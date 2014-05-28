@@ -94,7 +94,7 @@ class HiveapplicationController < ApplicationController
 
         HiveApplication.add_dev_user_activation_job(devuser.id)
 
-        render "hiveapplication/index"
+        redirect_to root_url
       end
     end
   end
