@@ -1,0 +1,29 @@
+#dev_portal_header
+  = "NEW APP"
+
+#create_application_form
+  = form_for :dev_portal, url: { controller: "hiveapplication", action: "add_application"}, method: "post", id:"createapplication" do |f|
+    %fieldset
+      = f.label :application_name, "Application Name: "
+      = f.text_field :application_name, autofocus: true,  required:true
+
+    %fieldset
+      = f.label :application_type, "Application Type: "
+      = f.select :application_type, options_for_select(HiveApplication.get_application_type), { }
+
+    %fieldset
+      = f.label :description, "Description: "
+      = f.text_field :description, required:true
+
+    %fieldset
+      = f.label :application_icon, "Application Icon: "
+      = f.file_field :application_icon, required:true
+    .upload-preview
+      %img{height: "60", width: "60"}
+
+    = f.submit "Create Application"
+
+  = flash.now[:notice]
+
+:javascript
+  Devportal.init();

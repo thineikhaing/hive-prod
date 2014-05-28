@@ -1,0 +1,12 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+
+  <body>
+    <p>
+      Thanks <%= @username %> for registering. Your verification code is <strong><a href="http://localhost:5000/verify?email=<%= @email %>&code=<%= @verify[:encoded_verification_code] %>&token=<%= @verify[:iv] %>">link</a></strong>.
+    </p>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+- if @hive_applications.present?
+  %table{width:"100%"}
+    %tr
+      %th{width:"15%"}
+        ="APP NAME"
+      %th{width:"10%"}
+        ="TYPE"
+      %th{width:"15%"}
+        = "API KEY"
+      -#%th{width:"10%"}
+      -#%th{width:"30%"}
+      -#  ="DESCRIPTION"
+      -#%th{width:"10%"}
+      -#  = "ICON"
+      -#%th{width:"5%"}
+      -#%th{width:"5%"}
+    - @hive_applications.each do |hive_app|
+      %tr{"data-link" => hiveapplication_edit_application_path(:app_id=> hive_app.id)}
+        %td{width:"15%"}
+          = hive_app.app_name
+        %td{width:"10%"}
+          = hive_app.app_type
+        %td{width:"15%"}
+          = hive_app.api_key
+        -#%td{width:"10%"}
+        -#  = link_to "Re-generate API Key", hiveapplication_regenerate_api_key_path(:app_id=> hive_app.id), remote:true
+        -#%td{width:"30%"}
+        -#  = hive_app.description
+        -#%td{width:"10%"}
+        -#  %img{ src:hive_app.icon_url}
+        -#%td{width:"5%"}
+        -#  = link_to "Delete", hiveapplication_delete_application_path(:app_id=> hive_app.id), remote:true
+        -#%td{width:"5%"}
+        -#  = link_to "Edit", hiveapplication_edit_application_path(:app_id=> hive_app.id)
+      %tr
+        %td{colspan: "3"}
+          #app_seperater_line
+
+
+:javascript
+  ApplicationList.init();

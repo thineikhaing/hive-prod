@@ -1,0 +1,25 @@
+#sign_up_form
+  = form_for :sign_up, url: { controller: "hiveapplication", action: "sign_up" }, method: "post" do |f|
+    %fieldset
+      = f.label :username, "Name: "
+      = f.text_field :username, autofocus: true, required:true
+
+    %fieldset
+      = f.label :email, "Email: "
+      = f.email_field :email, required:true
+
+    %fieldset
+      = f.label :password, "Password: "
+      = f.password_field :password, autocomplete: "off",required:true
+
+    %fieldset
+      = f.label :confirm_password, "Confirm Password: "
+      = f.password_field :confirm_password, autocomplete: "off",required:true
+
+    = f.submit "Sign Up"
+
+  = flash.now[:notice]
+
+
+:javascript
+  Signup.init();

@@ -1,0 +1,14 @@
+class CreateHiveApplications < ActiveRecord::Migration
+  def change
+    create_table :hive_applications do |t|
+      t.string :app_name
+      t.string :app_type
+      t.string :api_key
+      t.string :description
+      t.string :icon_url
+      t.integer :devuser_id
+
+      t.timestamps
+    end
+  end
+end

@@ -1,0 +1,23 @@
+%table{width: "100%"}
+  %tr
+    %td
+      #application_list
+        ="MY APPS"
+  %tr
+    %td
+      #seperater_line
+  %tr
+    %td
+      = render :partial => "hiveapplication/all_application_list"
+  %tr
+    %td
+      #application_list_footer
+        #create_app_container
+          %table
+            %tr
+              %td
+                #add_app_icon
+              %td
+                = link_to "NEW APP", hiveapplication_add_application_path
+
+

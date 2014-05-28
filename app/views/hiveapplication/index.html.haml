@@ -1,0 +1,26 @@
+#home_notice
+  = flash[:notice]
+
+#sign_in_form
+  = form_for :dev_users, url: { controller: "hiveapplication", action: "sign_in" }, method: "post" do |f|
+    %fieldset
+      #email_label
+        = "USER ID"
+      = f.text_field :email, class: "sign_in_input"
+    &br
+    %fieldset
+      #password_label
+        = "PASSWORD"
+      = f.password_field :password , autocomplete: "off", class: "sign_in_input"
+    &br
+    -#=
+    %fieldset
+      #forgot_password
+        = link_to "FORGET PASSWORD", hiveapplication_forget_password_path
+      #sign_up
+        = link_to "SIGN UP", hiveapplication_sign_up_path
+      = f.submit "OK", class: "submit_button"
+
+
+
+

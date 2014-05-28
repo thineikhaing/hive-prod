@@ -1,0 +1,9 @@
+#header
+  %table{:border =>"0"}
+    %tr
+      %td
+        #logo
+      %td
+        #header_info
+          - if current_user.present?
+            = session[:no_of_apps].to_s + " CONNECTED APPS"
