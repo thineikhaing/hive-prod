@@ -12,12 +12,21 @@
 
 #create_application_form {
   height: 300px;
-  width:  500px;
+  width:  100%;
   margin: 0 auto;
-  margin-top: 200px;
-  background-color: black;
-  color: white;
+  color: #FF9B00;
   text-align: center;
-  font-size: 32px;
+  font-size: 24px;
 }
 
+table.tbl_create_app{
+  width: 70%;
+  margin: 0 auto;
+  border: solid #FF9B00 1px;
+}
+table.tbl_create_app tr {
+  height: 25px;
+}
+table.tbl_create_app td {
+  width: 50%;
+}
