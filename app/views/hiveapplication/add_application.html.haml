@@ -25,19 +25,19 @@
       %tr
         %td
           %fieldset
-            = f.text_field :description, required:true
+            = f.text_area  :description, required:true ,cols: "50", rows: "15"
         %td
           %table{width:"100%"}
             %tr
               %td{width: "50%"}
+                .upload-preview
+                  %img{height: "120px", width: "120px"}
+              %td{width: "50%"}
                 %fieldset
                   = f.file_field :application_icon, required:true
-              %td{width: "50%"}
-                .upload-preview
-                  %img{height: "50", width: "50"}
       %tr
         %td{colspan:"2"}
-          = f.submit "Create Application"
+          = f.submit "CREATE APP"
       %tr
         %td{colspan:"2"}
           = flash.now[:notice]
