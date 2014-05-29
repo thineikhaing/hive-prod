@@ -27,8 +27,13 @@ CarrierWave.configure do |config|
   end
 
   config.cache_dir = "#{Rails.root}/tmp/uploads" # To let CarrierWave work on heroku
-
-  config.fog_directory = "hivedeviconimage"
+  if Rails.env.test? || Rails.env.development?
+    config.fog_directory = "hivedeviconimage"
+  elsif Rails.env.staging?
+    config.fog_directory = "hivedeviconimagestaging"
+  elsif Rails.env.production?
+    config.fog_directory = "hivedeviconimageproduction"
+  end
   config.fog_public = false
   config.fog_attributes = {'Cache-Control'=>'max-age=315576000'}
 end

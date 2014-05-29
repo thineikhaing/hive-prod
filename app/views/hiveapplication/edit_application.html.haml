@@ -15,13 +15,13 @@
 
     %fieldset
       = f.label :description, "Description: "
-      = f.text_field :description, required:true, value:@application.description
+      = f.text_area  :description, required:true ,cols: "50", rows: "15", value:@application.description
 
     %fieldset
       = f.label :application_icon, "Application Icon: "
       = f.file_field :application_icon, file: @application.icon_url
     .upload-preview
-      %img{height: "60", width: "60",src:@application.icon_url}
+      %img{height: "120", width: "120",src:@application.icon_url}
 
     = f.submit "Update Application", id: "btn_edit_application"
 
