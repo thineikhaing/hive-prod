@@ -1,74 +1,57 @@
 #create_application_form
   = form_for :dev_portal, url: { controller: "hiveapplication", action: "add_application"}, method: "post", id:"createapplication" do |f|
-    %table{class: "tbl_create_app"}
-      %tr
-        %td{colspan:"2"}
-          #dev_portal_header
-            = "NEW APP"
+    %table{class: "tbl_create_app_container"}
       %tr
         %td
-          = "APP NAME"
-        %td
-          = "TYPE"
-      %tr
-        %td
-          %fieldset
-            = f.text_field :application_name, autofocus: true,  required:true
-        %td
-          %fieldset
-            = f.select :application_type, options_for_select(HiveApplication.get_application_type), { }
-      %tr
-        %td
-          = "DESCRIPTION"
-        %td
-          = "ICON"
-      %tr
-        %td
-          %fieldset
-            = f.text_area  :description, required:true ,cols: "50", rows: "15"
-        %td
-          %table{width:"100%"}
+          %table{class: "tbl_create_app"}
             %tr
-              %td{width: "50%"}
-                .upload-preview
-                  %img{height: "120px", width: "120px"}
-              %td{width: "50%"}
+              %td{colspan:"2"}
+                #dev_portal_header
+                  #text_container
+                    = "NEW APP"
+            %tr
+              %td
+                #text_container
+                  = "APP NAME"
+              %td
+                #text_container
+                  = "TYPE"
+            %tr
+              %td
                 %fieldset
-                  = f.file_field :application_icon, required:true
+                  = f.text_field :application_name, autofocus: true,  required:true
+              %td
+                %fieldset
+                  = f.select :application_type, options_for_select(HiveApplication.get_application_type), { }
+            %tr
+              %td
+                #text_container
+                  = "DESCRIPTION"
+              %td
+                #text_container
+                  = "APP ICON"
+            %tr
+              %td
+                %fieldset
+                  = f.text_area  :description, required:true ,cols: "50", rows: "15"
+              %td
+                %table{width:"100%"}
+                  %tr
+                    %td{width: "50%"}
+                      .upload-preview
+                        %img{height: "120px", width: "120px"}
+                    %td{width: "50%"}
+                      %fieldset
+                        #btn_upload_icon
+                          .wrapper
+                            = f.file_field :application_icon, required:true
+                          %button CHOOSE FILE
       %tr
-        %td{colspan:"2"}
-          = f.submit "CREATE APP"
+        %td{class: "td_btn_container"}
+          = f.submit "CREATE APP", id:"btn_create_app"
       %tr
         %td{colspan:"2"}
           = flash.now[:notice]
-
-      -#%tr
-      -#  %td
-      -#    %fieldset
-      -#      = f.label :application_name, "APP NAME"
-      -#      = f.text_field :application_name, autofocus: true,  required:true
-      -#  %td
-      -#    %fieldset
-      -#      = f.label :application_type, "TYPE"
-      -#      = f.select :application_type, options_for_select(HiveApplication.get_application_type), { }
-      -#%tr
-      -#  %td
-      -#    %fieldset
-      -#      = f.label :description, "DESCRIPTION "
-      -#      = f.text_field :description, required:true
-      -#%tr
-      -#  %td
-      -#    %fieldset
-      -#      = f.label :application_icon, "ICON"
-      -#      = f.file_field :application_icon, required:true
-      -#      .upload-preview
-      -#        %img{height: "60", width: "60"}
-      -#%tr
-      -#  %td{colspan:"2"}
-      -#    = f.submit "Create Application"
-      -#%tr
-      -#  %td{colspan:"2"}
-      -#    = flash.now[:notice]
 
 :javascript
   Devportal.init();

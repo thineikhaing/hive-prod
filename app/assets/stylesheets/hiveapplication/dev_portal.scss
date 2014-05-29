@@ -2,12 +2,17 @@
   height:  40px;
   width: 100%;
   margin: 0 auto;
-  text-align: center;
-  padding-top: 15px;
+  text-align: left;
   font-size: 20px;
   background: #FF9B00;
   vertical-align: middle;
   color: white;
+}
+#text_container
+{
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-top: 15px;
 }
 
 #create_application_form {
@@ -18,39 +23,48 @@
   text-align: center;
   font-size: 24px;
 }
-
-table.tbl_create_app{
+table.tbl_create_app_container{
   width: 50%;
   margin: 0 auto;
+}
+table.tbl_create_app{
+  width: 100%;
   border: solid #FF9B00 1px;
 }
 table.tbl_create_app tr {
   height: 25px;
+  vertical-align: top;
 }
 table.tbl_create_app td {
   width: 50%;
   text-align:  left;
+}
+table.tbl_create_app_container td.td_btn_container{
+  text-align: right !important;
 }
 
 input#dev_portal_application_name{
   border: solid #FF9B00 1px;
   height: 25px;
   width: 300px;
+  margin-left: 10px;
+  margin-bottom: 10px;
 }
 
-input#commit{
- background: #FF9B00;
- color: white;
-}
-
-input[type=submit]{
+input[type=submit]#btn_create_app{
   background: #FF9B00;
+  font-size: 16px;
   color: white;
   border: none;
   cursor: pointer;
+  height: 30px;
+  margin-left: 10px;
+  margin-top: 10px;
 }
 textarea#dev_portal_description{
   border: solid #FF9B00 1px;
+  margin-left: 10px;
+  margin-bottom: 10px;
 }
 
 select#dev_portal_application_type{
@@ -58,11 +72,44 @@ select#dev_portal_application_type{
   color: white;
   height: 25px;
   width: 200px;
+  margin-left: 10px;
+  margin-bottom: 10px;
 }
 
 .upload-preview{
   border: solid #FF9B00 2px;
   background-color: white;
-  height: 120px;
+  height: 120px ;
+  margin-left: 10px;
   width: 120px;
+}
+
+#btn_upload_icon{
+  position: relative;
+}
+
+#btn_upload_icon {
+  position: relative;
+}
+
+#btn_upload_icon .wrapper {
+  opacity: 0;
+  cursor: pointer;
+  position: absolute;
+  height: 25px;
+  top: 0;
+  z-index: 2;
+}
+
+#btn_upload_icon button {
+  background-color: #ccc;
+  border: none;
+  color: white;
+  height: 25px;
+  font-size: 16px;
+  background-color: #FF9B00;
+  padding: 3px 5px;
+  position: relative;
+  top: 0;
+  z-index: 1;
 }
