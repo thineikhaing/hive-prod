@@ -1,0 +1,8 @@
+= form_for :hive, url: hiveapplication_login_page_path do |f|
+  #login_label
+    Password:
+    = f.password_field :login_password, autocomplete: "off", placeholder: "Password"
+    = f.submit "Submit"
+
+  #login_error
+    = flash[:notice]

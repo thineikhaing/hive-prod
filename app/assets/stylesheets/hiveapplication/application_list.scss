@@ -1,65 +1,98 @@
+#application_list_container {
+  height: 370px;
+  width:  840px;
+  margin: 0 auto;
+  margin-top: 50px;
 
-table,th,td
-{
-  th{
+  #application_list {
+    margin: 0 auto;
+    height: 25px;
+    width: 840px;
+    background: #FF9B00;
+    color: white;
+    padding: 10px 0px 10px 10px;
+    font-size: 24px;
+    //text-align: left;
+  }
+}
+
+#list_of_applications_container {
+  height: 234px;
+  width: 848px;
+  border: solid #FF9B00 1px;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
+table.app_list {
+  th {
     background: #FF9B00;
     color: white;
     font-size: 16px;
-    height: 30px;
+    height: 10px;
   }
-  td{
+
+  td {
     text-align: center;
     font-size: 18px;
   }
-  //border:1px solid black;
+
+  tr {
+    border-bottom: solid #FF9B00 1px;
+  }
 }
 
-#application_list
-{
-  background: #FF9B00;
-  color: white;
-  padding: 10px 10px 10px 10px;
-  font-size: 24px;
-  height: 25px;
-  width: 100%;
+.individual_app_cell {
+  height: 30px;
+  text-transform: uppercase;
+  line-height: 30px;
 }
-#seperater_line
-{
+
+#separator_line {
   background: white;
-  height: 2px;
-  width: 100%;
-}
-
-#app_seperater_line
-{
-  background: #FF9B00;
   height: 1px;
-  width: 100%;
+  //width: 100%;
+  width: 848px;
+  border: solid #FF9B00 1px;
 }
 
-#application_list_footer
-{
-  background: #FF9B00;
+#application_list_footer {
+  height: 32px;
+  width: 850px;
   color: white;
-  padding: 10px 5px 10px 5px;
+  padding: 5px 0px 0px 0px;
   font-size: 20px;
-  height: 40px;
-  width: 100%;
-  vertical-align: middle;
-  margin: 0 auto;
+  background: #FF9B00;
+
+  #app_icon_container {
+    height: 30px;
+    width: 100px;
+    margin: 0 auto;
+
+    #add_app_icon {
+      height: 25px;
+      width: 30px;
+      background-image: url("new_app.png");
+
+      #add_app_label {
+        height: 25px;
+        width: 90px;
+        margin-left: 40px;
+        color: white;
+        line-height: 25px;
+      }
+
+      #add_app_label a {
+        color: white;
+        text-decoration: none !important;
+      }
+    }
+  }
 }
 
-#create_app_container{
-  display: table;
-  margin: 0 auto;
+//#create_app_container{
+//  display: table;
+//  margin: 0 auto;
+//
+//}
 
-}
-#create_app_container a {
-  color: white;
-  text-decoration: none !important;
-}
-#add_app_icon{
-  height: 25px;
-  width: 30px;
-  background-image: url("new_app.png");
-}

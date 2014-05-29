@@ -1,5 +1,24 @@
 class HiveapplicationController < ApplicationController
   require 'securerandom'  #to generate api key for application
+
+  def login_page
+    p "here"
+    if params[:hive].present?
+      p "song"
+      if params[:hive][:login_password].present?
+        if params[:hive][:login_password] == App_Password::Key
+          p "in"
+          redirect_to hiveapplication_index_path
+        else
+          flash.now[:notice] = "Wrong Password"
+          render layout: nil
+        end
+      end
+    else
+      render layout: nil
+    end
+  end
+
   def index
     session[:session_devuser_id] = nil
     session[:no_of_apps] = nil
@@ -14,7 +33,7 @@ class HiveapplicationController < ApplicationController
       unless user.valid_password?(params[:dev_users][:password])
         # Redirects back to index if password is wrong
         flash[:notice] = error_notice
-        redirect_to root_path
+        redirect_to hiveapplication_index_path
       else
         if user.verified == true
           #store current user id in session
@@ -25,31 +44,31 @@ class HiveapplicationController < ApplicationController
         else
           # Redirects back to index view if user hasn't verified account.
           flash[:notice] = error_notice
-          redirect_to root_path
+          redirect_to hiveapplication_index_path
         end
       end
     else
       # Redirects back to index view if user enters the wrong email address.
       flash[:notice] = error_notice
-      redirect_to root_path
+      redirect_to hiveapplication_index_path
     end
   end
 
   def dev_portal
     p current_user
     if current_user.present?
-      @hive_applications = current_user.hive_applications.order("id DESC")
+      @hive_applications = current_user.hive_applications.order("id ASC")
       session[:no_of_apps] = current_user.hive_applications.count
     else
-      redirect_to root_path
+      redirect_to hiveapplication_index_path
     end
   end
 
   def application_list
     if current_user.present?
-      @hive_applications = current_user.hive_applications.order("id DESC")
+      @hive_applications = current_user.hive_applications.order("id ASC")
     else
-      redirect_to root_path
+      redirect_to hiveapplication_index_path
     end
   end
 
@@ -63,7 +82,7 @@ class HiveapplicationController < ApplicationController
         hive_application.save!
 
         user = Devuser.find(current_user.id)
-        @hive_applications = user.hive_applications.order("id DESC")
+        @hive_applications = user.hive_applications.order("id ASC")
       end
     end
 
@@ -94,7 +113,7 @@ class HiveapplicationController < ApplicationController
 
         HiveApplication.add_dev_user_activation_job(devuser.id)
 
-        redirect_to root_url
+        redirect_to hiveapplication_index_path
       end
     end
   end
@@ -117,7 +136,7 @@ class HiveapplicationController < ApplicationController
         end
       end
     else
-      redirect_to root_path
+      redirect_to hiveapplication_index_path
     end
   end
 
@@ -142,7 +161,7 @@ class HiveapplicationController < ApplicationController
         redirect_to hiveapplication_application_list_path
       end
     else
-      redirect_to root_path
+      redirect_to hiveapplication_index_path
     end
   end
 
@@ -158,7 +177,7 @@ class HiveapplicationController < ApplicationController
       user = Devuser.find(current_user.id)
       @hive_applications = user.hive_applications
     else
-      redirect_to root_path
+      redirect_to hiveapplication_index_path
     end
 
   end
@@ -199,7 +218,7 @@ class HiveapplicationController < ApplicationController
     if @devuser.reset_password_sent_at < 2.hours.ago
       redirect_to hiveapplication_forget_password_path, :alert => "Password reset has expired."
     elsif @devuser.update_attributes(params[:devuser])
-      redirect_to root_url, :notice => "Password has been reset!"
+      redirect_to hiveapplication_index_path, :notice => "Password has been reset!"
     else
       render :reset_password #err in saving password, show on reset_password page
     end
@@ -210,9 +229,9 @@ class HiveapplicationController < ApplicationController
       user = Devuser.find_by_email(params[:email])
       if user.present?
         user.send_password_reset
-        redirect_to root_url, :notice => "Email sent with password reset instructions."
+        redirect_to hiveapplication_index_path, :notice => "Email sent with password reset instructions."
       else
-        redirect_to root_url, :notice => "Email address does not exist."
+        redirect_to hiveapplication_index_path, :notice => "Email address does not exist."
       end
 
 

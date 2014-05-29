@@ -1,12 +1,14 @@
 Rails.application.routes.draw do
   devise_for :users
   devise_for :devusers
-  root to: "hiveapplication#index"
+  root to: "hiveapplication#login_page"
 
   resources :hiveapplication
   post "hiveapplication/sign_in", path: "sign_in"
   get "hiveapplication/verify", path: "verify"
 
+  match "hiveapplication/login_page"          , path: "login_page", via: [:get, :post]
+  match "hiveapplication/index"               , path: "index", via: [:get, :post]
   match "hiveapplication/dev_portal"          , path: "dev_portal", via: [:get, :post]
   match "hiveapplication/application_list"    , path: "dev_portal", via: [:get, :post]
   match "hiveapplication/sign_up"             , path: "sign_up", via: [:get, :post]
