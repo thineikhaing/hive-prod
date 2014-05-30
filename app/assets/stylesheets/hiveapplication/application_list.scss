@@ -40,6 +40,10 @@ table.app_list {
   tr {
     border-bottom: solid #FF9B00 1px;
   }
+
+  tr:hover {
+    cursor: pointer;
+  }
 }
 
 .individual_app_cell {
