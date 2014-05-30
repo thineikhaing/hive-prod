@@ -1,31 +1,59 @@
-#dev_portal_header
-  = "Update Applications"
-
 #create_application_form
   = form_for :dev_portal, url: { controller: "hiveapplication", action: "edit_application"}, method: "post", id:"updateapplication" do |f|
     %fieldset
       = f.hidden_field :application_id, value: @application.id
-    %fieldset
-      = f.label :application_name, "Application Name: "
-      = f.text_field :application_name, autofocus: true,  required:true, value: @application.app_name
-
-    %fieldset
-      = f.label :application_type, "Application Type: "
-      = f.select :application_type, options_for_select(HiveApplication.get_application_type, selected: @application.app_type), { }
-
-    %fieldset
-      = f.label :description, "Description: "
-      = f.text_area  :description, required:true ,cols: "50", rows: "15", value:@application.description
-
-    %fieldset
-      = f.label :application_icon, "Application Icon: "
-      = f.file_field :application_icon, file: @application.icon_url
-    .upload-preview
-      %img{height: "120", width: "120",src:@application.icon_url}
-
-    = f.submit "Update Application", id: "btn_edit_application"
-
-  = flash.now[:notice]
+    %table{class: "tbl_create_app_container"}
+      %tr
+        %td
+          %table{class: "tbl_create_app"}
+            %tr
+              %td{colspan:"2"}
+                #dev_portal_header
+                  #text_container
+                    = "UPDATE APP"
+            %tr
+              %td
+                #text_container
+                  = "APP NAME"
+              %td
+                #text_container
+                  = "TYPE"
+            %tr
+              %td
+                %fieldset
+                  = f.text_field :application_name, autofocus: true,  required:true, value: @application.app_name
+              %td
+                %fieldset
+                  = f.select :application_type, options_for_select(HiveApplication.get_application_type, selected: @application.app_type), { }
+            %tr
+              %td
+                #text_container
+                  = "DESCRIPTION"
+              %td
+                #text_container
+                  = "APP ICON"
+            %tr
+              %td
+                %fieldset
+                  = f.text_area  :description, required:true ,cols: "50", rows: "15" , value:@application.description
+              %td
+                %table{width:"100%"}
+                  %tr
+                    %td{width: "50%"}
+                      .upload-preview
+                        %img{height: "120px", width: "120px",src:@application.icon_url}
+                    %td{width: "50%"}
+                      %fieldset
+                        #btn_upload_icon
+                          .wrapper
+                            = f.file_field :application_icon
+                          %button CHOOSE FILE
+      %tr
+        %td{class: "td_btn_container"}
+          = f.submit "UPDATE APP", id:"btn_create_app"
+      %tr
+        %td{colspan:"2"}
+          = flash.now[:notice]
 
 :javascript
   Devportal.init();
