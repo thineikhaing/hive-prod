@@ -16,7 +16,9 @@
       -#%th{width:"5%"}
     - @hive_applications.each do |hive_app|
       %tr{"data-link" => hiveapplication_edit_application_path(:app_id=> hive_app.id)}
-        %td{width:"30%"}
+        %td{width:"5%"}
+          %img{ src:hive_app.icon_url, class:"img_app_icon"}
+        %td{width:"25%"}
           .individual_app_cell
             = hive_app.app_name
         %td{width:"25%"}
