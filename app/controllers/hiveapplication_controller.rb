@@ -120,14 +120,18 @@ class HiveapplicationController < ApplicationController
 
   def add_application
     if current_user.present?
-      p params[:dev_portal]
       if params[:dev_portal].present?
         hive_application = HiveApplication.create(app_name: params[:dev_portal][:application_name], app_type: params[:dev_portal][:application_type], description: params[:dev_portal][:description], icon_url: params[:dev_portal][:application_icon] ,devuser_id: current_user.id )
-        p hive_application
-        if hive_application.present?
+        flash[:notice] = ""
+        hive_application.errors.full_messages.each do |message|
+          # do stuff for each error
+          flash[:notice] << message
+        end
+        unless hive_application.errors.any?
           #generate random number for api key
           api_key = SecureRandom.hex
           hive_application.api_key = api_key
+          p if hive_application.save
           hive_application.save!
 
           User.create(username: "#{params[:dev_portal][:application_name]} Bot", role: User::BOT)

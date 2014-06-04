@@ -51,7 +51,8 @@
           = f.submit "CREATE APP", id:"btn_create_app"
       %tr
         %td{colspan:"2"}
-          = flash.now[:notice]
+          #home_notice
+            = flash.now[:notice]
 
 :javascript
   Devportal.init();
