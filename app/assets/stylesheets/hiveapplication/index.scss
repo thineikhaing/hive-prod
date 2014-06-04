@@ -1,6 +1,6 @@
 #sign_in_form {
   height:  220px;
-  width:  300px;
+  width:  400px;
   color: white;
   margin: 0 auto;
   margin-top: 20px;
@@ -10,10 +10,9 @@
   display: inline-block;
   height: 23px;
   width:  80px;
-  font-size: 12px;
   background-color: #FF9B00;
   text-align: center;
-  line-height: 23px;
+  line-height: 28px;
   margin-left: 12px;
 }
 
@@ -23,35 +22,35 @@
 }
 
 #email_label, #password_label {
-  font-size: 12px;
   color: #FF9B00
 }
 
 .sign_in_input {
-  height: 23px;
-  width: 300px;
+  height: 30px;
+  width: 350px;
   color: #FF9B00;
   border: 1px solid #FF9B00;
+  font-size: 24px;
 }
 
 .submit_button,  {
   height: 23px;
   width: 50px;
-  font-size: 12px;
   color: white;
   background-color: #FF9B00;
   margin-left: 12px;
+  font-family: Labrador-A-Medium;
+  font-size: 24px;
   border: none;
 }
 
 #forgot_password {
   display: inline-block;
   height: 23px;
-  width: 138px;
-  font-size: 12px;
+  width: 180px;
   color: white;
   text-align: center;
-  line-height: 23px;
+  line-height: 28px;
   background-color: #FF9B00;
 }
 

@@ -1,24 +1,24 @@
 #application_list_container {
   height: 370px;
-  width:  840px;
+  width:  1200px;
   margin: 0 auto;
   margin-top: 50px;
 
   #application_list {
     margin: 0 auto;
     height: 25px;
-    width: 840px;
+    width: 1200px;
     background: #FF9B00;
     color: white;
     padding: 10px 0px 10px 10px;
-    font-size: 24px;
+    font-size: 36px;
     //text-align: left;
   }
 }
 
 #list_of_applications_container {
   height: 234px;
-  width: 848px;
+  width: 1208px;
   border: solid #FF9B00 1px;
   overflow: scroll;
   overflow-x: hidden;
@@ -28,13 +28,13 @@ table.app_list {
   th {
     background: #FF9B00;
     color: white;
-    font-size: 16px;
     height: 10px;
+    padding-top: 5px;
   }
 
   td {
     text-align: center;
-    font-size: 18px;
+    font-size: 36px;
   }
 
   tr {
@@ -56,14 +56,13 @@ table.app_list {
 #separator_line {
   background: white;
   height: 1px;
-  //width: 100%;
-  width: 848px;
+  width: 1208px;
   border: solid #FF9B00 1px;
 }
 
 #application_list_footer {
   height: 32px;
-  width: 850px;
+  width: 1210px;
   color: white;
   padding: 5px 0px 0px 0px;
   font-size: 20px;
