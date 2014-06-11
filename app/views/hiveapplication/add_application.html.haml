@@ -27,13 +27,15 @@
               %td
                 #text_container
                   = "DESCRIPTION"
+                #remain_char_container
+                  %label{for: "myalue"}
               %td
                 #text_container
                   = "APP ICON"
             %tr
               %td
                 %fieldset
-                  = f.text_area  :description, required:true ,cols: "50", rows: "15"
+                  = f.text_area  :description, required:true ,cols: "50", rows: "15" ,maxlength: "255"
               %td
                 %table{width:"100%"}
                   %tr

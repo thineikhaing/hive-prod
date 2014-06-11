@@ -27,6 +27,10 @@ var Devportal = {
       };
     }
 
+    this.updateCountdown();
+    $('#dev_portal_description').change(this.updateCountdown);
+    $('#dev_portal_description').keyup(this.updateCountdown);
+
 
     $("#dev_portal_application_icon").on( 'change', function(){
 //      alert("On change");
@@ -43,16 +47,20 @@ var Devportal = {
         {
           $("#btn_edit_application").removeAttr('disabled');
           var preview = $(".upload-preview img");
-          var file = this.files[0];
-          var reader = new FileReader();
-          reader.onload = function(e){
-            image_base64 = e.target.result;
-            preview.attr("src", image_base64);
-          };
+
           reader.readAsDataURL(file);
         }
       }
 
     });
+  },
+  updateCountdown: function() {
+
+    var remaining = 255 - $('#dev_portal_description').val().length;
+//    if (remaining == 0)
+//      $("#dev_portal_description").attr("disabled", "disabled");
+//    else
+    $("label[for='myalue']").html( "( <font color='red'> " + remaining + "</font> CHARACTERS REMAINING )");
+
   }
 }

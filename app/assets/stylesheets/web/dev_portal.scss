@@ -12,9 +12,16 @@
 {
   padding-left: 10px;
   padding-bottom: 10px;
+  float: left;
   padding-top: 15px;
 }
-
+#remain_char_container{
+  padding-right: 10px;
+  padding-bottom: 10px;
+  padding-top: 15px;
+  font-size: 20px;
+  float: right;
+}
 #create_application_form {
   height: 300px;
   width:  100%;
@@ -114,3 +121,4 @@ select#dev_portal_application_type{
   top: 0;
   z-index: 1;
 }
+

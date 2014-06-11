@@ -14,6 +14,7 @@ class HiveApplication < ActiveRecord::Base
 
   attr_accessible :app_name, :app_type, :description, :api_key, :icon_url ,:devuser_id, :created_at
   validates :app_name, :length => { :maximum => 32 }
+  validates :description, :length => { :maximum => 255 }
 
   def self.generate_verification_code(length=16)
     # Generates an alphanumerical verification code (length = 16bits)
