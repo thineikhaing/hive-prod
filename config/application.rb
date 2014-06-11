@@ -56,7 +56,7 @@ module Hive
 
     # Assets
     config.assets.initialize_on_precompile = false
-    config.assets.precompile += %w(web.css web.js)
+    config.assets.precompile += %w(web.css web.js mobile.css mobile.js)
   end
 end
 

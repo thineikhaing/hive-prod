@@ -2,15 +2,6 @@
   #application_list
     = "MY APPS"
 
-  #separator_line
-  %table{class: "app_list", width: "850px"}
-    %tr
-      %th{width:"45%"}
-        ="APP NAME"
-      %th{width:"15%"}
-        ="TYPE"
-      %th{width:"40%"}
-        = "API KEY"
   #list_of_applications_container
     = render :partial => "hiveapplication/all_application_list"
 

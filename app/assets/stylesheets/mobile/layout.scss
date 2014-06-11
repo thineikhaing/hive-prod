@@ -1,0 +1,48 @@
+html {
+  height: 100%;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  font-family: Exo2Regular;
+}
+
+.container {
+  width: 100%;
+  padding: 25px 0px 25px 0px;
+  font-size: 12px;
+  color: #FF9B00;
+}
+
+#main_background {
+  height: 100%;
+  width: 100%;
+  background-image: url('BG.jpg');
+}
+
+table.web_header {
+
+}
+
+#header {
+  height: 110px;
+  width: 100%;
+
+  #logo {
+    height: 145px;
+    width: 500px;
+    display: block;
+    background-image: url('Hive-Dev-Web-Logo.png');
+    background-size: cover;
+    margin: 0 auto;
+  }
+
+  #header_info {
+    font-size: 20px;
+    height: 87px;
+    display: block;
+    width: 300px;
+    text-align: right;
+  }
+}

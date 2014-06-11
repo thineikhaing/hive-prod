@@ -1,5 +1,6 @@
 class HiveapplicationController < ApplicationController
   require 'securerandom'  #to generate api key for application
+  before_filter :detect_format
 
   def login_page
     p "here"
@@ -237,8 +238,14 @@ class HiveapplicationController < ApplicationController
       else
         redirect_to hiveapplication_index_path, :notice => "Email address does not exist."
       end
+    end
+  end
 
-
+  def detect_format
+    unless current_browser.mobile? or current_browser.tablet?
+      request.format = :html
+    else
+      request.format = :mobile
     end
   end
 end

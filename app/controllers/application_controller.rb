@@ -4,4 +4,9 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   include UserHelper, AuthenticationHelper
+  before_filter :current_browser
+
+  def current_browser
+    @browser = Browser.new(ua: request.user_agent)
+  end
 end

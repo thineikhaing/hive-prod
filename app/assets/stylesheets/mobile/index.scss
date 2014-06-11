@@ -1,0 +1,74 @@
+#sign_in_form {
+  height:  300px;
+  width:  800px;
+  color: white;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+#sign_up {
+  display: inline-block;
+  height: 70px;
+  width:  180px;
+  font-size: 34px;
+  background-color: #FF9B00;
+  text-align: center;
+  line-height: 70px;
+  margin-left: 12px;
+}
+
+#sign_up a {
+  color: white;
+  text-decoration: none !important;
+}
+
+#email_label, #password_label {
+  font-size: 34px;
+  color: #FF9B00
+}
+
+.sign_in_input {
+  height: 75px;
+  width: 750px;
+  color: #FF9B00;
+  font-size: 34px;
+  margin-bottom: 30px;
+  border: 1px solid #FF9B00;
+}
+
+.submit_button,  {
+  height: 70px;
+  width: 220px;
+  font-size: 34px;
+  color: white;
+  background-color: #FF9B00;
+  margin-left: 12px;
+  border: none;
+  -webkit-appearance: none;
+}
+
+#forgot_password {
+  display: inline-block;
+  height: 70px;
+  width: 350px;
+  font-size: 12px;
+  font-size: 34px;
+  color: white;
+  text-align: center;
+  line-height: 70px;
+  background-color: #FF9B00;
+}
+
+#forgot_password a {
+  color: white;
+  text-decoration: none !important;
+}
+
+#home_notice {
+  width: 735px;
+  color: red;
+  font-size: 34px;
+  text-align: center;
+  margin: 0 auto;
+  margin-top: 380px;
+}
