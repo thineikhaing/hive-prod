@@ -32,6 +32,7 @@ Rails.application.routes.draw do
   #get "sign_in", to: "hiveapplication#sign_in"
 
   namespace :api do
+    match "topics/create"           => "topics#create", :via => :get
     match "mytest/test"             => "mytest#test"  , :via => :get
     match "mytest/test2"            => "mytest#test2" , :via => :get
     match "mytest/test3"            => "mytest#test3" , :via => :get

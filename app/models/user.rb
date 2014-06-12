@@ -11,8 +11,10 @@ class User < ActiveRecord::Base
 
   # Setup hstore
   store_accessor :data
+  include Authenticable
 
-  attr_accessible :username, :email, :password, :authentication_token, :avatar_url, :role, :quid, :honor_rating, :created_at, :data
+  attr_accessible :username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :quid, :honor_rating, :created_at, :data
+  after_initialize :ensure_authentication_token
 
-  enums %w(BOT VENDOR NORMAL)
+  enums %w(BOT ADMIN VENDOR NORMAL)
 end
