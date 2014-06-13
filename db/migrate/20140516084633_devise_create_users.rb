@@ -31,6 +31,7 @@ class DeviseCreateUsers < ActiveRecord::Migration
       # t.datetime :locked_at
 
       t.string :username
+      t.string :device_id
       t.string :authentication_token
       t.string :avatar_url
       t.integer :role
@@ -41,7 +42,6 @@ class DeviseCreateUsers < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :users, :email,                unique: true
     add_index :users, :authentication_token, unique: true
     add_index :users, :reset_password_token, unique: true
     # add_index :users, :confirmation_token,   unique: true

@@ -15,6 +15,7 @@ class CreatePlaces < ActiveRecord::Migration
       t.string :img_url
       t.string :source
       t.integer :source_id
+      t.integer :user_id
       t.hstore :data
 
       t.float :latitude

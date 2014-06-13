@@ -105,6 +105,7 @@ ActiveRecord::Schema.define(version: 20140611051242) do
     t.string   "img_url"
     t.string   "source"
     t.integer  "source_id"
+    t.integer  "user_id"
     t.hstore   "data"
     t.float    "latitude"
     t.float    "longitude"
@@ -167,6 +168,7 @@ ActiveRecord::Schema.define(version: 20140611051242) do
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.string   "username"
+    t.string   "device_id"
     t.string   "authentication_token"
     t.string   "avatar_url"
     t.integer  "role"
@@ -178,7 +180,6 @@ ActiveRecord::Schema.define(version: 20140611051242) do
   end
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree
-  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
 end

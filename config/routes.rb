@@ -4,22 +4,22 @@ Rails.application.routes.draw do
   root to: "hiveapplication#login_page"
 
   resources :hiveapplication
-  post "hiveapplication/sign_in", path: "sign_in"
-  get "hiveapplication/verify", path: "verify"
+  post "hiveapplication/sign_in"              , path: "sign_in"
+  get "hiveapplication/verify"                , path: "verify"
 
-  match "hiveapplication/login_page"          , path: "login_page", via: [:get, :post]
-  match "hiveapplication/index"               , path: "index", via: [:get, :post]
-  match "hiveapplication/dev_portal"          , path: "dev_portal", via: [:get, :post]
-  match "hiveapplication/application_list"    , path: "dev_portal", via: [:get, :post]
-  match "hiveapplication/sign_up"             , path: "sign_up", via: [:get, :post]
-  match "hiveapplication/regenerate_api_key"  ,path: "regenerate_api_key", via: [:get, :post]
-  match "hiveapplication/delete_application"  ,path: "delete_application", via: [:get, :post]
-  match "hiveapplication/edit_application"    ,path: "edit_application", via: [:get, :post]
-  match "hiveapplication/add_application"    , path: "add_application", via: [:get, :post]
-  match "hiveapplication/sign_up"             , path: "sign_up", via: [:get, :post]
-  match "hiveapplication/forget_password"     , path: "forget_password", via: [:get, :post]
-  match "hiveapplication/reset_password"      , path: "reset_password", via: [:get, :post]
-  match "hiveapplication/update_password"     , path: "update_password", via: [:get, :post]
+  match "hiveapplication/login_page"          , path: "login_page"              , via: [:get, :post]
+  match "hiveapplication/index"               , path: "index"                   , via: [:get, :post]
+  match "hiveapplication/dev_portal"          , path: "dev_portal"              , via: [:get, :post]
+  match "hiveapplication/application_list"    , path: "dev_portal"              , via: [:get, :post]
+  match "hiveapplication/sign_up"             , path: "sign_up"                 , via: [:get, :post]
+  match "hiveapplication/regenerate_api_key"  , path: "regenerate_api_key"      , via: [:get, :post]
+  match "hiveapplication/delete_application"  , path: "delete_application"      , via: [:get, :post]
+  match "hiveapplication/edit_application"    , path: "edit_application"        , via: [:get, :post]
+  match "hiveapplication/add_application"     , path: "add_application"         , via: [:get, :post]
+  match "hiveapplication/sign_up"             , path: "sign_up"                 , via: [:get, :post]
+  match "hiveapplication/forget_password"     , path: "forget_password"         , via: [:get, :post]
+  match "hiveapplication/reset_password"      , path: "reset_password"          , via: [:get, :post]
+  match "hiveapplication/update_password"     , path: "update_password"         , via: [:get, :post]
 
   #get "hiveapplication/sign_up", path: "sign_up"
   #post "hiveapplication/sign_up", path: "sign_up"
@@ -32,11 +32,14 @@ Rails.application.routes.draw do
   #get "sign_in", to: "hiveapplication#sign_in"
 
   namespace :api do
-    match "topics/create"           => "topics#create", :via => :get
-    match "mytest/test"             => "mytest#test"  , :via => :get
-    match "mytest/test2"            => "mytest#test2" , :via => :get
-    match "mytest/test3"            => "mytest#test3" , :via => :get
-    match "mytest/test4"            => "mytest#test4" , :via => :get
+    match "downloaddata/initial_retrieve"       => "downloaddata#initial_retrieve", :via => :get
+    match "users/create_anonymous_user"         => "users#create_anonymous_user"  , :via => :get
+    match "topics/create"                       => "topics#create"                , :via => :get
+    match "posts/create"                        => "posts#create"                 , :via => :get
+    match "mytest/test"                         => "mytest#test"                  , :via => :get
+    match "mytest/test2"                        => "mytest#test2"                 , :via => :get
+    match "mytest/test3"                        => "mytest#test3"                 , :via => :get
+    match "mytest/test4"                        => "mytest#test4"                 , :via => :get
   end
 
   # The priority is based upon order of creation: first created -> highest priority.
