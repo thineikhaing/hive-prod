@@ -1,7 +1,11 @@
 class Api::UsersController < ApplicationController
   def create_anonymous_user
-    User.create!(device_id: "12345", password: Devise.friendly_token)
+    if User.find_by_device_id(params[:device_id]).present?
+      render json: { status: false }
+    else
+      user = User.create!(device_id: params[:device_id], password: Devise.friendly_token)
 
-    render json: User.search_data("Hive")
+      render json: user
+    end
   end
 end
