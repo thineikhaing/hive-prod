@@ -36,6 +36,7 @@ Rails.application.routes.draw do
     match "users/create_anonymous_user"         => "users#create_anonymous_user"  , :via => :get
     match "topics/create"                       => "topics#create"                , :via => :get
     match "posts/create"                        => "posts#create"                 , :via => :get
+    match "posts/retrieve_post"                 => "posts#retrieve_post"          , :via => :get
     match "mytest/test"                         => "mytest#test"                  , :via => :get
     match "mytest/test2"                        => "mytest#test2"                 , :via => :get
     match "mytest/test3"                        => "mytest#test3"                 , :via => :get
