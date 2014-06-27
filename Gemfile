@@ -35,6 +35,7 @@ gem 'jbuilder'                    , '~> 2.0.6' # Build JSON APIs with ease. Read
 gem 'protected_attributes'        , '~> 1.0.7' # Protect attributes from mass assignment
 gem "rmagick"                     , :require => 'RMagick' #gem to resize the image
 gem 'browser'                     , '~> 0.5.0' # Do some browser detection with Ruby.
+gem 'whenever'                    , :require => false  # provides a clear syntax for writing and deploying cron jobs.
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

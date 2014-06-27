@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140611051242) do
+ActiveRecord::Schema.define(version: 20140627074919) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,14 @@ ActiveRecord::Schema.define(version: 20140611051242) do
     t.string   "type_name"
     t.integer  "type_id"
     t.integer  "action_user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "app_additional_fields", force: true do |t|
+    t.integer  "app_id"
+    t.string   "table_name"
+    t.string   "additional_column_name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -147,6 +155,7 @@ ActiveRecord::Schema.define(version: 20140611051242) do
 
   create_table "topics", force: true do |t|
     t.string   "title"
+    t.string   "image_url"
     t.integer  "topic_sub_type"
     t.integer  "place_id"
     t.hstore   "data"
@@ -154,6 +163,22 @@ ActiveRecord::Schema.define(version: 20140611051242) do
     t.datetime "updated_at"
     t.integer  "hiveapplication_id"
     t.integer  "user_id"
+  end
+
+  create_table "user_accounts", force: true do |t|
+    t.integer  "user_id"
+    t.string   "account_type"
+    t.string   "linked_account_id"
+    t.integer  "priority"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "user_push_tokens", force: true do |t|
+    t.integer  "user_id"
+    t.string   "push_token"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "users", force: true do |t|
@@ -167,6 +192,7 @@ ActiveRecord::Schema.define(version: 20140611051242) do
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
+    t.datetime "token_expiry_date"
     t.string   "username"
     t.string   "device_id"
     t.string   "authentication_token"

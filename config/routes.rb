@@ -20,6 +20,10 @@ Rails.application.routes.draw do
   match "hiveapplication/forget_password"     , path: "forget_password"         , via: [:get, :post]
   match "hiveapplication/reset_password"      , path: "reset_password"          , via: [:get, :post]
   match "hiveapplication/update_password"     , path: "update_password"         , via: [:get, :post]
+  match "hiveapplication/edit_column"         , path:"edit_column"              , via: [:get, :post]
+  match "hiveapplication/delete_additional_column", path:"delete_additional_column" , via: [:get, :post]
+  match "hiveapplication/edit_additional_column",path:"edit_additional_column"  , via: [:get, :post]
+  match "hiveapplication/create_additional_field",path:"create_additional_field", via: [:get,:post]
 
   #get "hiveapplication/sign_up", path: "sign_up"
   #post "hiveapplication/sign_up", path: "sign_up"
@@ -37,6 +41,7 @@ Rails.application.routes.draw do
     match "topics/create"                       => "topics#create"                , :via => :get
     match "posts/create"                        => "posts#create"                 , :via => :get
     match "posts/retrieve_post"                 => "posts#retrieve_post"          , :via => :get
+    match "user_push_token/create"              => "user_push_token#create"       , :via => :get
     match "mytest/test"                         => "mytest#test"                  , :via => :get
     match "mytest/test2"                        => "mytest#test2"                 , :via => :get
     match "mytest/test3"                        => "mytest#test3"                 , :via => :get

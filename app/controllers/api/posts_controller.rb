@@ -1,7 +1,41 @@
 class Api::PostsController < ApplicationController
   def create
     if current_user.present?
-      post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id) if params[:post_type] == Post::TEXT.to_s
+      topic = Topic.find(params[:topic_id].to_i)
+      if params[:data].present? and  topic.hiveapplication_id!=1
+        data = getHashValuefromString(params[:data])
+
+
+        #get all extra columns that define in app setting
+        appAdditionalField = AppAdditionalField.where(:app_id => topic.hiveapplication_id, :table_name => "Post")
+        if appAdditionalField.present?
+          defined_Fields = Hash.new
+          appAdditionalField.each do |field|
+            defined_Fields[field.additional_column_name] = nil
+          end
+          #get all extra columns that define in app setting against with the params data
+          data.deep_merge(defined_Fields)
+
+
+          result = Hash.new
+          defined_Fields.keys.each do |key|
+            result.merge!(data.extract! (key))
+          end
+        end
+        result = nil unless result.present?
+        p result
+        post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, data: result) if params[:post_type] == Post::TEXT.to_s
+
+      else
+        post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id) if params[:post_type] == Post::TEXT.to_s
+      end
+
+      if topic.hiveapplication_id ==1 #Hive Application
+        post.broadcast_hive
+      else
+        post.broadcast_hive
+        post.broadcast_other_app
+      end
       render json: { post: post}
     end
   end
@@ -24,6 +58,7 @@ class Api::PostsController < ApplicationController
             posts =  topic.posts.where("id < ?", post_id).order("id DESC").limit(10)
           elsif no_of_posts > 0 && post_id > 0
             posts =  topic.posts.where("id < ?", post_id).order("id DESC").limit(no_of_posts)
+
           end
         end
         render json: {posts: posts}
@@ -34,4 +69,17 @@ class Api::PostsController < ApplicationController
       render json: { status: false}
    end
   end
+
+  def getHashValuefromString(data)
+    data.sub! '{',''
+    data.sub! '}',''
+    hash = {}
+    data.split(',').each do |pair|
+      key,value = pair.split(/:/)
+      hash[key] = value
+    end
+    p hash
+    return hash
+  end
+
 end

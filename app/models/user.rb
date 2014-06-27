@@ -8,6 +8,8 @@ class User < ActiveRecord::Base
 
   has_many :topics
   has_many :posts
+  has_many :user_push_tokens
+  has_many  :user_accounts
 
   # Setup hstore
   store_accessor :data
@@ -24,6 +26,21 @@ class User < ActiveRecord::Base
 
   def self.search_data(search)
     where("lower(username) like ?", "%#{search.downcase}%")
+  end
+
+
+  def regenerate_auth_token_for_expiry_tokens
+    users = User.where(:token_expiry_date => Date.today )
+    users.each do |user|
+      token = ""
+      loop do
+        token = Devise.friendly_token
+        break token unless User.where(authentication_token: token).first
+      end
+      user.authentication_token =  token
+      user.token_expiry_date = Date.today + 6.months
+      user.save!
+    end
   end
 
   private

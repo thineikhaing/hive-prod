@@ -1,0 +1,12 @@
+- if @table_list.present?
+  %table{width:"100%"}
+    %tr
+      %th{width:"15%"}
+        ="Table Name"
+      %th{width:"5%"}
+    - @table_list.each do |table_name|
+      %tr
+        %td{width:"15%"}
+          = table_name
+        %td{width:"5%"}
+          = link_to "Edit", hiveapplication_edit_column_path(:table_name=> table_name, :app_id=> params[:app_id])

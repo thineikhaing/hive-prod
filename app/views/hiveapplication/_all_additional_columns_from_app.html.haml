@@ -1,0 +1,19 @@
+- if @fieldbyapp.present?
+  = " Additional Columns"
+  %table{width:"100%", border:"1", id:"tbl_add_fields"}
+    - @fieldbyapp.each do |field|
+      %tr
+        %td
+          = field.additional_column_name
+        %td
+          #del_container
+            = "delete"
+            %input#field_id{type: "hidden", value: field.id}/
+        %td
+          #del_container
+            = "edit"
+            %input#field_id{type: "hidden", value: field.id}/
+        -#%td
+        -#  = link_to "Delete", hiveapplication_delete_additional_column_path(:field_id=>field.id), :id => "del_field" , remote: true
+        -#%td
+        -#  = link_to "Edit", hiveapplication_edit_additional_column_path(:field_id=>field.id), remote: true

@@ -72,6 +72,6 @@ require 'factual'
 # Credentials are not required in Prod mode because Pusher account is linked directly with Heroku
 require 'pusher'
 
-Pusher.app_id = '65761'
-Pusher.key    = '8197ab8e102c7e2ca2eb'
-Pusher.secret = 'e58e48596fbe758eb605'
+Pusher.app_id = '76231'
+Pusher.key    = 'd5e72333be1c2e5c6f45'
+Pusher.secret = '487a0e829301b6b5b2e8'
