@@ -38,6 +38,9 @@ Rails.application.routes.draw do
   namespace :api do
     match "downloaddata/initial_retrieve"       => "downloaddata#initial_retrieve", :via => :get
     match "users/create_anonymous_user"         => "users#create_anonymous_user"  , :via => :get
+    match "users/sign_up"                       => "users#sign_up"                , :via => :get
+    match "users/sign_in"                       => "users#sign_in"                , :via => :get
+    match "users/facebook_login"                => "users#facebook_login"         , :via => :get
     match "topics/create"                       => "topics#create"                , :via => :get
     match "posts/create"                        => "posts#create"                 , :via => :get
     match "posts/retrieve_post"                 => "posts#retrieve_post"          , :via => :get

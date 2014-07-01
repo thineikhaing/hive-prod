@@ -6,8 +6,9 @@ class Api::TopicsController < ApplicationController
         #user = User.find_by_authentication_token (params[:auth_token]) if params[:auth_token].present?
 
         if current_user.present?
-          if params[:data].present? and hiveApplication.id != 1
-            data = getHashValuefromString(params[:data])
+          #if params[:data].present? and hiveApplication.id != 1
+          if hiveApplication.id != 1
+            data = getHashValuefromString(params[:data]) if params[:data].present?
 
             #get all extra columns that define in app setting
             appAdditionalField = AppAdditionalField.where(:app_id => hiveApplication.id, :table_name => "Topic")
@@ -16,14 +17,15 @@ class Api::TopicsController < ApplicationController
               appAdditionalField.each do |field|
                 defined_Fields[field.additional_column_name] = nil
               end
-
               #get all extra columns that define in app setting against with the params data
-              data.deep_merge(defined_Fields)
-
-
-              result = Hash.new
-              defined_Fields.keys.each do |key|
-                result.merge!(data.extract! (key))
+              if data.present?
+                data = defined_Fields.deep_merge(data)
+                result = Hash.new
+                defined_Fields.keys.each do |key|
+                  result.merge!(data.extract! (key))
+                end
+              else
+                result = defined_Fields
               end
             end
             result = nil unless result.present?

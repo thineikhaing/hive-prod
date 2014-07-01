@@ -45,7 +45,7 @@ class Api::UsersController < ApplicationController
       if user.present?
         if user.valid_password?(params[:password])
             user_accounts = UserAccount.where(:user_id => user.id)
-            render json: { :user => device_user, user_accounts: user_accounts, :success => 20 }, status: 200
+            render json: { :user => user_accounts, user_accounts: user_accounts, :success => 20 }, status: 200
         else
           var.push(22)
           render json: { :error => var }, status: 400 # User password wrong

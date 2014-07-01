@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
   end
 
 
-  def regenerate_auth_token_for_expiry_tokens
+  def self.regenerate_auth_token_for_expiry_tokens
     users = User.where(:token_expiry_date => Date.today )
     users.each do |user|
       token = ""

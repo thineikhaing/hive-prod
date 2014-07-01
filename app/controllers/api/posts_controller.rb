@@ -2,11 +2,11 @@ class Api::PostsController < ApplicationController
   def create
     if current_user.present?
       topic = Topic.find(params[:topic_id].to_i)
-      if params[:data].present? and  topic.hiveapplication_id!=1
-        data = getHashValuefromString(params[:data])
+      if  topic.hiveapplication_id!=1
+        data = getHashValuefromString(params[:data]) if params[:data].present?
 
 
-        #get all extra columns that define in app setting
+            #get all extra columns that define in app setting
         appAdditionalField = AppAdditionalField.where(:app_id => topic.hiveapplication_id, :table_name => "Post")
         if appAdditionalField.present?
           defined_Fields = Hash.new
@@ -14,12 +14,14 @@ class Api::PostsController < ApplicationController
             defined_Fields[field.additional_column_name] = nil
           end
           #get all extra columns that define in app setting against with the params data
-          data.deep_merge(defined_Fields)
-
-
-          result = Hash.new
-          defined_Fields.keys.each do |key|
-            result.merge!(data.extract! (key))
+          if data.present?
+            data = defined_Fields.deep_merge(data)
+            result = Hash.new
+            defined_Fields.keys.each do |key|
+              result.merge!(data.extract! (key))
+            end
+          else
+            result = defined_Fields
           end
         end
         result = nil unless result.present?
