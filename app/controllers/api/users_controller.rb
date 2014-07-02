@@ -39,6 +39,23 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def verify_user_account
+    if params[:auth_token].present? & params[:push_token]
+      user = User.find_by_authentication_token(params[:auth_token])
+      if user.present?
+        user_pusher =  UserPushToken.find_by(:user_id => user.id, :push_token => params[:push_token])
+        if user_pusher.present?
+          render json: { :user => user, :user_push_token => user_pusher}
+        else
+          render json:{:status=> false}
+        end
+      else
+        render json:{:status=> false}
+      end
+    end
+
+  end
+
   def sign_in
     if params[:email].present? and params[:password].present?
       user = User.find_by_email(params[:email])

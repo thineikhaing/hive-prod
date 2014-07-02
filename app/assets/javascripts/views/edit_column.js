@@ -1,31 +1,38 @@
 var editColumn = {
   init: function() {
+
+
+    console.log("init");
     $("form").submit(function(e){
-      $.ajax({
-        success: function(html) {
-          var htmlobject = $(html);
-          var output = htmlobject.find("#additional_columns")[0];
-          var testing = new XMLSerializer().serializeToString(output);
-          $("#additional_columns").replaceWith(testing);
-          $('#AppAdditionalColumn_additional_column_name').val('');
-          $('#AppAdditionalColumn_field_id').val(0);
-          editColumn.init();
-        }
+      console.log("submit");
+      e.preventDefault();
+      /* get some values from elements on the page: */
+      var $form = $(this),
+        term = $form.find('input[name="s"]').val(),
+        url = $form.attr('action');
+
+      /* Send the data using post */
+      var posting = $.post(url, {
+        s: term
       });
+
+      /* Put the results in a div */
+      posting.done(function(data) {
+        $.ajax({
+          success: function(html) {
+            console.log("success");
+            var htmlobject = $(html);
+            var output = htmlobject.find("#additional_columns")[0];
+            var testing = new XMLSerializer().serializeToString(output);
+            $("#additional_columns").replaceWith(testing);
+            $('#AppAdditionalColumn_additional_column_name').val('');
+            $('#AppAdditionalColumn_field_id').val(0);
+            editColumn.init();
+          }
+        });
+      });
+
     });
-//
-//    $('a').click(function(e){
-//      alert ("innnnnn")
-//      $.ajax({
-//        success: function(html) {
-//          var htmlobject = $(html);
-//          var output = htmlobject.find("#additional_columns")[0];
-//          var testing = new XMLSerializer().serializeToString(output);
-//          $("#additional_columns").replaceWith(testing);
-//          $('#AppAdditionalColumn_additional_column_name').val('');
-//        }
-//      });
-//    });
 
     var table = document.getElementById("tbl_add_fields");
     for (var i = 0, row; row = table.rows[i]; i++) {
@@ -61,19 +68,18 @@ var editColumn = {
         var txt = table.rows[index].cells[0].innerHTML.trim();
         $('#AppAdditionalColumn_additional_column_name').val(txt);
         $('#AppAdditionalColumn_field_id').val(field_id);
-//        console.log(txt);
-//        $.ajax({
-//          url: '/update_additional_column',
-//          data: {field_id: field_id},
-//          success: function(html) {
-//            var htmlobject = $(html);
-//            var output = htmlobject.find("#additional_columns")[0];
-//            var testing = new XMLSerializer().serializeToString(output);
-//            $("#additional_columns").replaceWith(testing);
-//            $('#AppAdditionalColumn_additional_column_name').val('');
-//            editColumn.init();
-//          }
-//        });
+        $.ajax({
+          url: '/update_additional_column',
+          data: {field_id: field_id},
+          success: function(html) {
+            var htmlobject = $(html);
+            var output = htmlobject.find("#additional_columns")[0];
+            var testing = new XMLSerializer().serializeToString(output);
+            $("#additional_columns").replaceWith(testing);
+            $('#AppAdditionalColumn_additional_column_name').val('');
+            editColumn.init();
+          }
+        });
       });
 
     }

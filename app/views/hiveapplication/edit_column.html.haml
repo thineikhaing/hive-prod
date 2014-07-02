@@ -17,7 +17,7 @@
   = render :partial => "all_additional_columns_from_app"
 
 #create_additional_column_container
-  = form_for :AppAdditionalColumn, url: { controller: "hiveapplication", action: "edit_column" }, method: "post", remote:true do |f|
+  = form_for :AppAdditionalColumn, url: { controller: "hiveapplication", action: "edit_column", method: "post"}, remote:true do |f|
     = f.label "Field Name"
     = f.text_field :additional_column_name
     = f.hidden_field :field_id, value: 0

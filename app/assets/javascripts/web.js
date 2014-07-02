@@ -10,6 +10,5 @@
 //= require views/app_list
 //= require jquery
 //= require jquery_ujs
-//= require jquery-ui
 //= require jquery/cookie
 //= require_self

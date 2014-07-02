@@ -12,7 +12,7 @@
   %body
     = javascript_tag do
       PUSHER_KEY = "#{Pusher.key}";
-    = javascript_include_tag "web", "http://js.pusher.com/1.11/pusher.min.js"
+    = javascript_include_tag "http://js.pusher.com/1.11/pusher.min.js"
     #main_background
       .container
         = render "hiveapplication/web_header"

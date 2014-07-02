@@ -301,8 +301,6 @@ class HiveapplicationController < ApplicationController
 
   def edit_column
     # Edits the field stored in data(hstore)
-    p "edit_column"
-    p params
     if params[:AppAdditionalColumn].present?
       if params[:AppAdditionalColumn][:field_id].present?
         if params[:AppAdditionalColumn][:field_id].to_i!= 0
@@ -311,15 +309,15 @@ class HiveapplicationController < ApplicationController
           new_column_name = params[:AppAdditionalColumn][:additional_column_name]
           field_record.additional_column_name = new_column_name
           field_record.save!
-          @fieldbyapp = AppAdditionalField.where(:app_id=> params[:AppAdditionalColumn][:app_id], :table_name => params[:AppAdditionalColumn][:table_name])
           AppAdditionalField.edit_column(params[:AppAdditionalColumn][:table_name],old_column_name,new_column_name,params[:AppAdditionalColumn][:app_id])
-        else
-          p "else"
-          app_add_field = AppAdditionalField.create(app_id: params[:AppAdditionalColumn][:app_id].to_i, table_name: params[:AppAdditionalColumn][:table_name], additional_column_name: params[:AppAdditionalColumn][:additional_column_name])
 
           @fieldbyapp = AppAdditionalField.where(:app_id=> params[:AppAdditionalColumn][:app_id], :table_name => params[:AppAdditionalColumn][:table_name])
+
+        else
+          app_add_field = AppAdditionalField.create(app_id: params[:AppAdditionalColumn][:app_id].to_i, table_name: params[:AppAdditionalColumn][:table_name], additional_column_name: params[:AppAdditionalColumn][:additional_column_name])
           AppAdditionalField.add_column(params[:AppAdditionalColumn][:table_name],params[:AppAdditionalColumn][:additional_column_name],params[:AppAdditionalColumn][:app_id])
 
+          @fieldbyapp = AppAdditionalField.where(:app_id=> params[:AppAdditionalColumn][:app_id], :table_name => params[:AppAdditionalColumn][:table_name])
         end
       end
     elsif params[:table_name].present?
@@ -336,7 +334,9 @@ class HiveapplicationController < ApplicationController
       if params[:app_id].present?
         session[:app_id] = params[:app_id]
         @fieldbyapp = AppAdditionalField.where(:app_id=> params[:app_id], :table_name => params[:table_name])
+        p @fieldbyapp
       end
     end
   end
+
 end

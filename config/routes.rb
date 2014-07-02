@@ -41,10 +41,11 @@ Rails.application.routes.draw do
     match "users/sign_up"                       => "users#sign_up"                , :via => :get
     match "users/sign_in"                       => "users#sign_in"                , :via => :get
     match "users/facebook_login"                => "users#facebook_login"         , :via => :get
+    match "users/verify_user_account"           => "users#verify_user_account"    , :via => :get
     match "topics/create"                       => "topics#create"                , :via => :get
     match "posts/create"                        => "posts#create"                 , :via => :get
     match "posts/retrieve_post"                 => "posts#retrieve_post"          , :via => :get
-    match "user_push_token/create"              => "user_push_token#create"       , :via => :get
+    match "userpushtokens/create"               => "userpushtokens#create"        , :via => :get
     match "mytest/test"                         => "mytest#test"                  , :via => :get
     match "mytest/test2"                        => "mytest#test2"                 , :via => :get
     match "mytest/test3"                        => "mytest#test3"                 , :via => :get
