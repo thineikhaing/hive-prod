@@ -52,26 +52,16 @@ class Api::TopicsController < ApplicationController
           end
           render json: { topic: topic }
         else
+          p "1"
           render json: { status: false }
         end
       else
+        p "2"
         render json: { status: false }
       end
     else
+      p "3"
       render json: { status: false }
     end
   end
-
-  def getHashValuefromString(data)
-    data.sub! '{',''
-    data.sub! '}',''
-    hash = {}
-    data.split(',').each do |pair|
-      key,value = pair.split(/:/)
-      hash[key] = value
-    end
-    p hash
-    return hash
-  end
-
 end

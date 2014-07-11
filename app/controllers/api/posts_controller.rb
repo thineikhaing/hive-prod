@@ -69,19 +69,6 @@ class Api::PostsController < ApplicationController
       end
     else
       render json: { status: false}
-   end
-  end
-
-  def getHashValuefromString(data)
-    data.sub! '{',''
-    data.sub! '}',''
-    hash = {}
-    data.split(',').each do |pair|
-      key,value = pair.split(/:/)
-      hash[key] = value
     end
-    p hash
-    return hash
   end
-
 end

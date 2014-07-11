@@ -201,7 +201,25 @@ class HiveapplicationController < ApplicationController
         application.remove_icon_url = true
         application.save!
 
-        #delete the record
+        #delete related records from different tables
+        AppAdditionalField.where(:app_id => params[:app_id] ).delete_all
+        topics = Topic.where (:hiveapplication_id =>  params[:app_id])
+        if topics.present?
+          topics.each do |topic|
+            Post.where(:topic_id=>topic.id).delete_all
+            tags = TopicWithTag.where(:topic_id=> topic.id)
+            if tags.present?
+              tags.each do |tag|
+                Tag.find(tag.tag_id).delete
+              end
+            end
+            ActionLog.where(:type_name => "topic", :type_id => topic.id).delete_all
+          end
+          topics.delete_all
+        end
+
+
+        #delete the application record
         application.delete
       end
       user = Devuser.find(current_user.id)
