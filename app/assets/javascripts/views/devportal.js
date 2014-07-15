@@ -3,6 +3,15 @@ var Devportal = {
   init: function() {
     //check mandatory fields of the form
     var elements = document.getElementsByTagName("INPUT");
+    var hexvalue = $('#dev_portal_theme_color').val();
+    if (hexvalue.length== 7){
+        $('#dev_portal_color_display').css("background-color", hexvalue);
+    }
+    $('#dev_portal_theme_color').minicolors({
+        change: function(hex, rgb) {
+            $('#dev_portal_color_display').css("background-color", hex);
+        }
+    });
     for (var i = 0; i < elements.length; i++) {
       elements[i].oninvalid = function(e) {
         e.target.setCustomValidity("");

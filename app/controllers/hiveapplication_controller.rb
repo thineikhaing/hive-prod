@@ -130,7 +130,7 @@ class HiveapplicationController < ApplicationController
     # Check if CURRENT_USER exist
     if current_user.present?
       if params[:dev_portal].present?
-        hive_application = HiveApplication.create(app_name: params[:dev_portal][:application_name], app_type: params[:dev_portal][:application_type], description: params[:dev_portal][:description], icon_url: params[:dev_portal][:application_icon] ,devuser_id: current_user.id )
+        hive_application = HiveApplication.create(app_name: params[:dev_portal][:application_name], app_type: params[:dev_portal][:application_type], description: params[:dev_portal][:description], icon_url: params[:dev_portal][:application_icon] ,devuser_id: current_user.id, theme_color: params[:dev_portal][:theme_color] )
         flash[:notice] = ""
         hive_application.errors.full_messages.each do |message|
           # do stuff for each error
@@ -174,6 +174,7 @@ class HiveapplicationController < ApplicationController
         application.app_name = params[:dev_portal][:application_name]
         application.app_type = params[:dev_portal][:application_type]
         application.description = params[:dev_portal][:description]
+        application.theme_color = params[:dev_portal][:theme_color]
 
         if params[:dev_portal][:application_icon].present?
           application.icon_url = params[:dev_portal][:application_icon]
@@ -203,7 +204,7 @@ class HiveapplicationController < ApplicationController
 
         #delete related records from different tables
         AppAdditionalField.where(:app_id => params[:app_id] ).delete_all
-        topics = Topic.where (:hiveapplication_id =>  params[:app_id])
+        topics = Topic.where(:hiveapplication_id =>  params[:app_id])
         if topics.present?
           topics.each do |topic|
             Post.where(:topic_id=>topic.id).delete_all

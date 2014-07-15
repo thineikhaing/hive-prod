@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/pivotal/LicenseFinder.git
-  revision: d911e252b772d8b356d32569d66235a3c07cef35
+  revision: 7e199bc374832e5592aaae5dc576b30ddeb7046a
   specs:
-    license_finder (1.0.0.0)
+    license_finder (1.1.0)
       bundler
       httparty
       sequel
@@ -12,9 +12,9 @@ GIT
 
 GIT
   remote: https://github.com/tomykaira/clockwork.git
-  revision: afbb344e8df6e73c6731847bf0e49c7c22229920
+  revision: 4bbe8f8181770cc3d27bf464e6556eac595438bc
   specs:
-    clockwork (0.7.5)
+    clockwork (0.7.7)
       activesupport
       tzinfo
 
@@ -48,17 +48,17 @@ GEM
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
     addressable (2.3.6)
-    airbrake (3.1.16)
+    airbrake (3.1.17)
       builder
       multi_json
     arel (5.0.1.20140414130214)
     bcrypt (3.1.7)
-    bourbon (3.2.1)
+    bourbon (3.2.3)
       sass (~> 3.2)
       thor
     browser (0.5.0)
     builder (3.2.2)
-    capybara (1.1.4)
+    capybara (1.1.3)
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
       rack (>= 1.0.0)
@@ -80,11 +80,11 @@ GEM
     coffee-script (2.2.0)
       coffee-script-source
       execjs
-    coffee-script-source (1.7.0)
+    coffee-script-source (1.7.1)
     cookiejar (0.3.2)
     daemons (1.1.9)
     database_cleaner (1.2.0)
-    delayed_job (4.0.1)
+    delayed_job (4.0.2)
       activesupport (>= 3.0, < 4.2)
     delayed_job_active_record (4.0.1)
       activerecord (>= 3.0, < 4.2)
@@ -96,7 +96,9 @@ GEM
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
-    dotenv (0.7.0)
+    dotenv (0.11.1)
+      dotenv-deployment (~> 0.0.2)
+    dotenv-deployment (0.0.2)
     ejs (1.1.1)
     em-http-request (1.1.2)
       addressable (>= 2.3.4)
@@ -115,27 +117,29 @@ GEM
       json_pure
       launchy
       sinatra (~> 1.1)
-    excon (0.33.0)
-    execjs (2.0.2)
+    excon (0.38.0)
+    execjs (2.2.1)
     factory_girl (4.4.0)
       activesupport (>= 3.0.0)
     factory_girl_rails (4.4.1)
       factory_girl (~> 4.4.0)
       railties (>= 3.0.0)
-    factual-api (1.3.14)
-      json (>= 1.2.0)
-      oauth (>= 0.4.4)
+    factual-api (1.3.16)
+      json (~> 1.2, >= 1.2.0)
+      oauth (~> 0.4.4, >= 0.4.4)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.3)
-    fog (1.22.0)
+    fog (1.22.1)
       fog-brightbox
-      fog-core (~> 1.21, >= 1.21.1)
+      fog-core (~> 1.22)
       fog-json
+      ipaddress (~> 0.5)
       nokogiri (~> 1.5, >= 1.5.11)
-    fog-brightbox (0.0.2)
-      fog-core
+    fog-brightbox (0.1.1)
+      fog-core (~> 1.22)
       fog-json
+      inflecto
     fog-core (1.22.0)
       builder
       excon (~> 0.33)
@@ -145,11 +149,11 @@ GEM
       net-ssh (>= 2.1.3)
     fog-json (1.0.0)
       multi_json (~> 1.0)
-    foreman (0.66.0)
-      dotenv (~> 0.7.0)
+    foreman (0.74.0)
+      dotenv (~> 0.11.1)
       thor (~> 0.19.1)
-    formatador (0.2.4)
-    geocoder (1.2.1)
+    formatador (0.2.5)
+    geocoder (1.2.3)
     gon (5.0.4)
       actionpack (>= 2.3.0)
       json
@@ -176,10 +180,15 @@ GEM
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     httpclient (2.3.4.1)
-    i18n (0.6.9)
-    jbuilder (2.0.7)
+    i18n (0.6.11)
+    inflecto (0.0.2)
+    ipaddress (0.8.0)
+    jbuilder (2.0.8)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
+    jquery-minicolors-rails (2.1.4.0)
+      jquery-rails
+      rails (>= 3.2.8)
     jquery-rails (2.1.4)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
@@ -198,8 +207,8 @@ GEM
     mini_magick (3.7.0)
       subexec (~> 0.2.1)
     mini_portile (0.6.0)
-    minitest (5.3.4)
-    multi_json (1.10.0)
+    minitest (5.4.0)
+    multi_json (1.10.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
     net-scp (1.2.1)
@@ -214,8 +223,8 @@ GEM
     orm_adapter (0.5.0)
     pg (0.17.1)
     pivotal_git_scripts (1.1.4)
-    polyglot (0.3.4)
-    protected_attributes (1.0.7)
+    polyglot (0.3.5)
+    protected_attributes (1.0.8)
       activemodel (>= 4.0.1, < 5.0)
     pusher (0.12.0)
       httpclient (~> 2.3.0)
@@ -247,8 +256,11 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     rake (10.3.2)
-    rest-client (1.6.7)
-      mime-types (>= 1.16)
+    rdoc (4.1.1)
+      json (~> 1.4)
+    rest-client (1.6.8)
+      mime-types (~> 1.16)
+      rdoc (>= 2.4.2)
     rmagick (2.13.2)
     rspec-core (2.14.8)
     rspec-expectations (2.14.5)
@@ -262,19 +274,19 @@ GEM
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
       rspec-mocks (~> 2.14.0)
-    rubyzip (1.1.3)
+    rubyzip (1.1.6)
     sass (3.2.19)
     sass-rails (4.0.3)
       railties (>= 4.0.0, < 5.0)
       sass (~> 3.2.0)
       sprockets (~> 2.8, <= 2.11.0)
       sprockets-rails (~> 2.0)
-    selenium-webdriver (2.41.0)
+    selenium-webdriver (2.42.0)
       childprocess (>= 0.5.0)
       multi_json (~> 1.0)
       rubyzip (~> 1.0)
       websocket (~> 1.0.4)
-    sequel (4.10.0)
+    sequel (4.12.0)
     shoulda-matchers (2.6.1)
       activesupport (>= 3.0.0)
     signature (0.1.7)
@@ -287,7 +299,7 @@ GEM
       multi_json (~> 1.0)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
-    sprockets-rails (2.1.2)
+    sprockets-rails (2.1.3)
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (~> 2.8)
@@ -298,7 +310,7 @@ GEM
       eventmachine (>= 0.12.6)
       rack (>= 1.0.0)
     thor (0.19.1)
-    thread_safe (0.3.3)
+    thread_safe (0.3.4)
     tilt (1.4.1)
     time_difference (0.3.2)
       activesupport
@@ -307,9 +319,9 @@ GEM
       polyglot (>= 0.3.1)
     turbolinks (2.2.2)
       coffee-rails
-    tzinfo (1.1.0)
+    tzinfo (1.2.1)
       thread_safe (~> 0.1)
-    uglifier (2.5.0)
+    uglifier (2.5.1)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
     urbanairship (2.3.3)
@@ -317,7 +329,7 @@ GEM
     warden (1.2.3)
       rack (>= 1.0)
     websocket (1.0.7)
-    xml-simple (1.1.3)
+    xml-simple (1.1.4)
     xpath (0.1.4)
       nokogiri (~> 1.3)
 
@@ -351,6 +363,7 @@ DEPENDENCIES
   hirefire-resource (~> 0.3.2)
   httparty (~> 0.13.1)
   jbuilder (~> 2.0.6)
+  jquery-minicolors-rails
   jquery-rails (~> 2.1.3)
   koala (~> 1.9.0)
   license_finder!

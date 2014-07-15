@@ -93,6 +93,7 @@ ActiveRecord::Schema.define(version: 20140627074919) do
     t.string   "api_key"
     t.string   "description"
     t.string   "icon_url"
+    t.string   "theme_color"
     t.integer  "devuser_id"
     t.datetime "created_at"
     t.datetime "updated_at"

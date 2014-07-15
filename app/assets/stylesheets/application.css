@@ -11,7 +11,7 @@
  * file per style scope.
  *
  *= require web
+ *= require jquery.minicolors
  *= require_self
- *= require_tree .
-
+ *= require_tree
  */

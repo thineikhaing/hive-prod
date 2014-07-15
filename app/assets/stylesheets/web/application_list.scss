@@ -15,7 +15,9 @@
     //text-align: left;
   }
 }
-
+#additional_columns,#default_columns{
+  font-size: 30px;
+}
 #list_of_applications_container {
   height: 234px;
   width: 848px;
@@ -39,6 +41,28 @@ table.app_list {
 
   tr {
     border-bottom: solid #FF9B00 1px;
+  }
+
+  tr:hover {
+    cursor: pointer;
+  }
+}
+
+table.field_list {
+  th {
+    background: #FF9B00;
+    color: white;
+    font-size: 16px;
+    height: 10px;
+  }
+
+  td {
+    text-align: center;
+    font-size: 18px;
+  }
+
+  tr {
+    border: solid #FF9B00 1px;
   }
 
   tr:hover {
@@ -100,6 +124,11 @@ table.app_list {
   margin-top: 10px;
   margin-bottom: 10px;
   margin-left: 10px;
+}
+
+#del_col_container, #edit_col_container{
+ text-decoration: underline;
+ color: blue;
 }
 //#create_app_container{
 //  display: table;

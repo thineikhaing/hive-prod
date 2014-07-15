@@ -32,6 +32,7 @@
               %td
                 #text_container
                   = "APP ICON"
+
             %tr
               %td
                 %fieldset
@@ -48,6 +49,14 @@
                           .wrapper
                             = f.file_field :application_icon, required:true
                           %button CHOOSE FILE
+                  %tr
+                    %td
+                      #text_container
+                        = "THEME COLOR"
+                    %td
+                      = f.text_field :theme_color, input_html: { class: 'colorpicker'}
+                      = f.text_area  :color_display, cols: "10", rows: "3", disabled: true
+
       %tr
         %td{class: "td_btn_container"}
           = f.submit "CREATE APP", id:"btn_create_app"

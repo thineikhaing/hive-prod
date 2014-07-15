@@ -1,16 +1,23 @@
 - if @fieldbyapp.present?
   = " Additional Columns"
-  %table{width:"100%", border:"1", id:"tbl_add_fields"}
+  %table{width:"100%", border:"1", id:"tbl_add_fields", class:"field_list"}
+    %tr
+      %th{width:"80%"}
+        ="Column Name"
+      %th{width:"10%"}
+        ="delete"
+      %th{width:"10%"}
+        ="edit"
     - @fieldbyapp.each do |field|
       %tr
         %td
           = field.additional_column_name
         %td
-          #del_container
+          #del_col_container
             = "delete"
             %input#field_id{type: "hidden", value: field.id}/
         %td
-          #del_container
+          #edit_col_container
             = "edit"
             %input#field_id{type: "hidden", value: field.id}/
         -#%td
