@@ -1,4 +1,4 @@
-var Application_list = {
+var Applicationlist = {
 
   init: function() {
     $("tr[data-link]").click(function() {

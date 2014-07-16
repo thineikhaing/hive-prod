@@ -1,9 +1,12 @@
 #header
   %table{class: "web_header", :border =>"0"}
     %tr
-      %td
+      %td{width:"30%"}
         #logo
-      %td
+      %td{width:"50%"}
         #header_info
           - if current_user.present?
             = session[:no_of_apps].to_s + " CONNECTED APPS"
+      %td{width:"20%"}
+        - if current_user.present?
+          = link_to "Logout", hiveapplication_index_path
