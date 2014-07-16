@@ -12,5 +12,4 @@
 //= require jquery_ujs
 //= require jquery/cookie
 //= require jquery.minicolors
-//= require jquery.minicolors.simple_form
 //= require_self
