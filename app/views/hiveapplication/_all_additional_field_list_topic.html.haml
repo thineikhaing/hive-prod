@@ -1,0 +1,36 @@
+%table
+  %tr
+    %td
+      - if @Topicfieldbyapp.present?
+        %table{class: "app_list"}
+          - @Topicfieldbyapp.each do |field|
+            %tr{height: "40px"}
+              %td{width:"10%"}
+                %input{name: "txt_col_name", type: "text", value: field.additional_column_name, style: "visibility:hidden;"}/
+              %td{width:"10%"}
+                %field_name_container
+                  = field.additional_column_name
+              %td{width:"5%"}
+                %img.image{height: "30px", src: "assets/edit_pencil.png", width: "30px" ,style: "visibility:hidden;margin:5px"}/
+              %td{width:"5%"}
+                %input{name: "id", type: "hidden", value: field.id, style: "visibility:hidden;"}/
+              %td{width:"5%"}
+                %input{type: "submit", value: "√", style: "visibility:hidden;"}/
+              %td{width:"5%"}
+                %input{type: "submit", value: "X", style: "visibility:hidden;"}/
+              %td{width:"60%"}
+                %input{name: "is_edit_btn_clicked", type: "hidden", value: 0}/
+  %tr
+    %td
+      #create_additional_column_container
+        = form_for :AppAdditionalColumn, url: { controller: "hiveapplication", action: "edit_column", method: "post"}, :html=> {:id => 'add_new_column_form'}, remote:true do |f|
+          = f.text_field :additional_column_name
+          = f.hidden_field :field_id, value: 0
+          = f.hidden_field :app_id, value: params[:app_id]
+          = f.hidden_field :table_name, value: "Topic"
+          = f.submit "√"
+          = f.submit "X"
+        #table_separator_line
+
+:javascript
+  editColumn.init();

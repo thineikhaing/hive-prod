@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   match "hiveapplication/update_password"     , path: "update_password"         , via: [:get, :post]
   match "hiveapplication/edit_column"         , path:"edit_column"              , via: [:get, :post]
   match "hiveapplication/delete_additional_column", path:"delete_additional_column" , via: [:get, :post]
+  match "hiveapplication/update_additional_column", path:"update_additional_column" , via: [:get, :post]
   match "hiveapplication/edit_additional_column",path:"edit_additional_column"  , via: [:get, :post]
   match "hiveapplication/create_additional_field",path:"create_additional_field", via: [:get,:post]
 
@@ -36,20 +37,23 @@ Rails.application.routes.draw do
   #get "sign_in", to: "hiveapplication#sign_in"
 
   namespace :api do
-    match "downloaddata/initial_retrieve"       => "downloaddata#initial_retrieve", :via => :get
-    match "users/create_anonymous_user"         => "users#create_anonymous_user"  , :via => :get
-    match "users/sign_up"                       => "users#sign_up"                , :via => :get
-    match "users/sign_in"                       => "users#sign_in"                , :via => :get
-    match "users/facebook_login"                => "users#facebook_login"         , :via => :get
-    match "users/verify_user_account"           => "users#verify_user_account"    , :via => :get
-    match "topics/create"                       => "topics#create"                , :via => :get
-    match "posts/create"                        => "posts#create"                 , :via => :get
-    match "posts/retrieve_post"                 => "posts#retrieve_post"          , :via => :get
-    match "userpushtokens/create"               => "userpushtokens#create"        , :via => :get
-    match "mytest/test"                         => "mytest#test"                  , :via => :get
-    match "mytest/test2"                        => "mytest#test2"                 , :via => :get
-    match "mytest/test3"                        => "mytest#test3"                 , :via => :get
-    match "mytest/test4"                        => "mytest#test4"                 , :via => :get
+    match "downloaddata/initial_retrieve"           => "downloaddata#initial_retrieve"          , via: [:get, :post]
+    match "downloaddata/retrieve_hiveapplications"  => "downloaddata#retrieve_hiveapplications" , via: [:get, :post]
+    match "users/create_anonymous_user"             => "users#create_anonymous_user"            , via: [:get, :post]
+    match "users/sign_up"                           => "users#sign_up"                          , via: [:get, :post]
+    match "users/sign_in"                           => "users#sign_in"                          , via: [:get, :post]
+    match "users/facebook_login"                    => "users#facebook_login"                   , via: [:get, :post]
+    match "users/verify_user_account"               => "users#verify_user_account"              , via: [:get, :post]
+    match "topics/create"                           => "topics#create"                          , via: [:get, :post]
+    match "posts/create"                            => "posts#create"                           , via: [:get, :post]
+    match "posts/retrieve_post"                     => "posts#retrieve_post"                    , via: [:get, :post]
+    match "userpushtokens/create"                   => "userpushtokens#create"                  , via: [:get, :post]
+    match "places/create"                           => "places#create"                          , via: [:get, :post]
+    match "places/retrieve_places"                  => "places#retrieve_places"                 , via: [:get, :post]
+    match "mytest/test"                             => "mytest#test"                            , via: [:get, :post]
+    match "mytest/test2"                            => "mytest#test2"                           , via: [:get, :post]
+    match "mytest/test3"                            => "mytest#test3"                           , via: [:get, :post]
+    match "mytest/test4"                            => "mytest#test4"                           , via: [:get, :post]
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

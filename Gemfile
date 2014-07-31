@@ -50,7 +50,7 @@ gem 'jquery-minicolors-rails'
 # gem 'debugger', group: [:development, :test]
 
 group :assets do
-  gem 'sass-rails'                , '>= 3.2.5' # Sass adapter for the Rails asset pipeline.
+  gem 'sass-rails'                , '>= 4.0.3' # Sass adapter for the Rails asset pipeline.
   gem 'bourbon'                   , '>= 3.0.1' # Bourbon provides a comprehensive framework of sass mixins that are designed to be as vanilla as possible. Meaning they should not deter from the original CSS syntax. The mixins contain vendor specific prefixes for all CSS3 properties for support amongst modern browsers. The prefixes also ensure graceful degradation for older browsers that support only CSS3 prefixed properties.
   gem 'uglifier'                  , '~> 2.5.0' # Use Uglifier as compressor for JavaScript assets
 
@@ -66,9 +66,14 @@ end
 
 group :development, :test do
   gem 'rspec-rails'         , '~> 2.14.2' # RSpec for Rails
-  gem 'capybara'            , '~> 1.1.2' # Capybara is an integration testing tool for rack based web applications. It simulates how a user would interact with a website
+  #gem 'capybara'            , '~> 1.1.2' # Capybara is an integration testing tool for rack based web applications. It simulates how a user would interact with a website
   gem 'factory_girl_rails'  , '~> 4.4.1' # factory_girl_rails provides integration between factory_girl and rails 3 (currently just automatic factory definition loading)
   gem 'shoulda-matchers'    , '~> 2.6.0' # Making tests easy on the fingers and eyes
   gem 'evergreen'           , :require => 'evergreen/rails' # Run Jasmine JavaScript unit tests, integrate them into Ruby applications.
   gem 'database_cleaner'    , '~> 1.2.0' # Strategies for cleaning databases. Can be used to ensure a clean state for testing.
+end
+
+group :test do
+  gem 'capybara'
+  gem 'guard-rspec'
 end

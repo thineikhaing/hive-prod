@@ -158,11 +158,13 @@ class HiveapplicationController < ApplicationController
 
   def edit_application
     # Show the Topics, Posts, Places, Users
-    table_list
-
     # Check if APPLICATION_ID and CURRENT_USER exist
     if params[:app_id].present? && current_user.present?
+      session[:app_id] = params[:app_id].to_i
       @application = HiveApplication.find(params[:app_id])
+      @Topicfieldbyapp = table_list(params[:app_id], "Topic")
+
+      @Postfieldbyapp =  table_list(params[:app_id], "Post")
 
       # Check if APPLICATION_ID that user click and CURRENT_USER exist
     elsif params[:dev_portal].present? && current_user.present?
@@ -240,13 +242,24 @@ class HiveapplicationController < ApplicationController
 
       if additional_field.present?
         additional_field.delete
-        @fieldbyapp = AppAdditionalField.where(:app_id=> session[:app_id], :table_name => session[:table_name])
-        AppAdditionalField.delete_column(session[:table_name],field_name,session[:app_id])
+        @fieldbyapp = AppAdditionalField.where(:app_id=> session[:app_id], :table_name => params[:table_name])
+        AppAdditionalField.delete_column(params[:table_name],field_name,session[:app_id])
         #check the table name (Topic/Post/Places/User)
-
-        redirect_to hiveapplication_edit_column_path(:app_id => session[:app_id], :table_name => session[:table_name])
+        redirect_to hiveapplication_edit_application_path(:app_id => session[:app_id])
       end
     end
+  end
+
+  def update_additional_column
+    field_record = AppAdditionalField.find(params[:field_id].to_i)
+    old_column_name = field_record.additional_column_name
+    new_column_name = params[:column_name]
+    field_record.additional_column_name = new_column_name
+    field_record.save!
+    AppAdditionalField.edit_column(params[:table_name],old_column_name,new_column_name,session[:app_id])
+
+    @fieldbyapp = AppAdditionalField.where(:app_id=> session[:app_id], :table_name => params[:table_name])
+    redirect_to hiveapplication_edit_application_path(:app_id => session[:app_id])
   end
 
   def verify
@@ -313,13 +326,15 @@ class HiveapplicationController < ApplicationController
     end
   end
 
-  def table_list
+  def table_list(app_id,table_name)
     # Table list (temporary)
-    @table_list = ["Topic", "Post"]
+    #@table_list = ["Topic", "Post"]
+    return AppAdditionalField.where(:app_id=> app_id, :table_name => table_name)
   end
 
   def edit_column
     # Edits the field stored in data(hstore)
+     p params
     if params[:AppAdditionalColumn].present?
       if params[:AppAdditionalColumn][:field_id].present?
         if params[:AppAdditionalColumn][:field_id].to_i!= 0
@@ -350,11 +365,7 @@ class HiveapplicationController < ApplicationController
       elsif params[:table_name] == "Post"
         @columns = Post.columns.map {|c| [c.name, c.type]}
       end
-      if params[:app_id].present?
-        session[:app_id] = params[:app_id]
-        @fieldbyapp = AppAdditionalField.where(:app_id=> params[:app_id], :table_name => params[:table_name])
-        p @fieldbyapp
-      end
+
     end
   end
 

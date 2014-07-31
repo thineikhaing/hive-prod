@@ -1,0 +1,85 @@
+#create_application_form
+  = form_for :dev_portal, url: { controller: "hiveapplication", action: "edit_application"}, method: "post", id:"updateapplication" do |f|
+    %fieldset
+      = f.hidden_field :application_id, value: @application.id
+    %table{class: "tbl_create_app_container"}
+      %tr
+        %td
+          %table{class: "tbl_create_app"}
+            %tr
+              %td{colspan:"2"}
+                #dev_portal_header
+                  #text_container
+                    = "UPDATE APP"
+            %tr
+              %td
+                #text_container
+                  = "APP NAME"
+              %td
+                #text_container
+                  = "TYPE"
+            %tr
+              %td
+                %fieldset
+                  = f.text_field :application_name, autofocus: true,  required:true, value: @application.app_name
+              %td
+                %fieldset
+                  = f.select :application_type, options_for_select(HiveApplication.get_application_type, selected: @application.app_type), { }
+            %tr
+              %td
+                #text_container
+                  = "DESCRIPTION"
+                #remain_char_container
+                  %label{for: "myalue"}
+              %td
+                #text_container
+                  = "APP ICON"
+            %tr
+              %td
+                %fieldset
+                  = f.text_area  :description, required:true ,cols: "50", rows: "15" , value:@application.description,maxlength: "255"
+              %td
+                %table{width:"100%"}
+                  %tr
+                    %td{width: "50%"}
+                      .upload-preview
+                        %img{height: "120px", width: "120px",src:@application.icon_url}
+                    %td{width: "50%"}
+                      %fieldset
+                        #btn_upload_icon
+                          .wrapper
+                            = f.file_field :application_icon
+                          %button CHOOSE FILE
+                  %tr
+                    %td
+                      #text_container
+                        = "THEME COLOR"
+                    %td
+                      = f.text_field :theme_color, input_html: { class: 'colorpicker'}, value: @application.theme_color
+                      -#= f.text_area  :color_display, cols: "10", rows: "3", disabled: true
+      %tr
+        %td{class: "td_btn_container"}
+          .btn_adv_option_container
+            = "ADVANCED OPTIONS"
+          .btn_edit_container
+            = f.submit "SAVE CHANGES", id:"btn_create_app"
+      %tr
+        %td
+          %br
+      %tr
+        %td{class: "td_warning_container"}
+          %table{class: "tbl_warning"}
+            %tr
+              %td
+                .warning_header
+                  = "WARNING:"
+              %td
+                .warning_description
+                  = " Modifying advanced settings might cause"
+            %tr
+              %td{colspan:"2"}
+                .warning_description
+                  = " your application to behave unexpectedly or stop working."
+      %tr
+        %td{colspan:"2"}
+          = flash.now[:notice]

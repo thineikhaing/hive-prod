@@ -1,12 +1,72 @@
-- if @table_list.present?
-  %table{width:"100%"}
-    %tr
-      %th{width:"15%"}
-        ="Table Name"
-      %th{width:"5%"}
-    - @table_list.each do |table_name|
+#table_list
+  #table_list_header
+    %table{class: "tbl_create_app_container"}
       %tr
-        %td{width:"15%"}
-          = table_name
-        %td{width:"5%"}
-          = link_to "Edit", hiveapplication_edit_column_path(:table_name=> table_name, :app_id=> params[:app_id])
+        %td{class: "td_btn_container"}
+          .btn_back_option_container
+            = "<< BACK TO BASIC OPTIONS"
+        %td{class: "td_btn_container"}
+          .btn_save_additional_field_container
+            = "SAVE CHANGES"
+      %tr
+        %td
+          %br
+      %tr
+        %td{class: "td_warning_container", colspan:"2"}
+          %table{class: "tbl_warning"}
+            %tr
+              %td
+                .warning_header
+                  = "WARNING:"
+              %td
+                .warning_description
+                  = " Changing any of these fields might cause"
+            %tr
+              %td{colspan:"2"}
+                .warning_description
+                  = " your application to behave unexpectedly or stop working."
+      %tr
+        %td{colspan:"2"}
+          #additional_field_list_container
+            #additional_field_list
+              %table
+                %tr
+                  %td
+                    = "ADD/ EDIT TOPIC FIELDS"
+                  %td
+                    #btn_new_field_container
+                      #btn_new_field_btn
+                        %img.image{height: "20px", src: "assets/new_app.png", width: "20px"}/
+                      #btn_new_field_label
+                        = "NEW FIELD"
+            #separator_line
+            %table{class: "app_list", width: "850px"}
+              %tr
+                %th{width:"85%"}
+                  ="FIELD NAME"
+                %th{width:"15%"}
+                  ="TYPE"
+            #list_of_topic_fields_container
+              = render :partial => "all_additional_field_list_topic"
+      %tr
+        %td{colspan:"2"}
+          #additional_field_list_container
+            #additional_field_list
+              %table
+                %tr
+                  %td
+                    = "ADD/ EDIT POST FIELDS"
+                  %td
+                    #btn_new_field_container
+                      -##btn_new_field_btn
+                      #btn_new_field_label
+                        = "NEW FIELD"
+            #separator_line
+            %table{class: "app_list", width: "850px"}
+              %tr
+                %th{width:"85%"}
+                  ="FIELD NAME"
+                %th{width:"15%"}
+                  ="TYPE"
+            #list_of_post_fields_container
+              = render :partial => "all_additional_field_list_post"

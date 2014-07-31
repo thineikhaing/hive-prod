@@ -9,7 +9,7 @@ class Post < ActiveRecord::Base
   store_accessor :data
 
   attr_accessible :content, :post_type, :data, :created_at, :user_id, :topic_id
-  enums %w(TEXT)
+  enums %w(TEXT IMAGE AUDIO VIDEO)
   validates :content, presence: true
   validates :content, obscenity: { sanitize: true, replacement: "snork" }
 
@@ -23,6 +23,9 @@ class Post < ActiveRecord::Base
           id: self.id,
           topic_id: self.topic_id,
           content: self.content,
+          img_url: self.img_url,
+          width:  self.width,
+          height: self.height,
           created_at: self.created_at,
           user_id: self.user_id,
           username: self.username,
@@ -37,6 +40,9 @@ class Post < ActiveRecord::Base
         id: self.id,
         topic_id: self.topic_id,
         content: self.content,
+        img_url: self.img_url,
+        width:  self.width,
+        height: self.height,
         created_at: self.created_at,
         user_id: self.user_id,
         username: self.username,

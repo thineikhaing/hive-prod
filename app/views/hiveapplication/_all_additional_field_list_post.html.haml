@@ -1,0 +1,18 @@
+- if @hive_applications.present?
+  %table{class: "app_list"}
+    - @hive_applications.each do |hive_app|
+      %tr{"data-link" => hiveapplication_edit_application_path(:app_id=> hive_app.id)}
+        %td{width:"3%"}
+          %img{ src:hive_app.icon_url, class:"img_app_icon"}
+        %td{width:"42%"}
+          .individual_app_cell
+            = hive_app.app_name
+        %td{width:"10%"}
+          .individual_app_cell
+            = hive_app.app_type
+        %td{width:"45%"}
+          .individual_app_cell
+            = hive_app.api_key
+
+:javascript
+  Applicationlist.init();

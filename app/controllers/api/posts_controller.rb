@@ -1,8 +1,9 @@
 class Api::PostsController < ApplicationController
+
   def create
     if current_user.present?
       topic = Topic.find(params[:topic_id].to_i)
-      if  topic.hiveapplication_id!=1
+      #if  topic.hiveapplication_id!=1
         data = getHashValuefromString(params[:data]) if params[:data].present?
 
 
@@ -27,10 +28,11 @@ class Api::PostsController < ApplicationController
         result = nil unless result.present?
         p result
         post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, data: result) if params[:post_type] == Post::TEXT.to_s
-
-      else
-        post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id) if params[:post_type] == Post::TEXT.to_s
-      end
+        post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height], data: result) if params[:post_type] == Post::IMAGE.to_s
+      #else
+      #  post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id) if params[:post_type] == Post::TEXT.to_s
+      #  post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height]) if params[:post_type] == IMAGE::TEXT.to_s
+      #end
 
       if topic.hiveapplication_id ==1 #Hive Application
         post.broadcast_hive

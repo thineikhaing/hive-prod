@@ -12,12 +12,14 @@ body {
 #main_background {
   height: 100%;
   width: 100%;
-  background-image: url('BG.jpg');
+
 }
 
 .container {
   width: 100%;
+  height: 100% !important;
   padding: 25px 0px 25px 0px;
+  background-image: url('BG.jpg');
   color: #FF9B00;
 }
 

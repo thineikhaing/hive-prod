@@ -2,9 +2,9 @@ class Devuser < ActiveRecord::Base
   has_many :hive_applications
 
   #check mandatory fields are present?
-  #validates :username, presence: {message: "User Name is mandatory"}
-  #validates :email, presence: {message: "Email is mandatory"}
-  #validates :password, presence: {message: "Password is mandatory"}
+  validates :username, presence: {message: "User Name is mandatory"}
+  validates :email, presence: {message: "Email is mandatory"}
+  validates :password, presence: {message: "Password is mandatory"}
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable

@@ -22,7 +22,6 @@
   float: right;
 }
 #create_application_form {
-  height: 300px;
   width:  100%;
   margin: 0 auto;
   margin-top: 50px;
@@ -46,8 +45,63 @@ table.tbl_create_app td {
   width: 50%;
   text-align:  left;
 }
+table.tbl_warning{
+  width: 50% !important;
+}
 table.tbl_create_app_container td.td_btn_container{
-  text-align: right !important;
+  //text-align: right !important;
+  .btn_edit_container{
+    float: right;
+  }
+
+  .btn_adv_option_container,.btn_back_option_container{
+    float: left;
+    background: #FF9B00;
+    font-size: 16px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    height: 30px;
+    width: 250px;
+    margin-left: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+    text-align: center;
+  }
+  .btn_save_additional_field_container{
+    float: left;
+    background: #FF9B00;
+    font-size: 16px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    height: 30px;
+    width: 150px;
+    margin-left: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+    text-align: center;
+    float: right;
+  }
+}
+
+table.tbl_create_app_container td.td_warning_container{
+  text-align: left !important;
+  .warning_description{
+    font-size: 18px;
+    color: #FF9B00;
+  }
+  .warning_header {
+    font-size: 22px;
+    color: #FF9B00;
+  }
+}
+
+input#AppAdditionalColumn_additional_column_name{
+  border: solid #FF9B00 1px;
+  height: 20px;
+  width: 350px;
+  margin: 2px;
 }
 
 input#dev_portal_application_name{
@@ -68,6 +122,18 @@ input[type=submit]#btn_create_app{
   margin-left: 10px;
   margin-top: 10px;
 }
+
+input[type=submit]#btn_adv_option{
+  background: #FF9B00;
+  font-size: 16px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  height: 30px;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
 textarea#dev_portal_description{
   border: solid #FF9B00 1px;
   margin-left: 10px;
@@ -120,4 +186,53 @@ select#dev_portal_application_type{
   top: 0;
   z-index: 1;
 }
+#btn_new_field_container{
+  font-size: 16px;
+  float: right;
+}
 
+#table_separator_line {
+  background: #FF9B00;
+  height: 1px;
+  //width: 100%;
+  width: 848px;
+}
+
+#btn_new_field_btn{
+  float: left;
+}
+#btn_new_field_label{
+  float: right;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+#additional_field_list_container {
+  height: 300px;
+  width:  840px;
+  margin: 0 auto;
+  margin-top: 10px;
+
+
+  #additional_field_list {
+    margin: 0 auto;
+    height: 40px;
+    width: 840px;
+    background: #FF9B00;
+    color: white;
+    //padding: 10px 0px 10px 10px;
+    line-height: 40px;
+    font-size: 24px;
+    font-weight: bold;
+    padding-left: 10px;
+    //text-align: left;
+  }
+}
+
+#list_of_topic_fields_container, #list_of_post_fields_container {
+  height: 234px;
+  width: 848px;
+  border: solid #FF9B00 1px;
+  overflow: scroll;
+  overflow-x: hidden;
+}

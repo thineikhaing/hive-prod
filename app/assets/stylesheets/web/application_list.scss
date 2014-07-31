@@ -27,6 +27,7 @@
 }
 
 table.app_list {
+  width: 850px !important;
   th {
     background: #FF9B00;
     color: white;
@@ -130,6 +131,8 @@ table.field_list {
  text-decoration: underline;
  color: blue;
 }
+
+
 //#create_app_container{
 //  display: table;
 //  margin: 0 auto;

@@ -1,17 +1,27 @@
 var Devportal = {
 
   init: function() {
-    //check mandatory fields of the form
+    $('#table_list').hide();
+    $('#create_additional_column_container').hide();
+    $('.btn_adv_option_container').click(function() {
+        $('#table_list').show();
+       $('#create_application_form').animate({
+        opacity: 'hide',
+        height: 'hide'
+        }, 'slow');
+    });
+
+    $('.btn_back_option_container').click(function() {
+        $('#create_application_form').animate({
+            opacity: 'show',
+            height: 'show'
+        }, 'slow');
+        $('#table_list').hide();
+    });
+
     var elements = document.getElementsByTagName("INPUT");
     var hexvalue = $('#dev_portal_theme_color').val();
-    if (hexvalue.length== 7){
-        $('#dev_portal_color_display').css("background-color", hexvalue);
-    }
-    $('#dev_portal_theme_color').minicolors({
-        change: function(hex, rgb) {
-            $('#dev_portal_color_display').css("background-color", hex);
-        }
-    });
+    $('#dev_portal_theme_color').minicolors({});
     for (var i = 0; i < elements.length; i++) {
       elements[i].oninvalid = function(e) {
         e.target.setCustomValidity("");
@@ -42,7 +52,6 @@ var Devportal = {
 
 
     $("#dev_portal_application_icon").on( 'change', function(){
-//      alert("On change");
       var allowedExtension = ["jpg", "jpeg", "gif", "png"];
       if (this.value.split(".").length == 2){
         extName = this.value.split(".")[1] ;
@@ -66,9 +75,9 @@ var Devportal = {
       }
 
     });
+
   },
   updateCountdown: function() {
-    console.log("inside update count down");
     var remaining = 255 - $('#dev_portal_description').val().length;
     $("label[for='myalue']").html( "( <font color='red'> " + remaining + "</font> CHARACTERS REMAINING )");
 

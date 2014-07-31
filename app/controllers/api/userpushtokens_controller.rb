@@ -1,4 +1,5 @@
 class Api::UserpushtokensController < ApplicationController
+
   def create
     if current_user.present? && params[:push_token].present?
       user_push_token = UserPushToken.find_by(:push_token => params[:push_token])

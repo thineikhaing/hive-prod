@@ -11,6 +11,9 @@ class Place < ActiveRecord::Base
 
   # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)
   def self.nearest_topics_within(latitude, longitude, radius)
+    p latitude
+    p longitude
+    p radius
     radius = 1 if radius.nil?
 
     box = Geocoder::Calculations.bounding_box("#{latitude}, #{longitude}", radius, {units: :km})
@@ -28,4 +31,12 @@ class Place < ActiveRecord::Base
 
     topics_array
   end
+
+  def self.nearest(latitude, longitude, radius)
+    # Contains bottom-left and top-right corners
+    radius = 0.3 unless radius.present?
+    box = Geocoder::Calculations.bounding_box("#{latitude},#{longitude}", radius, {units: :km})
+    Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
+  end
+
 end

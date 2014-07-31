@@ -16,6 +16,15 @@ class HiveApplication < ActiveRecord::Base
   validates :app_name, :length => { :maximum => 32 }
   validates :description, :length => { :maximum => 255 }
 
+  def as_json(options=nil)
+    if options.present?
+      super(only: [:id, :app_name, :app_type, :description, :theme_color, :created_at, :updated_at], methods:[:img_icon_url] )
+    else
+      super(only: [:id, :app_name, :app_type, :api_key, :description, :theme_color, :devuser_id, :created_at, :updated_at], methods:[:img_icon_url] )
+    end
+
+  end
+
   def self.generate_verification_code(length=16)
     # Generates an alphanumerical verification code (length = 16bits)
     chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ0123456789'
@@ -29,6 +38,10 @@ class HiveApplication < ActiveRecord::Base
     ["Please select a type", "food", "social", "game"]
   end
 
+
+  def img_icon_url
+    self.icon_url.url
+  end
 
   def self.add_dev_user_activation_job(user_id)
     # Adds a batch job with a time limit of n minutes (1 for development, 1440 for production)
@@ -47,3 +60,5 @@ class HiveApplication < ActiveRecord::Base
     end
   end
 end
+
+
