@@ -2,7 +2,6 @@ var Devportal = {
 
   init: function() {
     $('#table_list').hide();
-    $('#create_additional_column_container').hide();
     $('.btn_adv_option_container').click(function() {
         $('#table_list').show();
        $('#create_application_form').animate({

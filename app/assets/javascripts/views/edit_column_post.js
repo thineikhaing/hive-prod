@@ -1,8 +1,8 @@
-var editColumn = {
+var editColumn_Post = {
   init: function() {
-    $('#create_additional_column_container').hide();
+    $('#create_additional_column_post_container').hide();
     $("#btn_new_field_container").click(function(){
-      $('#create_additional_column_container').show();
+      $('#create_additional_column_post_container').show();
       //set the rest controls to default
       const  col_txt_field_name = 0;
       const col_lbl_field_name = 1;
@@ -36,7 +36,7 @@ var editColumn = {
       });
     });
 
-    $("#add_new_column_form").submit(function(e){
+    $("#add_new_column_form_post").submit(function(e){
       e.preventDefault();
       /* get some values from elements on the page: */
       var $form = $(this),
@@ -53,10 +53,10 @@ var editColumn = {
         $.ajax({
           success: function(html) {
             var htmlobject = $(html);
-            var output = htmlobject.find("#list_of_topic_fields_container")[0];
+            var output = htmlobject.find("#list_of_post_fields_container")[0];
             var testing = new XMLSerializer().serializeToString(output);
-            $("#list_of_topic_fields_container").replaceWith(testing);
-            $('#create_additional_column_container').hide();
+            $("#list_of_post_fields_container").replaceWith(testing);
+            $('#create_additional_column_post_container').hide();
             editColumn.init();
           }
         });
@@ -89,9 +89,9 @@ var editColumn = {
 
 
       //hide create new pannel when the row is clicked
-      var $theAncestor = $(this).closest('#list_of_topic_fields_container');
-      console.log($($theAncestor).find("#create_additional_column_container"));
-      create_container =  $($theAncestor).find("#create_additional_column_container");
+      var $theAncestor = $(this).closest('#list_of_post_fields_container');
+      console.log($($theAncestor).find("#create_additional_column_post_container"));
+      create_container =  $($theAncestor).find("#create_additional_column_post_container");
       $(create_container).hide();
 
 
@@ -177,9 +177,9 @@ var editColumn = {
                 data: {field_id: field_id},
                 success: function(html) {
                   var htmlobject = $(html);
-                  var output = htmlobject.find("#list_of_topic_fields_container")[0];
+                  var output = htmlobject.find("#list_of_post_fields_container")[0];
                   var testing = new XMLSerializer().serializeToString(output);
-                  $("#list_of_topic_fields_container").replaceWith(testing);
+                  $("#list_of_post_fields_container").replaceWith(testing);
                   $('#AppAdditionalColumn_additional_column_name').val('');
                   editColumn.init();
                 }
@@ -209,9 +209,9 @@ var editColumn = {
                   data: {field_id: field_id, column_name: column_name, table_name: "Toopic"},
                   success: function(html) {
                     var htmlobject = $(html);
-                    var output = htmlobject.find("#list_of_topic_fields_container")[0];
+                    var output = htmlobject.find("#list_of_post_fields_container")[0];
                     var testing = new XMLSerializer().serializeToString(output);
-                    $("#list_of_topic_fields_container").replaceWith(testing);
+                    $("#list_of_post_fields_container").replaceWith(testing);
                     $('#AppAdditionalColumn_additional_column_name').val('');
                     editColumn.init();
                   }

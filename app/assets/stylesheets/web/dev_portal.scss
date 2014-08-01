@@ -99,13 +99,15 @@ table.tbl_create_app_container td.td_warning_container{
 
 input#AppAdditionalColumn_additional_column_name{
   border: solid #FF9B00 1px;
+  color: #FF9B00;
   height: 20px;
-  width: 350px;
+  width: 300px;
   margin: 2px;
 }
 
 input#dev_portal_application_name{
   border: solid #FF9B00 1px;
+  color : #FF9B00;
   height: 25px;
   width: 300px;
   margin-left: 10px;
@@ -136,6 +138,7 @@ input[type=submit]#btn_adv_option{
 
 textarea#dev_portal_description{
   border: solid #FF9B00 1px;
+  color : #FF9B00;
   margin-left: 10px;
   margin-bottom: 10px;
 }
@@ -235,4 +238,12 @@ select#dev_portal_application_type{
   border: solid #FF9B00 1px;
   overflow: scroll;
   overflow-x: hidden;
+}
+
+input#txt_column_name{
+  border: solid #FF9B00 1px;
+  color: #FF9B00;
+  height: 25px;
+  width: 300px;
+  margin: 5px;
 }

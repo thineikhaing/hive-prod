@@ -1,18 +1,46 @@
-- if @hive_applications.present?
-  %table{class: "app_list"}
-    - @hive_applications.each do |hive_app|
-      %tr{"data-link" => hiveapplication_edit_application_path(:app_id=> hive_app.id)}
-        %td{width:"3%"}
-          %img{ src:hive_app.icon_url, class:"img_app_icon"}
-        %td{width:"42%"}
-          .individual_app_cell
-            = hive_app.app_name
-        %td{width:"10%"}
-          .individual_app_cell
-            = hive_app.app_type
-        %td{width:"45%"}
-          .individual_app_cell
-            = hive_app.api_key
+%table
+  %tr
+    %td
+      - if @Postfieldbyapp.present?
+        %table{class: "app_list"}
+          - @Postfieldbyapp.each do |field|
+            %tr{height: "40px"}
+              %td{width:"10%"}
+                %input{name: "txt_col_name", type: "text", value: field.additional_column_name, id: "txt_column_name", style: "visibility:hidden;"}/
+              %td{width:"10%"}
+                %field_name_container
+                  = field.additional_column_name
+              %td{width:"5%"}
+                %img.image{height: "30px", src: "assets/edit_pencil.png", width: "30px" ,style: "visibility:hidden;margin:5px"}/
+              %td{width:"5%"}
+                %input{name: "id", type: "hidden", value: field.id, style: "visibility:hidden;"}/
+              %td{width:"5%"}
+                %input{type: "submit", value: "√", style: "visibility:hidden;"}/
+              %td{width:"5%"}
+                %input{type: "submit", value: "X", style: "visibility:hidden;"}/
+              %td{width:"60%"}
+                %input{name: "is_edit_btn_clicked", type: "hidden", value: 0}/
+  %tr
+    %td
+      #create_additional_column_post_container
+        %table{width:'100%'}
+          = form_for :AppAdditionalColumn, url: { controller: "hiveapplication", action: "edit_column", method: "post"}, :html=> {:id => 'add_new_column_form_post'}, remote:true do |f|
+            %tr{height: "40px"}
+              %td{width:"10%"}
+                = f.text_field :additional_column_name
+              %td{width:"10%"}
+                = f.hidden_field :field_id, value: 0
+              %td{width:"10%"}
+                = f.hidden_field :app_id, value: params[:app_id]
+              %td{width:"5%"}
+                = f.hidden_field :table_name, value: "Post"
+              %td{width:"5%"}
+                = f.submit "√"
+              %td{width:"5%"}
+                = f.submit "X"
+              %td{width:"75%"}
+                = " "
+        #table_separator_line
 
 :javascript
-  Applicationlist.init();
+  editColumn_Post.init();

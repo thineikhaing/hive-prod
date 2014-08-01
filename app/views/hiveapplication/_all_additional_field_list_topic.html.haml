@@ -6,7 +6,7 @@
           - @Topicfieldbyapp.each do |field|
             %tr{height: "40px"}
               %td{width:"10%"}
-                %input{name: "txt_col_name", type: "text", value: field.additional_column_name, style: "visibility:hidden;"}/
+                %input{name: "txt_col_name", type: "text", value: field.additional_column_name, id: "txt_column_name", style: "visibility:hidden;"}/
               %td{width:"10%"}
                 %field_name_container
                   = field.additional_column_name
@@ -23,13 +23,23 @@
   %tr
     %td
       #create_additional_column_container
-        = form_for :AppAdditionalColumn, url: { controller: "hiveapplication", action: "edit_column", method: "post"}, :html=> {:id => 'add_new_column_form'}, remote:true do |f|
-          = f.text_field :additional_column_name
-          = f.hidden_field :field_id, value: 0
-          = f.hidden_field :app_id, value: params[:app_id]
-          = f.hidden_field :table_name, value: "Topic"
-          = f.submit "√"
-          = f.submit "X"
+        %table{width:'100%'}
+          = form_for :AppAdditionalColumn, url: { controller: "hiveapplication", action: "edit_column", method: "post"}, :html=> {:id => 'add_new_column_form'}, remote:true do |f|
+            %tr{height: "40px"}
+              %td{width:"10%"}
+                = f.text_field :additional_column_name
+              %td{width:"10%"}
+                = f.hidden_field :field_id, value: 0
+              %td{width:"10%"}
+                = f.hidden_field :app_id, value: params[:app_id]
+              %td{width:"5%"}
+                = f.hidden_field :table_name, value: "Topic"
+              %td{width:"5%"}
+                = f.submit "√"
+              %td{width:"5%"}
+                = f.submit "X"
+              %td{width:"75%"}
+                = " "
         #table_separator_line
 
 :javascript
