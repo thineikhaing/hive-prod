@@ -15,9 +15,11 @@
               %td{width:"5%"}
                 %input{name: "id", type: "hidden", value: field.id, style: "visibility:hidden;"}/
               %td{width:"5%"}
-                %input{type: "submit", value: "√", style: "visibility:hidden;"}/
+                -#%input{type: "submit", value: "√", style: "visibility:hidden;"}/
+                %img.image{height: "20px", src: "assets/webtick.png", width: "20px"}/
               %td{width:"5%"}
-                %input{type: "submit", value: "X", style: "visibility:hidden;"}/
+                -#%input{type: "submit", value: "X", style: "visibility:hidden;"}/
+                %img.image{height: "20px", src: "assets/webcross.png", width: "20px"}/
               %td{width:"60%"}
                 %input{name: "is_edit_btn_clicked", type: "hidden", value: 0}/
   %tr
