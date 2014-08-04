@@ -98,13 +98,8 @@ var editColumn_Post = {
         row.selected = false;
       });
 
-
       //hide create new pannel when the row is clicked
-      var $theAncestor = $(this).closest('#post_fields_list');
-      console.log($($theAncestor).find("#create_additional_column_container_post"));
-      create_container =  $($theAncestor).find("#create_additional_column_container_post");
-      $(create_container).hide();
-
+      $('#create_additional_column_container_post').hide();
 
       // set selected property to true
       this.selected = true;

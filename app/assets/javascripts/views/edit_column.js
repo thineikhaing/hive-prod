@@ -98,10 +98,9 @@ var editColumn = {
 
 
       //hide create new pannel when the row is clicked
-      var $theAncestor = $(this).closest('#topic_fields_list');
-      console.log($($theAncestor).find("#create_additional_column_container_topic"));
-      create_container =  $($theAncestor).find("#create_additional_column_container_topic");
-      $(create_container).hide();
+//      var $theAncestor = $(this).closest('#topic_fields_list');
+//      create_container =  $($theAncestor).find("#create_additional_column_container_topic");
+      $('#create_additional_column_container_topic').hide();
 
 
       // set selected property to true
