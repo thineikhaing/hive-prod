@@ -9,6 +9,10 @@ var editColumn = {
 
     $("#btn_topic_new_field_container").click(function(){
       $('#create_additional_column_container_topic').show();
+      main_container = $('#create_additional_column_container_topic');
+      txt_add_col = $(main_container).find('#AppAdditionalColumn_additional_column_name');
+      txt_add_col.val('');
+
       //set the rest controls to default
       const  col_txt_field_name = 0;
       const col_lbl_field_name = 1;
@@ -59,9 +63,9 @@ var editColumn = {
         $.ajax({
           success: function(html) {
             var htmlobject = $(html);
-            var output = htmlobject.find("#list_of_topic_fields_container")[0];
+            var output = htmlobject.find("#topic_fields_list")[0];
             var testing = new XMLSerializer().serializeToString(output);
-            $("#list_of_topic_fields_container").replaceWith(testing);
+            $("#topic_fields_list").replaceWith(testing);
             $('#create_additional_column_container_topic').hide();
             editColumn.init();
           }
@@ -94,7 +98,7 @@ var editColumn = {
 
 
       //hide create new pannel when the row is clicked
-      var $theAncestor = $(this).closest('#list_of_topic_fields_container');
+      var $theAncestor = $(this).closest('#topic_fields_list');
       console.log($($theAncestor).find("#create_additional_column_container_topic"));
       create_container =  $($theAncestor).find("#create_additional_column_container_topic");
       $(create_container).hide();
@@ -182,9 +186,9 @@ var editColumn = {
                 data: {field_id: field_id},
                 success: function(html) {
                   var htmlobject = $(html);
-                  var output = htmlobject.find("#list_of_topic_fields_container")[0];
+                  var output = htmlobject.find("#topic_fields_list")[0];
                   var testing = new XMLSerializer().serializeToString(output);
-                  $("#list_of_topic_fields_container").replaceWith(testing);
+                  $("#topic_fields_list").replaceWith(testing);
                   $('#AppAdditionalColumn_additional_column_name').val('');
                   editColumn.init();
                 }
@@ -214,9 +218,9 @@ var editColumn = {
                   data: {field_id: field_id, column_name: column_name, table_name: "Toopic"},
                   success: function(html) {
                     var htmlobject = $(html);
-                    var output = htmlobject.find("#list_of_topic_fields_container")[0];
+                    var output = htmlobject.find("#topic_fields_list")[0];
                     var testing = new XMLSerializer().serializeToString(output);
-                    $("#list_of_topic_fields_container").replaceWith(testing);
+                    $("#topic_fields_list").replaceWith(testing);
                     $('#AppAdditionalColumn_additional_column_name').val('');
                     editColumn.init();
                   }
