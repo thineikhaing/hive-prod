@@ -1,8 +1,14 @@
 var editColumn = {
   init: function() {
-    $('#create_additional_column_container').hide();
-    $("#btn_new_field_container").click(function(){
-      $('#create_additional_column_container').show();
+    $('#create_additional_column_container_topic').hide();
+
+    // click cross button of creation additional column
+    $('#btn_topic_add_field_create_container').click( function(){
+      $('#create_additional_column_container_topic').hide();
+    });
+
+    $("#btn_topic_new_field_container").click(function(){
+      $('#create_additional_column_container_topic').show();
       //set the rest controls to default
       const  col_txt_field_name = 0;
       const col_lbl_field_name = 1;
@@ -11,9 +17,9 @@ var editColumn = {
       const col_btn_delete = 5;
       const col_bool_edit_btn_clicked = 6;
 
-      $('table.app_list tr').each(function (i, row) {
+      $('table.add_col_topic_list tr').each(function (i, row) {
         //check to make sure that the row is not selected row
-        $(row).css("background-color", "white");  //change background color to white
+        $(row).css("background", "none");  //change background color to white
         var all_columns = $(row).find('td') ;
         $(all_columns[col_lbl_field_name]).css ('color', '#FF9B00');
 
@@ -56,7 +62,7 @@ var editColumn = {
             var output = htmlobject.find("#list_of_topic_fields_container")[0];
             var testing = new XMLSerializer().serializeToString(output);
             $("#list_of_topic_fields_container").replaceWith(testing);
-            $('#create_additional_column_container').hide();
+            $('#create_additional_column_container_topic').hide();
             editColumn.init();
           }
         });
@@ -64,7 +70,7 @@ var editColumn = {
 
     });
 
-    $("table.app_list tr").click( function(){
+    $("table.add_col_topic_list tr").click( function(){
       //declaration variables
       const  col_txt_field_name = 0;
       const col_lbl_field_name = 1;
@@ -74,24 +80,23 @@ var editColumn = {
       const col_btn_delete = 5;
       const col_bool_edit_btn_clicked = 6;
       var columns = $(this).find('td');
-      var rowCount = $('table.app_list tr').length;
+//      var rowCount = $('table.add_col_topic_list tr').length;
 
 
       // reset the background color & selected value
-      $('table.app_list tr').each(function (i, row) {
+      $('table.add_col_topic_list tr').each(function (i, row) {
 
-        $(row).css("background-color", "white");  //change background color to white
+        $(row).css("background", "none");  //change background color to white
         var all_columns = $(row).find('td') ;
         $(all_columns[col_lbl_field_name]).css ('color', '#FF9B00');
-
         row.selected = false;
       });
 
 
       //hide create new pannel when the row is clicked
       var $theAncestor = $(this).closest('#list_of_topic_fields_container');
-      console.log($($theAncestor).find("#create_additional_column_container"));
-      create_container =  $($theAncestor).find("#create_additional_column_container");
+      console.log($($theAncestor).find("#create_additional_column_container_topic"));
+      create_container =  $($theAncestor).find("#create_additional_column_container_topic");
       $(create_container).hide();
 
 
@@ -102,7 +107,7 @@ var editColumn = {
       $(columns[col_lbl_field_name]).css ('color', 'white');
 
       //set the rest controls to default
-      $('table.app_list tr').each(function (i, row) {
+      $('table.add_col_topic_list tr').each(function (i, row) {
         //check to make sure that the row is not selected row
         if (!row.selected)
         {
@@ -134,7 +139,7 @@ var editColumn = {
 
     });
 
-    $("table.app_list tr td").click( function(){
+    $("table.add_col_topic_list tr td").click( function(){
       const  col_txt_field_name = 0;
       const col_lbl_field_name = 1;
       const col_img_edit = 2;

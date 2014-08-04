@@ -133,6 +133,52 @@ table.field_list {
 }
 
 
+table.add_col_topic_list {
+  width: 850px !important;
+  th {
+    background: #FF9B00;
+    color: white;
+    font-size: 16px;
+    height: 10px;
+  }
+
+  td {
+    text-align: center;
+    font-size: 18px;
+  }
+
+  tr {
+    border-bottom: solid #FF9B00 1px;
+  }
+
+  tr:hover {
+    cursor: pointer;
+  }
+}
+
+table.add_col_post_list {
+  width: 850px !important;
+  th {
+    background: #FF9B00;
+    color: white;
+    font-size: 16px;
+    height: 10px;
+  }
+
+  td {
+    text-align: center;
+    font-size: 18px;
+  }
+
+  tr {
+    border-bottom: solid #FF9B00 1px;
+  }
+
+  tr:hover {
+    cursor: pointer;
+  }
+}
+
 //#create_app_container{
 //  display: table;
 //  margin: 0 auto;
