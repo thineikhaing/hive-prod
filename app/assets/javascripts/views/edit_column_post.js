@@ -30,8 +30,6 @@ var editColumn_Post = {
 
         row.selected = false;
 
-//        if (!row.selected)
-//        {
         var all_columns = $(row).find('td') ;
         if (all_columns[col_img_edit])
         {
@@ -42,8 +40,6 @@ var editColumn_Post = {
           all_columns[col_btn_save].children[0].style.visibility = 'hidden';
           all_columns[col_btn_delete].children[0].style.visibility = 'hidden';
         }
-//
-//        }
       });
     });
 
