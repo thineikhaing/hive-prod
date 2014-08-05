@@ -42,10 +42,10 @@ class Topic < ActiveRecord::Base
         hiveapplication_id: self.hiveapplication_id,
         value:  self.value,
         unit: self.unit,
-        methods: [
+        methods: {
             username: username,
             place_information: self.place_information
-        ]
+        }
     }
 
     Pusher["hive_channel"].trigger_async("new_topic", data)
@@ -66,10 +66,10 @@ class Topic < ActiveRecord::Base
         value:  self.value,
         unit: self.unit,
         data: self.data,
-        methods: [
+        methods: {
             username: username,
             place_information: self.place_information
-        ]
+        }
     }
     channel_name = "hive_application_"+ self.hiveapplication_id.to_s+ "_channel"
     Pusher[channel_name].trigger_async("new_topic", data)
