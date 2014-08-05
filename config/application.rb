@@ -57,6 +57,10 @@ module Hive
     # Assets
     config.assets.initialize_on_precompile = false
     config.assets.precompile += %w(web.css web.js mobile.css mobile.js)
+
+    config.generators do |g|
+      g.factory_girl false
+    end
   end
 end
 

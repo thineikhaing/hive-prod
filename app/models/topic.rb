@@ -33,7 +33,6 @@ class Topic < ActiveRecord::Base
         id: self.id,
         title: self.title,
         user_id: self.user_id,
-        username: username,
         topic_type: self.topic_type,
         topic_sub_type: self.topic_sub_type,
         place_id: self.place_id,
@@ -42,7 +41,11 @@ class Topic < ActiveRecord::Base
         height: self.height,
         hiveapplication_id: self.hiveapplication_id,
         value:  self.value,
-        unit: self.unit
+        unit: self.unit,
+        methods: [
+            username: username,
+            place_information: self.place_information
+        ]
     }
 
     Pusher["hive_channel"].trigger_async("new_topic", data)
@@ -53,7 +56,6 @@ class Topic < ActiveRecord::Base
         id: self.id,
         title: self.title,
         user_id: self.user_id,
-        username: username,
         topic_type: self.topic_type,
         topic_sub_type: self.topic_sub_type,
         place_id: self.place_id,
@@ -63,7 +65,11 @@ class Topic < ActiveRecord::Base
         hiveapplication_id: self.hiveapplication_id,
         value:  self.value,
         unit: self.unit,
-        data: self.data
+        data: self.data,
+        methods: [
+            username: username,
+            place_information: self.place_information
+        ]
     }
     channel_name = "hive_application_"+ self.hiveapplication_id.to_s+ "_channel"
     Pusher[channel_name].trigger_async("new_topic", data)

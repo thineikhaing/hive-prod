@@ -124,6 +124,9 @@ ActiveRecord::Schema.define(version: 20140627074919) do
 
   create_table "posts", force: true do |t|
     t.string   "content"
+    t.string   "img_url"
+    t.integer  "width",      default: 0
+    t.integer  "height",     default: 0
     t.integer  "post_type"
     t.hstore   "data"
     t.datetime "created_at"
@@ -157,8 +160,13 @@ ActiveRecord::Schema.define(version: 20140627074919) do
   create_table "topics", force: true do |t|
     t.string   "title"
     t.string   "image_url"
+    t.integer  "width",              default: 0
+    t.integer  "height",             default: 0
+    t.integer  "topic_type"
     t.integer  "topic_sub_type"
     t.integer  "place_id"
+    t.float    "value",              default: 0.0
+    t.string   "unit",               default: ""
     t.hstore   "data"
     t.datetime "created_at"
     t.datetime "updated_at"
