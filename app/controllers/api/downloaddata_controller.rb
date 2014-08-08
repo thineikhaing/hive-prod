@@ -54,7 +54,11 @@ class Api::DownloaddataController < ApplicationController
       end
 
       if hiveApplication.present?
-        render json: { topics: topics_array}
+        if (popular_post ==1 or newest_post == 1  or num_posts>0)
+          render json: { topics: topics_array}
+        else
+          render json: { topics: topics}
+        end
       else
         render json: { status: false }
       end
