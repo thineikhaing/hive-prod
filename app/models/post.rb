@@ -36,7 +36,7 @@ class Post < ActiveRecord::Base
           offensive: self.offensive,
           data: self.data
       }
-    channel_name = self.topic_id.to_s+ "_channel"
+    channel_name = "topic_" + self.topic_id.to_s+ "_channel"
     Pusher[channel_name].trigger_async("broadcast", data)
   end
 
@@ -57,7 +57,7 @@ class Post < ActiveRecord::Base
         dislikes: self.dislikes,
         offensive: self.offensive,
     }
-    channel_name = self.topic_id.to_s+ "_channel"
+    channel_name = "topic_" + self.topic_id.to_s+ "_channel"
     Pusher[channel_name].trigger_async("broadcast", data)
   end
 
