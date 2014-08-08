@@ -7,10 +7,13 @@ class Topic < ActiveRecord::Base
   # Setup hstore
   store_accessor :data
 
-  attr_accessible :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :data, :created_at, :image_url, :width, :height, :value, :unit
+  #enums for topic type
+  enums %w(NORMAL IMAGE AUDIO VIDEO)
+
+  attr_accessible :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :data, :created_at, :image_url, :width, :height, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type
 
   def as_json(options=nil)
-    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :created_at], methods: [:username, :place_information])
+    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information])
   end
 
   def username
@@ -20,7 +23,6 @@ class Topic < ActiveRecord::Base
   def place_information
     if self.place_id.present? and self.place_id > 0
       place = Place.find(self.place_id)
-
       { id: place.id, name: place.name, latitude: place.latitude, longitude: place.longitude, address: place.address, category: place.category, source: place.source, source_id: place.source_id, user_id: place.user_id, country: place.country, postal_code: place.postal_code, chain_name: place.chain_name, contact_number: place.contact_number, img_url: place.img_url,locality: place.locality, region: place.region, neighbourhood: place.neighbourhood, data: place.data }
     else
       { id: nil, name: nil, latitude: nil, longitude: nil, address: nil , custom_pin_url: nil, source: nil, user_id: nil, popular: nil }
@@ -42,6 +44,11 @@ class Topic < ActiveRecord::Base
         hiveapplication_id: self.hiveapplication_id,
         value:  self.value,
         unit: self.unit,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        offensive: self.offensive,
+        notification_range: self.notification_range,
+        sepcial_type: self.special_type,
         methods: {
             username: username,
             place_information: self.place_information
@@ -65,6 +72,11 @@ class Topic < ActiveRecord::Base
         hiveapplication_id: self.hiveapplication_id,
         value:  self.value,
         unit: self.unit,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        offensive: self.offensive,
+        notification_range: self.notification_range,
+        special_type: self.special_type,
         data: self.data,
         methods: {
             username: username,
@@ -73,6 +85,54 @@ class Topic < ActiveRecord::Base
     }
     channel_name = "hive_application_"+ self.hiveapplication_id.to_s+ "_channel"
     Pusher[channel_name].trigger_async("new_topic", data)
+  end
+
+  # Check for the total counts of likes and dislikes
+  # Returns the most popular post, sorted by highest total counts and created_at
+  # Check for any new posts, return nil if there is no new post
+
+  def get_popular_post
+    testDataArray = [ ]
+    postsArray = posts.where(["likes > ? OR dislikes > ?", 0, 0])
+
+    if postsArray.present?
+      postsArray.each do |pa|
+        total = pa.likes + pa.dislikes
+        testDataArray.push({ total: total, id: pa.id, created_at: pa.created_at })
+      end
+
+      new_post = testDataArray.sort_by { |x| [x[:total], x[:created_at]] }
+      post = Post.find(new_post.last[:id])
+      popular_post= post
+    else
+      popular_post= nil
+    end
+  end
+
+  def get_newest_post
+    if posts.last == posts.first
+      newest_post= nil
+    else
+      newest_post= posts.last
+    end
+  end
+
+  def get_post_info(num_post=0)
+    if num_post>0
+      num_post = posts.last(num_post.to_i)
+    else
+      num_post = nil
+    end
+  end
+
+  def image_upload_delayed_job(filename)
+    p "delayed job starts!"
+    uploader = PhotoUploader.new
+    uploader.retrieve_from_store!(filename)
+    uploader.cache_stored_file!
+    uploader.resize_to_fit(uploader.get_geometry[0]/5,uploader.get_geometry[1]/5)
+    uploader.store!
+    p "delayed job ends!"
   end
 
 end

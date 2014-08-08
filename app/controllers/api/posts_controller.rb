@@ -1,34 +1,54 @@
 class Api::PostsController < ApplicationController
 
   def create
+    p "create"
     if current_user.present?
+      p "present"
       topic = Topic.find(params[:topic_id].to_i)
       #if  topic.hiveapplication_id!=1
-        data = getHashValuefromString(params[:data]) if params[:data].present?
+      data = getHashValuefromString(params[:data]) if params[:data].present?
 
+      place_id = nil
+      #check the place_id presents
+      if params[:place_id].present?
+        place_id = params[:place_id].to_i
+      else
+        #create place first if the place_id is null
 
-            #get all extra columns that define in app setting
-        appAdditionalField = AppAdditionalField.where(:app_id => topic.hiveapplication_id, :table_name => "Post")
-        if appAdditionalField.present?
-          defined_Fields = Hash.new
-          appAdditionalField.each do |field|
-            defined_Fields[field.additional_column_name] = nil
-          end
-          #get all extra columns that define in app setting against with the params data
-          if data.present?
-            data = defined_Fields.deep_merge(data)
-            result = Hash.new
-            defined_Fields.keys.each do |key|
-              result.merge!(data.extract! (key))
-            end
-          else
-            result = defined_Fields
-          end
+        place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
+        if place.present?
+          place_id = place.id
         end
-        result = nil unless result.present?
-        p result
-        post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, data: result) if params[:post_type] == Post::TEXT.to_s
-        post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height], data: result) if params[:post_type] == Post::IMAGE.to_s
+      end
+      p place
+            #get all extra columns that define in app setting
+      appAdditionalField = AppAdditionalField.where(:app_id => topic.hiveapplication_id, :table_name => "Post")
+      if appAdditionalField.present?
+
+        defined_Fields = Hash.new
+        appAdditionalField.each do |field|
+          defined_Fields[field.additional_column_name] = nil
+        end
+        #get all extra columns that define in app setting against with the params data
+        if data.present?
+          data = defined_Fields.deep_merge(data)
+          result = Hash.new
+          defined_Fields.keys.each do |key|
+            result.merge!(data.extract! (key))
+          end
+        else
+          result = defined_Fields
+        end
+      end
+      result = nil unless result.present?
+      p result
+      post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, place_id: place_id, data: result) if params[:post_type] == Post::TEXT.to_s
+      if params[:post_type] == Post::IMAGE.to_s
+        p "inside img"
+        post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height], place_id: place_id, data: result)
+        post.delay.image_upload_delayed_job(params[:img_url])
+      end
+
       #else
       #  post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id) if params[:post_type] == Post::TEXT.to_s
       #  post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height]) if params[:post_type] == IMAGE::TEXT.to_s
@@ -73,4 +93,30 @@ class Api::PostsController < ApplicationController
       render json: { status: false}
     end
   end
+
+
+  def post_liked
+    if params[:post_id].present? && params[:choice].present?
+      post = Post.find(params[:post_id])
+      action_status = post.user_add_likes(current_user, params[:post_id], params[:choice])
+      post.reload
+
+      render json: { post: post, action_status: action_status}
+    else
+      render json: { status: false }
+    end
+  end
+
+  def post_offensive
+    if params[:post_id].present?
+      post = Post.find(params[:post_id])
+      post.user_offensive_post(current_user, params[:post_id], post)
+      post.reload
+
+      render json: { post: post }
+    else
+      render json: { status: false }
+    end
+  end
+
 end

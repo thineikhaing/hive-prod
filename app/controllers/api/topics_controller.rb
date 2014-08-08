@@ -8,43 +8,11 @@ class Api::TopicsController < ApplicationController
 
         place_id = nil
         #check the place_id presents
-        factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
         if params[:place_id]
-          p "if"
           place_id = params[:place_id].to_i
-        else   #create place first if the place_id is null
-          p "else"
-          query = factual.geocode(params[:latitude],params[:longitude]).first
-
-          if query.present?
-            p "query presents"
-            if query["address"].present?
-              check = Place.find_by_address(query["address"])
-              p "check1"
-              p check
-              check.present? ? place = check : place = Place.create(name: query["address"], latitude: params[:latitude], longitude: params[:longitude], address: query["address"], postal_code: query["postcode"], locality: query["locality"], country: query["country"], source: Place::UNKNOWN, user_id: current_user.id)
-            elsif query["locality"].present?
-
-              check = Place.find_by_address("Somewhere in #{query["locality"]}")
-              p "check2"
-              p check
-              check.present? ? place = check : place = Place.create(name: "Somewhere in #{query["locality"]}", latitude: params[:latitude], longitude: params[:longitude], address: "Somewhere in #{query["locality"]}", postal_code: query["postcode"], locality: query["locality"], country: query["country"], source: Place::UNKNOWN, user_id: current_user.id)
-            end
-          else
-            p "query does not present"
-            geocoder = Geocoder.search("#{params[:latitude]},#{params[:longitude]}").first
-
-            if geocoder.present? and geocoder.country.present?
-              p "present"
-              check = Place.find_by_address("Somewhere in #{geocoder.country}")
-              check2 = Place.find_by_address("Somewhere in the world")
-
-              check.present? ? place = check : place = Place.create(name: "Somewhere in #{geocoder.country}", latitude: params[:latitude], longitude: params[:longitude], address: "Somewhere in #{geocoder.country}", source: Place::UNKNOWN, user_id: current_user.id)
-            else
-              p "we are the world"
-              check2.present? ? place = check2 : place = Place.create(name: "Somewhere in the world", latitude: params[:latitude], longitude: params[:longitude], address: "Somewhere in the world", source: Place::UNKNOWN, user_id: current_user.id)
-            end
-          end
+        else
+          #create place first if the place_id is null
+          place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
 
           if place.present?
             place_id = place.id
@@ -77,11 +45,16 @@ class Api::TopicsController < ApplicationController
           result = nil unless result.present?
           p result
           if params[:image_url].present?
-            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value],place_id: place_id, data: result, image_url: params[:image_url], width: params[:width], height: params[:height])
+            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value],place_id: place_id, data: result, image_url: params[:image_url], width: params[:width], height: params[:height], special_type: params[:special_type])
+            topic.delay.image_upload_delayed_job(params[:image_url])
           else
-            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value], place_id: place_id, data: result)
+            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value], place_id: place_id, data: result, special_type: params[:special_type])
           end
-
+          post = nil
+          if topic.present? and params[:post_content].present?
+            post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, place_id: place_id) if params[:post_type] == Post::TEXT.to_s
+            post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height], place_id: place_id) if params[:post_type] == Post::IMAGE.to_s
+          end
           #else
           #  if params[:image_url].present?
           #    topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value], place_id: place_id,image_url: params[:image_url], width: params[:width], height: params[:height])
@@ -97,7 +70,12 @@ class Api::TopicsController < ApplicationController
             topic.hive_broadcast
             topic.app_broadcast
           end
-          render json: { topic: topic}
+          if post.present?
+            render json: { topic: topic, post:post}
+          else
+            render json: { topic: topic}
+          end
+
         else
           p "1"
           render json: { status: false }
