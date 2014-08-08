@@ -13,7 +13,35 @@ class Topic < ActiveRecord::Base
   attr_accessible :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :data, :created_at, :image_url, :width, :height, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type
 
   def as_json(options=nil)
-    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information])
+    if options[:popular_post].present? and options[:latest_post].present?
+      if options[:num_posts].present? and options[:num_posts].to_i>0
+        @no_of_post =options[:num_posts].to_i
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :popular_post, :latest_post, :num_posts])
+      else
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :popular_post, :latest_post])
+      end
+    elsif options[:popular_post].present? and options[:latest_post].nil?
+      if options[:num_posts].present?  and options[:num_posts].to_i>0
+        @no_of_post =options[:num_posts].to_i
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :popular_post, :num_posts])
+      else
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :popular_post])
+      end
+    elsif options[:popular_post].nil? and options[:latest_post].present?
+      if options[:num_posts].present?  and options[:num_posts].to_i>0
+        @no_of_post =options[:num_posts].to_i
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :latest_post, :num_posts])
+      else
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :latest_post])
+      end
+    else
+      if options[:num_posts].present?  and options[:num_posts].to_i>0
+        @no_of_post =options[:num_posts].to_i
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :num_posts])
+      else
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information])
+      end
+    end
   end
 
   def username
@@ -91,9 +119,9 @@ class Topic < ActiveRecord::Base
   # Returns the most popular post, sorted by highest total counts and created_at
   # Check for any new posts, return nil if there is no new post
 
-  def get_popular_post
+  def popular_post
     testDataArray = [ ]
-    postsArray = posts.where(["likes > ? OR dislikes > ?", 0, 0])
+    postsArray = self.posts.where(["likes > ? OR dislikes > ?", 0, 0])
 
     if postsArray.present?
       postsArray.each do |pa|
@@ -103,25 +131,25 @@ class Topic < ActiveRecord::Base
 
       new_post = testDataArray.sort_by { |x| [x[:total], x[:created_at]] }
       post = Post.find(new_post.last[:id])
-      popular_post= post
+      post
     else
-      popular_post= nil
+      nil
     end
   end
 
-  def get_newest_post
-    if posts.last == posts.first
-      newest_post= nil
+  def latest_post
+    if self.posts.last == self.posts.first
+      nil
     else
-      newest_post= posts.last
+      self.posts.last
     end
   end
 
-  def get_post_info(num_post=0)
-    if num_post>0
-      num_post = posts.last(num_post.to_i)
+  def num_posts
+    if @no_of_post>0
+      self.posts.last(@no_of_post)
     else
-      num_post = nil
+     nil
     end
   end
 

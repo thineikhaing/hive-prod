@@ -22,42 +22,15 @@ class Api::DownloaddataController < ApplicationController
       else
         num_posts = 0
       end
-
-      topics_array=[]
-      topics.each do |t|
-        #post_info = t.get_post_info(popular_post, newest_post, num_post)
-        if newest_post == 1 and   popular_post ==1
-          if num_posts>0
-            topics_array.push({topic: t, newest_post: t.get_newest_post, popular_post: t.get_popular_post, posts: t.get_post_info(num_posts)} )
-          else
-            topics_array.push( {topic: t, newest_post: t.get_newest_post, popular_post:get_popular_post})
-          end
-        elsif   newest_post == 1 and   popular_post ==0
-          if num_posts>0
-            topics_array.push({topic: t, newest_post: t.get_newest_post, posts: t.get_post_info(num_posts)})
-          else
-            topics_array.push({topic: t, newest_post: t.get_newest_post})
-          end
-        elsif newest_post == 0 and   popular_post ==1
-          if num_posts>0
-            topics_array.push({topic: t, popular_post: t.get_popular_post, posts: t.get_post_info(num_posts)})
-          else
-            topics_array.push({topic: t, popular_post: t.get_popular_post})
-          end
-        else
-          if num_posts>0
-            topics_array.push( {topic: t, posts: t.get_post_info(num_posts)} )
-          else
-            topics_array.push({topic: t} )
-          end
-        end
-      end
-
       if hiveApplication.present?
-        if (popular_post ==1 or newest_post == 1  or num_posts>0)
-          render json: { topics: topics_array}
+        if newest_post == 1 and   popular_post ==1
+          render json: { topics: JSON.parse(topics.to_json(latest_post: newest_post, popular_post: popular_post, num_posts: num_posts))}
+        elsif   newest_post == 1 and   popular_post ==0
+          render json: { topics: JSON.parse(topics.to_json(latest_post: newest_post, num_posts: num_posts))}
+        elsif newest_post == 0 and   popular_post ==1
+          render json: { topics: JSON.parse(topics.to_json(popular_post: popular_post, num_posts: num_posts))}
         else
-          render json: { topics: topics}
+          render json: { topics: JSON.parse(topics.to_json(num_posts: num_posts))}
         end
       else
         render json: { status: false }

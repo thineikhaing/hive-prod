@@ -55,13 +55,6 @@ class Api::TopicsController < ApplicationController
             post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, place_id: place_id) if params[:post_type] == Post::TEXT.to_s
             post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height], place_id: place_id) if params[:post_type] == Post::IMAGE.to_s
           end
-          #else
-          #  if params[:image_url].present?
-          #    topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value], place_id: place_id,image_url: params[:image_url], width: params[:width], height: params[:height])
-          #  else
-          #    topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value], place_id: place_id)
-          #  end
-          #end
           if hiveApplication.id ==1
             #broadcast new topic creation to hive_channel only
             topic.hive_broadcast
