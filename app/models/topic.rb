@@ -135,10 +135,10 @@ class Topic < ActiveRecord::Base
         offensive: self.offensive,
         notification_range: self.notification_range,
         special_type: self.special_type,
-        methods: [
+        methods: {
             username: username,
             place_information: self.place_information
-        ]
+        }
     }
 
     Pusher["hive_channel"].trigger_async("update_topic", data)
@@ -164,10 +164,10 @@ class Topic < ActiveRecord::Base
         notification_range: self.notification_range,
         special_type: self.special_type,
         data: self.data,
-        methods: [
+        methods: {
             username: username,
             place_information: self.place_information
-        ]
+        }
     }
     channel_name = "hive_application_"+ self.hiveapplication_id.to_s+ "_channel"
     Pusher[channel_name].trigger_async("update_topic", data)
