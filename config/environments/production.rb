@@ -98,6 +98,11 @@ Rails.application.configure do
       :password             => "raydiusadm1n" ,
       :enable_starttls_auto => false
   }
+
+  config.after_initialize do
+    Delayed::Job.scaler = :heroku_cedar
+  end
+
 end
 
 # For factual
