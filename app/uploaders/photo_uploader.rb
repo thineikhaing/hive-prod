@@ -32,7 +32,7 @@ class PhotoUploader < CarrierWave::Uploader::Base
     elsif Rails.env.staging?
       self.fog_directory = "hivestagingimages"
     elsif Rails.env.production?
-      self.fog_directory = "hiveproductionimages"
+      self.fog_directory = "hivestagingimages"
     end
   end
 
