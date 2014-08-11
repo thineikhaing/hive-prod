@@ -46,7 +46,7 @@ class Api::PostsController < ApplicationController
       if params[:post_type] == Post::IMAGE.to_s
         p "inside img"
         post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height], place_id: place_id, data: result)
-        post.delay.image_upload_delayed_job(params[:img_url])
+        #post.delay.image_upload_delayed_job(params[:img_url])
       end
 
       #else
