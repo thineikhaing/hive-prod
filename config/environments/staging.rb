@@ -75,10 +75,6 @@ SocialCalendar::Application.configure do
       :user_name            => "info@raydiusapp.com",
       :password             => "raydiusadm1n",
   }
-
-  config.after_initialize do
-    Delayed::Job.scaler = :heroku_cedar
-  end
 end
 
 ::ActiveSupport::Deprecation.silenced = true
