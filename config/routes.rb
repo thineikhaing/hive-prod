@@ -47,6 +47,8 @@ Rails.application.routes.draw do
     match "topics/create"                           => "topics#create"                          , via: [:get, :post]
     match "posts/create"                            => "posts#create"                           , via: [:get, :post]
     match "posts/retrieve_post"                     => "posts#retrieve_post"                    , via: [:get, :post]
+    match "posts/post_liked"                        => "posts#post_liked"                       , via: [:get, :post]
+    match "posts/post_offensive"                    => "posts#post_offensive"                   , via: [:get, :post]
     match "userpushtokens/create"                   => "userpushtokens#create"                  , via: [:get, :post]
     match "places/create"                           => "places#create"                          , via: [:get, :post]
     match "places/retrieve_places"                  => "places#retrieve_places"                 , via: [:get, :post]

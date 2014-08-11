@@ -96,23 +96,24 @@ class Post < ActiveRecord::Base
       else
         unless check_like.present?
           post.likes = post.likes + 1
-          post_user.points = post_user.points + 1
-          ActionLog.create_record("post", post_id, "like", user.id)
+          #actionlog.create_record("post", post_id, "like", user.id)
+          actionlog =   ActionLog.create(type_name: "post", type_id: post_id, action_type: "like", action_user_id: user.id)
           test_check = true
+
           action_status = 1
         end
       end
     elsif choice == "dislike"
       if check_like.present?
         post.likes = post.likes - 1
-        post_user.points = post_user.points - 1
         ActionLog.find_by_type_name_and_type_id_and_action_type_and_action_user_id("post", post_id, "like", user.id).delete
         test_check = true
         action_status = -1
       else
         unless check_dislike.present?
           post.dislikes = post.dislikes + 1
-          actionlog.create_record("post", post_id, "dislike", user.id)
+          #actionlog.create_record("post", post_id, "dislike", user.id)
+          actionlog =   ActionLog.create(type_name: "post", type_id: post_id, action_type: "dislike", action_user_id: user.id)
           test_check = true
           action_status = 1
         end
@@ -165,7 +166,8 @@ class Post < ActiveRecord::Base
         post.reload
         #mail = UserMailer.report_offensive_post(user, post)
         #mail.deliver
-        actionlog.create_record("post", post_id, "offensive", current_user.id)
+        #actionlog.create_record("post", post_id, "offensive", current_user.id)
+        actionlog=    ActionLog.create(type_name: "post", type_id: post_id, action_type: "offensive", action_user_id: current_user.id)
         #history.create_record("post", self.id, "update", self.topic_id)
         #post.update_event_broadcast
       end
