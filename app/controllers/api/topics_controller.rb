@@ -46,12 +46,12 @@ class Api::TopicsController < ApplicationController
           p result
           if params[:image_url].present?
             topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value],place_id: place_id, data: result, image_url: params[:image_url], width: params[:width], height: params[:height], special_type: params[:special_type])
-            p topic
-            p params[:image_url]
-            topic.topic_image_upload_delayed_job(params[:image_url])
-            p "2"
-            topic.delay.topic_image_upload_delayed_job(params[:image_url])
-            p "3"
+            #p topic
+            #p params[:image_url]
+            #topic.topic_image_upload_delayed_job(params[:image_url])
+            #p "2"
+            #topic.delay.topic_image_upload_delayed_job(params[:image_url])
+            #p "3"
           else
             topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value], place_id: place_id, data: result, special_type: params[:special_type])
           end
