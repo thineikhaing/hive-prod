@@ -153,7 +153,7 @@ class Topic < ActiveRecord::Base
     end
   end
 
-  def image_upload_delayed_job(filename)
+  def topic_image_upload_delayed_job(filename)
     p "delayed job starts!"
     uploader = PhotoUploader.new
     uploader.retrieve_from_store!(filename)
