@@ -55,10 +55,55 @@ class Post < ActiveRecord::Base
         place_id: self.place_id,
         likes: self.likes,
         dislikes: self.dislikes,
-        offensive: self.offensive,
+        offensive: self.offensive
     }
     channel_name = "topic_" + self.topic_id.to_s+ "_channel"
     Pusher[channel_name].trigger_async("broadcast", data)
+  end
+
+  def update_event_broadcast_hive
+    data = {
+        id: self.id,
+        topic_id: self.topic_id,
+        content: self.content,
+        img_url: self.img_url,
+        width:  self.width,
+        height: self.height,
+        created_at: self.created_at,
+        user_id: self.user_id,
+        username: self.username,
+        post_type: self.post_type,
+        place_id: self.place_id,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        offensive: self.offensive
+    }
+
+    channel_name = "topic_" + self.topic_id.to_s+ "_channel"
+    Pusher[channel_name].trigger_async("update_post", data)
+  end
+
+  def update_event_broadcast_other_app
+    data = {
+        id: self.id,
+        topic_id: self.topic_id,
+        content: self.content,
+        img_url: self.img_url,
+        width:  self.width,
+        height: self.height,
+        created_at: self.created_at,
+        user_id: self.user_id,
+        username: self.username,
+        post_type: self.post_type,
+        place_id: self.place_id,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        offensive: self.offensive,
+        data: self.data
+    }
+
+    channel_name = "topic_" + self.topic_id.to_s+ "_channel"
+    Pusher[channel_name].trigger_async("update_post", data)
   end
 
   def user_add_likes(current_user, post_id, choice)
@@ -124,6 +169,17 @@ class Post < ActiveRecord::Base
     post.reload
 
     #history.create_record("post", post.id, "update", self.topic_id)
+    if topic.hiveapplication_id ==1 and action_status != 0 #Hive Application
+      post.update_event_broadcast_hive
+      topic.update_event_broadcast_hive
+    else
+      if action_status != 0
+        post.update_event_broadcast_hive
+        post.update_event_broadcast_other_app
+        topic.update_event_broadcast_hive
+        topic.update_event_broadcast_other_app
+      end
+    end
     #post.update_event_broadcast   unless action_status == 0
     #topic.update_event_broadcast  unless action_status == 0
 
@@ -145,7 +201,7 @@ class Post < ActiveRecord::Base
         end
       else
         topic = Topic.find(post.topic_id)
-        topic.update_event_broadcast
+        #topic.update_event_broadcast
       end
     end
     return action_status

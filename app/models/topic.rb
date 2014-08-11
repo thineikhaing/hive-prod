@@ -115,6 +115,64 @@ class Topic < ActiveRecord::Base
     Pusher[channel_name].trigger_async("new_topic", data)
   end
 
+  def update_event_broadcast_hive()
+    p "update event boradcast"
+    data = {
+        id: self.id,
+        title: self.title,
+        user_id: self.user_id,
+        topic_type: self.topic_type,
+        topic_sub_type: self.topic_sub_type,
+        place_id: self.place_id,
+        image_url: self.image_url,
+        width:  self.width,
+        height: self.height,
+        hiveapplication_id: self.hiveapplication_id,
+        value:  self.value,
+        unit: self.unit,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        offensive: self.offensive,
+        notification_range: self.notification_range,
+        special_type: self.special_type,
+        methods: [
+            username: username,
+            place_information: self.place_information
+        ]
+    }
+
+    Pusher["hive_channel"].trigger_async("update_topic", data)
+  end
+
+  def update_event_broadcast_other_app()
+    data = {
+        id: self.id,
+        title: self.title,
+        user_id: self.user_id,
+        topic_type: self.topic_type,
+        topic_sub_type: self.topic_sub_type,
+        place_id: self.place_id,
+        image_url: self.image_url,
+        width:  self.width,
+        height: self.height,
+        hiveapplication_id: self.hiveapplication_id,
+        value:  self.value,
+        unit: self.unit,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        offensive: self.offensive,
+        notification_range: self.notification_range,
+        special_type: self.special_type,
+        data: self.data,
+        methods: [
+            username: username,
+            place_information: self.place_information
+        ]
+    }
+    channel_name = "hive_application_"+ self.hiveapplication_id.to_s+ "_channel"
+    Pusher[channel_name].trigger_async("update_topic", data)
+  end
+
   # Check for the total counts of likes and dislikes
   # Returns the most popular post, sorted by highest total counts and created_at
   # Check for any new posts, return nil if there is no new post
