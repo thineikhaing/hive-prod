@@ -3,3 +3,4 @@
 require File.expand_path(File.join(File.dirname(__FILE__), '..', 'config', 'environment'))
 require 'delayed/command'
 Delayed::Command.new(ARGV).daemonize
+Delayed::Job.attr_accessible :priority, :payload_object, :run_at, :locked_at, :failed_at, :locked_by
