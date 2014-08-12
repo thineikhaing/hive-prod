@@ -2,13 +2,13 @@ source 'https://rubygems.org'
 ruby "1.9.3"
 
 gem 'rails'                       , '4.1.0' # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'delayed_job_active_record'   , '4.0.1' # ActiveRecord backend for Delayed::Job
-gem 'thin'                  , '~> 1.5.0'
+gem 'delayed_job_active_record'             # ActiveRecord backend for Delayed::Job
+gem 'thin'                        , '~> 1.5.0'
 gem 'sprockets-rails'             , '~> 2.1.0'
 gem 'haml-rails'                  , '~> 0.5.3' # Haml-rails provides Haml generators for Rails 3. It also enables Haml as the templating engine for you, so you don't have to screw around in your own application.rb when your Gemfile already clearly indicated what templating engine you have installed. Hurrah.
 gem 'rails-backbone'              , '~> 0.9.10' # Quickly setup backbone.js for use with rails 3.1. Generators are provided to quickly get started.
 gem 'urbanairship'                , '~> 2.3.3' # Urbanairship is a Ruby library for interacting with the Urban Airship (http://urbanairship.com) API.
-gem 'delayed_job'                 , '~> 4.0.1' # Delayed_job (or DJ) encapsulates the common pattern of asynchronously executing longer tasks in the background. It is a direct extraction from Shopify where the job table is responsible for a multitude of core tasks.
+gem 'delayed_job'                              # Delayed_job (or DJ) encapsulates the common pattern of asynchronously executing longer tasks in the background. It is a direct extraction from Shopify where the job table is responsible for a multitude of core tasks.
 gem "hirefire-resource"           , '~> 0.3.2' # HireFire enables you to auto-scale your dynos, schedule capacity during specific times of the week, and recover crashed processes.
 gem 'devise'                      , '~> 3.2.4' # Flexible authentication solution for Rails with Warden
 gem 'httparty'                    , '~> 0.13.1' # Makes http fun! Also, makes consuming restful web services dead easy.
