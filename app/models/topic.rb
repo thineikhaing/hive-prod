@@ -221,4 +221,5 @@ class Topic < ActiveRecord::Base
     p "delayed job ends!"
   end
 
+  handle_asynchronously :topic_image_upload_delayed_job
 end

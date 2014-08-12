@@ -239,5 +239,5 @@ class Post < ActiveRecord::Base
     uploader.store!
     p "delayed job ends!"
   end
-
+  handle_asynchronously :post_image_upload_delayed_job
 end
