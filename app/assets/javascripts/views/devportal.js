@@ -3,19 +3,25 @@ var Devportal = {
   init: function() {
     $('#table_list').hide();
     $('.btn_adv_option_container').click(function() {
-      $('#table_list').show();
+      $('#table_list').animate({
+          opacity: 'show',
+        height: 'show'
+      }, 500);
       $('#create_application_form').animate({
-      opacity: 'hide',
+      opacity: 'show',
       height: 'hide'
-      }, 'slow');
+      }, 500);
     });
 
     $('.btn_back_option_container').click(function() {
       $('#create_application_form').animate({
           opacity: 'show',
           height: 'show'
-      }, 'slow');
-      $('#table_list').hide();
+      }, 500);
+      $('#table_list').animate({
+        opacity: 'show',
+        height: 'hide'
+      }, 500);
 
       // reset controls
       $('#create_additional_column_container_post').hide();
