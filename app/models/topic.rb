@@ -6,7 +6,6 @@ class Topic < ActiveRecord::Base
   has_many  :posts
   # Setup hstore
   store_accessor :data
-
   #enums for topic type
   enums %w(NORMAL IMAGE AUDIO VIDEO)
 
@@ -208,6 +207,86 @@ class Topic < ActiveRecord::Base
       self.posts.last(@no_of_post)
     else
      nil
+    end
+  end
+
+  def user_add_likes(current_user, topic_id, choice)
+    actionlog = ActionLog.new
+    user = User.find(current_user.id)
+    topic = Topic.find(topic_id)
+    topic_user = User.find(topic.user_id)
+    action_status = 0
+    check_like = ActionLog.where(type_name: "topic", type_id: topic_id, action_type: "like", action_user_id: current_user.id)
+    check_dislike = ActionLog.where(type_name: "topic", type_id: topic_id, action_type: "dislike", action_user_id: current_user.id)
+
+    if choice == "like"
+      if check_dislike.present?
+        topic.dislikes = topic.dislikes - 1
+        ActionLog.find_by_type_name_and_type_id_and_action_type_and_action_user_id("topic", topic_id, "dislike", user.id).delete
+        action_status = -1
+      else
+        unless check_like.present?
+          topic.likes = topic.likes + 1
+          topic_user.quid = topic_user.quid + 1
+          #actionlog.create_record("topic", topic_id, "like", user.id)
+          actionlog =   ActionLog.create(type_name: "topic", type_id: topic_id, action_type: "like", action_user_id: user.id)
+          action_status = 1
+        end
+      end
+    elsif choice == "dislike"
+      if check_like.present?
+        topic.likes = topic.likes - 1
+        topic_user.quid = topic_user.quid - 1
+        ActionLog.find_by_type_name_and_type_id_and_action_type_and_action_user_id("topic", topic_id, "like", user.id).delete
+        action_status = -1
+      else
+        unless check_dislike.present?
+          topic.dislikes = topic.dislikes + 1
+          topic_user.quid = topic_user.quid + 1
+          #actionlog.create_record("topic", topic_id, "dislike", current_user.id)
+          actionlog =   ActionLog.create(type_name: "topic", type_id: topic_id, action_type: "dislike", action_user_id: user.id)
+          action_status = 1
+        end
+      end
+    end
+
+    topic.save!
+    topic_user.save!
+    topic.reload
+
+    if topic.hiveapplication_id ==1 and action_status != 0 #Hive Application
+      topic.update_event_broadcast_hive
+    else
+      if action_status != 0
+        topic.update_event_broadcast_hive
+        topic.update_event_broadcast_other_app
+      end
+    end
+    return action_status
+  end
+
+  def user_offensive_topic(current_user, topic_id, topic)
+    actionlog = ActionLog.new
+    user = User.find(current_user.id)
+    admin_user = User.find_by_email("info@raydiusapp.com")
+    admin_user1 = User.find_by_email("gamebot@raydiusapp.com")
+    check = ActionLog.where(type_name: "topic", type_id: topic_id, action_type: "offensive", action_user_id: user.id)
+
+    unless check.present?
+      unless self.user_id == admin_user.id #or self.user_id == admin_user1.id
+        topic.offensive +=1
+        topic.save!
+        topic.reload
+        mail = UserMailer.report_offensive_topic(user, topic)
+        mail.deliver
+        actionlog =   ActionLog.create(type_name: "topic", type_id: topic_id, action_type: "offensive", action_user_id: user.id)
+        if topic.hiveapplication_id ==1  #Hive Application
+          topic.update_event_broadcast_hive
+        else
+          topic.update_event_broadcast_hive
+          topic.update_event_broadcast_other_app
+        end
+      end
     end
   end
 
