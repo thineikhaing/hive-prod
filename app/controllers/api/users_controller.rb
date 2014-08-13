@@ -111,7 +111,7 @@ class Api::UsersController < ApplicationController
 
   def user_params
     p "user param is called"
-    params.require(:user).permit(:username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :quid, :honor_rating, :created_at, :data, :device_id)
+    params.require(:user).permit(:username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :point, :honor_rating, :created_at, :data, :device_id)
   end
 
 end

@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
   store_accessor :data
   include Authenticable
 
-  attr_accessible :username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :quid, :honor_rating, :created_at, :data, :device_id
+  attr_accessible :username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :point, :honor_rating, :created_at, :data, :device_id
 
   after_initialize :ensure_authentication_token
   after_initialize :ensure_username

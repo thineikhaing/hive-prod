@@ -21,4 +21,18 @@ class UserMailer < ActionMailer::Base
     mail :to => user.email, :subject => "Password Reset"
   end
 
+  def report_offensive_topic(user, topic)
+    @user = user
+    @topic = topic
+    receiver = User.find_by_email("info@raydiusapp.com")
+    mail(:to => receiver.email, :subject => "Report for offensive topic")
+  end
+
+  def report_offensive_post(user, post)
+    @user = user
+    @post = post
+    receiver = User.find_by_email("info@raydiusapp.com")
+    mail(:to => receiver.email, :subject => "Report for offensive post")
+  end
+
 end

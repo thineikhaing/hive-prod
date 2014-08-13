@@ -104,4 +104,14 @@ class Api::TopicsController < ApplicationController
     end
   end
 
+  def topic_favourited
+    if params[:topic_id].present? && params[:choice].present?
+      topic = Topic.find(params[:topic_id])
+      topic.user_favourite_topic(current_user, params[:topic_id], params[:choice])
+      render json: { status: true }
+    else
+      render json: { status: false }
+    end
+  end
+
 end

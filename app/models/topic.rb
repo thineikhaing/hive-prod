@@ -227,7 +227,7 @@ class Topic < ActiveRecord::Base
       else
         unless check_like.present?
           topic.likes = topic.likes + 1
-          topic_user.quid = topic_user.quid + 1
+          topic_user.point = topic_user.point + 1
           #actionlog.create_record("topic", topic_id, "like", user.id)
           actionlog =   ActionLog.create(type_name: "topic", type_id: topic_id, action_type: "like", action_user_id: user.id)
           action_status = 1
@@ -236,13 +236,13 @@ class Topic < ActiveRecord::Base
     elsif choice == "dislike"
       if check_like.present?
         topic.likes = topic.likes - 1
-        topic_user.quid = topic_user.quid - 1
+        topic_user.point = topic_user.point - 1
         ActionLog.find_by_type_name_and_type_id_and_action_type_and_action_user_id("topic", topic_id, "like", user.id).delete
         action_status = -1
       else
         unless check_dislike.present?
           topic.dislikes = topic.dislikes + 1
-          topic_user.quid = topic_user.quid + 1
+          topic_user.point = topic_user.point + 1
           #actionlog.create_record("topic", topic_id, "dislike", current_user.id)
           actionlog =   ActionLog.create(type_name: "topic", type_id: topic_id, action_type: "dislike", action_user_id: user.id)
           action_status = 1
@@ -287,6 +287,15 @@ class Topic < ActiveRecord::Base
           topic.update_event_broadcast_other_app
         end
       end
+    end
+  end
+
+  def user_favourite_topic(current_user, topic_id, choice)
+    if choice == "favourite"
+      check = ActionLog.where(type_name: "topic", type_id: topic_id, action_type: "favourite", action_user_id: current_user.id)
+      actionlog =   ActionLog.create(type_name: "topic", type_id: topic_id, action_type: "favourite", action_user_id: user.id) unless check.present?
+    elsif choice == "unfavourite"
+      ActionLog.find_by_type_name_and_type_id_and_action_type_and_action_user_id("topic", topic_id, "favourite", current_user.id).delete
     end
   end
 
