@@ -41,22 +41,22 @@ class Api::PostsController < ApplicationController
         end
       end
       result = nil unless result.present?
-      p result
       post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, place_id: place_id, data: result) if params[:post_type] == Post::TEXT.to_s
       if params[:post_type] == Post::IMAGE.to_s
-        p "inside img"
         post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height], place_id: place_id, data: result)
-        #post.delay.post_image_upload_delayed_job(params[:img_url])
+        post.delay.post_image_upload_delayed_job(params[:img_url])
       end
 
       #else
       #  post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id) if params[:post_type] == Post::TEXT.to_s
       #  post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height]) if params[:post_type] == IMAGE::TEXT.to_s
       #end
-
+      p topic
       if topic.hiveapplication_id ==1 #Hive Application
+        p "in 1"
         post.broadcast_hive
       else
+        p "in 2"
         post.broadcast_hive
         post.broadcast_other_app
       end
