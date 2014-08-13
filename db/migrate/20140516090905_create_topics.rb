@@ -6,7 +6,7 @@ class CreateTopics < ActiveRecord::Migration
       t.integer :width, default: 0
       t.integer :height, default: 0
       t.integer :topic_type
-      t.integer :topic_sub_type
+      t.integer :topic_sub_type , default: 0
       t.string :special_type, :default => ""
       t.integer :place_id
       t.float :value, :default => 0

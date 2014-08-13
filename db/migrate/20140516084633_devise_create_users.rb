@@ -38,7 +38,7 @@ class DeviseCreateUsers < ActiveRecord::Migration
       t.string :authentication_token
       t.string :avatar_url
       t.integer :role
-      t.integer :quid
+      t.integer :point , default: 0
       t.integer :honor_rating
       t.hstore :data
 

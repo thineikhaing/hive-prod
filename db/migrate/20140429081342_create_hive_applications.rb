@@ -4,9 +4,9 @@ class CreateHiveApplications < ActiveRecord::Migration
       t.string :app_name
       t.string :app_type
       t.string :api_key
-      t.string :description
+      t.string :description , :default => ""
       t.string :icon_url
-      t.string :theme_color
+      t.string :theme_color , :default => ""
       t.integer :devuser_id
 
       t.timestamps

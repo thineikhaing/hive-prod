@@ -5,8 +5,8 @@ class CreatePlaces < ActiveRecord::Migration
       t.string :category
       t.string :address
       t.string :locality
-      t.string :region
-      t.string :neighbourhood
+      t.string :region , default: ""
+      t.string :neighbourhood , default: ""
       t.string :country
       t.string :postal_code
       t.string :website_url
