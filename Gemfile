@@ -2,13 +2,14 @@ source 'https://rubygems.org'
 ruby "1.9.3"
 
 gem 'rails'                       , '4.1.0' # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'delayed_job_active_record'             # ActiveRecord backend for Delayed::Job
 gem 'thin'                        , '~> 1.5.0'
 gem 'sprockets-rails'             , '~> 2.1.0'
 gem 'haml-rails'                  , '~> 0.5.3' # Haml-rails provides Haml generators for Rails 3. It also enables Haml as the templating engine for you, so you don't have to screw around in your own application.rb when your Gemfile already clearly indicated what templating engine you have installed. Hurrah.
 gem 'rails-backbone'              , '~> 0.9.10' # Quickly setup backbone.js for use with rails 3.1. Generators are provided to quickly get started.
 gem 'urbanairship'                , '~> 2.3.3' # Urbanairship is a Ruby library for interacting with the Urban Airship (http://urbanairship.com) API.
+gem 'protected_attributes'        , '~> 1.0.7' # Protect attributes from mass assignment
 gem 'delayed_job'                              # Delayed_job (or DJ) encapsulates the common pattern of asynchronously executing longer tasks in the background. It is a direct extraction from Shopify where the job table is responsible for a multitude of core tasks.
+gem 'delayed_job_active_record'             # ActiveRecord backend for Delayed::Job
 gem "hirefire-resource"           , '~> 0.3.2' # HireFire enables you to auto-scale your dynos, schedule capacity during specific times of the week, and recover crashed processes.
 gem 'devise'                      , '~> 3.2.4' # Flexible authentication solution for Rails with Warden
 gem 'httparty'                    , '~> 0.13.1' # Makes http fun! Also, makes consuming restful web services dead easy.
@@ -32,7 +33,6 @@ gem 'coffee-rails'                , '~> 4.0.0' # Use CoffeeScript for .js.coffee
 gem 'jquery-rails'                , '~> 2.1.3' # Use jquery as the JavaScript library
 gem 'turbolinks'                  , '~> 2.2.2' # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'jbuilder'                    , '~> 2.0.6' # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'protected_attributes'        , '~> 1.0.7' # Protect attributes from mass assignment
 gem "rmagick"                     , :require => 'RMagick' #gem to resize the image
 gem 'browser'                     , '~> 0.5.0' # Do some browser detection with Ruby.
 gem 'clockwork'                   , :git => "https://github.com/tomykaira/clockwork.git"

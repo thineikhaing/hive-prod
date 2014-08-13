@@ -290,15 +290,14 @@ class Topic < ActiveRecord::Base
     end
   end
 
-  def topic_image_upload_delayed_job(filename)
+  def topic_image_upload_job
     p "delayed job starts!"
     uploader = PhotoUploader.new
-    uploader.retrieve_from_store!(filename)
+    uploader.retrieve_from_store!(self.image_url)
     uploader.cache_stored_file!
     uploader.resize_to_fit(uploader.get_geometry[0]/5,uploader.get_geometry[1]/5)
     uploader.store!
     p "delayed job ends!"
   end
-
-  handle_asynchronously :topic_image_upload_delayed_job
+  handle_asynchronously :topic_image_upload_job
 end
