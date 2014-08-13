@@ -141,6 +141,7 @@ class Post < ActiveRecord::Base
       else
         unless check_like.present?
           post.likes = post.likes + 1
+          post_user.quid = post_user.quid + 1
           #actionlog.create_record("post", post_id, "like", user.id)
           actionlog =   ActionLog.create(type_name: "post", type_id: post_id, action_type: "like", action_user_id: user.id)
           test_check = true
@@ -151,6 +152,7 @@ class Post < ActiveRecord::Base
     elsif choice == "dislike"
       if check_like.present?
         post.likes = post.likes - 1
+        post_user.quid = post_user.quid - 1
         ActionLog.find_by_type_name_and_type_id_and_action_type_and_action_user_id("post", post_id, "like", user.id).delete
         test_check = true
         action_status = -1
@@ -216,7 +218,7 @@ class Post < ActiveRecord::Base
     #history = Historychange.new
 
     unless check.present?
-      unless self.user_id == admin_user.id or self.user_id == admin_user1.id
+      unless self.user_id == admin_user.id #or self.user_id == admin_user1.id
         post.offensive += 1
         post.save!
         post.reload
