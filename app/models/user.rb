@@ -43,6 +43,47 @@ class User < ActiveRecord::Base
     end
   end
 
+
+  def user_topic_retrival(choice)
+    likes = ActionLog.where(type_name:"topic", action_type:"like", action_user_id:self.id)
+    dislikes = ActionLog.where(type_name:"topic", action_type:"dislike", action_user_id:self.id)
+    favourites = ActionLog.where(type_name:"topic", action_type:"favourite", action_user_id:self.id)
+    offensives = ActionLog.where(type_name:"topic", action_type:"offensive", action_user_id:self.id)
+
+    like_ids =[]
+    dislike_ids = []
+    favourite_ids = []
+    offensive_ids = []
+
+    likes.each do |l|
+      like_ids.push(l.type_id)
+    end
+
+    dislikes.each do |dl|
+      dislike_ids.push(dl.type_id)
+    end
+
+    favourites.each do |f|
+      favourite_ids.push(f.type_id)
+    end
+
+    offensives.each do |o|
+      offensive_ids.push(o.type_id)
+    end
+
+    if choice == "detail"
+      like_topics = Topic.where(id: like_ids)
+      dislike_topics = Topic.where(id: dislike_ids)
+      favourite_topics = Topic.where(id:  favourite_ids)
+      offensive_topics = Topic.where(id: offensive_ids)
+
+      {likes: like_topics, dislikes: dislike_topics, favourites: favourite_topics, offensives: offensive_topics, point: self.point}
+    else
+      {likes: like_ids, dislikes: dislike_ids, favourites: favourite_ids, offensives: offensive_ids, point: self.point}
+    end
+
+  end
+
   private
 
   def email_required?
@@ -77,6 +118,9 @@ class User < ActiveRecord::Base
       end
     end
   end
+
+
+
 end
 
 

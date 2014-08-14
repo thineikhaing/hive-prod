@@ -107,11 +107,26 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def user_info
+    if current_user.present?
+      user = User.find(current_user.id)
+      choice = "summary" #default to summary
+      if params[:choice].present?
+        choice = params[:choice]
+      end
+      topic_info = user.user_topic_retrival(choice)
+      render json: topic_info
+    else
+      render json:{:status=> false}
+    end
+  end
+
   private
 
   def user_params
     p "user param is called"
     params.require(:user).permit(:username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :point, :honor_rating, :created_at, :data, :device_id)
   end
+
 
 end

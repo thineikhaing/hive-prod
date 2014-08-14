@@ -114,4 +114,19 @@ class Api::TopicsController < ApplicationController
     end
   end
 
+  def topics_by_ids
+    if params[:app_key].present? and params[:topic_ids].present?
+      app = HiveApplication.find_by_api_key(params[:app_key])
+      if app.present?
+        arr_topic_ids = eval(params[:topic_ids]) #convert string array into array
+        topics = Topic.where(:id => arr_topic_ids)
+        render json: { topics: topics }
+      else
+        render json: { status: false}
+      end
+
+    else
+      render json: { status: false }
+    end
+  end
 end

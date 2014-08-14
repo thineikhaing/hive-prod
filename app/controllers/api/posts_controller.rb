@@ -119,4 +119,20 @@ class Api::PostsController < ApplicationController
     end
   end
 
+  def posts_by_ids
+    if params[:app_key].present? and params[:post_ids].present?
+      app = HiveApplication.find_by_api_key(params[:app_key])
+      if app.present?
+        arr_post_ids = eval(params[:post_ids]) #convert string array into array
+        posts = Post.where(:id => arr_post_ids)
+        render json: { posts: posts }
+      else
+        render json: { status: false}
+      end
+
+    else
+      render json: { status: false }
+    end
+  end
+
 end
