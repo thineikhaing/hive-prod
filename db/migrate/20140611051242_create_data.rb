@@ -15,7 +15,7 @@ class CreateData < ActiveRecord::Migration
     User.create(email: "admin6@rs-v.com", password: "p@ssw0rd!", password_confirmation: "p@ssw0rd!", username: "Admin Panda", role: 1)
 
     api_key = SecureRandom.hex
-    HiveApplication.create(devuser_id: 1, app_name: "Hive",description: "a way to connect nearby people (with each other, and with businesses) anonymously",api_key: api_key )
+    HiveApplication.create(devuser_id: 1, app_name: "Hive",app_type: "social",description: "a way to connect nearby people (with each other, and with businesses) anonymously",api_key: api_key )
 
     CSV.foreach("db/migrate/20140328083723_stations_seed.csv") do |row|
       Place.create(name: row[0], latitude: row[1], longitude: row[2], address: row[3], locality: row[4], country: row[5], img_url: row[6], user_id: admin.id, source: 0)
@@ -23,3 +23,4 @@ class CreateData < ActiveRecord::Migration
     end
   end
 end
+                                                                                                                      git
