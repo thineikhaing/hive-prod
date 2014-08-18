@@ -23,4 +23,3 @@ class CreateData < ActiveRecord::Migration
     end
   end
 end
-                                                                                                                      git
