@@ -30,12 +30,15 @@ class DeviseCreateDevusers < ActiveRecord::Migration
       # t.string   :unlock_token # Only if unlock strategy is :email or :both
       # t.datetime :locked_at
       t.string :username
-      t.string :email_verification_code
+      t.string :email_verification_code, :default, null:false, default: ""
       t.hstore :data
       t.boolean :verified, :default => false
 
       t.timestamps
       t.references :hiveapplication
+
+
+
     end
 
     add_index :devusers, :email,                unique: true

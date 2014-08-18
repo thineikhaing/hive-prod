@@ -33,13 +33,26 @@ class DeviseCreateUsers < ActiveRecord::Migration
       #auth_token expiry date
       t.datetime :token_expiry_date
 
-      t.string :username
+      t.string :username, null: false, default: ""
       t.string :device_id
       t.string :authentication_token
       t.string :avatar_url
       t.integer :role
       t.integer :point , default: 0
-      t.integer :honor_rating
+      #t.integer :honor_rating
+
+      t.integer :flareMode,           :default => 0
+      t.integer :alert_count,         :default => 3
+      t.integer :paid_alert_count,    :default => 0
+      t.float :credits,               :default => 0
+      t.float :last_known_latitude,   :default => 0
+      t.float :last_known_longitude,  :default => 0
+      t.timestamp :check_in_time
+      t.integer :profanity_counter,   :default => 0
+      t.datetime :offence_date
+      t.integer :positive_honor,      :default => 0
+      t.integer :negative_honor,      :default => 0
+      t.integer :honored_times,       :default => 0
       t.hstore :data
 
       t.timestamps
