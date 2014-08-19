@@ -45,6 +45,7 @@ Rails.application.routes.draw do
     match "users/facebook_login"                    => "users#facebook_login"                   , via: [:get, :post]
     match "users/verify_user_account"               => "users#verify_user_account"              , via: [:get, :post]
     match "users/user_info"                         => "users#user_info"                        , via: [:get, :post]
+    match "users/favourite_user"                    => "users#favourite_user"                   , via: [:get, :post]
     match "topics/create"                           => "topics#create"                          , via: [:get, :post]
     match "topics/topic_liked"                      => "topics#topic_liked"                     , via: [:get, :post]
     match "topics/topic_offensive"                  => "topics#topic_offensive"                 , via: [:get, :post]

@@ -121,6 +121,16 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def favourite_user
+    if params[:fav_user_id].present? and params[:choice].present? and current_user.present?
+      current_user.favourite_user(current_user, params[:user_id], params[:choice])
+
+      render json: { status: true }
+    else
+      render json: { status: false }
+    end
+  end
+
   private
 
   def user_params

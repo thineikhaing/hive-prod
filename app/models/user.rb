@@ -84,6 +84,18 @@ class User < ActiveRecord::Base
 
   end
 
+
+  def favourite_user(current_user, user_id, choice)
+
+    if choice == "favourite"
+      check = ActionLog.where(type_name: "user", type_id: user_id, action_type: "favourite", action_user_id: current_user.id)
+      ActionLog.create(type_name: "user",type_id: user_id, action_type: "favourite", action_user_id: current_user.id) unless check.present?
+    elsif choice == "unfavourite"
+      check = ActionLog.find_by(type_name: "user", type_id: user_id, action_type: "favourite", action_user_id: current_user.id)
+      check.delete if check.present?
+    end
+  end
+
   private
 
   def email_required?
@@ -118,7 +130,6 @@ class User < ActiveRecord::Base
       end
     end
   end
-
 
 
 end

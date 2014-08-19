@@ -4,7 +4,7 @@ class Devuser < ActiveRecord::Base
   #check mandatory fields are present?
   validates :username, presence: {message: "User Name is mandatory"}
   validates :email, presence: {message: "Email is mandatory"}
-  validates :password, presence: {message: "Password is mandatory"}
+  validates :password, presence: {message: "password   is mandatory"} , :on => :create
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
