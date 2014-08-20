@@ -513,11 +513,13 @@ class HiveapplicationController < ApplicationController
       topics = session[:transaction_list_topics]
       topics.each do |topic|
         case topic["status"] # a_variable is the variable we want to compare
+          when 1    #new column
             app_add_field = AppAdditionalField.create(app_id: session[:app_id].to_i, table_name: "Topic", additional_column_name: topic["additional_column_name"])
             AppAdditionalField.add_column("Topic",topic["column_name"],session[:app_id])
 
           when 2    #edit
             if topic["field_id"] >0
+              p "2.1"
               field_record = AppAdditionalField.find(topic["field_id"])
               if field_record.present?
                 old_column_name = field_record.additional_column_name
@@ -530,6 +532,7 @@ class HiveapplicationController < ApplicationController
               end
 
             else
+              p "2.2"
               #new column
               app_add_field = AppAdditionalField.create(app_id: session[:app_id].to_i, table_name: "Topic", additional_column_name: topic["additional_column_name"])
 
