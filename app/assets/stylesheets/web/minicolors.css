@@ -218,6 +218,9 @@
     width: auto;
     display: inline-block;
     padding-left: 26px;
+    font-family: Labrador-A-Medium;
+    font-size: 18px;
+    color: #FF9B00;
 }
 .minicolors-theme-default.minicolors-position-right .minicolors-input {
     padding-right: 26px;

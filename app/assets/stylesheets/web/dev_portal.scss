@@ -14,12 +14,16 @@
   padding-bottom: 10px;
   float: left;
   padding-top: 15px;
+  font-family: Labrador-A-Medium;
+  font-size: 25px;
 }
 #remain_char_container{
   padding-bottom: 10px;
   padding-top: 15px;
   font-size: 18px;
   float: right;
+  font-family: Labrador-A-Medium;
+  font-size: 22px;
 }
 #create_application_form {
   width:  100%;
@@ -67,6 +71,9 @@ table.tbl_create_app_container td.td_btn_container{
     margin-top: 10px;
     padding-top: 10px;
     text-align: center;
+    font-family: Labrador-A-Medium;
+    font-size: 22px;
+
   }
   .btn_save_additional_field_container{
     float: left;
@@ -82,6 +89,8 @@ table.tbl_create_app_container td.td_btn_container{
     padding-top: 10px;
     text-align: center;
     float: right;
+    font-family: Labrador-A-Medium;
+    font-size: 22px;
   }
 }
 
@@ -89,10 +98,12 @@ table.tbl_create_app_container td.td_warning_container{
   text-align: left !important;
   .warning_description{
     font-size: 18px;
+    font-family: Labrador-A-Medium;
     color: #FF9B00;
   }
   .warning_header {
     font-size: 22px;
+    font-family: Labrador-A-Medium;
     color: #FF9B00;
   }
 }
@@ -107,6 +118,8 @@ input#AppAdditionalColumn_additional_column_name{
 
 input#dev_portal_application_name{
   border: solid #FF9B00 1px;
+  font-family: Labrador-A-Medium;
+  font-size: 18px;
   color : #FF9B00;
   height: 25px;
   width: 300px;
@@ -120,9 +133,11 @@ input[type=submit]#btn_create_app{
   color: white;
   border: none;
   cursor: pointer;
-  height: 30px;
+  height: 40px;
   margin-left: 10px;
   margin-top: 10px;
+  font-family: Labrador-A-Medium;
+  font-size: 22px;
 }
 
 input[type=submit]#btn_adv_option{
@@ -138,6 +153,8 @@ input[type=submit]#btn_adv_option{
 
 textarea#dev_portal_description{
   border: solid #FF9B00 1px;
+  font-size: 18px;
+  color : #FF9B00;
   color : #FF9B00;
   margin-left: 10px;
   margin-bottom: 10px;
@@ -148,6 +165,8 @@ select#dev_portal_application_type{
   color: white;
   height: 25px;
   width: 200px;
+  font-family: Labrador-A-Medium;
+  font-size: 18px;
   margin-left: 10px;
   margin-bottom: 10px;
 }
@@ -182,7 +201,8 @@ select#dev_portal_application_type{
   border: none;
   color: white;
   height: 25px;
-  font-size: 16px;
+  font-family: Labrador-A-Medium;
+  font-size: 22px;
   background-color: #FF9B00;
   padding: 3px 5px;
   position: relative;
@@ -202,6 +222,7 @@ select#dev_portal_application_type{
 }
 
 #btn_new_field_btn{
+  margin-top: 5px;
   float: left;
 }
 #btn_new_field_label{
@@ -215,7 +236,7 @@ select#dev_portal_application_type{
   width:  840px;
   margin: 0 auto;
   margin-top: 10px;
-
+  font-family: Labrador-A-Medium;
 
   #additional_field_list {
     margin: 0 auto;
@@ -225,7 +246,7 @@ select#dev_portal_application_type{
     color: white;
     //padding: 10px 0px 10px 10px;
     line-height: 40px;
-    font-size: 24px;
+    font-size: 25px;
     font-weight: bold;
     padding-left: 10px;
     //text-align: left;
