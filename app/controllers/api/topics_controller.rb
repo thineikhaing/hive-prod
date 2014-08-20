@@ -3,8 +3,16 @@ class Api::TopicsController < ApplicationController
   def create
     if params[:app_key].present?
       hiveApplication = HiveApplication.find_by_api_key(params[:app_key])
+      check_profanity = false
+
       if hiveApplication.present?
         #user = User.find_by_authentication_token (params[:auth_token]) if params[:auth_token].present?
+        if check_banned_profanity(params[:title])
+          user = User.find(current_user.id)
+          user.profanity_counter += 1
+          user.offence_date = Time.now
+          user.save!
+        end
 
         place_id = nil
         #check the place_id presents
@@ -44,6 +52,7 @@ class Api::TopicsController < ApplicationController
           end
           result = nil unless result.present?
 
+          #check the profanity
           if params[:image_url].present?
             topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value],place_id: place_id, data: result, image_url: params[:image_url], width: params[:width], height: params[:height], special_type: params[:special_type])
             topic.delay.topic_image_upload_job

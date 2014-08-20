@@ -6,6 +6,13 @@ class Api::PostsController < ApplicationController
       p "present"
       topic = Topic.find(params[:topic_id].to_i)
       #if  topic.hiveapplication_id!=1
+      if check_banned_profanity(params[:post])
+        user = User.find(current_user.id)
+        user.profanity_counter += 1
+        user.offence_date = Time.now
+        user.save!
+      end
+
       data = getHashValuefromString(params[:data]) if params[:data].present?
 
       place_id = nil
