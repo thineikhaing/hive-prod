@@ -1,12 +1,30 @@
 var editColumn_Post = {
   init: function() {
     $('#create_additional_column_container_post').hide();
-
     // click cross button of creation additional column
-    $('#btn_post_add_field_create_container').click( function(){
+    $('#btn_post_cancel_field_create_container').click( function(){
       $('#create_additional_column_container_post').hide();
     });
 
+
+    $('#btn_post_add_field_create_container').click( function(){
+//      $('#create_additional_column_container_topic').hide();
+      var col_name = $('#post_additional_column_name').val();
+      $.ajax({
+        //additional_column_name
+        url: '/edit_column',
+        data: {field_id: 0, additional_column_name:col_name, table_name: "Post"},
+        success: function(html) {
+          var htmlobject = $(html);
+          var output = htmlobject.find("#post_fields_list")[0];
+          var testing = new XMLSerializer().serializeToString(output);
+          $("#post_fields_list").replaceWith(testing);
+          $('#post_additional_column_name').val('');
+          $('#create_additional_column_container_post').hide();
+          editColumn_Post.init();
+        }
+      });
+    });
 
     $("#btn_post_new_field_container").click(function(){
       $('#create_additional_column_container_post').show();
@@ -176,7 +194,7 @@ var editColumn_Post = {
 
               $.ajax({
                 url: '/delete_additional_column',
-                data: {field_id: field_id},
+                data: {field_id: field_id, table_name: "Post"},
                 success: function(html) {
                   var htmlobject = $(html);
                   var output = htmlobject.find("#post_fields_list")[0];
@@ -208,7 +226,7 @@ var editColumn_Post = {
                 // call jquery to controller to save
                 $.ajax({
                   url: '/update_additional_column',
-                  data: {field_id: field_id, column_name: column_name, table_name: "Toopic"},
+                  data: {field_id: field_id, column_name: column_name, table_name: "Post"},
                   success: function(html) {
                     var htmlobject = $(html);
                     var output = htmlobject.find("#post_fields_list")[0];

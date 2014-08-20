@@ -5,24 +5,25 @@
         - if @Postfieldbyapp.present?
           %table{class: "add_col_post_list"}
             - @Postfieldbyapp.each do |field|
-              %tr{height: "40px"}
-                %td{width:"10%"}
-                  %input{name: "txt_col_name", type: "text", value: field.additional_column_name, id: "txt_column_name", style: "visibility:hidden;"}/
-                %td{width:"10%"}
-                  %field_name_container
-                    = field.additional_column_name
-                %td{width:"5%"}
-                  %img.image{height: "30px", src: "assets/edit_pencil.png", width: "30px" ,style: "visibility:hidden;margin:5px"}/
-                %td{width:"5%"}
-                  %input{name: "id", type: "hidden", value: field.id, style: "visibility:hidden;"}/
-                %td{width:"5%"}
-                  -#%input{type: "submit", value: "√", style: "visibility:hidden;"}/
-                  %img.image{height: "30px", src: "assets/webtick.png", width: "30px",style: "visibility: hidden;"}/
-                %td{width:"5%"}
-                  -#%input{type: "submit", value: "X", style: "visibility:hidden;"}/
-                  %img.image{height: "30px", src: "assets/webcross.png", width: "30px",style: "visibility: hidden;"}/
-                %td{width:"60%"}
-                  %input{name: "is_edit_btn_clicked", type: "hidden", value: 0}/
+              - if field["status"] != 3
+                %tr{height: "40px"}
+                  %td{width:"10%"}
+                    %input{name: "txt_col_name", type: "text", value: field["additional_column_name"], id: "txt_column_name", style: "visibility:hidden;"}/
+                  %td{width:"10%"}
+                    %field_name_container
+                      = field["additional_column_name"]
+                  %td{width:"5%"}
+                    %img.image{height: "30px", src: "assets/edit_pencil.png", width: "30px" ,style: "visibility:hidden;margin:5px"}/
+                  %td{width:"5%"}
+                    %input{name: "id", type: "hidden", value: field["id"], style: "visibility:hidden;"}/
+                  %td{width:"5%"}
+                    -#%input{type: "submit", value: "√", style: "visibility:hidden;"}/
+                    %img.image{height: "30px", src: "assets/webtick.png", width: "30px",style: "visibility: hidden;"}/
+                  %td{width:"5%"}
+                    -#%input{type: "submit", value: "X", style: "visibility:hidden;"}/
+                    %img.image{height: "30px", src: "assets/webcross.png", width: "30px",style: "visibility: hidden;"}/
+                  %td{width:"60%"}
+                    %input{name: "is_edit_btn_clicked", type: "hidden", value: 0}/
   %tr
     %td
       #create_additional_column_container_post{style: "background: #FDAF37;"}
@@ -30,19 +31,25 @@
           = form_for :AppAdditionalColumn, url: { controller: "hiveapplication", action: "edit_column", method: "post"}, :html=> {:id => 'add_new_column_form_post'}, remote:true do |f|
             %tr{height: "40px"}
               %td{width:"10%"}
-                = f.text_field :additional_column_name
+                -#= f.text_field :additional_column_name
+                %input{name: "post_additional_column_name", type: "text", id: "post_additional_column_name"}/
               %td{width:"10%"}
-                = f.hidden_field :field_id, value: 0
+                -#= f.hidden_field :field_id, value: 0
+                %input{name: "field_id", type: "hidden", value: 0}/
               %td{width:"10%"}
-                = f.hidden_field :app_id, value: params[:app_id]
+                -#= f.hidden_field :app_id, value: params[:app_id]
+                %input{name: "app_id", type: "hidden", value: params[:app_id]}/
               %td{width:"5%"}
-                = f.hidden_field :table_name, value: "Post"
+                -#= f.hidden_field :table_name, value: "Post"
+                %input{name: "table_name", type: "hidden", value: "Post"}/
               %td{width:"5%"}
                 -#= f.submit "√"
-                %input.imgClass{type: "submit", value: ""}/
+                -#%input.imgClass{type: "submit", value: ""}/
+                #btn_post_add_field_create_container
+                  %img.image{height: "30px", src: "assets/webtick.png", width: "30px"}/
               %td{width:"5%"}
                 -#= f.submit "X"
-                #btn_post_add_field_create_container
+                #btn_post_cancel_field_create_container
                   %img.image{height: "30px", src: "assets/webcross.png", width: "30px"}/
               %td{width:"75%"}
                 = " "

@@ -1,13 +1,14 @@
-%table
-  %tr
-    %td
-      = render :partial => "main_edit_application"
-  %tr
-    %td
-      %br
-  %tr
-    %td
-      = render :partial => "all_tables_list"
+#edit_app_conainter
+  %table
+    %tr
+      %td
+        = render :partial => "main_edit_application"
+    %tr
+      %td
+        %br
+    %tr
+      %td
+        = render :partial => "all_tables_list"
 
-:javascript
-  Devportal.init();
+  :javascript
+    Devportal.init();

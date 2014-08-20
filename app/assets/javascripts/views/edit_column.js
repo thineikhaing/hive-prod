@@ -3,8 +3,27 @@ var editColumn = {
     $('#create_additional_column_container_topic').hide();
 
     // click cross button of creation additional column
-    $('#btn_topic_add_field_create_container').click( function(){
+    $('#btn_topic_cancel_field_create_container').click( function(){
       $('#create_additional_column_container_topic').hide();
+    });
+
+    $('#btn_topic_add_field_create_container').click( function(){
+//      $('#create_additional_column_container_topic').hide();
+      var col_name = $('#additional_column_name').val();
+      $.ajax({
+        //additional_column_name
+        url: '/edit_column',
+        data: {field_id: 0, additional_column_name:col_name, table_name: "Topic"},
+        success: function(html) {
+          var htmlobject = $(html);
+          var output = htmlobject.find("#topic_fields_list")[0];
+          var testing = new XMLSerializer().serializeToString(output);
+          $("#topic_fields_list").replaceWith(testing);
+          $('#additional_column_name').val('');
+          $('#create_additional_column_container_topic').hide();
+          editColumn.init();
+        }
+      });
     });
 
     $("#btn_topic_new_field_container").click(function(){
@@ -56,8 +75,10 @@ var editColumn = {
 
       /* Put the results in a div */
       posting.done(function(data) {
+//        console.log(data);
         $.ajax({
           success: function(html) {
+            console.log(html);
             var htmlobject = $(html);
             var output = htmlobject.find("#topic_fields_list")[0];
             var testing = new XMLSerializer().serializeToString(output);
@@ -178,13 +199,13 @@ var editColumn = {
 
               $.ajax({
                 url: '/delete_additional_column',
-                data: {field_id: field_id},
+                data: {field_id: field_id, table_name: "Topic"},
                 success: function(html) {
                   var htmlobject = $(html);
                   var output = htmlobject.find("#topic_fields_list")[0];
                   var testing = new XMLSerializer().serializeToString(output);
                   $("#topic_fields_list").replaceWith(testing);
-                  $('#AppAdditionalColumn_additional_column_name').val('');
+                  $('#additional_column_name').val('');
                   editColumn.init();
                 }
               });
@@ -210,13 +231,13 @@ var editColumn = {
                 // call jquery to controller to save
                 $.ajax({
                   url: '/update_additional_column',
-                  data: {field_id: field_id, column_name: column_name, table_name: "Toopic"},
+                  data: {field_id: field_id, column_name: column_name, table_name: "Topic"},
                   success: function(html) {
                     var htmlobject = $(html);
                     var output = htmlobject.find("#topic_fields_list")[0];
                     var testing = new XMLSerializer().serializeToString(output);
                     $("#topic_fields_list").replaceWith(testing);
-                    $('#AppAdditionalColumn_additional_column_name').val('');
+                    $('#additional_column_name').val('');
                     editColumn.init();
                   }
                 });

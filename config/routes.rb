@@ -25,7 +25,8 @@ Rails.application.routes.draw do
   match "hiveapplication/update_additional_column", path:"update_additional_column" , via: [:get, :post]
   match "hiveapplication/edit_additional_column",path:"edit_additional_column"  , via: [:get, :post]
   match "hiveapplication/create_additional_field",path:"create_additional_field", via: [:get,:post]
-
+  match "hiveapplication/clear_columns_changes", path:"clear_columns_changes"   , via: [:get,:post]
+  match "hiveapplication/save_columns_changes" , path:"save_columns_changes"    , via: [:get,:post]
   #get "hiveapplication/sign_up", path: "sign_up"
   #post "hiveapplication/sign_up", path: "sign_up"
 

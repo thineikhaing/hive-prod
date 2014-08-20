@@ -24,6 +24,8 @@ class HiveapplicationController < ApplicationController
     session[:no_of_apps] = nil
     session[:app_id] = nil
     session[:table_name] = nil
+    session[:transaction_list_topics] = []
+    session[:transaction_list_posts] = []
   end
 
   def sign_in
@@ -59,6 +61,9 @@ class HiveapplicationController < ApplicationController
   def dev_portal
     # Check for CURRENT_USER
     # Shows list of hiveapplications owned
+    #clear the session array
+    session[:transaction_list_topics] = []
+    session[:transaction_list_posts] = []
     if current_user.present?
       @hive_applications = current_user.hive_applications.order("id ASC")
       session[:no_of_apps] = current_user.hive_applications.count
@@ -130,7 +135,11 @@ class HiveapplicationController < ApplicationController
     # Check if CURRENT_USER exist
     if current_user.present?
       if params[:dev_portal].present?
-        hive_application = HiveApplication.create(app_name: params[:dev_portal][:application_name], app_type: params[:dev_portal][:application_type], description: params[:dev_portal][:description], icon_url: params[:dev_portal][:application_icon] ,devuser_id: current_user.id, theme_color: params[:dev_portal][:theme_color] )
+
+        # Generate random number for APPLICATION_KEY
+        api_key = SecureRandom.hex
+
+        hive_application = HiveApplication.create(app_name: params[:dev_portal][:application_name], app_type: params[:dev_portal][:application_type], description: params[:dev_portal][:description], icon_url: params[:dev_portal][:application_icon] ,devuser_id: current_user.id, theme_color: params[:dev_portal][:theme_color], api_key: api_key )
         flash[:notice] = ""
         hive_application.errors.full_messages.each do |message|
           # do stuff for each error
@@ -138,11 +147,6 @@ class HiveapplicationController < ApplicationController
         end
 
         unless hive_application.errors.any?
-          # Generate random number for APPLICATION_KEY
-          api_key = SecureRandom.hex
-          hive_application.api_key = api_key
-          hive_application.save!
-
           # Creates a bot for the the application
           User.create(email: "bot@#{params[:dev_portal][:application_name]}", username: "#{params[:dev_portal][:application_name]} Bot", role: User::BOT)
 
@@ -159,13 +163,34 @@ class HiveapplicationController < ApplicationController
   def edit_application
     # Show the Topics, Posts, Places, Users
     # Check if APPLICATION_ID and CURRENT_USER exist
+    p "edit_application"
     if params[:app_id].present? && current_user.present?
       session[:app_id] = params[:app_id].to_i
       @application = HiveApplication.find(params[:app_id])
-      @Topicfieldbyapp = table_list(params[:app_id], "Topic")
+      @Topicfields = table_list(params[:app_id], "Topic")
 
-      @Postfieldbyapp =  table_list(params[:app_id], "Post")
+      @Postfields =  table_list(params[:app_id], "Post")
 
+      #else
+      #id, additional_column_name, status{ 0:default, 1:create, 2:edit, 3:delete }
+      if session[:transaction_list_topics].present?  == false
+        id=0
+        @Topicfields.each do |topic_field|
+          id+=1
+          session[:transaction_list_topics].push({"field_id" => topic_field.id, "id"=> id, "additional_column_name"=> topic_field.additional_column_name, "status"=> 0})
+        end
+      end
+      @Topicfieldbyapp = session[:transaction_list_topics]
+      if session[:transaction_list_posts].present?  == false
+        id=0
+        @Postfields.each do |topic_field|
+          id+=1
+          session[:transaction_list_posts].push({"field_id"=> topic_field.id, "id"=> id, "additional_column_name"=> topic_field.additional_column_name, "status"=> 0 })
+        end
+      end
+      @Postfieldbyapp = session[:transaction_list_posts]
+
+      check_status_changes
       # Check if APPLICATION_ID that user click and CURRENT_USER exist
     elsif params[:dev_portal].present? && current_user.present?
       application_id = params[:dev_portal][:application_id]
@@ -191,6 +216,7 @@ class HiveapplicationController < ApplicationController
       #redirect back to Sign in Page
       redirect_to hiveapplication_index_path
     end
+
   end
 
   def delete_application
@@ -237,13 +263,32 @@ class HiveapplicationController < ApplicationController
   def delete_additional_column
     # Delete the additional field stored in hstore (data)
     if params[:field_id].present?
-      additional_field = AppAdditionalField.find(params[:field_id])
-      field_name = additional_field.additional_column_name
+      #additional_field = AppAdditionalField.find(params[:field_id])
+      #field_name = additional_field.additional_column_name
+      #check for params[:field_id] and if it is zero if id is zero del permanently from array
+      #if additional_field.present? and params[:table_name].present?
+      if params[:table_name].present?
+        if params[:table_name]=="Topic" and session[:transaction_list_topics].present?
+          topics = session[:transaction_list_topics]
+          topics.each do |field|
+            if field["id"].to_i == params[:field_id].to_i
+              p "INSIDE"
+              field["status"] = 3
+            end
+          end
+          @Topicfieldbyapp = session[:transaction_list_topics]
+        elsif params[:table_name]=="Post" and session[:transaction_list_posts].present?
+         session[:transaction_list_posts].each do |field|
+            if field["id"].to_i == params[:field_id].to_i
+              field[:status] = 3
+            end
+         end
+         @Postfieldbyapp = session[:transaction_list_posts]
+        end
 
-      if additional_field.present?
-        additional_field.delete
-        @fieldbyapp = AppAdditionalField.where(:app_id=> session[:app_id], :table_name => params[:table_name])
-        AppAdditionalField.delete_column(params[:table_name],field_name,session[:app_id])
+        #additional_field.delete
+        #@fieldbyapp = AppAdditionalField.where(:app_id=> session[:app_id], :table_name => params[:table_name])
+        #AppAdditionalField.delete_column(params[:table_name],field_name,session[:app_id])
         #check the table name (Topic/Post/Places/User)
         redirect_to hiveapplication_edit_application_path(:app_id => session[:app_id])
       end
@@ -251,15 +296,47 @@ class HiveapplicationController < ApplicationController
   end
 
   def update_additional_column
-    field_record = AppAdditionalField.find(params[:field_id].to_i)
-    old_column_name = field_record.additional_column_name
-    new_column_name = params[:column_name]
-    field_record.additional_column_name = new_column_name
-    field_record.save!
-    AppAdditionalField.edit_column(params[:table_name],old_column_name,new_column_name,session[:app_id])
 
-    @fieldbyapp = AppAdditionalField.where(:app_id=> session[:app_id], :table_name => params[:table_name])
-    redirect_to hiveapplication_edit_application_path(:app_id => session[:app_id])
+    if params[:field_id].present?
+      #additional_field = AppAdditionalField.find(params[:field_id])
+      #field_name = additional_field.additional_column_name
+      #if additional_field.present? and params[:table_name].present?
+      if params[:table_name].present?
+        new_column_name = params[:column_name]
+        if params[:table_name]=="Topic" and session[:transaction_list_topics].present?
+          topics = session[:transaction_list_topics]
+          topics.each do |field|
+            p field
+            p params[:field_id].to_i
+            if field["id"].to_i == params[:field_id].to_i
+              p "INSIDE"
+              field["additional_column_name"] = new_column_name
+              field["status"] = 2
+            end
+          end
+          @Topicfieldbyapp = session[:transaction_list_topics]
+        elsif params[:table_name]=="Post" and session[:transaction_list_posts].present?
+          session[:transaction_list_posts].each do |field|
+            if field["id"].to_i == params[:field_id].to_i
+              field["additional_column_name"] = new_column_name
+              field["status"] = 2
+            end
+          end
+          @Postfieldbyapp = session[:transaction_list_posts]
+        end
+        redirect_to hiveapplication_edit_application_path(:app_id => session[:app_id])
+      end
+    end
+    #field_record = AppAdditionalField.find(params[:field_id].to_i)
+    #old_column_name = field_record.additional_column_name
+    #new_column_name = params[:column_name]
+
+    #field_record.additional_column_name = new_column_name
+    #field_record.save!
+    #AppAdditionalField.edit_column(params[:table_name],old_column_name,new_column_name,session[:app_id])
+    #
+    #@fieldbyapp = AppAdditionalField.where(:app_id=> session[:app_id], :table_name => params[:table_name])
+    #redirect_to hiveapplication_edit_application_path(:app_id => session[:app_id])
   end
 
   def verify
@@ -334,38 +411,144 @@ class HiveapplicationController < ApplicationController
 
   def edit_column
     # Edits the field stored in data(hstore)
-     p params
-    if params[:AppAdditionalColumn].present?
-      if params[:AppAdditionalColumn][:field_id].present?
-        if params[:AppAdditionalColumn][:field_id].to_i!= 0
-          field_record = AppAdditionalField.find(params[:AppAdditionalColumn][:field_id].to_i)
-          old_column_name = field_record.additional_column_name
-          new_column_name = params[:AppAdditionalColumn][:additional_column_name]
-          field_record.additional_column_name = new_column_name
-          field_record.save!
-          AppAdditionalField.edit_column(params[:AppAdditionalColumn][:table_name],old_column_name,new_column_name,params[:AppAdditionalColumn][:app_id])
+    p "edit_column"
+    p params
+    #if params[:AppAdditionalColumn].present?
+      if params[:field_id].present?
+        if params[:table_name]=="Topic"
+          if session[:transaction_list_topics].present?
+            topics = session[:transaction_list_topics]
+            id = topics.last["id"]
+          else
+            id = 0
+            topics = []
+          end
+          id +=1
+          topics.push({"id" => id, "field_id" => 0, "additional_column_name"=> params[:additional_column_name], "status"=> 1})
+          session[:transaction_list_topics] = topics
+          @Topicfieldbyapp = session[:transaction_list_topics]
+        elsif params[:table_name]=="Post"
+          if session[:transaction_list_posts].present?
+            posts = session[:transaction_list_posts]
+            id = posts.last["id"]
+          else
+            id = 0
+            posts = []
+          end
+          id +=1
+          posts.push({"id" => id, "field_id" => 0, "additional_column_name"=> params[:additional_column_name], "status"=> 1})
+          session.delete(:transaction_list_posts)
+          session[:transaction_list_posts] = posts
+          p  session[:transaction_list_posts]
+          @Postfieldbyapp = session[:transaction_list_posts]
+        end
+        redirect_to hiveapplication_edit_application_path(:app_id => session[:app_id])
+      #end
+    end
 
-          @fieldbyapp = AppAdditionalField.where(:app_id=> params[:AppAdditionalColumn][:app_id], :table_name => params[:AppAdditionalColumn][:table_name])
 
-        else
-          app_add_field = AppAdditionalField.create(app_id: params[:AppAdditionalColumn][:app_id].to_i, table_name: params[:AppAdditionalColumn][:table_name], additional_column_name: params[:AppAdditionalColumn][:additional_column_name])
-          AppAdditionalField.add_column(params[:AppAdditionalColumn][:table_name],params[:AppAdditionalColumn][:additional_column_name],params[:AppAdditionalColumn][:app_id])
 
-          @fieldbyapp = AppAdditionalField.where(:app_id=> params[:AppAdditionalColumn][:app_id], :table_name => params[:AppAdditionalColumn][:table_name])
+    #if params[:AppAdditionalColumn].present?
+    #  if params[:AppAdditionalColumn][:field_id].present?
+
+        #if params[:AppAdditionalColumn][:field_id].to_i!= 0
+        #  field_record = AppAdditionalField.find(params[:AppAdditionalColumn][:field_id].to_i)
+        #  old_column_name = field_record.additional_column_name
+        #  new_column_name = params[:AppAdditionalColumn][:additional_column_name]
+        #  field_record.additional_column_name = new_column_name
+        #  field_record.save!
+        #  AppAdditionalField.edit_column(params[:AppAdditionalColumn][:table_name],old_column_name,new_column_name,params[:AppAdditionalColumn][:app_id])
+        #
+        #  @fieldbyapp = AppAdditionalField.where(:app_id=> params[:AppAdditionalColumn][:app_id], :table_name => params[:AppAdditionalColumn][:table_name])
+        #
+
+
+        #app_add_field = AppAdditionalField.create(app_id: params[:AppAdditionalColumn][:app_id].to_i, table_name: params[:AppAdditionalColumn][:table_name], additional_column_name: params[:AppAdditionalColumn][:additional_column_name])
+        #AppAdditionalField.add_column(params[:AppAdditionalColumn][:table_name],params[:AppAdditionalColumn][:additional_column_name],params[:AppAdditionalColumn][:app_id])
+        #
+        #@fieldbyapp = AppAdditionalField.where(:app_id=> params[:AppAdditionalColumn][:app_id], :table_name => params[:AppAdditionalColumn][:table_name])
+        #end
+      #end
+    #elsif params[:table_name].present?
+    #  session[:table_name] = params[:table_name]
+    #  if params[:table_name] == "Topic"
+    #    @columns = Topic.columns.map {|c| [c.name, c.type]}
+    #  elsif params[:table_name] == "Post"
+    #    @columns = Post.columns.map {|c| [c.name, c.type]}
+    #  end
+    #end
+  end
+
+
+  def check_status_changes
+    status_change = false
+    session[:transaction_list_topics].each do |topic|
+      if topic["status"]!= 0
+        status_change = true
+        break
+      end
+    end
+    if status_change == false
+      session[:transaction_list_posts].each do |post|
+        if post["status"]!= 0
+          status_change = true
+          break
         end
       end
-    elsif params[:table_name].present?
-      session[:table_name] = params[:table_name]
-      #if params[:table_name] == "Place"
-      #  @columns = Place.columns.map {|c| [c.name, c.type]}
-      #elsif params[:table_name] == "User"
-      #  @columns = User.columns.map {|c| [c.name, c.type]}
-      if params[:table_name] == "Topic"
-        @columns = Topic.columns.map {|c| [c.name, c.type]}
-      elsif params[:table_name] == "Post"
-        @columns = Post.columns.map {|c| [c.name, c.type]}
-      end
+    end
+    cookies[:status_change] = status_change
+    p cookies[:status_change]
+  end
 
+  def clear_columns_changes
+    cookies[:status_change] = false
+    session[:transaction_list_topics] = []
+    session[:transaction_list_posts] = []
+    redirect_to hiveapplication_edit_application_path(:app_id => session[:app_id])
+  end
+
+  def save_columns_changes
+    p "save changes"
+    if session[:transaction_list_topics].present?
+      topics = session[:transaction_list_topics]
+      topics.each do |topic|
+        case topic["status"] # a_variable is the variable we want to compare
+            app_add_field = AppAdditionalField.create(app_id: session[:app_id].to_i, table_name: "Topic", additional_column_name: topic["additional_column_name"])
+            AppAdditionalField.add_column("Topic",topic["column_name"],session[:app_id])
+
+          when 2    #edit
+            if topic["field_id"] >0
+              field_record = AppAdditionalField.find(topic["field_id"])
+              if field_record.present?
+                old_column_name = field_record.additional_column_name
+                new_column_name = topic["additional_column_name"]
+
+                field_record.additional_column_name = new_column_name
+                field_record.save!
+
+                AppAdditionalField.edit_column("Topic",old_column_name,new_column_name,session[:app_id])
+              end
+
+            else
+              #new column
+              app_add_field = AppAdditionalField.create(app_id: session[:app_id].to_i, table_name: "Topic", additional_column_name: topic["additional_column_name"])
+
+              AppAdditionalField.add_column("Topic",topic["column_name"],session[:app_id])
+            end
+
+          when 3    #delete
+            additional_field = AppAdditionalField.find(topic["field_id"])
+            if additional_field.present?
+              field_name = additional_field.additional_column_name
+              additional_field.delete
+
+              AppAdditionalField.delete_column("Topic",field_name,session[:app_id])
+            end
+          else
+            p "it was something else"
+        end
+      end
+      clear_columns_changes
     end
   end
 
