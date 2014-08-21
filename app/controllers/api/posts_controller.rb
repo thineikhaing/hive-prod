@@ -108,6 +108,12 @@ class Api::PostsController < ApplicationController
         post =  Post.find(params[:post_id])
         if post.present?
           post.remove_records
+          if hiveapplication.id ==1
+            post.delete_event_broadcast_hive
+          else
+            post.delete_event_broadcast_hive
+            post.delete_event_broadcast_other_app
+          end
           #post.delete_event_broadcast
           post.delete
 

@@ -52,12 +52,15 @@ class Api::TopicsController < ApplicationController
           end
           result = nil unless result.present?
 
+          params[:likes].present? ? likes = params[:likes].to_i : likes = 0
+          params[:dislikes].present? ? dislikes = params[:dislikes].to_i : dislikes = 0
+
           #check the profanity
           if params[:image_url].present?
-            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value],place_id: place_id, data: result, image_url: params[:image_url], width: params[:width], height: params[:height], special_type: params[:special_type])
+            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value],place_id: place_id, data: result, image_url: params[:image_url], width: params[:width], height: params[:height], special_type: params[:special_type],likes: likes, dislikes: dislikes)
             topic.delay.topic_image_upload_job
           else
-            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value], place_id: place_id, data: result, special_type: params[:special_type])
+            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value], place_id: place_id, data: result, special_type: params[:special_type],likes: likes, dislikes: dislikes)
           end
           post = nil
           if topic.present? and params[:post_content].present?
@@ -67,6 +70,14 @@ class Api::TopicsController < ApplicationController
 
           tag.add_record(topic.id, params[:tag], Tag::NORMAL) if params[:tag].present?  and topic.present?
           tag.add_record(topic.id, params[:locationtag], Tag::LOCATION) if params[:locationtag].present?  and topic.present?
+
+          if likes > 0
+            ActionLog.create(action_type: "like", type_id: topic.id, type_name: "topic", action_user_id: current_user.id) if topic.present?
+          end
+
+          if dislikes > 0
+            ActionLog.create(action_type: "dislike", type_id: topic.id, type_name: "topic", action_user_id: current_user.id) if topic.present?
+          end
 
           if hiveApplication.id ==1
             #broadcast new topic creation to hive_channel only
@@ -150,6 +161,12 @@ class Api::TopicsController < ApplicationController
         topic = Topic.find(params[:topic_id])
         if topic.present?
           topic.remove_records
+          if hiveapplication.id ==1
+            topic.delete_event_broadcast_hive
+          else
+            topic.delete_event_broadcast_hive
+            topic.delete_event_broadcast_other_app
+          end
           #topic.delete_event_broadcast
           topic.delete
 
