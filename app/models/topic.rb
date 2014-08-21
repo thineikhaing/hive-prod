@@ -11,34 +11,41 @@ class Topic < ActiveRecord::Base
 
   attr_accessible :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :data, :created_at, :image_url, :width, :height, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type
 
+  # Return the tags and location tags related to the topic
+
+  def tag_information
+    tags = TopicWithTag.where(topic_id: self.id)
+    { tags: tags }
+  end
+
   def as_json(options=nil)
     if options[:popular_post].present? and options[:latest_post].present?
       if options[:num_posts].present? and options[:num_posts].to_i>0
         @no_of_post =options[:num_posts].to_i
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :popular_post, :latest_post, :num_posts])
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post, :latest_post, :num_posts])
       else
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :popular_post, :latest_post])
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post, :latest_post])
       end
     elsif options[:popular_post].present? and options[:latest_post].nil?
       if options[:num_posts].present?  and options[:num_posts].to_i>0
         @no_of_post =options[:num_posts].to_i
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :popular_post, :num_posts])
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post, :num_posts])
       else
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :popular_post])
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post])
       end
     elsif options[:popular_post].nil? and options[:latest_post].present?
       if options[:num_posts].present?  and options[:num_posts].to_i>0
         @no_of_post =options[:num_posts].to_i
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :latest_post, :num_posts])
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :latest_post, :num_posts])
       else
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :latest_post])
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :latest_post])
       end
     else
       if options[:num_posts].present?  and options[:num_posts].to_i>0
         @no_of_post =options[:num_posts].to_i
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :num_posts])
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :num_posts])
       else
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information])
+        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information])
       end
     end
   end
@@ -78,7 +85,8 @@ class Topic < ActiveRecord::Base
         sepcial_type: self.special_type,
         methods: {
             username: username,
-            place_information: self.place_information
+            place_information: self.place_information,
+            tag_information: self.tag_information
         }
     }
 
@@ -107,7 +115,8 @@ class Topic < ActiveRecord::Base
         data: self.data,
         methods: {
             username: username,
-            place_information: self.place_information
+            place_information: self.place_information,
+            tag_information: self.tag_information
         }
     }
     channel_name = "hive_application_"+ self.hiveapplication_id.to_s+ "_channel"
@@ -136,7 +145,8 @@ class Topic < ActiveRecord::Base
         special_type: self.special_type,
         methods: {
             username: username,
-            place_information: self.place_information
+            place_information: self.place_information,
+            tag_information: self.tag_information
         }
     }
 
@@ -165,7 +175,8 @@ class Topic < ActiveRecord::Base
         data: self.data,
         methods: {
             username: username,
-            place_information: self.place_information
+            place_information: self.place_information,
+            tag_information: self.tag_information
         }
     }
     channel_name = "hive_application_"+ self.hiveapplication_id.to_s+ "_channel"

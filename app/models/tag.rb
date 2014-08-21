@@ -1,7 +1,49 @@
 require 'value_enums'
 
 class Tag < ActiveRecord::Base
-  attr_accessible :tag_type, :keyword, :created_at
-
+  belongs_to :topic
   enums %w(NORMAL LOCATION)
+
+  attr_accessible :tag_type, :keyword
+
+
+  def as_json(option=nil)
+    super(only: [:id, :keyword, :tag_type])
+  end
+
+
+  def add_record(topic_id, name, tag_type)
+    topicwithtag = TopicWithTag.new
+    tagsArray = [ ]
+    nameArray = name.split(",")
+    count = 0
+    profanity = false
+
+    nameArray.each do |na|
+      na.downcase!
+      checkProfanity = na.split(" ")
+      checkProfanity.map { |cp| profanity = true if cp == "cunt" or cp == "shit" or cp == "cocksucker" or cp == "piss" or cp == "tits" or cp == "fuck" or cp == "motherfucker" or cp == "suck" or cp == "cheebye" }
+
+      unless profanity == true
+        tag = Tag.find_by_keyword_and_tag_type(na, tag_type)
+
+        if tag.present?
+          topicwithtag.add_record(topic_id, tag.id)
+        else
+          count += 1
+          p count
+          p na[0 .. 24]
+          p tag_type
+          new_tag = Tag.create(keyword: na[0 .. 24], tag_type: tag_type)
+          topicwithtag.add_record(topic_id, new_tag.id)
+          tagsArray.push({ keyword: new_tag})
+        end
+      end
+      profanity = false
+    end
+
+    #Pusher["hive_channel"].trigger_async("new_tag", { tags: tagsArray }) if count > 0
+  end
+
+
 end

@@ -3,7 +3,7 @@ class Api::TopicsController < ApplicationController
   def create
     if params[:app_key].present?
       hiveApplication = HiveApplication.find_by_api_key(params[:app_key])
-      check_profanity = false
+      tag = Tag.new
 
       if hiveApplication.present?
         #user = User.find_by_authentication_token (params[:auth_token]) if params[:auth_token].present?
@@ -64,6 +64,10 @@ class Api::TopicsController < ApplicationController
             post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, place_id: place_id) if params[:post_type] == Post::TEXT.to_s
             post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height], place_id: place_id) if params[:post_type] == Post::IMAGE.to_s
           end
+
+          tag.add_record(topic.id, params[:tag], Tag::NORMAL) if params[:tag].present?  and topic.present?
+          tag.add_record(topic.id, params[:locationtag], Tag::LOCATION) if params[:locationtag].present?  and topic.present?
+
           if hiveApplication.id ==1
             #broadcast new topic creation to hive_channel only
             topic.hive_broadcast
