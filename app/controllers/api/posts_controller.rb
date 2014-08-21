@@ -101,6 +101,27 @@ class Api::PostsController < ApplicationController
     end
   end
 
+  def delete
+    if params[:app_key].present? and params[:post_id].present?
+      hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+      if hiveapplication.present?
+        post =  Post.find(params[:post_id])
+        if post.present?
+          post.remove_records
+          #post.delete_event_broadcast
+          post.delete
+
+          render json: { status: true }
+        else
+          render json: { status: false }
+        end
+      else
+        render json: { status: false }
+      end
+    else
+      render json: { status: false}
+    end
+  end
 
   def post_liked
     if params[:post_id].present? && params[:choice].present?

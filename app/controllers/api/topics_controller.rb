@@ -142,4 +142,27 @@ class Api::TopicsController < ApplicationController
       render json: { status: false }
     end
   end
+
+  def delete
+    if params[:topic_id].present? and params[:app_key].present?
+      hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+      if hiveapplication.present?
+        topic = Topic.find(params[:topic_id])
+        if topic.present?
+          topic.remove_records
+          #topic.delete_event_broadcast
+          topic.delete
+
+          render json: { status: true }
+        else
+          render json: { status: false }
+        end
+      else
+        render json: { status: false }
+      end
+    else
+      render json: { status: false }
+    end
+  end
+
 end

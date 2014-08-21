@@ -106,6 +106,51 @@ class Post < ActiveRecord::Base
     Pusher[channel_name].trigger_async("update_post", data)
   end
 
+  def delete_event_broadcast_hive
+    data = {
+        id: self.id,
+        topic_id: self.topic_id,
+        content: self.content,
+        img_url: self.img_url,
+        width:  self.width,
+        height: self.height,
+        created_at: self.created_at,
+        user_id: self.user_id,
+        username: self.username,
+        post_type: self.post_type,
+        place_id: self.place_id,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        offensive: self.offensive
+    }
+
+    channel_name = "topic_" + self.topic_id.to_s+ "_channel"
+    Pusher[channel_name].trigger_async("delete_post", data)
+  end
+
+  def delete_event_broadcast_other_app
+    data = {
+        id: self.id,
+        topic_id: self.topic_id,
+        content: self.content,
+        img_url: self.img_url,
+        width:  self.width,
+        height: self.height,
+        created_at: self.created_at,
+        user_id: self.user_id,
+        username: self.username,
+        post_type: self.post_type,
+        place_id: self.place_id,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        offensive: self.offensive,
+        data: self.data
+    }
+
+    channel_name = "topic_" + self.topic_id.to_s+ "_channel"
+    Pusher[channel_name].trigger_async("delete_post", data)
+  end
+
   def user_add_likes(current_user, post_id, choice)
     actionlog = ActionLog.new
     #history = Historychange.new
@@ -119,6 +164,7 @@ class Post < ActiveRecord::Base
     test_check = false
     check_like = ActionLog.where(type_name: "post", type_id: post_id, action_type: "like", action_user_id: user.id)
     check_dislike = ActionLog.where(type_name: "post", type_id: post_id, action_type: "dislike", action_user_id: user.id)
+
     action_status = 0
     postsArray = Topic.find(post.topic_id).posts.where(["likes > ? OR dislikes > ?", 0, 0])
 
@@ -188,23 +234,26 @@ class Post < ActiveRecord::Base
     if test_check == true
       newTestDataArray = [ ]
       newPostsArray = Topic.find(post.topic_id).posts.where(["likes > ? OR dislikes > ?", 0, 0])
-
-      newPostsArray.each do |npa|
-        newTotal = npa.likes + npa.dislikes
-        newTestDataArray.push({ total: newTotal, id: npa.id, created_at: npa.created_at })
-      end
-      newer_post = newTestDataArray.sort_by { |x| [x[:total], x[:created_at]] }
-      newer_TestPost = Post.find(newer_post.last[:id])
-
-      if new_post.present?
-        unless testPost.id == newer_TestPost.id
-          topic = Topic.find(post.topic_id)
-          topic.update_event_broadcast
+      if newPostsArray.present?
+        newPostsArray.each do |npa|
+          newTotal = npa.likes + npa.dislikes
+          newTestDataArray.push({ total: newTotal, id: npa.id, created_at: npa.created_at })
         end
-      else
-        topic = Topic.find(post.topic_id)
-        #topic.update_event_broadcast
+
+        newer_post = newTestDataArray.sort_by { |x| [x[:total], x[:created_at]] }
+        newer_TestPost = Post.find(newer_post.last[:id])
+
+        if new_post.present?
+          unless testPost.id == newer_TestPost.id
+            topic = Topic.find(post.topic_id)
+            topic.update_event_broadcast
+          end
+        else
+          topic = Topic.find(post.topic_id)
+          #topic.update_event_broadcast
+        end
       end
+
     end
     return action_status
   end
@@ -231,6 +280,27 @@ class Post < ActiveRecord::Base
       end
     end
   end
+
+  def remove_records
+
+    checkLikedPost = ActionLog.where(type_name: "post", action_type: "like", type_id: self.id)
+    checkFavouritePost = ActionLog.where(type_name: "post", action_type: "favourite", type_id: self.id)
+    checkOffensivePost = ActionLog.where(type_name: "post", action_type: "offensive", type_id: self.id)
+
+    checkLikedPost.each do |clp|
+      clp.delete
+    end
+
+    checkFavouritePost.each do |cfp|
+      cfp.delete
+    end
+
+    checkOffensivePost.each do |cop|
+      cop.delete
+    end
+
+  end
+
 
   def post_image_upload_delayed_job(filename)
     p "delayed job starts!"
