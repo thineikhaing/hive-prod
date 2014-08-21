@@ -21,7 +21,7 @@ var editColumn = {
           $("#topic_fields_list").replaceWith(testing);
           $('#additional_column_name').val('');
           $('#create_additional_column_container_topic').hide();
-          editColumn.init();
+//          editColumn.init();
         }
       });
     });
@@ -196,7 +196,6 @@ var editColumn = {
             if (field_id!= 0)
             {
               // call jquery to controller to del
-
               $.ajax({
                 url: '/delete_additional_column',
                 data: {field_id: field_id, table_name: "Topic"},

@@ -21,7 +21,7 @@ var editColumn_Post = {
           $("#post_fields_list").replaceWith(testing);
           $('#post_additional_column_name').val('');
           $('#create_additional_column_container_post').hide();
-          editColumn_Post.init();
+//          editColumn_Post.init();
         }
       });
     });
