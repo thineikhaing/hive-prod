@@ -89,9 +89,9 @@ var editColumn = {
         $.ajax({
           success: function(html) {
             var htmlobject = $(html);
-            var output = htmlobject.find("#topic_fields_list")[0];
+            var output = htmlobject.find("#additional_field_list_container_topic")[0];
             var testing = new XMLSerializer().serializeToString(output);
-            $("#topic_fields_list").replaceWith(testing);
+            $("#additional_field_list_container_topic").replaceWith(testing);
             $('#create_additional_column_container_topic').hide();
             editColumn.init();
           }
@@ -211,9 +211,9 @@ var editColumn = {
                 data: {field_id: field_id, table_name: "Topic"},
                 success: function(html) {
                   var htmlobject = $(html);
-                  var output = htmlobject.find("#topic_fields_list")[0];
+                  var output = htmlobject.find("#additional_field_list_container_topic")[0];
                   var testing = new XMLSerializer().serializeToString(output);
-                  $("#topic_fields_list").replaceWith(testing);
+                  $("#additional_field_list_container_topic").replaceWith(testing);
                   $('#additional_column_name').val('');
                   editColumn.init();
                 }
@@ -243,9 +243,9 @@ var editColumn = {
                   data: {field_id: field_id, column_name: column_name, table_name: "Topic"},
                   success: function(html) {
                     var htmlobject = $(html);
-                    var output = htmlobject.find("#topic_fields_list")[0];
+                    var output = htmlobject.find("#additional_field_list_container_topic")[0];
                     var testing = new XMLSerializer().serializeToString(output);
-                    $("#topic_fields_list").replaceWith(testing);
+                    $("#additional_field_list_container_topic").replaceWith(testing);
                     $('#additional_column_name').val('');
                     editColumn.init();
                   }

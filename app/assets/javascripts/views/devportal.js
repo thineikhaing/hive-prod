@@ -128,12 +128,14 @@ var Devportal = {
         success: function(html) {
           alert ("successful");
           var htmlobject = $(html);
-          var output = htmlobject.find("#post_fields_list")[0];
+          var output = htmlobject.find("#additional_field_list_container_post")[0];
           var testing = new XMLSerializer().serializeToString(output);
-          $("#post_fields_list").replaceWith(testing);
-          var output = htmlobject.find("#topic_fields_list")[0];
+          $("#additional_field_list_container_post").replaceWith(testing);
+          var output = htmlobject.find("#additional_field_list_container_topic")[0];
           var testing = new XMLSerializer().serializeToString(output);
-          $("#topic_fields_list").replaceWith(testing);
+          $("#additional_field_list_container_topic").replaceWith(testing);
+          editColumn_Post.init();
+          editColumn.init();
         }
       });
     });

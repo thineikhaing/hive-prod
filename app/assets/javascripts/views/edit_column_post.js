@@ -88,9 +88,9 @@ var editColumn_Post = {
         $.ajax({
           success: function(html) {
             var htmlobject = $(html);
-            var output = htmlobject.find("#post_fields_list")[0];
+            var output = htmlobject.find("#additional_field_list_container_post")[0];
             var testing = new XMLSerializer().serializeToString(output);
-            $("#post_fields_list").replaceWith(testing);
+            $("#additional_field_list_container_post").replaceWith(testing);
             $('#create_additional_column_container_post').hide();
             editColumn_Post.init();
           }
@@ -207,9 +207,9 @@ var editColumn_Post = {
                 data: {field_id: field_id, table_name: "Post"},
                 success: function(html) {
                   var htmlobject = $(html);
-                  var output = htmlobject.find("#post_fields_list")[0];
+                  var output = htmlobject.find("#additional_field_list_container_post")[0];
                   var testing = new XMLSerializer().serializeToString(output);
-                  $("#post_fields_list").replaceWith(testing);
+                  $("#additional_field_list_container_post").replaceWith(testing);
                   $('#AppAdditionalColumn_additional_column_name').val('');
                   editColumn_Post.init();
                 }
@@ -239,9 +239,9 @@ var editColumn_Post = {
                   data: {field_id: field_id, column_name: column_name, table_name: "Post"},
                   success: function(html) {
                     var htmlobject = $(html);
-                    var output = htmlobject.find("#post_fields_list")[0];
+                    var output = htmlobject.find("#additional_field_list_container_post")[0];
                     var testing = new XMLSerializer().serializeToString(output);
-                    $("#post_fields_list").replaceWith(testing);
+                    $("#additional_field_list_container_post").replaceWith(testing);
                     $('#AppAdditionalColumn_additional_column_name').val('');
                     editColumn_Post.init();
                   }
