@@ -15,9 +15,11 @@
     = render :partial => "hiveapplication/all_application_list"
 
   #application_list_footer
-    #app_icon_container
-      #add_app_icon
-        #add_app_label
-          = link_to "NEW APP", hiveapplication_add_application_path
+    %a{:href => hiveapplication_add_application_path, :style => "color: #FFFFFF;text-decoration: none;"}
+      #app_icon_container
+        #add_app_icon
+          #add_app_label
+            -#= link_to "NEW APP", hiveapplication_add_application_path
+            = "NEW APP"
 
 
