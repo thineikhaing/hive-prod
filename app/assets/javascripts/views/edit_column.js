@@ -21,7 +21,7 @@ var editColumn = {
           $("#additional_field_list_container_topic").replaceWith(testing);
           $('#additional_column_name').val('');
           $('#create_additional_column_container_topic').hide();
-          var container_height = $('#list_of_topic_fields_container').height();
+          var container_height = $('#topic_fields_list').height();
           $('#list_of_topic_fields_container').scrollTop(container_height);
 //          $('#list_of_topic_fields_container').animate({
 //            scrollTop: container_height +100
@@ -34,7 +34,7 @@ var editColumn = {
     $("#btn_topic_new_field_container").click(function(){
       $('#create_additional_column_container_topic').show();
       main_container = $('#create_additional_column_container_topic');
-      var container_height = $('#list_of_topic_fields_container').height();
+      var container_height = $('#topic_fields_list').height();
 //      $('#list_of_topic_fields_container').animate({
 //        scrollTop: container_height + 100
 //      }, 100);

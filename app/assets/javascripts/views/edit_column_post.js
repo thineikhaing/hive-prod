@@ -21,7 +21,7 @@ var editColumn_Post = {
           $("#additional_field_list_container_post").replaceWith(testing);
           $('#post_additional_column_name').val('');
           $('#create_additional_column_container_post').hide();
-          var container_height = $('#list_of_post_fields_container').height();
+          var container_height = $('#post_fields_list').height();
           $('#list_of_post_fields_container').scrollTop(container_height);
 //          $('#list_of_post_fields_container').animate({
 //            scrollTop: container_height +100
@@ -33,7 +33,7 @@ var editColumn_Post = {
 
     $("#btn_post_new_field_container").click(function(){
       $('#create_additional_column_container_post').show();
-      var container_height = $('#list_of_post_fields_container').height();
+      var container_height = $('#post_fields_list').height();
       $('#list_of_post_fields_container').scrollTop(container_height);
 //      $('#list_of_post_fields_container').animate({
 //        scrollTop: container_height +100
