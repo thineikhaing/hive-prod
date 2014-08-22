@@ -16,12 +16,12 @@ var editColumn = {
         data: {field_id: 0, additional_column_name:col_name, table_name: "Topic"},
         success: function(html) {
           var htmlobject = $(html);
-          var output = htmlobject.find("#topic_fields_list")[0];
+          var output = htmlobject.find("#additional_field_list_container_topic")[0];
           var testing = new XMLSerializer().serializeToString(output);
-          $("#topic_fields_list").replaceWith(testing);
+          $("#additional_field_list_container_topic").replaceWith(testing);
           $('#additional_column_name').val('');
           $('#create_additional_column_container_topic').hide();
-//          editColumn.init();
+          editColumn.init();
         }
       });
     });
@@ -78,7 +78,6 @@ var editColumn = {
 //        console.log(data);
         $.ajax({
           success: function(html) {
-            console.log(html);
             var htmlobject = $(html);
             var output = htmlobject.find("#topic_fields_list")[0];
             var testing = new XMLSerializer().serializeToString(output);
@@ -195,6 +194,7 @@ var editColumn = {
           {
             if (field_id!= 0)
             {
+              console.log("call ajax");
               // call jquery to controller to del
               $.ajax({
                 url: '/delete_additional_column',

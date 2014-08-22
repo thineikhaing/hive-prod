@@ -16,12 +16,12 @@ var editColumn_Post = {
         data: {field_id: 0, additional_column_name:col_name, table_name: "Post"},
         success: function(html) {
           var htmlobject = $(html);
-          var output = htmlobject.find("#post_fields_list")[0];
+          var output = htmlobject.find("#additional_field_list_container_post")[0];
           var testing = new XMLSerializer().serializeToString(output);
-          $("#post_fields_list").replaceWith(testing);
+          $("#additional_field_list_container_post").replaceWith(testing);
           $('#post_additional_column_name').val('');
           $('#create_additional_column_container_post').hide();
-//          editColumn_Post.init();
+          editColumn_Post.init();
         }
       });
     });

@@ -512,6 +512,8 @@ class HiveapplicationController < ApplicationController
     if session[:transaction_list_topics].present?
       topics = session[:transaction_list_topics]
       topics.each do |topic|
+        p "status"
+        p topic["status"]
         case topic["status"] # a_variable is the variable we want to compare
           when 1    #new column
             app_add_field = AppAdditionalField.create(app_id: session[:app_id].to_i, table_name: "Topic", additional_column_name: topic["additional_column_name"])
@@ -533,17 +535,18 @@ class HiveapplicationController < ApplicationController
             else
               #new column
               app_add_field = AppAdditionalField.create(app_id: session[:app_id].to_i, table_name: "Topic", additional_column_name: topic["additional_column_name"])
-
               AppAdditionalField.add_column("Topic",topic["additional_column_name"],session[:app_id])
             end
 
           when 3    #delete
-            additional_field = AppAdditionalField.find(topic["field_id"])
-            if additional_field.present?
-              field_name = additional_field.additional_column_name
-              additional_field.delete
+            if topic["field_id"]>0
+              additional_field = AppAdditionalField.find(topic["field_id"])
+              if additional_field.present?
+                field_name = additional_field.additional_column_name
+                additional_field.delete
 
-              AppAdditionalField.delete_column("Topic",field_name,session[:app_id])
+                AppAdditionalField.delete_column("Topic",field_name,session[:app_id])
+              end
             end
           else
             p "it was something else"
@@ -553,13 +556,18 @@ class HiveapplicationController < ApplicationController
     if session[:transaction_list_posts].present?
       posts = session[:transaction_list_posts]
       posts.each do |post|
+        p "status"
+        p post["status"]
         case post["status"] # a_variable is the variable we want to compare
           when 1    #new column
+            p "new"
             app_add_field = AppAdditionalField.create(app_id: session[:app_id].to_i, table_name: "Post", additional_column_name: post["additional_column_name"])
             AppAdditionalField.add_column("Post",post["additional_column_name"],session[:app_id])
 
           when 2    #edit
             if post["field_id"] >0
+              p "edit"
+              p post["field_id"]
               field_record = AppAdditionalField.find(post["field_id"])
               if field_record.present?
                 old_column_name = field_record.additional_column_name
@@ -572,19 +580,23 @@ class HiveapplicationController < ApplicationController
               end
 
             else
+              p "new"
               #new column
               app_add_field = AppAdditionalField.create(app_id: session[:app_id].to_i, table_name: "Post", additional_column_name: post["additional_column_name"])
-
               AppAdditionalField.add_column("Post",post["additional_column_name"],session[:app_id])
             end
 
           when 3    #delete
-            additional_field = AppAdditionalField.find(post["field_id"])
-            if additional_field.present?
-              field_name = additional_field.additional_column_name
-              additional_field.delete
+            p "delete"
+            p post["field_id"]
+            if post["field_id"]>0
+              additional_field = AppAdditionalField.find(post["field_id"])
+              if additional_field.present?
+                field_name = additional_field.additional_column_name
+                additional_field.delete
 
-              AppAdditionalField.delete_column("Post",field_name,session[:app_id])
+                AppAdditionalField.delete_column("Post",field_name,session[:app_id])
+              end
             end
           else
             p "it was something else"
