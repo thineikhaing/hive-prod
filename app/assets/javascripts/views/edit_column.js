@@ -22,9 +22,10 @@ var editColumn = {
           $('#additional_column_name').val('');
           $('#create_additional_column_container_topic').hide();
           var container_height = $('#list_of_topic_fields_container').height();
-          $('#list_of_topic_fields_container').animate({
-            scrollTop: container_height +100
-          }, 100);
+          $('#list_of_topic_fields_container').scrollTop(container_height);
+//          $('#list_of_topic_fields_container').animate({
+//            scrollTop: container_height +100
+//          }, 100);
           editColumn.init();
         }
       });
@@ -34,9 +35,10 @@ var editColumn = {
       $('#create_additional_column_container_topic').show();
       main_container = $('#create_additional_column_container_topic');
       var container_height = $('#list_of_topic_fields_container').height();
-      $('#list_of_topic_fields_container').animate({
-        scrollTop: container_height + 100
-      }, 100);
+//      $('#list_of_topic_fields_container').animate({
+//        scrollTop: container_height + 100
+//      }, 100);
+      $('#list_of_topic_fields_container').scrollTop(container_height);
       txt_add_col = $(main_container).find('#AppAdditionalColumn_additional_column_name');
       txt_add_col.val('');
 

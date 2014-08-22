@@ -22,9 +22,10 @@ var editColumn_Post = {
           $('#post_additional_column_name').val('');
           $('#create_additional_column_container_post').hide();
           var container_height = $('#list_of_post_fields_container').height();
-          $('#list_of_post_fields_container').animate({
-            scrollTop: container_height +100
-          }, 100);
+          $('#list_of_post_fields_container').scrollTop(container_height);
+//          $('#list_of_post_fields_container').animate({
+//            scrollTop: container_height +100
+//          }, 100);
           editColumn_Post.init();
         }
       });
@@ -33,9 +34,10 @@ var editColumn_Post = {
     $("#btn_post_new_field_container").click(function(){
       $('#create_additional_column_container_post').show();
       var container_height = $('#list_of_post_fields_container').height();
-      $('#list_of_post_fields_container').animate({
-        scrollTop: container_height +100
-      }, 100);
+      $('#list_of_post_fields_container').scrollTop(container_height);
+//      $('#list_of_post_fields_container').animate({
+//        scrollTop: container_height +100
+//      }, 100);
       main_container = $('#create_additional_column_container_post');
       txt_add_col = $(main_container).find('#AppAdditionalColumn_additional_column_name');
       txt_add_col.val('');
