@@ -23,7 +23,7 @@ var editColumn_Post = {
           $('#create_additional_column_container_post').hide();
           var container_height = $('#list_of_post_fields_container').height();
           $('#list_of_post_fields_container').animate({
-            scrollTop: container_height
+            scrollTop: container_height +50
           }, 100);
           editColumn_Post.init();
         }
@@ -34,7 +34,7 @@ var editColumn_Post = {
       $('#create_additional_column_container_post').show();
       var container_height = $('#list_of_post_fields_container').height();
       $('#list_of_post_fields_container').animate({
-        scrollTop: container_height
+        scrollTop: container_height +50
       }, 100);
       main_container = $('#create_additional_column_container_post');
       txt_add_col = $(main_container).find('#AppAdditionalColumn_additional_column_name');
