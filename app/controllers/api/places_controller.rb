@@ -1,6 +1,5 @@
 class Api::PlacesController < ApplicationController
   def create
-
     if current_user.present?
 
       params[:name].present? ? name = params[:name] : name = nil
@@ -24,7 +23,6 @@ class Api::PlacesController < ApplicationController
 
       render json: { place: place}
     end
-
   end
 
   def retrieve_places
@@ -57,4 +55,92 @@ class Api::PlacesController < ApplicationController
       render json: { places: data_array}
     end
   end
+
+  def select_venue
+    # TODO: When fetching back queries, check whether it exists before processing it.
+    data_array = [ ]
+    factual_data_array = [ ]
+    places_array = [ ]
+
+    if params[:latitude].present? and params[:longitude].present? and params[:app_key].present?
+      hiveapplication = HiveApplication.find_by(:api_key => params[:app_key])
+      place = Place.nearest(params[:latitude], params[:longitude], params[:radius])
+      place.each do |pl|
+        if params[:auth_token].present?
+          if pl.source == 6
+            places_array.push(pl) if pl.user_id == current_user.id
+          else
+            places_array.push(pl)
+          end
+        else
+          places_array.push(pl) unless pl.source == 6
+        end
+      end
+
+      places_array.each do |pl|
+        username = User.find(pl.user_id).username if pl.user_id.present?
+        #numOfCheckIns = Checkinplace.select(:user_id).where(place_id: pl.id)
+        numOfCheckIns = Checkinplace.where(:place_id=>pl.id)
+        #filter by category is only valid for factual
+        if hiveapplication.app_type.include? "Food"
+          if pl.category.include? "Food"
+            if pl.user_id.present?
+              data = { id: pl.id, name: pl.name, latitude: pl.latitude, longitude: pl.longitude, address: pl.address, source: pl.source, user_id: pl.user_id, username: username, users_check_in: numOfCheckIns.count(:user_id, distinct: true), img_url: pl.img_url }
+              data_array.push(data)
+            else
+              data = { id: pl.id, name: pl.name, latitude: pl.latitude, longitude: pl.longitude, address: pl.address, source: pl.source, user_id: nil, username: nil, users_check_in: numOfCheckIns.count(:user_id, distinct: true), img_url: pl.img_url }
+              data_array.push(data)
+            end
+          end
+        else
+          if pl.user_id.present?
+            data = { id: pl.id, name: pl.name, latitude: pl.latitude, longitude: pl.longitude, address: pl.address, source: pl.source, user_id: pl.user_id, username: username, users_check_in: numOfCheckIns.count(:user_id, distinct: true), img_url: pl.img_url }
+            data_array.push(data)
+          else
+            data = { id: pl.id, name: pl.name, latitude: pl.latitude, longitude: pl.longitude, address: pl.address, source: pl.source, user_id: nil, username: nil, users_check_in: numOfCheckIns.count(:user_id, distinct: true), img_url: pl.img_url }
+            data_array.push(data)
+          end
+        end
+      end
+
+      data_array.sort_by! {|x| [ x[:users_check_in] ] }
+      data_array.reverse!
+
+      factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+      query = factual.table("global").geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => 1000})
+
+      if query.present?
+        if hiveapplication.app_type.include? "Food"
+          query.each do |q|
+            if q["category_labels"].present?
+              q["category_labels"].each do |category|
+                if category.include? "Food and Dining"
+                  data = { name: q["name"], latitude: q["latitude"], longitude: q["longitude"], address: q["address"], source: 3, user_id: nil, username: nil, source_id: q["factual_id"] }
+                  factual_data_array.push(data)
+                end
+              end
+            end
+          end
+        else
+          query.each do |q|
+            data = { name: q["name"], latitude: q["latitude"], longitude: q["longitude"], address: q["address"], source: 3, user_id: nil, username: nil, source_id: q["factual_id"] }
+            factual_data_array.push(data)
+          end
+        end
+
+        data_array.each do |da|
+          factual_data_array.each do |fda|
+            factual_data_array.delete(fda) if da[:name] == fda[:name]
+          end
+        end
+
+        data_array = data_array + factual_data_array
+
+        render json: data_array
+      else
+        render json: data_array
+      end
+    end
+  end
+
 end

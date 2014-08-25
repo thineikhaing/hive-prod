@@ -40,6 +40,7 @@ Rails.application.routes.draw do
   namespace :api do
     match "downloaddata/initial_retrieve"           => "downloaddata#initial_retrieve"          , via: [:get, :post]
     match "downloaddata/retrieve_hiveapplications"  => "downloaddata#retrieve_hiveapplications" , via: [:get, :post]
+    match "downloaddata/retrieve_users"             => "downloaddata#retrieve_users"            , via: [:get, :post]
     match "users/create_anonymous_user"             => "users#create_anonymous_user"            , via: [:get, :post]
     match "users/sign_up"                           => "users#sign_up"                          , via: [:get, :post]
     match "users/sign_in"                           => "users#sign_in"                          , via: [:get, :post]
@@ -62,6 +63,7 @@ Rails.application.routes.draw do
     match "userpushtokens/create"                   => "userpushtokens#create"                  , via: [:get, :post]
     match "places/create"                           => "places#create"                          , via: [:get, :post]
     match "places/retrieve_places"                  => "places#retrieve_places"                 , via: [:get, :post]
+    match "places/select_venue"                     => "places#select_venue"                    , via: [:get, :post]
     match "mytest/test"                             => "mytest#test"                            , via: [:get, :post]
     match "mytest/test2"                            => "mytest#test2"                           , via: [:get, :post]
     match "mytest/test3"                            => "mytest#test3"                           , via: [:get, :post]
