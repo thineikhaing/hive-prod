@@ -114,7 +114,7 @@ class Api::TopicsController < ApplicationController
 
   def topic_liked
     if (params[:topic_id].present? && params[:choice].present?)
-      topic = Topic.find(params[:topic_id])
+      topic = Topic.find_by_id(params[:topic_id])
       if topic.present?
         action_status = topic.user_add_likes(current_user, params[:topic_id], params[:choice])
         topic.reload
@@ -139,7 +139,7 @@ class Api::TopicsController < ApplicationController
 
   def topic_offensive
     if params[:topic_id].present?
-      topic = Topic.find(params[:topic_id])
+      topic = Topic.find_by_id(params[:topic_id])
       if topic.present?
         topic.user_offensive_topic(current_user, params[:topic_id], topic)
         topic.reload
@@ -163,7 +163,7 @@ class Api::TopicsController < ApplicationController
 
   def topic_favourited
     if params[:topic_id].present? && params[:choice].present?
-      topic = Topic.find(params[:topic_id])
+      topic = Topic.find_by_id(params[:topic_id])
       if topic.present?
         topic.user_favourite_topic(current_user, params[:topic_id], params[:choice])
         render json: { status: true }
@@ -200,7 +200,7 @@ class Api::TopicsController < ApplicationController
     if params[:topic_id].present? and params[:app_key].present?
       hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
       if hiveapplication.present?
-        topic = Topic.find(params[:topic_id])
+        topic = Topic.find_by_id(params[:topic_id])
         if topic.present?
           topic.remove_records
 

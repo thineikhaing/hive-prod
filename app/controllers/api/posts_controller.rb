@@ -2,11 +2,11 @@ class Api::PostsController < ApplicationController
 
   def create
     if current_user.present?
-      topic = Topic.find(params[:topic_id].to_i)
+      topic = Topic.find_by_id(params[:topic_id].to_i)
 
       if topic.present?
         if check_banned_profanity(params[:post])
-          user = User.find(current_user.id)
+          user = User.find_by_id(current_user.id)
           user.profanity_counter += 1
           user.offence_date = Time.now
           user.save!
@@ -81,7 +81,7 @@ class Api::PostsController < ApplicationController
     if params[:app_key].present? && params[:topic_id].present?
       application_id = HiveApplication.find_by_api_key(params[:app_key])
       if application_id.present?
-        topic = Topic.find(params[:topic_id])
+        topic = Topic.find_by_id(params[:topic_id])
         if topic.present?
           params[:numPosts].present? ? no_of_posts= params[:numPosts].to_i : no_of_posts=0
           params[:post_id].present? ? post_id= params[:post_id].to_i : post_id=0
@@ -111,7 +111,7 @@ class Api::PostsController < ApplicationController
     if params[:app_key].present? and params[:post_id].present?
       hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
       if hiveapplication.present?
-        post =  Post.find(params[:post_id])
+        post =  Post.find_by_id(params[:post_id])
         if post.present?
           post.remove_records
           hiveapplication = HiveApplication.find(hiveapplication.id)
@@ -139,7 +139,7 @@ class Api::PostsController < ApplicationController
 
   def post_liked
     if params[:post_id].present? && params[:choice].present?
-      post = Post.find(params[:post_id])
+      post = Post.find_by_id(params[:post_id])
       if post.present?
         action_status = post.user_add_likes(current_user, params[:post_id], params[:choice])
         post.reload
@@ -155,7 +155,7 @@ class Api::PostsController < ApplicationController
 
   def post_offensive
     if params[:post_id].present?
-      post = Post.find(params[:post_id])
+      post = Post.find_by_id(params[:post_id])
       if post.present?
         post.user_offensive_post(current_user, params[:post_id], post)
         post.reload

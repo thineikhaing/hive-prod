@@ -4,7 +4,7 @@ class Api::TagsController < ApplicationController
   # Delete records of tags inside Historychange Table
   def delete
     if params[:tag_id].present?
-      tag = Tag.find(params[:tag_id])
+      tag = Tag.find_by_id(params[:tag_id])
       if tag.present?
         tag.remove_records(params[:tag_id])
         tag.delete
