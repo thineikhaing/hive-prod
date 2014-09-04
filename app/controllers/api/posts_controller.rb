@@ -70,10 +70,10 @@ class Api::PostsController < ApplicationController
         end
         render json: { post: post,temp_id: params[:temp_id],  profanity_counter: current_user.profanity_counter}
       else
-        render json: { status: false }
+        render json: { error_msg: "Invalid topic_id" }
       end
     else
-      render json: { status: false }
+      render json: { error_msg: "Params user_id and auth_token must be presented" }
     end
   end
 
@@ -100,10 +100,10 @@ class Api::PostsController < ApplicationController
         end
         render json: {posts: posts}
       else
-        render json: { status: false}
+        render json: { error_msg: "Invalid app_key" }
       end
     else
-      render json: { status: false}
+      render json: { error_msg: "Params app_key and topic_id must be presented" }
     end
   end
 
@@ -127,37 +127,45 @@ class Api::PostsController < ApplicationController
 
           render json: { status: true }
         else
-          render json: { status: false }
+          render json: { error_msg: "Invalid post_id" }
         end
       else
-        render json: { status: false }
+        render json: { error_msg: "Invalid app_key" }
       end
     else
-      render json: { status: false}
+      render json: { error_msg: "Params app_key and post_id must be presented" }
     end
   end
 
   def post_liked
     if params[:post_id].present? && params[:choice].present?
       post = Post.find(params[:post_id])
-      action_status = post.user_add_likes(current_user, params[:post_id], params[:choice])
-      post.reload
+      if post.present?
+        action_status = post.user_add_likes(current_user, params[:post_id], params[:choice])
+        post.reload
 
-      render json: { post: post, action_status: action_status}
+        render json: { post: post, action_status: action_status}
+      else
+        render json: { error_msg: "Invalid post_id" }
+      end
     else
-      render json: { status: false }
+      render json: { error_msg: "Params post_id and choice must be presented" }
     end
   end
 
   def post_offensive
     if params[:post_id].present?
       post = Post.find(params[:post_id])
-      post.user_offensive_post(current_user, params[:post_id], post)
-      post.reload
+      if post.present?
+        post.user_offensive_post(current_user, params[:post_id], post)
+        post.reload
 
-      render json: { post: post }
+        render json: { post: post }
+      else
+        render json: { error_msg: "Invalid post_id" }
+      end
     else
-      render json: { status: false }
+      render json: { error_msg: "Param post_id must be presented" }
     end
   end
 
@@ -169,11 +177,10 @@ class Api::PostsController < ApplicationController
         posts = Post.where(:id => arr_post_ids)
         render json: { posts: posts }
       else
-        render json: { status: false}
+        render json: { error_msg: "Invalid app_key" }
       end
-
     else
-      render json: { status: false }
+      render json: { error_msg: "Params app_key and post_ids must be presented" }
     end
   end
 

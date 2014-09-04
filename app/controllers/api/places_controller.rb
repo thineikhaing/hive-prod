@@ -1,7 +1,6 @@
 class Api::PlacesController < ApplicationController
   def create
     if current_user.present?
-
       params[:name].present? ? name = params[:name] : name = nil
       params[:category].present? ? category = params[:category] : category = nil
       params[:address].present? ? address = params[:address] : address = nil
@@ -22,6 +21,8 @@ class Api::PlacesController < ApplicationController
       place = Place.create(name: name, category: category, address: address, locality: locality, region: region, neighbourhood: neighbourhood,country: country,postal_code: postcode, website_url: website_url,chain_name: chain_name, contact_number: contact_number,img_url: img_url, source: source, source_id: source_id,user_id: current_user.id, latitude: latitude, longitude: longitude)
       Checkinplace.create(place_id: place.id, user_id: current_user.id) if place.present?
       render json: { place: place}
+    else
+      render json: { error_msg: "Params user_id and auth_token must be presented" }
     end
   end
 
@@ -53,6 +54,8 @@ class Api::PlacesController < ApplicationController
       data_array = data_array + factual_data_array
 
       render json: { places: data_array}
+    else
+      render json: { error_msg: "Params latitude, longitude and radius must be presented" }
     end
   end
 
@@ -144,8 +147,10 @@ class Api::PlacesController < ApplicationController
           render json: data_array
         end
       else
-        render json: { status: false }
+        render json: { error_msg: "Invalid app_key" }
       end
+    else
+      render json: { error_msg: "Params latitude, longitude and app_key must be presented" }
     end
   end
 

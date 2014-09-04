@@ -9,11 +9,11 @@ class Api::TagsController < ApplicationController
         tag.remove_records(params[:tag_id])
         tag.delete
       else
-        render json: { error_msg: "Invalid TagID" }
+        render json: { error_msg: "Invalid tag_id" }
       end
       render json: { status: true }
     else
-      render json: { error_msg: "Params TagID must be present" }
+      render json: { error_msg: "Params tag_id must be presented" }
     end
   end
 
@@ -44,7 +44,7 @@ class Api::TagsController < ApplicationController
       end
       render json: { tags: normalTagsArray, locationtags: locationTagsArray }
     else
-      render json: { error_msg: "Params Latitude and Longitude must be present" }
+      render json: { error_msg: "Params latitude and longitude must presented" }
     end
   end
 

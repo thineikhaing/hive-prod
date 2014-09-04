@@ -16,8 +16,10 @@ class Api::DownloaddataController < ApplicationController
           render json: { topics: JSON.parse(topics.to_json())}
         end
       else
-        render json: { status: false }
+        render json: { error_msg: "Invalid app_key" }
       end
+    else
+      render json: { error_msg: "Params app_key must be presented" }
     end
   end
 
@@ -52,7 +54,7 @@ class Api::DownloaddataController < ApplicationController
 
       render json: { users: userInfo }
     else
-      render json: { status: false }
+      render json: { error_msg: "Params user_ids must be presented" }
     end
   end
 
