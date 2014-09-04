@@ -48,6 +48,10 @@ Rails.application.routes.draw do
     match "users/verify_user_account"               => "users#verify_user_account"              , via: [:get, :post]
     match "users/user_info"                         => "users#user_info"                        , via: [:get, :post]
     match "users/favourite_user"                    => "users#favourite_user"                   , via: [:get, :post]
+    match "users/block_user"                        => "users#block_user"                       , via: [:get, :post]
+    match "users/flare_mode"                        => "users#flare_mode"                       , via: [:get, :post]
+    match "users/user_action_logs"                  => "users#user_action_logs"                 , via: [:get, :post]
+    match "users/facebook_friends"                  => "users#facebook_friends"                 , via: [:get, :post]
     match "topics/create"                           => "topics#create"                          , via: [:get, :post]
     match "topics/topic_liked"                      => "topics#topic_liked"                     , via: [:get, :post]
     match "topics/topic_offensive"                  => "topics#topic_offensive"                 , via: [:get, :post]
@@ -68,6 +72,8 @@ Rails.application.routes.draw do
     match "mytest/test2"                            => "mytest#test2"                           , via: [:get, :post]
     match "mytest/test3"                            => "mytest#test3"                           , via: [:get, :post]
     match "mytest/test4"                            => "mytest#test4"                           , via: [:get, :post]
+    match "tags/delete"                             => "tags#delete"                            , via: [:get, :post]
+    match "tags/within_location"                    => "tags#within_location"                   , via: [:get, :post]
   end
 
   # The priority is based upon order of creation: first created -> highest priority.
