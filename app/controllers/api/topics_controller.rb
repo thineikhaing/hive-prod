@@ -5,7 +5,6 @@ class Api::TopicsController < ApplicationController
       tag = Tag.new
 
       if hiveapplication.present?
-        #user = User.find_by_authentication_token (params[:auth_token]) if params[:auth_token].present?
         if check_banned_profanity(params[:title])
           user = User.find(current_user.id)
           user.profanity_counter += 1
@@ -20,7 +19,6 @@ class Api::TopicsController < ApplicationController
         else
           #create place first if the place_id is null
           place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
-
           if place.present?
             place_id = place.id
             Checkinplace.create(place_id: place.id, user_id: current_user.id)
@@ -28,10 +26,7 @@ class Api::TopicsController < ApplicationController
         end
 
         if current_user.present?
-          #if params[:data].present? and hiveapplication.id != 1
-          #if hiveapplication.id != 1
           data = getHashValuefromString(params[:data]) if params[:data].present?
-
           #get all extra columns that define in app setting
           appAdditionalField = AppAdditionalField.where(:app_id => hiveapplication.id, :table_name => "Topic")
           if appAdditionalField.present?
@@ -63,22 +58,26 @@ class Api::TopicsController < ApplicationController
           else
             topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit], value: params[:value], place_id: place_id, data: result, special_type: special_type,likes: likes, dislikes: dislikes)
           end
+
+          #create post if param post_content is passed
           post = nil
           if topic.present? and params[:post_content].present?
             post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, place_id: place_id) if params[:post_type] == Post::TEXT.to_s
             post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height], place_id: place_id) if params[:post_type] == Post::IMAGE.to_s
           end
 
+          #create tag
           tag.add_record(topic.id, params[:tag], Tag::NORMAL) if params[:tag].present?  and topic.present?
           tag.add_record(topic.id, params[:locationtag], Tag::LOCATION) if params[:locationtag].present?  and topic.present?
 
+          #increase like and dislike count
           if likes > 0
             ActionLog.create(action_type: "like", type_id: topic.id, type_name: "topic", action_user_id: current_user.id) if topic.present?
           end
           if dislikes > 0
             ActionLog.create(action_type: "dislike", type_id: topic.id, type_name: "topic", action_user_id: current_user.id) if topic.present?
           end
-          #if hiveApplication.id ==1
+
           if hiveapplication.id ==1
             #broadcast new topic creation to hive_channel only
             topic.hive_broadcast
@@ -101,63 +100,76 @@ class Api::TopicsController < ApplicationController
           end
 
         else
-          render json: { status: false }
+          render json: { error_msg: "Params user_id and auth_token must be presented" }
         end
       else
-        render json: { status: false }
+        render json: { error_msg: "Invalid app_key" }
       end
     else
-      render json: { status: false }
+      render json: { error_msg: "Param app_key must be presented" }
     end
   end
 
   def topic_liked
     if (params[:topic_id].present? && params[:choice].present?)
       topic = Topic.find(params[:topic_id])
-      action_status = topic.user_add_likes(current_user, params[:topic_id], params[:choice])
-      topic.reload
+      if topic.present?
+        action_status = topic.user_add_likes(current_user, params[:topic_id], params[:choice])
+        topic.reload
 
-      hiveapplication = HiveApplication.find(topic.hiveapplication_id)
+        hiveapplication = HiveApplication.find(topic.hiveapplication_id)
 
-      if hiveapplication.id ==1 #Hive Application
-        render json: { topic: JSON.parse(topic.to_json()), action_status: action_status}
-      elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1 #All Applications under Herenow except Hive
-        render json: { topic: JSON.parse(topic.to_json(content: true)), action_status: action_status}
-      else #3rd party App
-        render json: { topic: JSON.parse(topic.to_json()), action_status: action_status}
+        if hiveapplication.id ==1 #Hive Application
+          render json: { topic: JSON.parse(topic.to_json()), action_status: action_status}
+        elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1 #All Applications under Herenow except Hive
+          render json: { topic: JSON.parse(topic.to_json(content: true)), action_status: action_status}
+        else #3rd party App
+          render json: { topic: JSON.parse(topic.to_json()), action_status: action_status}
+        end
+      else
+        render json: { error_msg: "Invalid topic_id" }
       end
+
     else
-      render json: { status: false }
+      render json: { error_msg: "Params topic_id and choice must be presented" }
     end
   end
 
   def topic_offensive
     if params[:topic_id].present?
       topic = Topic.find(params[:topic_id])
-      topic.user_offensive_topic(current_user, params[:topic_id], topic)
-      topic.reload
+      if topic.present?
+        topic.user_offensive_topic(current_user, params[:topic_id], topic)
+        topic.reload
 
-      hiveapplication = HiveApplication.find(topic.hiveapplication_id)
+        hiveapplication = HiveApplication.find(topic.hiveapplication_id)
 
-      if hiveapplication.id ==1 #Hive Application
-        render json: { topic: JSON.parse(topic.to_json())}
-      elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1 #All Applications under Herenow except Hive
-        render json: { topic: JSON.parse(topic.to_json(content: true))}
-      else #3rd party App
-        render json: { topic: JSON.parse(topic.to_json())}
+        if hiveapplication.id ==1 #Hive Application
+          render json: { topic: JSON.parse(topic.to_json())}
+        elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1 #All Applications under Herenow except Hive
+          render json: { topic: JSON.parse(topic.to_json(content: true))}
+        else #3rd party App
+          render json: { topic: JSON.parse(topic.to_json())}
+        end
+      else
+        render json: {error_msg: "Invalid topic_id"}
       end
     else
-      render json: { status: false }
+      render json: { error_msg: "Param topic_id must be presented" }
     end
   end
 
   def topic_favourited
     if params[:topic_id].present? && params[:choice].present?
       topic = Topic.find(params[:topic_id])
-      topic.user_favourite_topic(current_user, params[:topic_id], params[:choice])
-      render json: { status: true }
+      if topic.present?
+        topic.user_favourite_topic(current_user, params[:topic_id], params[:choice])
+        render json: { status: true }
+      else
+        render json: { error_msg: "Invalid topic_id" }
+      end
     else
-      render json: { status: false }
+      render json: { error_msg: "Params topic_id and choice must be presented" }
     end
   end
 
@@ -175,11 +187,10 @@ class Api::TopicsController < ApplicationController
           render json: { topics: JSON.parse(topics.to_json())}
         end
       else
-        render json: { status: false}
+        render json: { error_msg: "Invalid app_key" }
       end
-
     else
-      render json: { status: false }
+      render json: { error_msg: "Params app_key and topic_ids must be presented" }
     end
   end
 
@@ -206,13 +217,13 @@ class Api::TopicsController < ApplicationController
 
           render json: { status: true }
         else
-          render json: { status: false }
+          render json: { error_msg: "Invalid topic_id" }
         end
       else
-        render json: { status: false }
+        render json: { error_msg: "Invalid app_key" }
       end
     else
-      render json: { status: false }
+      render json: { error_msg: "Params topic_id and app_key must be presented" }
     end
   end
 
