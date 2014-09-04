@@ -17,7 +17,6 @@ class Api::UsersController < ApplicationController
       user = User.create!(device_id: params[:device_id], password: Devise.friendly_token)
       user.token_expiry_date= Date.today + 6.months
       user.save!
-      p user
       render json: { user: user }
     end
   end
@@ -107,6 +106,29 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def facebook_friends
+    fb_friends_array = [ ]
+    fbIDS_array = [ ]
+
+    if params[:fb_id].present?
+      fbIDS_array = params[:fb_id].split(",")
+
+      fbIDS_array.each do |fb|
+        p fb
+        account = UserAccount.find_by(account_type: "facebook",linked_account_id: fb)
+
+        if account.present?
+          data = { fb_id: fb, user_id: account.user_id }
+          fb_friends_array.push(data)
+        end
+      end
+
+      render json: { users: fb_friends_array }
+    else
+      render json: { status: false }
+    end
+  end
+
   def user_info
     if current_user.present?
       user = User.find(current_user.id)
@@ -121,6 +143,15 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def flare_mode
+    if current_user.present? and params[:flareMode].present?
+      current_user.update_attribute(:flareMode , params[:flareMode])
+      render json: { status: true }
+    else
+      render json: { status: false }
+    end
+  end
+
   def favourite_user
     if params[:fav_user_id].present? and params[:choice].present? and current_user.present?
       current_user.favourite_user(current_user, params[:user_id], params[:choice])
@@ -131,10 +162,96 @@ class Api::UsersController < ApplicationController
     end
   end
 
+
+  def block_user
+    if params[:block_user_id].present? and params[:choice].present? and current_user.present?
+      user = User.find(current_user.id)
+      user.block_user(current_user, params[:block_user_id], params[:choice])
+      user.reload
+
+      render json: { status: true }
+    else
+      render json: { status: false }
+    end
+  end
+
+
+  def user_action_logs
+
+    users = User.all
+    blockedArray = [ ]
+    favArray = [ ]
+    favTopicArray = [ ]
+    likedTopicArray = [ ]
+    likedPostArray = [ ]
+    usersArray = [ ]
+
+    count = 1
+    totalUsers = users.count
+
+
+    checkBlockedArray = ActionLog.where(type_name: "user", action_type: "block", action_user_id: current_user.id)
+    checkFavouriteArray = ActionLog.where(type_name: "user", action_type: "favourite", action_user_id: current_user.id)
+    checkFavouriteTopicArray = ActionLog.where(type_name: "topic", action_type: "favourite", action_user_id: current_user.id)
+    checkLikedTopicArray = ActionLog.where(type_name: "topic", action_type: "like", action_user_id: current_user.id)
+    checkLikedPostArray = ActionLog.where(type_name: "post", action_type: "liked", action_user_id: current_user.id)
+
+    users.each do |u|
+      data = { user_id: u.id, username: u.username, point: u.point}
+      usersArray.push(data)
+    end
+
+    usersArray.sort! { |a, b| a[:points] <=> b[:points] }
+    usersArray = usersArray.reverse
+
+    usersArray.each do |ua|
+      ua.merge!(rank: count)
+      count = count + 1
+    end
+
+    user = usersArray.select { |s| s[:user_id] == current_user.id }
+
+    checkBlockedArray.each do |cba|
+      blockedArray.push( { user_id: cba.type_id, username: User.find(cba.type_id).username } )
+    end
+
+    checkFavouriteArray.each do |cfa|
+      favArray.push( { user_id: cfa.type_id, username: User.find(cfa.type_id).username } )
+    end
+
+    checkFavouriteTopicArray.each do |cfta|
+      favTopicArray.push(cfta.type_id)
+    end
+
+    checkLikedTopicArray.each do |clta|
+      likedTopicArray.push(clta.type_id)
+    end
+
+    checkLikedPostArray.each do |clpa|
+      likedPostArray.push(clpa.type_id)
+    end
+
+    data = {
+        id: current_user.id,
+        username: current_user.username,
+        point: current_user.point,
+        favourite_topics: favTopicArray,
+        liked_posts: likedPostArray,
+        liked_topics: likedTopicArray,
+        block_users: blockedArray,
+        favourite_users: favArray,
+        rank: user.first[:rank],
+        total_users: totalUsers
+    }
+
+    render json: { user: data }
+
+  end
+
+
   private
 
   def user_params
-    p "user param is called"
     params.require(:user).permit(:username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :point, :honor_rating, :created_at, :data, :device_id)
   end
 

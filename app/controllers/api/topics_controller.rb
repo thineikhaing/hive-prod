@@ -1,10 +1,10 @@
 class Api::TopicsController < ApplicationController
   def create
     if params[:app_key].present?
-      hiveApplication = HiveApplication.find_by_api_key(params[:app_key])
+      hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
       tag = Tag.new
 
-      if hiveApplication.present?
+      if hiveapplication.present?
         #user = User.find_by_authentication_token (params[:auth_token]) if params[:auth_token].present?
         if check_banned_profanity(params[:title])
           user = User.find(current_user.id)
@@ -23,16 +23,17 @@ class Api::TopicsController < ApplicationController
 
           if place.present?
             place_id = place.id
+            Checkinplace.create(place_id: place.id, user_id: current_user.id)
           end
         end
 
         if current_user.present?
-          #if params[:data].present? and hiveApplication.id != 1
-          #if hiveApplication.id != 1
+          #if params[:data].present? and hiveapplication.id != 1
+          #if hiveapplication.id != 1
           data = getHashValuefromString(params[:data]) if params[:data].present?
 
           #get all extra columns that define in app setting
-          appAdditionalField = AppAdditionalField.where(:app_id => hiveApplication.id, :table_name => "Topic")
+          appAdditionalField = AppAdditionalField.where(:app_id => hiveapplication.id, :table_name => "Topic")
           if appAdditionalField.present?
             defined_Fields = Hash.new
             appAdditionalField.each do |field|
@@ -53,13 +54,14 @@ class Api::TopicsController < ApplicationController
 
           params[:likes].present? ? likes = params[:likes].to_i : likes = 0
           params[:dislikes].present? ? dislikes = params[:dislikes].to_i : dislikes = 0
-
+          params[:topic_sub_type].present? ? topic_sub_type = params[:topic_sub_type] :  topic_sub_type = 0
+          params[:special_type].present? ? special_type = params[:special_type] : special_type = 0
           #check the profanity
           if params[:image_url].present?
-            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value],place_id: place_id, data: result, image_url: params[:image_url], width: params[:width], height: params[:height], special_type: params[:special_type],likes: likes, dislikes: dislikes)
+            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type:topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit], value: params[:value],place_id: place_id, data: result, image_url: params[:image_url], width: params[:width], height: params[:height], special_type: special_type,likes: likes, dislikes: dislikes)
             topic.delay.topic_image_upload_job
           else
-            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: params[:topic_sub_type], hiveapplication_id: hiveApplication.id, unit: params[:unit], value: params[:value], place_id: place_id, data: result, special_type: params[:special_type],likes: likes, dislikes: dislikes)
+            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit], value: params[:value], place_id: place_id, data: result, special_type: special_type,likes: likes, dislikes: dislikes)
           end
           post = nil
           if topic.present? and params[:post_content].present?
@@ -73,23 +75,29 @@ class Api::TopicsController < ApplicationController
           if likes > 0
             ActionLog.create(action_type: "like", type_id: topic.id, type_name: "topic", action_user_id: current_user.id) if topic.present?
           end
-
           if dislikes > 0
             ActionLog.create(action_type: "dislike", type_id: topic.id, type_name: "topic", action_user_id: current_user.id) if topic.present?
           end
-
-          if hiveApplication.id ==1
+          #if hiveApplication.id ==1
+          if hiveapplication.id ==1
             #broadcast new topic creation to hive_channel only
             topic.hive_broadcast
+          elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1
+            #All Applications under Herenow except Hive
+            topic.hive_broadcast
+            topic.app_broadcast_with_content
           else
             #broadcast new topic creation to hive_channel and app_channel
             topic.hive_broadcast
             topic.app_broadcast
           end
-          if post.present?
-            render json: { topic: topic, post:post}
-          else
-            render json: { topic: topic}
+
+          if hiveapplication.id ==1 #Hive Application
+            render json: { topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
+          elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1 #All Applications under Herenow except Hive
+            render json: { topic: JSON.parse(topic.to_json(content: true)), profanity_counter: current_user.profanity_counter}
+          else #3rd party App
+            render json: { topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
           end
 
         else
@@ -109,7 +117,15 @@ class Api::TopicsController < ApplicationController
       action_status = topic.user_add_likes(current_user, params[:topic_id], params[:choice])
       topic.reload
 
-      render json: { topic: topic, action_status: action_status }
+      hiveapplication = HiveApplication.find(topic.hiveapplication_id)
+
+      if hiveapplication.id ==1 #Hive Application
+        render json: { topic: JSON.parse(topic.to_json()), action_status: action_status}
+      elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1 #All Applications under Herenow except Hive
+        render json: { topic: JSON.parse(topic.to_json(content: true)), action_status: action_status}
+      else #3rd party App
+        render json: { topic: JSON.parse(topic.to_json()), action_status: action_status}
+      end
     else
       render json: { status: false }
     end
@@ -121,7 +137,15 @@ class Api::TopicsController < ApplicationController
       topic.user_offensive_topic(current_user, params[:topic_id], topic)
       topic.reload
 
-      render json: { topic: topic }
+      hiveapplication = HiveApplication.find(topic.hiveapplication_id)
+
+      if hiveapplication.id ==1 #Hive Application
+        render json: { topic: JSON.parse(topic.to_json())}
+      elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1 #All Applications under Herenow except Hive
+        render json: { topic: JSON.parse(topic.to_json(content: true))}
+      else #3rd party App
+        render json: { topic: JSON.parse(topic.to_json())}
+      end
     else
       render json: { status: false }
     end
@@ -139,11 +163,17 @@ class Api::TopicsController < ApplicationController
 
   def topics_by_ids
     if params[:app_key].present? and params[:topic_ids].present?
-      app = HiveApplication.find_by_api_key(params[:app_key])
-      if app.present?
+      hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+      if hiveapplication.present?
         arr_topic_ids = eval(params[:topic_ids]) #convert string array into array
         topics = Topic.where(:id => arr_topic_ids)
-        render json: { topics: topics }
+        if hiveapplication.id ==1 #Hive Application
+          render json: { topics: JSON.parse(topics.to_json())}
+        elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1 #All Applications under Herenow except Hive
+          render json: { topics: JSON.parse(topics.to_json(content: true))}
+        else #3rd party App
+          render json: { topics: JSON.parse(topics.to_json())}
+        end
       else
         render json: { status: false}
       end
@@ -160,8 +190,13 @@ class Api::TopicsController < ApplicationController
         topic = Topic.find(params[:topic_id])
         if topic.present?
           topic.remove_records
+
           if hiveapplication.id ==1
+          #if hiveapplication.devuser_id ==1
             topic.delete_event_broadcast_hive
+          #elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1
+          #  topic.delete_event_broadcast_hive
+          #  topic.delete_event_broadcast_other_app_with_content
           else
             topic.delete_event_broadcast_hive
             topic.delete_event_broadcast_other_app

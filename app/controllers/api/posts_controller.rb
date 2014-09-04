@@ -1,73 +1,79 @@
 class Api::PostsController < ApplicationController
 
   def create
-    p "create"
     if current_user.present?
-      p "present"
       topic = Topic.find(params[:topic_id].to_i)
-      #if  topic.hiveapplication_id!=1
-      if check_banned_profanity(params[:post])
-        user = User.find(current_user.id)
-        user.profanity_counter += 1
-        user.offence_date = Time.now
-        user.save!
-      end
 
-      data = getHashValuefromString(params[:data]) if params[:data].present?
-
-      place_id = nil
-      #check the place_id presents
-      if params[:place_id].present?
-        place_id = params[:place_id].to_i
-      else
-        #create place first if the place_id is null
-
-        place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
-        if place.present?
-          place_id = place.id
+      if topic.present?
+        if check_banned_profanity(params[:post])
+          user = User.find(current_user.id)
+          user.profanity_counter += 1
+          user.offence_date = Time.now
+          user.save!
         end
-      end
-      p place
-            #get all extra columns that define in app setting
-      appAdditionalField = AppAdditionalField.where(:app_id => topic.hiveapplication_id, :table_name => "Post")
-      if appAdditionalField.present?
 
-        defined_Fields = Hash.new
-        appAdditionalField.each do |field|
-          defined_Fields[field.additional_column_name] = nil
-        end
-        #get all extra columns that define in app setting against with the params data
-        if data.present?
-          data = defined_Fields.deep_merge(data)
-          result = Hash.new
-          defined_Fields.keys.each do |key|
-            result.merge!(data.extract! (key))
-          end
+        data = getHashValuefromString(params[:data]) if params[:data].present?
+
+        place_id = nil
+        #check the place_id presents
+        if params[:place_id].present?
+          place_id = params[:place_id].to_i
         else
-          result = defined_Fields
+          #create place first if the place_id is null
+          place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
+          if place.present?
+            place_id = place.id
+            Checkinplace.create(place_id: place.id, user_id: current_user.id)
+          end
         end
-      end
-      result = nil unless result.present?
-      post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, place_id: place_id, data: result) if params[:post_type] == Post::TEXT.to_s
-      if params[:post_type] == Post::IMAGE.to_s
-        post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height], place_id: place_id, data: result)
-        post.delay.post_image_upload_delayed_job(params[:img_url])
-      end
 
-      #else
-      #  post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id) if params[:post_type] == Post::TEXT.to_s
-      #  post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height]) if params[:post_type] == IMAGE::TEXT.to_s
-      #end
-      p topic
-      if topic.hiveapplication_id ==1 #Hive Application
-        p "in 1"
-        post.broadcast_hive
+        #get all extra columns that define in app setting
+        appAdditionalField = AppAdditionalField.where(:app_id => topic.hiveapplication_id, :table_name => "Post")
+        if appAdditionalField.present?
+
+          defined_Fields = Hash.new
+          appAdditionalField.each do |field|
+            defined_Fields[field.additional_column_name] = nil
+          end
+
+          #compare all extra columns that define in app setting against with the params data
+          if data.present?
+            data = defined_Fields.deep_merge(data)
+            result = Hash.new
+            defined_Fields.keys.each do |key|
+              result.merge!(data.extract! (key))
+            end
+          else
+            result = defined_Fields
+          end
+        end
+
+        result = nil unless result.present?
+
+        post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, place_id: place_id, data: result) if params[:post_type] == Post::TEXT.to_s
+        if params[:post_type] == Post::IMAGE.to_s
+          post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height], place_id: place_id, data: result)
+          post.delay.post_image_upload_delayed_job(params[:img_url])
+        end
+
+        #else
+        #  post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id) if params[:post_type] == Post::TEXT.to_s
+        #  post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height]) if params[:post_type] == IMAGE::TEXT.to_s
+        #end
+        hiveapplication = HiveApplication.find(topic.hiveapplication_id)
+        if topic.hiveapplication_id ==1 #Hive Application
+                                        #if hiveapplication.devuser_id == 1
+          post.broadcast_hive
+        else
+          post.broadcast_hive
+          post.broadcast_other_app(params[:temp_id])
+        end
+        render json: { post: post,temp_id: params[:temp_id],  profanity_counter: current_user.profanity_counter}
       else
-        p "in 2"
-        post.broadcast_hive
-        post.broadcast_other_app
+        render json: { status: false }
       end
-      render json: { post: post}
+    else
+      render json: { status: false }
     end
   end
 
@@ -108,7 +114,9 @@ class Api::PostsController < ApplicationController
         post =  Post.find(params[:post_id])
         if post.present?
           post.remove_records
+          hiveapplication = HiveApplication.find(hiveapplication.id)
           if hiveapplication.id ==1
+          #if hiveapplication.devuser_id == 1
             post.delete_event_broadcast_hive
           else
             post.delete_event_broadcast_hive
