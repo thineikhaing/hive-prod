@@ -1,4 +1,6 @@
 class Api::TopicsController < ApplicationController
+  #before_filter :restrict_access
+
   def create
     if params[:app_key].present?
       hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
@@ -226,5 +228,12 @@ class Api::TopicsController < ApplicationController
       render json: { error_msg: "Params topic_id and app_key must be presented" }
     end
   end
+
+
+  #private
+  #def restrict_access
+  #  hiveapplication = HiveApplication.find_by(api_key: params[:api_key])
+  #  render json: {error_msg: "unauthorized access"} unless hiveapplication
+  #end
 
 end
