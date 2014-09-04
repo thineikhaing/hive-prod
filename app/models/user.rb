@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   has_many :topics
+  has_many :checkinplaces
   has_many :posts
   has_many :user_push_tokens
   has_many  :user_accounts
@@ -93,6 +94,21 @@ class User < ActiveRecord::Base
     elsif choice == "unfavourite"
       check = ActionLog.find_by(type_name: "user", type_id: user_id, action_type: "favourite", action_user_id: current_user.id)
       check.delete if check.present?
+    end
+  end
+
+  def block_user(current_user, user_id, choice)
+    admin_user = User.find_by_email("info@raydiusapp.com")
+    #admin_user1 = User.find_by_email("gamebot@raydiusapp.com")
+
+    if choice == "block"
+      unless user_id == admin_user.id or user_id == admin_user1.id
+        check = ActionLog.where(type_name: "user", type_id: user_id, action_type: "block", action_user_id: current_user.id )
+        ActionLog.create(type_name: "user",type_id: user_id, action_type: "block", action_user_id: current_user.id) unless check.present?
+      end
+    elsif choice == "unblock"
+      exist = ActionLog.find(type_name: "user", type_id: user_id, action_type: "block",action_user_id: current_user.id)
+      exist.delete if exist.present?
     end
   end
 

@@ -31,9 +31,6 @@ class Tag < ActiveRecord::Base
           topicwithtag.add_record(topic_id, tag.id)
         else
           count += 1
-          p count
-          p na[0 .. 24]
-          p tag_type
           new_tag = Tag.create(keyword: na[0 .. 24], tag_type: tag_type)
           topicwithtag.add_record(topic_id, new_tag.id)
           tagsArray.push({ keyword: new_tag})
@@ -45,5 +42,13 @@ class Tag < ActiveRecord::Base
     #Pusher["hive_channel"].trigger_async("new_tag", { tags: tagsArray }) if count > 0
   end
 
+  def remove_records(tag_id)
+    topicwithtag = TopicWithTag.where(tag_id: tag_id)
+
+    topicwithtag.each do |twt|
+      twt.delete
+    end
+
+  end
 
 end

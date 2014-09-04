@@ -10,7 +10,7 @@ class Place < ActiveRecord::Base
 
 
   # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)
-  def self.nearest_topics_within(latitude, longitude, radius)
+  def self.nearest_topics_within(latitude, longitude, radius, hive_id)
     radius = 1 if radius.nil?
 
     box = Geocoder::Calculations.bounding_box("#{latitude}, #{longitude}", radius, {units: :km})
@@ -21,7 +21,14 @@ class Place < ActiveRecord::Base
     places.each do |place|
       if place.topics.present?
         place.topics.each do |topic|
-          topics_array.push(topic)
+          if hive_id==1
+            topics_array.push(topic)
+          else
+            if topic.hiveapplication_id == hive_id
+              topics_array.push(topic)
+            end
+          end
+
         end
       end
     end
@@ -53,13 +60,11 @@ class Place < ActiveRecord::Base
       geocoder = Geocoder.search("#{latitude},#{longitude}").first
 
       if geocoder.present? and geocoder.country.present?
-        p "present"
         check = Place.find_by_address("Somewhere in #{geocoder.country}")
         check2 = Place.find_by_address("Somewhere in the world")
 
         check.present? ? place = check : place = Place.create(name: "Somewhere in #{geocoder.country}", latitude: latitude, longitude: longitude, address: "Somewhere in #{geocoder.country}", source: Place::UNKNOWN, user_id: current_user.id)
       else
-        p "we are the world"
         check2.present? ? place = check2 : place = Place.create(name: "Somewhere in the world", latitude: latitude, longitude: longitude, address: "Somewhere in the world", source: Place::UNKNOWN, user_id: current_user.id)
       end
     end

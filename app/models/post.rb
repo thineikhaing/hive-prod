@@ -18,7 +18,7 @@ class Post < ActiveRecord::Base
   end
 
 
-  def broadcast_other_app
+  def broadcast_other_app(temp_id)
       data = {
           id: self.id,
           topic_id: self.topic_id,
@@ -34,6 +34,7 @@ class Post < ActiveRecord::Base
           likes: self.likes,
           dislikes: self.dislikes,
           offensive: self.offensive,
+          temp_id: temp_id,
           data: self.data
       }
     channel_name = "topic_" + self.topic_id.to_s+ "_channel"
@@ -55,9 +56,10 @@ class Post < ActiveRecord::Base
         place_id: self.place_id,
         likes: self.likes,
         dislikes: self.dislikes,
-        offensive: self.offensive
+        offensive: self.offensive,
+        data: self.data,
     }
-    channel_name = "topic_" + self.topic_id.to_s+ "_channel"
+    channel_name = "hive_topic_" + self.topic_id.to_s+ "_channel"
     Pusher[channel_name].trigger_async("broadcast", data)
   end
 
@@ -79,7 +81,7 @@ class Post < ActiveRecord::Base
         offensive: self.offensive
     }
 
-    channel_name = "topic_" + self.topic_id.to_s+ "_channel"
+    channel_name = "hive_topic_" + self.topic_id.to_s+ "_channel"
     Pusher[channel_name].trigger_async("update_post", data)
   end
 
@@ -121,10 +123,11 @@ class Post < ActiveRecord::Base
         place_id: self.place_id,
         likes: self.likes,
         dislikes: self.dislikes,
-        offensive: self.offensive
+        offensive: self.offensive,
+        data: self.data
     }
 
-    channel_name = "topic_" + self.topic_id.to_s+ "_channel"
+    channel_name = "hive_topic_" + self.topic_id.to_s+ "_channel"
     Pusher[channel_name].trigger_async("delete_post", data)
   end
 

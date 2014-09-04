@@ -3,11 +3,12 @@ class Topic < ActiveRecord::Base
   belongs_to :user
   belongs_to :place
 
-  has_many  :posts
+  has_many  :posts, :dependent => :destroy
   # Setup hstore
   store_accessor :data
   #enums for topic type
   enums %w(NORMAL IMAGE AUDIO VIDEO)
+  enums %w(NONE FLARE BEACON STICKY PROMO COSHOOT QUESTION ERRAND)
 
   attr_accessible :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :data, :created_at, :image_url, :width, :height, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type
 
@@ -19,34 +20,39 @@ class Topic < ActiveRecord::Base
   end
 
   def as_json(options=nil)
-    if options[:popular_post].present? and options[:latest_post].present?
-      if options[:num_posts].present? and options[:num_posts].to_i>0
-        @no_of_post =options[:num_posts].to_i
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post, :latest_post, :num_posts])
-      else
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post, :latest_post])
-      end
-    elsif options[:popular_post].present? and options[:latest_post].nil?
-      if options[:num_posts].present?  and options[:num_posts].to_i>0
-        @no_of_post =options[:num_posts].to_i
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post, :num_posts])
-      else
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post])
-      end
-    elsif options[:popular_post].nil? and options[:latest_post].present?
-      if options[:num_posts].present?  and options[:num_posts].to_i>0
-        @no_of_post =options[:num_posts].to_i
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :latest_post, :num_posts])
-      else
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :latest_post])
-      end
+    #if options[:popular_post].present? and options[:latest_post].present?
+    #  if options[:num_posts].present? and options[:num_posts].to_i>0
+    #    @no_of_post =options[:num_posts].to_i
+    #    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post, :latest_post, :num_posts])
+    #  else
+    #    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post, :latest_post])
+    #  end
+    #elsif options[:popular_post].present? and options[:latest_post].nil?
+    #  if options[:num_posts].present?  and options[:num_posts].to_i>0
+    #    @no_of_post =options[:num_posts].to_i
+    #    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post, :num_posts])
+    #  else
+    #    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post])
+    #  end
+    #elsif options[:popular_post].nil? and options[:latest_post].present?
+    #  if options[:num_posts].present?  and options[:num_posts].to_i>0
+    #    @no_of_post =options[:num_posts].to_i
+    #    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :latest_post, :num_posts])
+    #  else
+    #    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :latest_post])
+    #  end
+    #else
+    #  if options[:num_posts].present?  and options[:num_posts].to_i>0
+    #    @no_of_post =options[:num_posts].to_i
+    #    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :num_posts])
+    #  else
+    #super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information])
+      #end
+    #end
+    if options[:content].present?      #return topic json with content information
+      super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :content])
     else
-      if options[:num_posts].present?  and options[:num_posts].to_i>0
-        @no_of_post =options[:num_posts].to_i
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :num_posts])
-      else
-        super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information])
-      end
+      super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information])
     end
   end
 
@@ -63,8 +69,33 @@ class Topic < ActiveRecord::Base
     end
   end
 
-  def hive_broadcast
+  def content
+    testDataArray = [ ]
+    hiveapplication = HiveApplication.find(self.hiveapplication_id)
+    if hiveapplication.present?
+      if hiveapplication.api_key ==  "f3b6eed28269900bc7eea17ebac5e701"    #api key for mealbox
+        postsArray = self.posts.where(["likes > ? OR dislikes > ?", 0, 0])
+        if postsArray.present?
+          postsArray.each do |pa|
+          total = pa.likes + pa.dislikes
+          testDataArray.push({ total: total, id: pa.id, created_at: pa.created_at })
+          end
+        end
+        new_post = testDataArray.sort_by { |x| [x[:total], x[:created_at]] }
+        if new_post.present?
+          post = Post.find(new_post.last[:id])
+        end
+        if post.present?
+         { popular_post: post, comment_post: self.posts.first}
+        else
+         { popular_post: nil,comment_post: self.posts.first}
 
+        end
+     end
+    end
+  end
+
+  def hive_broadcast
     data = {
         id: self.id,
         title: self.title,
@@ -83,6 +114,7 @@ class Topic < ActiveRecord::Base
         offensive: self.offensive,
         notification_range: self.notification_range,
         sepcial_type: self.special_type,
+        data: self.data,
         methods: {
             username: username,
             place_information: self.place_information,
@@ -94,6 +126,7 @@ class Topic < ActiveRecord::Base
   end
 
   def app_broadcast
+    hiveapplication = HiveApplication.find(self.hiveapplication_id)
     data = {
         id: self.id,
         title: self.title,
@@ -119,12 +152,12 @@ class Topic < ActiveRecord::Base
             tag_information: self.tag_information
         }
     }
-    channel_name = "hive_application_"+ self.hiveapplication_id.to_s+ "_channel"
+    channel_name = hiveapplication.api_key+ "_channel"
     Pusher[channel_name].trigger_async("new_topic", data)
   end
 
-  def update_event_broadcast_hive()
-    p "update event boradcast"
+  def app_broadcast_with_content
+    hiveapplication = HiveApplication.find(self.hiveapplication_id)
     data = {
         id: self.id,
         title: self.title,
@@ -143,6 +176,38 @@ class Topic < ActiveRecord::Base
         offensive: self.offensive,
         notification_range: self.notification_range,
         special_type: self.special_type,
+        data: self.data,
+        methods: {
+            username: username,
+            place_information: self.place_information,
+            tag_information: self.tag_information,
+            content: self.content
+        }
+    }
+    channel_name = hiveapplication.api_key+ "_channel"
+    Pusher[channel_name].trigger_async("new_topic", data)
+  end
+
+  def update_event_broadcast_hive
+    data = {
+        id: self.id,
+        title: self.title,
+        user_id: self.user_id,
+        topic_type: self.topic_type,
+        topic_sub_type: self.topic_sub_type,
+        place_id: self.place_id,
+        image_url: self.image_url,
+        width:  self.width,
+        height: self.height,
+        hiveapplication_id: self.hiveapplication_id,
+        value:  self.value,
+        unit: self.unit,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        offensive: self.offensive,
+        notification_range: self.notification_range,
+        special_type: self.special_type,
+        data: self.data,
         methods: {
             username: username,
             place_information: self.place_information,
@@ -153,7 +218,8 @@ class Topic < ActiveRecord::Base
     Pusher["hive_channel"].trigger_async("update_topic", data)
   end
 
-  def update_event_broadcast_other_app()
+  def update_event_broadcast_other_app
+    hiveapplication = HiveApplication.find(self.hiveapplication_id)
     data = {
         id: self.id,
         title: self.title,
@@ -179,12 +245,12 @@ class Topic < ActiveRecord::Base
             tag_information: self.tag_information
         }
     }
-    channel_name = "hive_application_"+ self.hiveapplication_id.to_s+ "_channel"
+    channel_name = hiveapplication.api_key+ "_channel"
     Pusher[channel_name].trigger_async("update_topic", data)
   end
 
-  def delete_event_broadcast_hive()
-    p "update event boradcast"
+  def update_event_broadcast_other_app_with_content
+    hiveapplication = HiveApplication.find(self.hiveapplication_id)
     data = {
         id: self.id,
         title: self.title,
@@ -203,6 +269,38 @@ class Topic < ActiveRecord::Base
         offensive: self.offensive,
         notification_range: self.notification_range,
         special_type: self.special_type,
+        data: self.data,
+        methods: {
+            username: username,
+            place_information: self.place_information,
+            tag_information: self.tag_information,
+            content: self.content
+        }
+    }
+    channel_name = hiveapplication.api_key+ "_channel"
+    Pusher[channel_name].trigger_async("update_topic", data)
+  end
+
+  def delete_event_broadcast_hive
+    data = {
+        id: self.id,
+        title: self.title,
+        user_id: self.user_id,
+        topic_type: self.topic_type,
+        topic_sub_type: self.topic_sub_type,
+        place_id: self.place_id,
+        image_url: self.image_url,
+        width:  self.width,
+        height: self.height,
+        hiveapplication_id: self.hiveapplication_id,
+        value:  self.value,
+        unit: self.unit,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        offensive: self.offensive,
+        notification_range: self.notification_range,
+        special_type: self.special_type,
+        data: self.data,
         methods: {
             username: username,
             place_information: self.place_information,
@@ -213,7 +311,8 @@ class Topic < ActiveRecord::Base
     Pusher["hive_channel"].trigger_async("delete_topic", data)
   end
 
-  def delete_event_broadcast_other_app()
+  def delete_event_broadcast_other_app
+    hiveapplication = HiveApplication.find(self.hiveapplication_id)
     data = {
         id: self.id,
         title: self.title,
@@ -239,7 +338,39 @@ class Topic < ActiveRecord::Base
             tag_information: self.tag_information
         }
     }
-    channel_name = "hive_application_"+ self.hiveapplication_id.to_s+ "_channel"
+    channel_name = hiveapplication.api_key + "_channel"
+    Pusher[channel_name].trigger_async("delete_topic", data)
+  end
+
+  def delete_event_broadcast_other_app_with_content
+    hiveapplication = HiveApplication.find(self.hiveapplication_id)
+    data = {
+        id: self.id,
+        title: self.title,
+        user_id: self.user_id,
+        topic_type: self.topic_type,
+        topic_sub_type: self.topic_sub_type,
+        place_id: self.place_id,
+        image_url: self.image_url,
+        width:  self.width,
+        height: self.height,
+        hiveapplication_id: self.hiveapplication_id,
+        value:  self.value,
+        unit: self.unit,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        offensive: self.offensive,
+        notification_range: self.notification_range,
+        special_type: self.special_type,
+        data: self.data,
+        methods: {
+            username: username,
+            place_information: self.place_information,
+            tag_information: self.tag_information,
+            content: self.content
+        }
+    }
+    channel_name = hiveapplication.api_key + "_channel"
     Pusher[channel_name].trigger_async("delete_topic", data)
   end
 
