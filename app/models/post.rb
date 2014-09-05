@@ -154,6 +154,18 @@ class Post < ActiveRecord::Base
     Pusher[channel_name].trigger_async("delete_post", data)
   end
 
+  # Search the database for related contents
+
+  def self.search_data(search)
+    if search
+      #find(:all, :conditions => ['lower(content) LIKE ?', "%#{search.downcase}%"])
+      where("lower(content) like ?", "%#{search.downcase}%")
+    else
+      find(:all)
+    end
+  end
+
+
   def user_add_likes(current_user, post_id, choice)
     actionlog = ActionLog.new
     #history = Historychange.new

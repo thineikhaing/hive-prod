@@ -51,4 +51,15 @@ class Tag < ActiveRecord::Base
 
   end
 
+  # Search the database for related tags
+
+  def self.search_data(search)
+    if search
+      #find(:all, :conditions => ['lower(tag) LIKE ?', "%#{search.downcase}%"])
+      where("lower(keyword) like ?", "%#{search.downcase}%")
+    else
+      find(:all)
+    end
+  end
+
 end

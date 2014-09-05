@@ -342,6 +342,17 @@ class Topic < ActiveRecord::Base
     Pusher[channel_name].trigger_async("delete_topic", data)
   end
 
+  # Search the database for related titles
+
+  def self.search_data(search)
+    if search
+      #find(:all, :conditions => ['lower(title) LIKE ?', "%#{search.downcase}%"])
+      where("lower(title) like ?", "%#{search.downcase}%")
+    else
+      find(:all)
+    end
+  end
+
   def delete_event_broadcast_other_app_with_content
     hiveapplication = HiveApplication.find(self.hiveapplication_id)
     data = {

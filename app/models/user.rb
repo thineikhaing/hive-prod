@@ -112,6 +112,13 @@ class User < ActiveRecord::Base
     end
   end
 
+  def self.nearest(latitude, longitude, radius=1)
+    # Contains bottom-left and top-right corners
+    box = Geocoder::Calculations.bounding_box("#{latitude},#{longitude}", radius, {units: :km})
+
+    User.where(last_known_latitude: box[0] .. box[2], last_known_longitude: box[1] .. box[3])
+  end
+
   private
 
   def email_required?
