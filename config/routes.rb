@@ -29,7 +29,7 @@ Rails.application.routes.draw do
   match "hiveapplication/save_columns_changes" , path:"save_columns_changes"    , via: [:get,:post]
   #get "hiveapplication/sign_up", path: "sign_up"
   #post "hiveapplication/sign_up", path: "sign_up"
-
+  resources :places
   #resources :topics
   #resources :posts
   #resources :users
@@ -41,6 +41,7 @@ Rails.application.routes.draw do
     match "downloaddata/initial_retrieve"           => "downloaddata#initial_retrieve"          , via: [:get, :post]
     match "downloaddata/retrieve_hiveapplications"  => "downloaddata#retrieve_hiveapplications" , via: [:get, :post]
     match "downloaddata/retrieve_users"             => "downloaddata#retrieve_users"            , via: [:get, :post]
+    match "downloaddata/search_database"            => "downloaddata#search_database"           , via: [:get, :post]
     match "users/create_anonymous_user"             => "users#create_anonymous_user"            , via: [:get, :post]
     match "users/sign_up"                           => "users#sign_up"                          , via: [:get, :post]
     match "users/sign_in"                           => "users#sign_in"                          , via: [:get, :post]
@@ -52,6 +53,7 @@ Rails.application.routes.draw do
     match "users/flare_mode"                        => "users#flare_mode"                       , via: [:get, :post]
     match "users/user_action_logs"                  => "users#user_action_logs"                 , via: [:get, :post]
     match "users/facebook_friends"                  => "users#facebook_friends"                 , via: [:get, :post]
+    match "users/check_in"                          => "users#check_in"                         , via: [:get, :post]
     match "topics/create"                           => "topics#create"                          , via: [:get, :post]
     match "topics/topic_liked"                      => "topics#topic_liked"                     , via: [:get, :post]
     match "topics/topic_offensive"                  => "topics#topic_offensive"                 , via: [:get, :post]

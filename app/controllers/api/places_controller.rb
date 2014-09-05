@@ -2,25 +2,33 @@ class Api::PlacesController < ApplicationController
   def create
     if current_user.present?
       params[:name].present? ? name = params[:name] : name = nil
-      params[:category].present? ? category = params[:category] : category = nil
+      #params[:category].present? ? category = params[:category] : category = nil
       params[:address].present? ? address = params[:address] : address = nil
       params[:latitude].present? ? latitude = params[:latitude] : latitude = nil
       params[:longitude].present? ? longitude = params[:longitude] : longitude = nil
-      params[:locality].present? ? locality = params[:locality] : locality=nil
-      params[:region].present? ? region = params[:region] : region=nil
+      #params[:locality].present? ? locality = params[:locality] : locality=nil
+      #params[:region].present? ? region = params[:region] : region=nil
+      params[:place_id].present? ? place_id = params[:place_id] : place_id = nil
       params[:neighbourhood].present? ? neighbourhood = params[:neighbourhood] : neighbourhood=nil
-      params[:country].present? ? country = params[:country] : country=nil
-      params[:postcode].present? ? postcode = params[:postcode] : postcode=nil
+      #params[:country].present? ? country = params[:country] : country=nil
+      #params[:postcode].present? ? postcode = params[:postcode] : postcode=nil
       params[:img_url].present? ? img_url = params[:img_url] : img_url = nil
-      params[:website_url].present? ? website_url= params[:website_url] : website_url = nil
+      #params[:website_url].present? ? website_url= params[:website_url] : website_url = nil
       params[:chain_name].present? ? chain_name = params[:chain_name] : chain_name = nil
       params[:contact_number].present? ? contact_number= params[:contact_number] : contact_number = nil
       params[:source].present? ? source = params[:source] : source = nil
       params[:source_id].present? ? source_id = params[:source_id] : source_id = nil
+      params[:app_key].present? ? app_key = params[:app_key] : app_key=nil
 
-      place = Place.create(name: name, category: category, address: address, locality: locality, region: region, neighbourhood: neighbourhood,country: country,postal_code: postcode, website_url: website_url,chain_name: chain_name, contact_number: contact_number,img_url: img_url, source: source, source_id: source_id,user_id: current_user.id, latitude: latitude, longitude: longitude)
-      Checkinplace.create(place_id: place.id, user_id: current_user.id) if place.present?
-      render json: { place: place}
+      choice="others"
+      if app_key.present?
+        choice = "luncheon" if app_key==  "f3b6eed28269900bc7eea17ebac5e701"
+      end
+      #places = Place.create(name: name, category: category, address: address, locality: locality, region: region, neighbourhood: neighbourhood,country: country,postal_code: postcode, website_url: website_url,chain_name: chain_name, contact_number: contact_number,img_url: img_url, source: source, source_id: source_id,user_id: current_user.id, latitude: latitude, longitude: longitude)
+      place = Place.new()
+      place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, current_user.id, current_user.authentication_token, choice,img_url,category="",locality="",country="",postcode="")
+      #Checkinplace.create(place_id: places.id, user_id: current_user.id) if places.present?
+      render json: place
     else
       render json: { error_msg: "Params user_id and auth_token must be presented" }
     end

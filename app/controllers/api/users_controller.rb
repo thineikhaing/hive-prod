@@ -56,6 +56,51 @@ class Api::UsersController < ApplicationController
 
   end
 
+  def check_in
+    # Authentication method that checks against database (taken from Devise)
+    # We are not using the before_filter with :authenticate_user! here because
+    # We want to handle the error ourselves, and not let Devise display a sign in box
+    warden.authenticate(:scope => :user, :auth_token => params[:auth_token])
+
+    usersArray = [ ]
+    activeUsersArray = [ ]
+
+    if current_user.present? && params[:latitude].present? && params[:longitude].present?
+      p current_user
+      current_user.update_attributes(last_known_latitude: params[:latitude], last_known_longitude: params[:longitude])
+      user = User.find(current_user.id)
+      user.check_in_time = Time.now
+      user.save!
+
+      Userpreviouslocation.create(latitude: params[:latitude], longitude: params[:longitude], radius: params[:radius], user_id: current_user.id) if params[:save] == "true"
+
+      time_allowance = Time.now - 10.minutes.ago
+
+      users = User.nearest(params[:latitude], params[:longitude], params[:radius])
+
+      users.each do |u|
+        if u.check_in_time.present?
+          time_difference = Time.now - u.check_in_time
+
+          unless time_difference.to_i > time_allowance.to_i
+            usersArray.push(u)
+          end
+        end
+      end
+
+      usersArray.each do |ua|
+        unless ua.id == current_user.id
+          active_users = { user_id: ua.id, username: ua.username, latitude: ua.last_known_latitude, longitude: ua.last_known_longitude }
+          activeUsersArray.push(active_users)
+        end
+      end
+
+      render json: { users: activeUsersArray }
+    else
+      render json: { status: false }, status: 400
+    end
+  end
+
   def verify_user_account
     if params[:auth_token].present? & params[:push_token]
       user = User.find_by_authentication_token(params[:auth_token])
@@ -134,9 +179,7 @@ class Api::UsersController < ApplicationController
       fbIDS_array = params[:fb_id].split(",")
 
       fbIDS_array.each do |fb|
-        p fb
         account = UserAccount.find_by(account_type: "facebook",linked_account_id: fb)
-
         if account.present?
           data = { fb_id: fb, user_id: account.user_id }
           fb_friends_array.push(data)
