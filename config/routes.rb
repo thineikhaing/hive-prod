@@ -54,6 +54,8 @@ Rails.application.routes.draw do
     match "users/user_action_logs"                  => "users#user_action_logs"                 , via: [:get, :post]
     match "users/facebook_friends"                  => "users#facebook_friends"                 , via: [:get, :post]
     match "users/check_in"                          => "users#check_in"                         , via: [:get, :post]
+    match "users/register_apn"                      => "users#register_apn"                     , via: [:get, :post]
+    match "users/edit_profile"                      => "users#edit_profile"                     , via: [:get, :post]
     match "topics/create"                           => "topics#create"                          , via: [:get, :post]
     match "topics/topic_liked"                      => "topics#topic_liked"                     , via: [:get, :post]
     match "topics/topic_offensive"                  => "topics#topic_offensive"                 , via: [:get, :post]
