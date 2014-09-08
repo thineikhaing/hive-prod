@@ -101,8 +101,27 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def register_apn
+    if params[:push_token].present?  && current_user.present?
+
+      #Urbanairship.unregister_device(current_user.device_token)
+
+      push_user = UserPushToken.create(user_id: current_user.id,push_token: params[:push_token])
+
+      #current_user.update_attribute(:device_token, params[:push_token])
+      #Urbanairship.register_device(params[:device_token], {alias: current_user.id, badge: 0})
+      if push_user.present?
+        render json: { status: true }
+      else
+        render json: { status: false }
+      end
+    else
+      render json: { status: false }
+    end
+  end
+
   def verify_user_account
-    if params[:auth_token].present? & params[:push_token]
+    if params[:auth_token].present? and params[:push_token].present?
       user = User.find_by_authentication_token(params[:auth_token])
       if user.present? & current_user.present?
         if user.id == current_user.id
@@ -124,11 +143,12 @@ class Api::UsersController < ApplicationController
 
   def sign_in
     if params[:email].present? and params[:password].present?
+      var = [ ]
       user = User.find_by_email(params[:email])
       if user.present?
         if user.valid_password?(params[:password])
             user_accounts = UserAccount.where(:user_id => user.id)
-            render json: { :user => user_accounts, user_accounts: user_accounts, :success => 20 }, status: 200
+            render json: { :user => user, user_accounts: user_accounts, :success => 20 }, status: 200
         else
           var.push(22)
           render json: { :error => var }, status: 400 # User password wrong
@@ -143,7 +163,7 @@ class Api::UsersController < ApplicationController
   end
 
   def facebook_login
-    if params[:fb_id].present?
+    if params[:fb_id].present? and current_user.present?
       var = [ ]
       user = User.find (current_user.id)
       fb_account = UserAccount.find_all_by_account_type_and_linked_account_id("facebook",params[:fb_id])
@@ -169,6 +189,53 @@ class Api::UsersController < ApplicationController
     else
       render json:{ error_msg: "Param fb_id must be presented" }
     end
+  end
+
+  def edit_profile
+    #if current_user.present?
+    #  user = User.find_by_id(current_user.id)
+    #  checkUsername = User.search_data(params[:username])
+    #  checkEmail = User.find_by_email(params[:email])
+    #
+    #  var = [ ]
+    #  #history = Historychange.new
+    #
+    #  if params[:username].present?
+    #    var.push(33) if Obscenity.profane?(params["username"]) == true
+    #    #checkName.map { |cN| var.push(33) unless var.include?(33) if cN.downcase == "cunt" or cN.downcase == "shit" or cN.downcase == "cocksucker" or cN.downcase == "piss" or cN.downcase == "tits" or cN.downcase == "fuck" or cN.downcase == "motherfucker" or cN.downcase == "suck" or cN.downcase == "cheebye" }
+    #    var.push(32) if checkUsername.present?
+    #  end
+    #
+    #  if params[:email].present?
+    #    if checkEmail != nil
+    #      var.push(31)
+    #    end
+    #  end
+    #
+    #  if var.empty?
+    #    if params[:username].present?
+    #      user.username = params[:username]
+    #      #user.posts.map { |post| history.create_record("post", post.id, "update", post.topic.id) } if user.posts.present?
+    #      #user.topics.map { |topic| history.create_record("topic", topic.id, "update", nil) } if user.topics.present?
+    #    end
+    #
+    #    if params[:password].present?
+    #      user.password = params[:password]
+    #      user.password_confirmation = params[:password]
+    #    end
+    #
+    #    if params[:email].present?
+    #      user.email = params[:email]
+    #    end
+    #
+    #    user.save!
+    #    render json: { :user => user, :success => 30 }, status: 200
+    #  else
+    #    render json: { :error => var }, status: 400
+    #  end
+    #else
+    #  render json:{ error_msg: "Param auth_token/ user_id must be presented" }
+    #end
   end
 
   def facebook_friends
