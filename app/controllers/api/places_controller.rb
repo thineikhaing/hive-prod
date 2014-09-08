@@ -22,7 +22,7 @@ class Api::PlacesController < ApplicationController
 
       choice="others"
       if app_key.present?
-        choice = "luncheon" if app_key==  "f3b6eed28269900bc7eea17ebac5e701"
+        choice = "luncheon" if app_key==  "81e75dccf4934e7224211d5e8096ea41"
       end
       #places = Place.create(name: name, category: category, address: address, locality: locality, region: region, neighbourhood: neighbourhood,country: country,postal_code: postcode, website_url: website_url,chain_name: chain_name, contact_number: contact_number,img_url: img_url, source: source, source_id: source_id,user_id: current_user.id, latitude: latitude, longitude: longitude)
       place = Place.new()
