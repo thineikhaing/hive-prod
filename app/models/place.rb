@@ -69,7 +69,7 @@ class Place < ActiveRecord::Base
         user.save!
         Userpreviouslocation.create(latitude: place.latitude, longitude: place.longitude, radius: 1, user_id: user_id)
 
-        return { places: place, status: 70 }
+        return { place: place, status: 70 }
       elsif source_id.present?
         factual_result = factual.table("places").filters("factual_id" => source_id.to_s).first
 
@@ -109,7 +109,7 @@ class Place < ActiveRecord::Base
         user.save!
         Userpreviouslocation.create(latitude: place.latitude, longitude: place.longitude, radius: 1, user_id: user_id)
 
-        return { places: place, status: 70 }
+        return { place: place, status: 70 }
       else
         place = ""
         private_place = ""
@@ -121,7 +121,7 @@ class Place < ActiveRecord::Base
         end
 
         if private_place.present?
-          return { places: private_place, status: 71 }
+          return { place: private_place, status: 71 }
         else
           if choice == "luncheon"
             place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, category: "Food and Dining",img_url: img_url,country: country,postcode: postcode,locality: locality) unless place.present?
@@ -136,14 +136,14 @@ class Place < ActiveRecord::Base
           user.save!
           Userpreviouslocation.create(latitude: place.latitude, longitude: place.longitude, radius: 1, user_id: user_id)
 
-          return { places: place, status: 70 }
+          return { place: place, status: 70 }
         end
       end
     else
       place = self.class.check_for_records(latitude, longitude)
 
       if place.present?
-        return { places: place, status: 70 }
+        return { place: place, status: 70 }
       else
         factual_result = factual.table("global").geo("$circle" => {"$center" => [latitude, longitude], "$meters" => 1000}).first
 
@@ -163,7 +163,7 @@ class Place < ActiveRecord::Base
         factual_result["tel"].present? ? tel = factual_result["tel"] : tel = ""
         new_place = Place.create(name: factual_result["name"], latitude: factual_result["latitude"], longitude: factual_result["longitude"], address: factual_result["address"], country: factual_result["country"], category: category, locality: factual_result["locality"], postal_code: factual_result["postcode"], region: factual_result["region"],  website_url: website, source: 3, source_id: source_id, user_id: user_id,img_url: img_url)
 
-        return { places: new_place, status: 70 }
+        return { place: new_place, status: 70 }
       end
     end
   end
