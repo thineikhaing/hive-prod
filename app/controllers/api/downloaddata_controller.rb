@@ -10,7 +10,7 @@ class Api::DownloaddataController < ApplicationController
         topics = Place.nearest_topics_within(params[:latitude], params[:longitude], radius, hiveApplication.id)
         if hiveApplication.id ==1 #Hive Application
           render json: { topics: JSON.parse(topics.to_json())}
-        elsif hiveApplication.devuser_id==1 and hiveApplication.id!=1 #All Applications under Herenow except Hive
+        elsif hiveApplication.devuser_id==1 and hiveApplication.id!=1 #All Applications under Herenow account except Hive
           render json: { topics: JSON.parse(topics.to_json(content: true))}
         else #3rd party App
           render json: { topics: JSON.parse(topics.to_json())}
