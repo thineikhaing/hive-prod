@@ -38,7 +38,7 @@ class Place < ActiveRecord::Base
   def add_record(name, latitude, longitude, address, source, source_id, place_id, user_id, auth_token, choice,img_url,category="",locality="",country="",postcode="")
     factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
     user = User.find(user_id)
-    #category = ""
+
     neighborhood = ""
     website = ""
     tel = ""
