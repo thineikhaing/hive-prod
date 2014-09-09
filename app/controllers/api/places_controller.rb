@@ -32,7 +32,7 @@ class Api::PlacesController < ApplicationController
       end
       #places = Place.create(name: name, category: category, address: address, locality: locality, region: region, neighbourhood: neighbourhood,country: country,postal_code: postcode, website_url: website_url,chain_name: chain_name, contact_number: contact_number,img_url: img_url, source: source, source_id: source_id,user_id: current_user.id, latitude: latitude, longitude: longitude)
       place = Place.new()
-      place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode="")
+      place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
       #Checkinplace.create(place_id: places.id, user_id: current_user.id) if places.present?
       render json: place
     else
