@@ -22,7 +22,13 @@ class Api::PlacesController < ApplicationController
 
       choice="others"
       if app_key.present?
-        choice = "luncheon" if app_key==  "81e75dccf4934e7224211d5e8096ea41"
+        mealbox_key = ""
+        if Rails.env.development?
+          mealbox_key = Mealbox_key::Development_Key
+        else
+          mealbox_key = Mealbox_key::Staging_Key
+        end
+        choice = "luncheon" if app_key ==  mealbox_key
       end
       #places = Place.create(name: name, category: category, address: address, locality: locality, region: region, neighbourhood: neighbourhood,country: country,postal_code: postcode, website_url: website_url,chain_name: chain_name, contact_number: contact_number,img_url: img_url, source: source, source_id: source_id,user_id: current_user.id, latitude: latitude, longitude: longitude)
       place = Place.new()

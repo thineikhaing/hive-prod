@@ -73,7 +73,13 @@ class Topic < ActiveRecord::Base
     testDataArray = [ ]
     hiveapplication = HiveApplication.find(self.hiveapplication_id)
     if hiveapplication.present?
-      if hiveapplication.api_key ==  "81e75dccf4934e7224211d5e8096ea41"    #api key for mealbox
+      mealbox_key = ""
+      if Rails.env.development?
+        mealbox_key = Mealbox_key::Development_Key
+      else
+        mealbox_key = Mealbox_key::Staging_Key
+      end
+      if hiveapplication.api_key ==  mealbox_key   #api key for mealbox
         postsArray = self.posts.where(["likes > ? OR dislikes > ?", 0, 0])
         if postsArray.present?
           postsArray.each do |pa|

@@ -68,7 +68,10 @@ module Factual_Const
   Key = "qG4dfx6KUELOXYR3mxdE2o7fXKay7qTQ3zWTnOFx"
   Secret = "yes4DHYok4jefKCSydsfO6NsYPbmvuMSU5ZcRnjR"
 end
-
+module Mealbox_key
+  Staging_Key= "81e75dccf4934e7224211d5e8096ea41"
+  Development_Key = "f3b6eed28269900bc7eea17ebac5e701"
+end
 module App_Password #constant variable to be used for encryption and decryption
   Key = "rebel4six"
   Length = "8 bytes!"
