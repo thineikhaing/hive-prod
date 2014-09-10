@@ -78,6 +78,7 @@ Rails.application.routes.draw do
     match "mytest/test4"                            => "mytest#test4"                           , via: [:get, :post]
     match "tags/delete"                             => "tags#delete"                            , via: [:get, :post]
     match "tags/within_location"                    => "tags#within_location"                   , via: [:get, :post]
+    match "tags/retrieve_all_tags"                  => "tags#retrieve_all_tags"                 , via: [:get, :post]
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

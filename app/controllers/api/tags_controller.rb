@@ -16,7 +16,13 @@ class Api::TagsController < ApplicationController
       render json: { error_msg: "Params tag_id must be presented" }
     end
   end
+ def retrieve_all_tags
+   tagsArray = [ ]
+   tags = Tag.all
+   tags.map { |t| tagsArray.push( { id: t.id, tag: t.keyword, tag_type: t.tag_type } ) }
 
+   render json: { tags: tagsArray }
+ end
   # Returns tags and locations within range of (n) Km
   # Current range is set as 1km
   def within_location
