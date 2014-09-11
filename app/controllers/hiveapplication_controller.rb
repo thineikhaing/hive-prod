@@ -1,6 +1,12 @@
 class HiveapplicationController < ApplicationController
   require 'securerandom'  #to generate api key for application
-  before_filter :detect_format
+  before_filter :detect_format, :set_cache_buster
+
+  #Reset session if user click back button in browser
+  def set_cache_buster
+    response.headers["Cache-Control"] = "no-cache, no-store, max-age=0, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+  end
 
   def login_page
     # Just a temporary login page to prevent people from looking at the content
@@ -9,6 +15,7 @@ class HiveapplicationController < ApplicationController
         if params[:hive][:login_password] == App_Password::Key
           redirect_to hiveapplication_index_path
         else
+          #show error msg for wrong password
           flash.now[:notice] = "Wrong Password"
           render layout: nil
         end
@@ -64,6 +71,8 @@ class HiveapplicationController < ApplicationController
     #clear the session array
     session[:transaction_list_topics] = []
     session[:transaction_list_posts] = []
+    session[:app_id] = nil
+    session[:table_name] = nil
     if current_user.present?
       @hive_applications = current_user.hive_applications.order("id ASC")
       session[:no_of_apps] = current_user.hive_applications.count
@@ -73,16 +82,7 @@ class HiveapplicationController < ApplicationController
     end
   end
 
-  #def application_list
-  #  # Check for current user
-  #  if current_user.present?
-  #    @hive_applications = current_user.hive_applications.order("id ASC")
-  #  else
-  #
-  #    redirect_to hiveapplication_index_path
-  #  end
-  #end
-
+  #function to regenerate api key wiich is not used for the time being
   def regenerate_api_key
     # Check if CURRENT_USER and APPLICATION_ID is present
     if current_user.present?  && params[:app_id].present?
@@ -113,8 +113,10 @@ class HiveapplicationController < ApplicationController
       elsif params[:sign_up][:password]!= params[:sign_up][:confirm_password]
         flash.now[:notice] = "Password and Confirm Password must be the same"
       else
+        #generate verification code
         verification_code = HiveApplication.generate_verification_code
 
+        #create new Devuser
         devuser = Devuser.create(username: params[:sign_up][:username], email: params[:sign_up][:email], password: params[:sign_up][:password])
         encrypted_code = encryption(verification_code)
         devuser.email_verification_code = verification_code
@@ -124,6 +126,7 @@ class HiveapplicationController < ApplicationController
         mailer = UserMailer.account_verification(params[:sign_up][:username], params[:sign_up][:email], encrypted_code)
         mailer.deliver
 
+        #add batch job to delete the user record if user does not verify
         HiveApplication.add_dev_user_activation_job(devuser.id)
 
         redirect_to hiveapplication_index_path
@@ -163,7 +166,6 @@ class HiveapplicationController < ApplicationController
   def edit_application
     # Show the Topics, Posts, Places, Users
     # Check if APPLICATION_ID and CURRENT_USER exist
-    p "edit_application"
     if params[:app_id].present? && current_user.present?
       session[:app_id] = params[:app_id].to_i
       @application = HiveApplication.find(params[:app_id])
@@ -261,18 +263,14 @@ class HiveapplicationController < ApplicationController
   end
 
   def delete_additional_column
-    # Delete the additional field stored in hstore (data)
     if params[:field_id].present?
-      #additional_field = AppAdditionalField.find(params[:field_id])
-      #field_name = additional_field.additional_column_name
-      #check for params[:field_id] and if it is zero if id is zero del permanently from array
-      #if additional_field.present? and params[:table_name].present?
+
+      #delete from session variable
       if params[:table_name].present?
         if params[:table_name]=="Topic" and session[:transaction_list_topics].present?
           topics = session[:transaction_list_topics]
           topics.each do |field|
             if field["id"].to_i == params[:field_id].to_i
-              p "INSIDE"
               field["status"] = 3
             end
           end
@@ -286,30 +284,20 @@ class HiveapplicationController < ApplicationController
          @Postfieldbyapp = session[:transaction_list_posts]
         end
 
-        #additional_field.delete
-        #@fieldbyapp = AppAdditionalField.where(:app_id=> session[:app_id], :table_name => params[:table_name])
-        #AppAdditionalField.delete_column(params[:table_name],field_name,session[:app_id])
-        #check the table name (Topic/Post/Places/User)
         redirect_to hiveapplication_edit_application_path(:app_id => session[:app_id])
       end
     end
   end
 
   def update_additional_column
-
     if params[:field_id].present?
-      #additional_field = AppAdditionalField.find(params[:field_id])
-      #field_name = additional_field.additional_column_name
-      #if additional_field.present? and params[:table_name].present?
+      #update to session variable
       if params[:table_name].present?
         new_column_name = params[:column_name]
         if params[:table_name]=="Topic" and session[:transaction_list_topics].present?
           topics = session[:transaction_list_topics]
           topics.each do |field|
-            p field
-            p params[:field_id].to_i
             if field["id"].to_i == params[:field_id].to_i
-              p "INSIDE"
               field["additional_column_name"] = new_column_name
               field["status"] = 2
             end
@@ -327,16 +315,6 @@ class HiveapplicationController < ApplicationController
         redirect_to hiveapplication_edit_application_path(:app_id => session[:app_id])
       end
     end
-    #field_record = AppAdditionalField.find(params[:field_id].to_i)
-    #old_column_name = field_record.additional_column_name
-    #new_column_name = params[:column_name]
-
-    #field_record.additional_column_name = new_column_name
-    #field_record.save!
-    #AppAdditionalField.edit_column(params[:table_name],old_column_name,new_column_name,session[:app_id])
-    #
-    #@fieldbyapp = AppAdditionalField.where(:app_id=> session[:app_id], :table_name => params[:table_name])
-    #redirect_to hiveapplication_edit_application_path(:app_id => session[:app_id])
   end
 
   def verify
@@ -411,8 +389,6 @@ class HiveapplicationController < ApplicationController
 
   def edit_column
     # Edits the field stored in data(hstore)
-    p "edit_column"
-    p params
     #if params[:AppAdditionalColumn].present?
       if params[:field_id].present?
         if params[:table_name]=="Topic"
@@ -439,48 +415,16 @@ class HiveapplicationController < ApplicationController
           posts.push({"id" => id, "field_id" => 0, "additional_column_name"=> params[:additional_column_name], "status"=> 1})
           session.delete(:transaction_list_posts)
           session[:transaction_list_posts] = posts
-          p  session[:transaction_list_posts]
           @Postfieldbyapp = session[:transaction_list_posts]
         end
         redirect_to hiveapplication_edit_application_path(:app_id => session[:app_id])
       #end
     end
-
-
-
-    #if params[:AppAdditionalColumn].present?
-    #  if params[:AppAdditionalColumn][:field_id].present?
-
-        #if params[:AppAdditionalColumn][:field_id].to_i!= 0
-        #  field_record = AppAdditionalField.find(params[:AppAdditionalColumn][:field_id].to_i)
-        #  old_column_name = field_record.additional_column_name
-        #  new_column_name = params[:AppAdditionalColumn][:additional_column_name]
-        #  field_record.additional_column_name = new_column_name
-        #  field_record.save!
-        #  AppAdditionalField.edit_column(params[:AppAdditionalColumn][:table_name],old_column_name,new_column_name,params[:AppAdditionalColumn][:app_id])
-        #
-        #  @fieldbyapp = AppAdditionalField.where(:app_id=> params[:AppAdditionalColumn][:app_id], :table_name => params[:AppAdditionalColumn][:table_name])
-        #
-
-
-        #app_add_field = AppAdditionalField.create(app_id: params[:AppAdditionalColumn][:app_id].to_i, table_name: params[:AppAdditionalColumn][:table_name], additional_column_name: params[:AppAdditionalColumn][:additional_column_name])
-        #AppAdditionalField.add_column(params[:AppAdditionalColumn][:table_name],params[:AppAdditionalColumn][:additional_column_name],params[:AppAdditionalColumn][:app_id])
-        #
-        #@fieldbyapp = AppAdditionalField.where(:app_id=> params[:AppAdditionalColumn][:app_id], :table_name => params[:AppAdditionalColumn][:table_name])
-        #end
-      #end
-    #elsif params[:table_name].present?
-    #  session[:table_name] = params[:table_name]
-    #  if params[:table_name] == "Topic"
-    #    @columns = Topic.columns.map {|c| [c.name, c.type]}
-    #  elsif params[:table_name] == "Post"
-    #    @columns = Post.columns.map {|c| [c.name, c.type]}
-    #  end
-    #end
   end
 
 
   def check_status_changes
+    #check the status to show the alert message when user click back to basic option
     status_change = false
     session[:transaction_list_topics].each do |topic|
       if topic["status"]!= 0
@@ -497,10 +441,10 @@ class HiveapplicationController < ApplicationController
       end
     end
     cookies[:status_change] = status_change
-    p cookies[:status_change]
   end
 
   def clear_columns_changes
+    #to clear the session data of all additional columns' changes
     cookies[:status_change] = false
     session[:transaction_list_topics] = []
     session[:transaction_list_posts] = []
@@ -508,12 +452,11 @@ class HiveapplicationController < ApplicationController
   end
 
   def save_columns_changes
-    p "save changes"
+    #to save the session data of all additional columns' changes  to table
     if session[:transaction_list_topics].present?
       topics = session[:transaction_list_topics]
+      #for topics
       topics.each do |topic|
-        p "status"
-        p topic["status"]
         case topic["status"] # a_variable is the variable we want to compare
           when 1    #new column
             app_add_field = AppAdditionalField.create(app_id: session[:app_id].to_i, table_name: "Topic", additional_column_name: topic["additional_column_name"])
@@ -548,19 +491,15 @@ class HiveapplicationController < ApplicationController
                 AppAdditionalField.delete_column("Topic",field_name,session[:app_id])
               end
             end
-          else
-            p "it was something else"
         end
       end
     end
     if session[:transaction_list_posts].present?
       posts = session[:transaction_list_posts]
+      #for post
       posts.each do |post|
-        p "status"
-        p post["status"]
         case post["status"] # a_variable is the variable we want to compare
           when 1    #new column
-            p "new"
             app_add_field = AppAdditionalField.create(app_id: session[:app_id].to_i, table_name: "Post", additional_column_name: post["additional_column_name"])
             AppAdditionalField.add_column("Post",post["additional_column_name"],session[:app_id])
 
@@ -580,15 +519,11 @@ class HiveapplicationController < ApplicationController
               end
 
             else
-              p "new"
-              #new column
               app_add_field = AppAdditionalField.create(app_id: session[:app_id].to_i, table_name: "Post", additional_column_name: post["additional_column_name"])
               AppAdditionalField.add_column("Post",post["additional_column_name"],session[:app_id])
             end
 
           when 3    #delete
-            p "delete"
-            p post["field_id"]
             if post["field_id"]>0
               additional_field = AppAdditionalField.find(post["field_id"])
               if additional_field.present?
@@ -598,8 +533,6 @@ class HiveapplicationController < ApplicationController
                 AppAdditionalField.delete_column("Post",field_name,session[:app_id])
               end
             end
-          else
-            p "it was something else"
         end
       end
     end
