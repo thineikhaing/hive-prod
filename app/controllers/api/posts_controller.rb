@@ -3,7 +3,6 @@ class Api::PostsController < ApplicationController
   def create
     if current_user.present?
       topic = Topic.find_by_id(params[:topic_id].to_i)
-
       if topic.present?
         if check_banned_profanity(params[:post])
           user = User.find_by_id(current_user.id)

@@ -28,8 +28,6 @@ class Api::DownloaddataController < ApplicationController
   end
 
   def search_database
-    text = ""
-    text_array = [ ]
     topic_array = [ ]
     user_array = [ ]
     place_array = [ ]
@@ -89,7 +87,6 @@ class Api::DownloaddataController < ApplicationController
   end
 
   def retrieve_users
-    userArray = [ ]
     userInfo = [ ]
 
     if params[:user_ids].present?

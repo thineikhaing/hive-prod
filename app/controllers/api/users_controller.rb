@@ -385,5 +385,4 @@ class Api::UsersController < ApplicationController
     params.require(:user).permit(:username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :point, :honor_rating, :created_at, :data, :device_id)
   end
 
-
 end

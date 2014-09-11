@@ -5,7 +5,6 @@ class Api::TopicsController < ApplicationController
     if params[:app_key].present?
       hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
       tag = Tag.new
-
       if hiveapplication.present?
         if check_banned_profanity(params[:title])
           user = User.find(current_user.id)
@@ -62,7 +61,6 @@ class Api::TopicsController < ApplicationController
           end
 
           #create post if param post_content is passed
-          post = nil
           if topic.present? and params[:post_content].present?
             post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, place_id: place_id) if params[:post_type] == Post::TEXT.to_s
             post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height], place_id: place_id) if params[:post_type] == Post::IMAGE.to_s

@@ -1,4 +1,5 @@
 class Api::PlacesController < ApplicationController
+
   def create
     if current_user.present?
       params[:name].present? ? name = params[:name] : name = nil
@@ -20,6 +21,7 @@ class Api::PlacesController < ApplicationController
       params[:neighbourhood].present? ? neighbourhood = params[:neighbourhood] : neighbourhood=""
       params[:chain_name].present? ? chain_name = params[:chain_name] : chain_name = ""
       params[:contact_number].present? ? contact_number= params[:contact_number] : contact_number = ""
+
       choice="others"
       if app_key.present?
         mealbox_key = ""

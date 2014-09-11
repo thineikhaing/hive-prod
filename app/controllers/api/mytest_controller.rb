@@ -1,4 +1,5 @@
 class Api::MytestController < ApplicationController
+
   def test
     User.create(email: "ximen@example.com", password: "password", username: "Xi Men Chui Xue", data: {nickname: "East Door Blow Snow", ranked: 1, role: "Force Beater" })
     #User.create(username: "hj", email: "hj@example.com", password: "password")
@@ -7,20 +8,16 @@ class Api::MytestController < ApplicationController
 
   def test2
     users = User.all
-
     users.each do |u|
       if u.data.present?
          if u.data.has_key?("role") == true
            data_hash = u.data.except("role")
-           #u.data = data_hash
-           #u.save
            p data_hash
            u.data = data_hash
            u.save!
          end
       end
     end
-
     render json: "test2"
   end
 
@@ -39,13 +36,12 @@ class Api::MytestController < ApplicationController
         u.save!
       end
     end
-
     render json: "test3"
   end
 
   def test4
     p User::BOT
-
     render json: SecureRandom.urlsafe_base64
   end
+
 end
