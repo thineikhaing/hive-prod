@@ -473,10 +473,16 @@ class Topic < ActiveRecord::Base
     topic_user.save!
     topic.reload
 
-    if topic.hiveapplication_id ==1 and action_status != 0 #Hive Application
-      topic.update_event_broadcast_hive
-    else
-      if action_status != 0
+    if action_status!= 0
+      hiveapplication = HiveApplication.find(topic.hiveapplication_id)
+      if hiveapplication.id ==1
+        #broadcast new topic creation to hive_channel only
+        topic.update_event_broadcast_hive
+      elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1
+        #All Applications under Herenow except Hive
+        topic.update_event_broadcast_hive
+        topic.update_event_broadcast_other_app_with_content
+      else
         topic.update_event_broadcast_hive
         topic.update_event_broadcast_other_app
       end
@@ -499,9 +505,17 @@ class Topic < ActiveRecord::Base
         mail = UserMailer.report_offensive_topic(user, topic)
         mail.deliver
         actionlog =   ActionLog.create(type_name: "topic", type_id: topic_id, action_type: "offensive", action_user_id: user.id)
-        if topic.hiveapplication_id ==1  #Hive Application
+
+        hiveapplication = HiveApplication.find(topic.hiveapplication_id)
+        if hiveapplication.id ==1
+          #broadcast new topic creation to hive_channel only
           topic.update_event_broadcast_hive
+        elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1
+          #All Applications under Herenow except Hive
+          topic.update_event_broadcast_hive
+          topic.update_event_broadcast_other_app_with_content
         else
+          #3rd party app
           topic.update_event_broadcast_hive
           topic.update_event_broadcast_other_app
         end

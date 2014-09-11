@@ -205,9 +205,9 @@ class Api::TopicsController < ApplicationController
           if hiveapplication.id ==1
           #if hiveapplication.devuser_id ==1
             topic.delete_event_broadcast_hive
-          #elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1
-          #  topic.delete_event_broadcast_hive
-          #  topic.delete_event_broadcast_other_app_with_content
+          elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1
+            topic.delete_event_broadcast_hive
+            topic.delete_event_broadcast_other_app_with_content
           else
             topic.delete_event_broadcast_hive
             topic.delete_event_broadcast_other_app

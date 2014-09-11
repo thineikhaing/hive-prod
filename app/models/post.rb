@@ -232,17 +232,28 @@ class Post < ActiveRecord::Base
     post.reload
 
     #history.create_record("post", post.id, "update", self.topic_id)
-    if topic.hiveapplication_id ==1 and action_status != 0 #Hive Application
-      post.update_event_broadcast_hive
-      topic.update_event_broadcast_hive
-    else
-      if action_status != 0
+
+    if action_status!= 0
+      hiveapplication = HiveApplication.find(topic.hiveapplication_id)
+      if hiveapplication.id ==1
+        #broadcast new topic creation to hive_channel only
+        post.update_event_broadcast_hive
+        topic.update_event_broadcast_hive
+      elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1
+        #All Applications under Herenow except Hive
+        post.update_event_broadcast_hive
+        post.update_event_broadcast_other_app
+        topic.update_event_broadcast_hive
+        topic.update_event_broadcast_other_app_with_content
+      else
+        #3rd party app
         post.update_event_broadcast_hive
         post.update_event_broadcast_other_app
         topic.update_event_broadcast_hive
         topic.update_event_broadcast_other_app
       end
     end
+
     #post.update_event_broadcast   unless action_status == 0
     #topic.update_event_broadcast  unless action_status == 0
 
@@ -261,7 +272,19 @@ class Post < ActiveRecord::Base
         if new_post.present?
           unless testPost.id == newer_TestPost.id
             topic = Topic.find(post.topic_id)
-            topic.update_event_broadcast
+            hiveapplication = HiveApplication.find(topic.hiveapplication_id)
+            if hiveapplication.id ==1
+              #broadcast new topic creation to hive_channel only
+              topic.update_event_broadcast_hive
+            elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1
+              #All Applications under Herenow except Hive
+              topic.update_event_broadcast_hive
+              topic.update_event_broadcast_other_app_with_content
+            else
+              #3rd party app
+              topic.update_event_broadcast_hive
+              topic.update_event_broadcast_other_app
+            end
           end
         else
           topic = Topic.find(post.topic_id)
