@@ -456,87 +456,51 @@ class HiveapplicationController < ApplicationController
     if session[:transaction_list_topics].present?
       topics = session[:transaction_list_topics]
       #for topics
-      topics.each do |topic|
-        case topic["status"] # a_variable is the variable we want to compare
-          when 1    #new column
-            app_add_field = AppAdditionalField.create(app_id: session[:app_id].to_i, table_name: "Topic", additional_column_name: topic["additional_column_name"])
-            AppAdditionalField.add_column("Topic",topic["additional_column_name"],session[:app_id])
-
-          when 2    #edit
-            if topic["field_id"] >0
-              field_record = AppAdditionalField.find(topic["field_id"])
-              if field_record.present?
-                old_column_name = field_record.additional_column_name
-                new_column_name = topic["additional_column_name"]
-
-                field_record.additional_column_name = new_column_name
-                field_record.save!
-
-                AppAdditionalField.edit_column("Topic",old_column_name,new_column_name,session[:app_id])
-              end
-
-            else
-              #new column
-              app_add_field = AppAdditionalField.create(app_id: session[:app_id].to_i, table_name: "Topic", additional_column_name: topic["additional_column_name"])
-              AppAdditionalField.add_column("Topic",topic["additional_column_name"],session[:app_id])
-            end
-
-          when 3    #delete
-            if topic["field_id"]>0
-              additional_field = AppAdditionalField.find(topic["field_id"])
-              if additional_field.present?
-                field_name = additional_field.additional_column_name
-                additional_field.delete
-
-                AppAdditionalField.delete_column("Topic",field_name,session[:app_id])
-              end
-            end
-        end
-      end
+      update_additional_field_table(topics, "Topic",session[:app_id])
     end
     if session[:transaction_list_posts].present?
       posts = session[:transaction_list_posts]
       #for post
-      posts.each do |post|
-        case post["status"] # a_variable is the variable we want to compare
-          when 1    #new column
-            app_add_field = AppAdditionalField.create(app_id: session[:app_id].to_i, table_name: "Post", additional_column_name: post["additional_column_name"])
-            AppAdditionalField.add_column("Post",post["additional_column_name"],session[:app_id])
-
-          when 2    #edit
-            if post["field_id"] >0
-              p "edit"
-              p post["field_id"]
-              field_record = AppAdditionalField.find(post["field_id"])
-              if field_record.present?
-                old_column_name = field_record.additional_column_name
-                new_column_name = post["additional_column_name"]
-
-                field_record.additional_column_name = new_column_name
-                field_record.save!
-
-                AppAdditionalField.edit_column("Post",old_column_name,new_column_name,session[:app_id])
-              end
-
-            else
-              app_add_field = AppAdditionalField.create(app_id: session[:app_id].to_i, table_name: "Post", additional_column_name: post["additional_column_name"])
-              AppAdditionalField.add_column("Post",post["additional_column_name"],session[:app_id])
-            end
-
-          when 3    #delete
-            if post["field_id"]>0
-              additional_field = AppAdditionalField.find(post["field_id"])
-              if additional_field.present?
-                field_name = additional_field.additional_column_name
-                additional_field.delete
-
-                AppAdditionalField.delete_column("Post",field_name,session[:app_id])
-              end
-            end
-        end
-      end
+      update_additional_field_table(posts, "Post",session[:app_id])
     end
     clear_columns_changes
   end
 
+  def update_additional_field_table(transaction_list, table_name,app_id)
+    transaction_list.each do |tran|
+      case tran["status"] # a_variable is the variable we want to compare
+        when 1    #new column
+          app_add_field = AppAdditionalField.create(app_id:app_id, table_name: table_name, additional_column_name: tran["additional_column_name"])
+          AppAdditionalField.add_column(table_name,tran["additional_column_name"],app_id)
+        when 2    #edit
+          if tran["field_id"] >0
+            field_record = AppAdditionalField.find(tran["field_id"])
+            if field_record.present?
+              old_column_name = field_record.additional_column_name
+              new_column_name = tran["additional_column_name"]
+
+              field_record.additional_column_name = new_column_name
+              field_record.save!
+
+              AppAdditionalField.edit_column(table_name,old_column_name,new_column_name,app_id)
+            end
+
+          else
+            app_add_field = AppAdditionalField.create(app_id: app_id, table_name: table_name, additional_column_name: tran["additional_column_name"])
+            AppAdditionalField.add_column(table_name,tran["additional_column_name"],app_id)
+          end
+
+        when 3    #delete
+          if tran["field_id"]>0
+            additional_field = AppAdditionalField.find(tran["field_id"])
+            if additional_field.present?
+              field_name = additional_field.additional_column_name
+              additional_field.delete
+
+              AppAdditionalField.delete_column(table_name,field_name,app_id)
+            end
+          end
+      end
+    end
+  end
 end
