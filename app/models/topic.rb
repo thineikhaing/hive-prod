@@ -20,35 +20,6 @@ class Topic < ActiveRecord::Base
   end
 
   def as_json(options=nil)
-    #if options[:popular_post].present? and options[:latest_post].present?
-    #  if options[:num_posts].present? and options[:num_posts].to_i>0
-    #    @no_of_post =options[:num_posts].to_i
-    #    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post, :latest_post, :num_posts])
-    #  else
-    #    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post, :latest_post])
-    #  end
-    #elsif options[:popular_post].present? and options[:latest_post].nil?
-    #  if options[:num_posts].present?  and options[:num_posts].to_i>0
-    #    @no_of_post =options[:num_posts].to_i
-    #    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post, :num_posts])
-    #  else
-    #    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :popular_post])
-    #  end
-    #elsif options[:popular_post].nil? and options[:latest_post].present?
-    #  if options[:num_posts].present?  and options[:num_posts].to_i>0
-    #    @no_of_post =options[:num_posts].to_i
-    #    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :latest_post, :num_posts])
-    #  else
-    #    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :latest_post])
-    #  end
-    #else
-    #  if options[:num_posts].present?  and options[:num_posts].to_i>0
-    #    @no_of_post =options[:num_posts].to_i
-    #    super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :num_posts])
-    #  else
-    #super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information])
-      #end
-    #end
     if options[:content].present?      #return topic json with content information
       super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :content])
     else
