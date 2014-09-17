@@ -69,10 +69,10 @@ class Api::PostsController < ApplicationController
         end
         render json: { post: post,temp_id: params[:temp_id],  profanity_counter: current_user.profanity_counter}
       else
-        render json: { error_msg: "Invalid topic_id" }
+        render json: { error_msg: "Invalid topic id" } , status: 400
       end
     else
-      render json: { error_msg: "Params user_id and auth_token must be presented" }
+      render json: { error_msg: "Params user id and/ or  authentication token must be presented" } , status: 400
     end
   end
 
@@ -99,10 +99,10 @@ class Api::PostsController < ApplicationController
         end
         render json: {posts: posts}
       else
-        render json: { error_msg: "Invalid app_key" }
+        render json: { error_msg: "Invalid application key" }, status: 400
       end
     else
-      render json: { error_msg: "Params app_key and topic_id must be presented" }
+      render json: { error_msg: "Params application key and topic id must be presented" } , status: 400
     end
   end
 
@@ -126,13 +126,13 @@ class Api::PostsController < ApplicationController
 
           render json: { status: true }
         else
-          render json: { error_msg: "Invalid post_id" }
+          render json: { error_msg: "Invalid post id" }, status: 400
         end
       else
-        render json: { error_msg: "Invalid app_key" }
+        render json: { error_msg: "Invalid application key" } , status: 400
       end
     else
-      render json: { error_msg: "Params app_key and post_id must be presented" }
+      render json: { error_msg: "Params application key and post id must be presented" }, status: 400
     end
   end
 
@@ -145,10 +145,10 @@ class Api::PostsController < ApplicationController
 
         render json: { post: post, action_status: action_status}
       else
-        render json: { error_msg: "Invalid post_id" }
+        render json: { error_msg: "Invalid post id" } , status: 400
       end
     else
-      render json: { error_msg: "Params post_id and choice must be presented" }
+      render json: { error_msg: "Params post id and choice must be presented" }, status: 400
     end
   end
 
@@ -161,10 +161,10 @@ class Api::PostsController < ApplicationController
 
         render json: { post: post }
       else
-        render json: { error_msg: "Invalid post_id" }
+        render json: { error_msg: "Invalid post id" }, status: 400
       end
     else
-      render json: { error_msg: "Param post_id must be presented" }
+      render json: { error_msg: "Param post id must be presented" }, status: 400
     end
   end
 
@@ -176,10 +176,10 @@ class Api::PostsController < ApplicationController
         posts = Post.where(:id => arr_post_ids)
         render json: { posts: posts }
       else
-        render json: { error_msg: "Invalid app_key" }
+        render json: { error_msg: "Invalid application key" }, status: 400
       end
     else
-      render json: { error_msg: "Params app_key and post_ids must be presented" }
+      render json: { error_msg: "Params application key and post id(s) must be presented" } , status: 400
     end
   end
 

@@ -16,15 +16,15 @@ class Api::DownloaddataController < ApplicationController
           render json: { topics: JSON.parse(topics.to_json())}
         end
       else
-        render json: { error_msg: "Invalid app_key" }
+        render json: { error_msg: "Invalid application key" }, status: 400
       end
     else
-      render json: { error_msg: "Params app_key must be presented" }
+      render json: { error_msg: "Params application key must be presented" } , status: 400
     end
   end
 
   def retrieve_hiveapplications
-    render json: {apps: HiveApplication.all.to_json(:test => "true") }
+    render json: {apps: JSON.parse(HiveApplication.all.to_json(:test => "true")) }
   end
 
   def search_database
@@ -112,7 +112,7 @@ class Api::DownloaddataController < ApplicationController
 
       render json: { users: userInfo }
     else
-      render json: { error_msg: "Params user_ids must be presented" }
+      render json: { error_msg: "Params user id(s) must be presented" } , status: 400
     end
   end
 

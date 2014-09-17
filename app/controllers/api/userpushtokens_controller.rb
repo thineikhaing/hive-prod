@@ -13,7 +13,7 @@ class Api::UserpushtokensController < ApplicationController
       end
       render json: { user_push_token: user_push_token }
     else
-      render json: { error_msg: "Params user_id, auth_token and push_token must be presented" }
+      render json: { error_msg: "Params user id, authentication token and pusher token must be presented" }, status: 400
     end
   end
 end

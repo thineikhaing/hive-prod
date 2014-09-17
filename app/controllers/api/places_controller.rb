@@ -38,7 +38,7 @@ class Api::PlacesController < ApplicationController
       #Checkinplace.create(place_id: places.id, user_id: current_user.id) if places.present?
       render json: place
     else
-      render json: { error_msg: "Params user_id and auth_token must be presented" }
+      render json: { error_msg: "Params user id and/ or authentication token must be presented" } , status: 400
     end
   end
 
@@ -71,7 +71,7 @@ class Api::PlacesController < ApplicationController
 
       render json: { places: data_array}
     else
-      render json: { error_msg: "Params latitude, longitude and radius must be presented" }
+      render json: { error_msg: "Params latitude, longitude and radius must be presented" }, status: 400
     end
   end
 
@@ -163,10 +163,10 @@ class Api::PlacesController < ApplicationController
           render json: data_array
         end
       else
-        render json: { error_msg: "Invalid app_key" }
+        render json: { error_msg: "Invalid application key" }, status: 400
       end
     else
-      render json: { error_msg: "Params latitude, longitude and app_key must be presented" }
+      render json: { error_msg: "Params latitude, longitude and application key must be presented" }, status: 400
     end
   end
 

@@ -52,7 +52,7 @@ class Api::TagsController < ApplicationController
       end
       render json: { tags: normalTagsArray, locationtags: locationTagsArray }
     else
-      render json: { error_msg: "Params latitude and longitude must presented" }
+      render json: { error_msg: "Params latitude and longitude must presented" }  , status: 400
     end
   end
 
