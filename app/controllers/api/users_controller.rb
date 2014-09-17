@@ -20,7 +20,47 @@ class Api::UsersController < ApplicationController
         render json: { user: user }
       end
     else
-      render json: { error_msg: "Invalid app_key" }
+      render json: { error_msg: "Invalid application key" } , status: 400
+    end
+  end
+
+  def update_carmmunicate_user
+    if current_user.present? and params[:app_key].present?
+      hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+      if hiveapplication.present?
+        user = User.find(current_user.id)
+        #covert the params data to hash
+        data = getHashValuefromString(params[:data]) if params[:data].present?
+
+        #get predefined addtional columns from table and match with the params value
+        appAdditionalField = AppAdditionalField.where(:app_id => hiveapplication.id, :table_name => "User")
+        result = Hash.new
+        if appAdditionalField.present?
+          defined_Fields = Hash.new
+          appAdditionalField.each do |field|
+            defined_Fields[field.additional_column_name] = nil
+          end
+          #get all extra columns that define in app setting against with the params data
+          if data.present?
+            data = defined_Fields.deep_merge(data)
+            defined_Fields.keys.each do |key|
+              result.merge!(data.extract! (key))
+            end
+          else
+            result = defined_Fields
+          end
+        end
+        result = nil unless result.present?
+
+        data_hash = {}
+        user.data = result
+        user.save!
+        render json: { user: user }
+      else
+        render json: { error_msg: "Invalid application key" }, status: 400
+      end
+    else
+      render json: { error_msg: "Param user id, authentication token and application key must be presented" }, status: 400
     end
   end
 
@@ -48,10 +88,10 @@ class Api::UsersController < ApplicationController
           end
         end
       else
-        render json: { error_msg: "Invalid user_id/ auth_token" }
+        render json: { error_msg: "Invalid user id/ authentication token" }, status: 400
       end
     else
-      render json: { error_msg: "Param app_key must be presented" }
+      render json: { error_msg: "Param application key must be presented" }, status: 400
     end
   end
 
@@ -95,7 +135,7 @@ class Api::UsersController < ApplicationController
 
       render json: { users: activeUsersArray }
     else
-      render json: { status: false }, status: 400
+      render json: { error_msg: "Param user id, authentication token, latitude and longitude must be presented" }, status: 400
     end
   end
 
@@ -111,10 +151,10 @@ class Api::UsersController < ApplicationController
       if push_user.present?
         render json: { status: true }
       else
-        render json: { status: false }
+        render json: { error_msg: "There is no pusher token for the user" }, status: 400
       end
     else
-      render json: { status: false }
+      render json: { error_msg: "Param user id, authentication token, pusher token must be presented" }, status: 400
     end
   end
 
@@ -131,10 +171,10 @@ class Api::UsersController < ApplicationController
           end
         end
       else
-        render json:{error_msg: "Invalid userid/ auth_token"}
+        render json:{error_msg: "Invalid user id/ authentication token"}, status: 400
       end
     else
-      render json:{error_msg: "Params auth_token and push_token must be presented"}
+      render json:{error_msg: "Params authentication token and pusher token must be presented"} , status: 400
     end
 
   end
@@ -156,7 +196,7 @@ class Api::UsersController < ApplicationController
         render json: { :error => var }, status: 400 # User email doesn't exist
       end
     else
-      render json: {error_msg: "Params email and password must be presented"}
+      render json: {error_msg: "Params email and password must be presented"} , status: 400
     end
   end
 
@@ -182,10 +222,10 @@ class Api::UsersController < ApplicationController
           render json: { :user => user,  :fb_exists => true,:user_accounts => user_accounts, :success => 40 }, status: 200
         end
       else
-        render json:{ error_msg: "Invalid user_id/ auth_token"}
+        render json:{ error_msg: "Invalid user id/ authentication token"}, status: 400
       end
     else
-      render json:{ error_msg: "Param fb_id must be presented" }
+      render json:{ error_msg: "Param facebook id must be presented" } , status: 400
     end
   end
 
@@ -232,7 +272,7 @@ class Api::UsersController < ApplicationController
         render json: { :error => var }, status: 400
       end
     else
-      render json:{ error_msg: "Param auth_token/ user_id must be presented" }
+      render json:{ error_msg: "Param authentication token/ user id must be presented" } , status: 400
     end
   end
 
@@ -253,7 +293,7 @@ class Api::UsersController < ApplicationController
 
       render json: { users: fb_friends_array }
     else
-      render json: { error_msg: "Param fb_id must be presented" }
+      render json: { error_msg: "facebook id must be presented" }, status: 400
     end
   end
 
@@ -267,7 +307,7 @@ class Api::UsersController < ApplicationController
       topic_info = user.user_topic_retrival(choice)
       render json: topic_info
     else
-      render json:{ error_msg: "Invalid user_id/ auth_token"}
+      render json:{ error_msg: "Invalid user id / authentication token"} , status: 400
     end
   end
 
@@ -276,7 +316,7 @@ class Api::UsersController < ApplicationController
       current_user.update_attribute(:flareMode , params[:flareMode])
       render json: { status: true }
     else
-      render json: { error_msg: "Params user_id, auth_token and flareMode must be presented" }
+      render json: { error_msg: "Params user id, authentication token and flareMode must be presented" } , status: 400
     end
   end
 
@@ -286,7 +326,7 @@ class Api::UsersController < ApplicationController
 
       render json: { status: true }
     else
-      render json: { error_msg: "Params fav_user_id, user_id, auth_token and choice must be presented" }
+      render json: { error_msg: "Params favourite user id, user id, authentication token and choice must be presented" }, status: 400
     end
   end
 
@@ -299,7 +339,7 @@ class Api::UsersController < ApplicationController
 
       render json: { status: true }
     else
-      render json: { error_msg: "Params block_user_id, user_id, auth_token and choice must be presented" }
+      render json: { error_msg: "Params user id to block, current user id, authentication token and choice must be presented" } , status: 400
     end
   end
 
@@ -374,7 +414,7 @@ class Api::UsersController < ApplicationController
 
       render json: { user: data }
     else
-      render json: { error_msg: "Invalid user_id/ auth_token"}
+      render json: { error_msg: "Invalid user id/ authentication token"}, status: 400
     end
   end
 
