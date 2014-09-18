@@ -115,11 +115,12 @@ class Api::UsersController < ApplicationController
 
       if params[:app_key].present?
         hive_application = HiveApplication.find_by_api_key(params[:app_key])
-        if Rails.env.Development?
+        if Rails.env.development?
           carmmunicate_key = Carmmunicate_key::Development_Key
         else
           carmmunicate_key = Carmmunicate_key::Staging_Key
         end
+        p carmmunicate_key
         if hive_application.present?
           if hive_application.api_key ==carmmunicate_key
             time_allowance = Time.now - 10.seconds.ago
@@ -157,6 +158,7 @@ class Api::UsersController < ApplicationController
       render json: { error_msg: "Param user id, authentication token, latitude and longitude must be presented" }, status: 400
     end
   end
+
 
   def register_apn
     if params[:push_token].present?  && current_user.present?
