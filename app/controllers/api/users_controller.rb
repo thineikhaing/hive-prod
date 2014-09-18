@@ -115,8 +115,13 @@ class Api::UsersController < ApplicationController
 
       if params[:app_key].present?
         hive_application = HiveApplication.find_by_api_key(params[:app_key])
+        if Rails.env.Development?
+          carmmunicate_key = Carmmunicate_key::Development_Key
+        else
+          carmmunicate_key = Carmmunicate_key::Staging_Key
+        end
         if hive_application.present?
-          if hive_application.api_key ==Carmmunicate_key
+          if hive_application.api_key ==carmmunicate_key
             time_allowance = Time.now - 10.seconds.ago
           else
             time_allowance = Time.now - 10.minutes.ago
@@ -132,7 +137,7 @@ class Api::UsersController < ApplicationController
       users = User.nearest(params[:latitude], params[:longitude], params[:radius])
 
       users.each do |u|
-        if u.check_in_time.present?             ``
+        if u.check_in_time.present?
           time_difference = Time.now - u.check_in_time
           unless time_difference.to_i > time_allowance.to_i
             usersArray.push(u)

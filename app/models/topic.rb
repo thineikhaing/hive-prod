@@ -588,6 +588,50 @@ class Topic < ActiveRecord::Base
 
   end
 
+  def notify_carmmunicate_msg_to_nearby_users
+    users_to_push=[]
+    place = Place.find_by_id(self.place_id)
+    current_lat = place.latitude
+    current_lng = place.longitude
+    user = User.find(self.user_id)
+
+
+    #get the user within 5KM
+    users_to_push = get_active_users_to_push(current_lat, current_lng, 5, user.id)
+
+    #get the user within 10KM if there is no user to push within 5KM
+    unless users_to_push.present?
+      users_to_push = get_active_users_to_push(current_lat, current_lng, 10, user.id)
+    end
+
+    if users_to_push.present?
+      notify_carmmunicate_msg_to_selected_users(users_to_push)
+    end
+  end
+
+  def get_active_users_to_push(current_lat, current_lng, raydius, current_user_id)
+    usersArray = [ ]
+    activeUsersArray = []
+
+    users = User.nearest(current_lat, current_lng, raydius)
+    time_allowance = Time.now - 10.seconds.ago
+
+    users.each do |u|
+      if u.check_in_time.present?
+        time_difference = Time.now - u.check_in_time
+        unless time_difference.to_i > time_allowance.to_i
+          usersArray.push(u)
+        end
+      end
+    end
+
+    usersArray.each do |ua|
+      unless ua.id == current_user_id
+        activeUsersArray.push(ua.id)
+      end
+    end
+  end
+
   def user_favourite_topic(current_user, topic_id, choice)
     if choice == "favourite"
       check = ActionLog.where(type_name: "topic", type_id: topic_id, action_type: "favourite", action_user_id: current_user.id)

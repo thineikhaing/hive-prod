@@ -69,7 +69,20 @@ class Api::TopicsController < ApplicationController
           #create tag
           tag.add_record(topic.id, params[:tag], Tag::NORMAL) if params[:tag].present?  and topic.present?
           tag.add_record(topic.id, params[:locationtag], Tag::LOCATION) if params[:locationtag].present?  and topic.present?
+          if Rails.env.Development?
+            carmmunicate_key = Carmmunicate_key::Development_Key
+          else
+            carmmunicate_key = Carmmunicate_key::Staging_Key
+          end
+          if params[:option].present? and hiveapplication.api_key == carmmunicate_key
+            if params[:option] == true and params[:users_to_push].present?
+              #broadcast to selected user group
+              topic.notify_carmmunicate_msg_to_selected_users (params[:users_to_push]) if topic.present?
+            else
+              #broadcast users within 5km/10km
 
+            end
+          end
           #increase like and dislike count
           if likes > 0
             ActionLog.create(action_type: "like", type_id: topic.id, type_name: "topic", action_user_id: current_user.id) if topic.present?
