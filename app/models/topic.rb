@@ -559,19 +559,19 @@ class Topic < ActiveRecord::Base
     }.to_json
 
     if Rails.env.production?
-      app_key = Urbanairship_Const::FV_P_Key
-      app_secret = Urbanairship_Const::FV_P_Secret
-      master_secret= Urbanairship_Const::FV_P_Master_Secret
+      app_key = Urbanairship_Const::CM_P_Key
+      app_secret = Urbanairship_Const::CM_P_Secret
+      master_secret= Urbanairship_Const::CM_P_Master_Secret
     elsif Rails.env.staging?
       p "staging"
-      app_key = Urbanairship_Const::FV_S_Key
-      app_secret= Urbanairship_Const::FV_S_Secret
-      master_secret= Urbanairship_Const::FV_S_Master_Secret
+      app_key = Urbanairship_Const::CM_S_Key
+      app_secret= Urbanairship_Const::CM_S_Secret
+      master_secret= Urbanairship_Const::CM_S_Master_Secret
     else
       p "development"
-      app_key = Urbanairship_Const::FV_D_Key
-      app_secret= Urbanairship_Const::FV_D_Secret
-      master_secret= Urbanairship_Const::FV_D_Master_Secret
+      app_key = Urbanairship_Const::CM_D_Key
+      app_secret= Urbanairship_Const::CM_D_Secret
+      master_secret= Urbanairship_Const::CM_D_Master_Secret
     end
     full_path = 'https://go.urbanairship.com/api/push/'
     url = URI.parse(full_path)
@@ -603,7 +603,8 @@ class Topic < ActiveRecord::Base
     unless users_to_push.present?
       users_to_push = get_active_users_to_push(current_lat, current_lng, 10, user.id)
     end
-
+    p "users_to_push"
+    p users_to_push
     if users_to_push.present?
       notify_carmmunicate_msg_to_selected_users(users_to_push)
     end
@@ -614,7 +615,7 @@ class Topic < ActiveRecord::Base
     activeUsersArray = []
 
     users = User.nearest(current_lat, current_lng, raydius)
-    time_allowance = Time.now - 10.seconds.ago
+    time_allowance = Time.now - 10.days.ago
 
     users.each do |u|
       if u.check_in_time.present?
