@@ -73,6 +73,7 @@ Rails.application.routes.draw do
     match "places/create"                           => "places#create"                          , via: [:get, :post]
     match "places/retrieve_places"                  => "places#retrieve_places"                 , via: [:get, :post]
     match "places/select_venue"                     => "places#select_venue"                    , via: [:get, :post]
+    match "places/user_recent_places"               => "places#user_recent_places"              , via: [:get, :post]
     match "mytest/test"                             => "mytest#test"                            , via: [:get, :post]
     match "mytest/test2"                            => "mytest#test2"                           , via: [:get, :post]
     match "mytest/test3"                            => "mytest#test3"                           , via: [:get, :post]

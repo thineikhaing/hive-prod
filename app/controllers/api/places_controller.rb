@@ -75,6 +75,36 @@ class Api::PlacesController < ApplicationController
     end
   end
 
+  def user_recent_places
+    if current_user.present?
+      places_array = current_user.checkinplaces.order("created_at DESC")
+      data_array = [ ]
+      list_array = [ ]
+      places_id_array = [ ]
+
+      places_array.each do |pa|
+        places_id_array.push(pa.place_id)
+      end
+
+      Place.where(id: [places_id_array]).each do |place|
+        list_array.push(place.id) unless list_array.include?(place.id)
+      end
+
+      list_array.each_with_index do |la, i|
+        break if i == 10
+        place = Place.find(la)
+        result = current_user.checkinplaces.where(place_id: place.id).last
+        data = { name: place.name, id: place.id, latitude: place.latitude, longitude: place.longitude, created_at: result.created_at }
+        data_array.push(data)
+      end
+      render json: data_array
+    else
+      render json: {error_msg: "Params user id and authentication token must be presented"},status: 400
+    end
+
+
+  end
+
   def select_venue
     # TODO: When fetching back queries, check whether it exists before processing it.
     data_array = [ ]
