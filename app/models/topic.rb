@@ -529,6 +529,65 @@ class Topic < ActiveRecord::Base
     }
   end
 
+  def notify_carmmunicate_msg_to_selected_users (users_to_push)
+    notification = {
+        aliases: users_to_push,
+        aps: { alert: self.title, badge: "+1", sound: "default" },
+        id: self.id,
+        title: self.title,
+        user_id: self.user_id,
+        topic_type: self.topic_type,
+        topic_sub_type: self.topic_sub_type,
+        place_id: self.place_id,
+        image_url: self.image_url,
+        width:  self.width,
+        height: self.height,
+        hiveapplication_id: self.hiveapplication_id,
+        value:  self.value,
+        unit: self.unit,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        offensive: self.offensive,
+        notification_range: self.notification_range,
+        special_type: self.special_type,
+        data: self.data,
+        methods: {
+            username: username,
+            place_information: self.place_information,
+            tag_information: self.tag_information
+        }
+    }.to_json
+
+    if Rails.env.production?
+      app_key = Urbanairship_Const::FV_P_Key
+      app_secret = Urbanairship_Const::FV_P_Secret
+      master_secret= Urbanairship_Const::FV_P_Master_Secret
+    elsif Rails.env.staging?
+      p "staging"
+      app_key = Urbanairship_Const::FV_S_Key
+      app_secret= Urbanairship_Const::FV_S_Secret
+      master_secret= Urbanairship_Const::FV_S_Master_Secret
+    else
+      p "development"
+      app_key = Urbanairship_Const::FV_D_Key
+      app_secret= Urbanairship_Const::FV_D_Secret
+      master_secret= Urbanairship_Const::FV_D_Master_Secret
+    end
+    full_path = 'https://go.urbanairship.com/api/push/'
+    url = URI.parse(full_path)
+    req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+    req.body = notification
+    req.basic_auth app_key, master_secret
+    con = Net::HTTP.new(url.host, url.port)
+    con.use_ssl = true
+
+    r = con.start {|http| http.request(req)}
+    p "after sent"
+    logger.info "\n\n##############\n\n  " + "Resonse body: " + r.body + "  \n\n##############\n\n"
+    p "after urban airship"
+
+  end
+
   def user_favourite_topic(current_user, topic_id, choice)
     if choice == "favourite"
       check = ActionLog.where(type_name: "topic", type_id: topic_id, action_type: "favourite", action_user_id: current_user.id)
