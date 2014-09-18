@@ -58,6 +58,11 @@ module Hive
     config.assets.initialize_on_precompile = false
     config.assets.precompile += %w(web.css web.js mobile.css mobile.js)
 
+    config.action_dispatch.default_headers.merge!({
+        'Access-Control-Allow-Origin' => '*',
+        'Access-Control-Request-Method' => '*'
+    })
+
     config.generators do |g|
       g.factory_girl false
     end
@@ -72,8 +77,28 @@ module Mealbox_key
   Staging_Key= "81e75dccf4934e7224211d5e8096ea41"
   Development_Key = "f3b6eed28269900bc7eea17ebac5e701"
 end
+
+module Carmmunicate_key
+  Staging_Key= "81e75dccf4934e7224211d5e8096ea41"
+  Development_Key = "58de665af6db2812702682085777a3a8"
+end
+
 module App_Password #constant variable to be used for encryption and decryption
   Key = "rebel4six"
   Length = "8 bytes!"
   Size =1024
+end
+
+module Urbanairship_Const
+  CM_S_Key = "LSA3cn4IR1K7Hl96MS1I1w"
+  CM_S_Secret = "bjCQ6p4LRfCuHOTbWyuqHA"
+  CM_S_Master_Secret="kgKRIrkpTsiXp4vUO1Utsg"
+
+  CM_P_Key = "2WOYSZRTRLiyanfEg2PQ2w"
+  CM_P_Secret = "qV5S-fplRUCA78Fk25xThw"
+  CM_P_Master_Secret="4wX2m2ZiSsCiLfR2elX_rw"
+
+  CM_D_Key = "7wgMq0dkSWeqo-TbcBvEyg"
+  CM_D_Secret = "xB8kEzjdT4WeqgEm3CKclQ"
+  CM_D_Master_Secret="1EXyDmHxTNSZRV0raeCthA"
 end
