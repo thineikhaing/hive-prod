@@ -110,8 +110,9 @@ class Api::UsersController < ApplicationController
       user = User.find(current_user.id)
       user.check_in_time = Time.now
       user.save!
+      params[:radius].present? ? radius = params[:radius].to_i : radius = 1
 
-      Userpreviouslocation.create(latitude: params[:latitude], longitude: params[:longitude], radius: params[:radius], user_id: current_user.id) if params[:save] == "true"
+      Userpreviouslocation.create(latitude: params[:latitude], longitude: params[:longitude], radius: radius, user_id: current_user.id) if params[:save] == "true"
 
       if params[:app_key].present?
         hive_application = HiveApplication.find_by_api_key(params[:app_key])
@@ -124,6 +125,7 @@ class Api::UsersController < ApplicationController
         if hive_application.present?
           if hive_application.api_key ==carmmunicate_key
             time_allowance = Time.now - 10.seconds.ago
+            #time_allowance = Time.now - 1.minute.ago
           else
             time_allowance = Time.now - 10.minutes.ago
           end
@@ -135,7 +137,7 @@ class Api::UsersController < ApplicationController
         time_allowance = Time.now - 10.minutes.ago
       end
 
-      users = User.nearest(params[:latitude], params[:longitude], params[:radius])
+      users = User.nearest(params[:latitude], params[:longitude], radius)
 
       users.each do |u|
         if u.check_in_time.present?
@@ -148,8 +150,9 @@ class Api::UsersController < ApplicationController
 
       usersArray.each do |ua|
         unless ua.id == current_user.id
-          active_users = { user_id: ua.id, username: ua.username, latitude: ua.last_known_latitude, longitude: ua.last_known_longitude }
-          activeUsersArray.push(active_users)
+          user = User.find(ua.id)
+          #active_users = { user_id: ua.id, username: ua.username, latitude: ua.last_known_latitude, longitude: ua.last_known_longitude }
+          activeUsersArray.push(user)
         end
       end
 
@@ -438,8 +441,6 @@ class Api::UsersController < ApplicationController
       render json: { error_msg: "Invalid user id/ authentication token"}, status: 400
     end
   end
-
-
 
   private
 
