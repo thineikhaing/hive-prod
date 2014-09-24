@@ -151,7 +151,7 @@ class Api::UsersController < ApplicationController
       usersArray.each do |ua|
         unless ua.id == current_user.id
           user = User.find(ua.id)
-          active_users = { user_id: ua.id, username: ua.username, latitude: ua.last_known_latitude, longitude: ua.last_known_longitude , data: ua.data}
+          active_users = { id: ua.id, username: ua.username, last_known_latitude: ua.last_known_latitude, last_known_longitude: ua.last_known_longitude , data: ua.data}
           activeUsersArray.push(active_users)
         end
       end

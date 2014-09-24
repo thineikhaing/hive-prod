@@ -75,10 +75,10 @@ class Api::TopicsController < ApplicationController
             carmmunicate_key = Carmmunicate_key::Staging_Key
           end
           p carmmunicate_key
-          if hiveapplication.api_key == carmmunicate_key
+          if hiveapplication.api_key == carmmunicate_key  and topic.present?
             if params[:users_to_push].present?
               #broadcast to selected user group
-              topic.notify_carmmunicate_msg_to_selected_users (params[:users_to_push], true) if topic.present?
+              topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true)
             else
               #broadcast users within 5km/10km
               topic.notify_carmmunicate_msg_to_nearby_users
