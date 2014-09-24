@@ -529,7 +529,7 @@ class Topic < ActiveRecord::Base
     }
   end
 
-  def notify_carmmunicate_msg_to_selected_users (users_to_push)
+  def notify_carmmunicate_msg_to_selected_users (users_to_push, isprivatemsg )
     notification = {
         aliases: users_to_push,
         aps: { alert: self.title, badge: "+1", sound: "default" },
@@ -554,7 +554,8 @@ class Topic < ActiveRecord::Base
         methods: {
             username: username,
             place_information: self.place_information,
-            tag_information: self.tag_information
+            tag_information: self.tag_information,
+            is_private_message: isprivatemsg
         }
     }.to_json
 
@@ -606,7 +607,7 @@ class Topic < ActiveRecord::Base
     p "users_to_push"
     p users_to_push
     if users_to_push.present?
-      notify_carmmunicate_msg_to_selected_users(users_to_push)
+      notify_carmmunicate_msg_to_selected_users(users_to_push,false)
     end
   end
 
