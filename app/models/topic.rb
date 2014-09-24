@@ -559,6 +559,9 @@ class Topic < ActiveRecord::Base
         }
     }.to_json
 
+    p "users_to_push"
+    p users_to_push
+    p isprivatemsg
     if Rails.env.production?
       app_key = Urbanairship_Const::CM_P_Key
       app_secret = Urbanairship_Const::CM_P_Secret
@@ -616,7 +619,7 @@ class Topic < ActiveRecord::Base
     activeUsersArray = []
 
     users = User.nearest(current_lat, current_lng, raydius)
-    time_allowance = Time.now - 10.days.ago
+    time_allowance = Time.now - 10.minutes.ago
 
     users.each do |u|
       if u.check_in_time.present?
@@ -629,9 +632,10 @@ class Topic < ActiveRecord::Base
 
     usersArray.each do |ua|
       unless ua.id == current_user_id
-        activeUsersArray.push(ua.id)
+        activeUsersArray.push(ua.id.to_s)
       end
     end
+    p activeUsersArray
   end
 
   def user_favourite_topic(current_user, topic_id, choice)

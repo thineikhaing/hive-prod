@@ -168,11 +168,13 @@ class Api::UsersController < ApplicationController
 
       #Urbanairship.unregister_device(current_user.device_token)
 
-      push_user = UserPushToken.create(user_id: current_user.id,push_token: params[:push_token])
+      user_token = UserPushToken.find_by(user_id: current_user.id,push_token: params[:push_token])
+
+      push_user = UserPushToken.create(user_id: current_user.id,push_token: params[:push_token])   unless user_token.present?
 
       #current_user.update_attribute(:device_token, params[:push_token])
       #Urbanairship.register_device(params[:device_token], {alias: current_user.id, badge: 0})
-      if push_user.present?
+      if push_user.present?  or user_token.present?
         render json: { status: true }
       else
         render json: { error_msg: "There is no pusher token for the user" }, status: 400
