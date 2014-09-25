@@ -339,6 +339,63 @@ class Post < ActiveRecord::Base
 
   end
 
+  def notify_reply_message_to_topic_owner
+    topic = Topic.find(self.topic_id)
+    user_to_push= []
+    user_to_push.push(topic.user_id.to_s)
+    notification = {
+      aliases: user_to_push,
+      aps: { alert: self.content, badge: "+1", sound: "default" },
+      post:{
+          id: self.id,
+          topic_id: self.topic_id,
+          content: self.content,
+          img_url: self.img_url,
+          width:  self.width,
+          height: self.height,
+          created_at: self.created_at,
+          user_id: self.user_id,
+          username: self.username,
+          post_type: self.post_type,
+          place_id: self.place_id,
+          likes: self.likes,
+          dislikes: self.dislikes,
+          offensive: self.offensive,
+          data: self.data
+      }
+    }.to_json
+
+    p "user_to_push"
+    p user_to_push
+
+    if Rails.env.production?
+      app_key = Urbanairship_Const::CM_P_Key
+      app_secret = Urbanairship_Const::CM_P_Secret
+      master_secret= Urbanairship_Const::CM_P_Master_Secret
+    elsif Rails.env.staging?
+      p "staging"
+      app_key = Urbanairship_Const::CM_S_Key
+      app_secret= Urbanairship_Const::CM_S_Secret
+      master_secret= Urbanairship_Const::CM_S_Master_Secret
+    else
+      p "development"
+      app_key = Urbanairship_Const::CM_D_Key
+      app_secret= Urbanairship_Const::CM_D_Secret
+      master_secret= Urbanairship_Const::CM_D_Master_Secret
+    end
+    full_path = 'https://go.urbanairship.com/api/push/'
+    url = URI.parse(full_path)
+    req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+    req.body = notification
+    req.basic_auth app_key, master_secret
+    con = Net::HTTP.new(url.host, url.port)
+    con.use_ssl = true
+
+    r = con.start {|http| http.request(req)}
+    p "after sent"
+    logger.info "\n\n##############\n\n  " + "Resonse body: " + r.body + "  \n\n##############\n\n"
+  end
+
 
   def post_image_upload_delayed_job(filename)
     p "delayed job starts!"

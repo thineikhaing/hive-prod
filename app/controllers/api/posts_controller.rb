@@ -55,6 +55,13 @@ class Api::PostsController < ApplicationController
           post.delay.post_image_upload_delayed_job(params[:img_url])
         end
 
+        #push the urban airship reply message to the topic owner if params[:notify_topic_owner] is true
+        if post.present? and params[:notify_topic_owner].present?
+          if params[:notify_topic_owner].to_i==1
+            p "inside"
+            post.notify_reply_message_to_topic_owner
+          end
+        end
         #else
         #  post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id) if params[:post_type] == Post::TEXT.to_s
         #  post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height]) if params[:post_type] == IMAGE::TEXT.to_s
