@@ -533,7 +533,7 @@ class Topic < ActiveRecord::Base
     notification = {
         aliases: users_to_push,
         aps: { alert: self.title, badge: "+1", sound: "default" },
-        id: self.id,
+        topic:{id: self.id,
         title: self.title,
         user_id: self.user_id,
         topic_type: self.topic_type,
@@ -556,6 +556,7 @@ class Topic < ActiveRecord::Base
             place_information: self.place_information,
             tag_information: self.tag_information,
             is_private_message: isprivatemsg
+          }
         }
     }.to_json
 
