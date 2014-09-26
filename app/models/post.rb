@@ -14,16 +14,19 @@ class Post < ActiveRecord::Base
   validates :content, obscenity: { sanitize: true, replacement: "snork" }
 
   def as_json(options=nil)
-    super(only: [:id, :topic_id, :content, :created_at, :user_id, :post_type,:place_id,:likes, :dislikes, :offensive,:img_url, :width, :height, :data], methods: [:username])
+    super(only: [:id, :topic_id, :content, :created_at, :user_id, :post_type,:place_id,:likes, :dislikes, :offensive, :width, :height, :data], methods: [:username, :image_url])
   end
 
+  def image_url
+    self.img_url
+  end
 
   def broadcast_other_app(temp_id)
       data = {
           id: self.id,
           topic_id: self.topic_id,
           content: self.content,
-          img_url: self.img_url,
+          image_url: self.img_url,
           width:  self.width,
           height: self.height,
           created_at: self.created_at,
@@ -46,7 +49,7 @@ class Post < ActiveRecord::Base
         id: self.id,
         topic_id: self.topic_id,
         content: self.content,
-        img_url: self.img_url,
+        image_url: self.img_url,
         width:  self.width,
         height: self.height,
         created_at: self.created_at,
@@ -68,7 +71,7 @@ class Post < ActiveRecord::Base
         id: self.id,
         topic_id: self.topic_id,
         content: self.content,
-        img_url: self.img_url,
+        image_url: self.img_url,
         width:  self.width,
         height: self.height,
         created_at: self.created_at,
@@ -90,7 +93,7 @@ class Post < ActiveRecord::Base
         id: self.id,
         topic_id: self.topic_id,
         content: self.content,
-        img_url: self.img_url,
+        image_url: self.img_url,
         width:  self.width,
         height: self.height,
         created_at: self.created_at,
@@ -113,7 +116,7 @@ class Post < ActiveRecord::Base
         id: self.id,
         topic_id: self.topic_id,
         content: self.content,
-        img_url: self.img_url,
+        image_url: self.img_url,
         width:  self.width,
         height: self.height,
         created_at: self.created_at,
@@ -136,7 +139,7 @@ class Post < ActiveRecord::Base
         id: self.id,
         topic_id: self.topic_id,
         content: self.content,
-        img_url: self.img_url,
+        image_url: self.img_url,
         width:  self.width,
         height: self.height,
         created_at: self.created_at,
@@ -350,7 +353,7 @@ class Post < ActiveRecord::Base
           id: self.id,
           topic_id: self.topic_id,
           content: self.content,
-          img_url: self.img_url,
+          image_url: self.img_url,
           width:  self.width,
           height: self.height,
           created_at: self.created_at,
