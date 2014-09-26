@@ -532,12 +532,12 @@ class HiveapplicationController < ApplicationController
     if params[:topic_id].present?
       topic = Topic.find_by_id(params[:topic_id])
       if topic.present?
-        topic.title = params[:title]
+        topic.title = params[:topic_title]
         topic.save!
       end
     end
+    redirect_to hiveapplication_edit_topic_post_path(:app_id => session[:app_id])
   end
-
 
   #to delete topic by topic_id
   def delete_topic
@@ -556,10 +556,11 @@ class HiveapplicationController < ApplicationController
     if params[:post_id].present?
       post = Post.find_by_id(params[:post_id])
       if post.present?
-        post.content = params[:content]
+        post.content = params[:post_content]
         post.save!
       end
     end
+    redirect_to hiveapplication_edit_topic_post_path(:app_id => session[:app_id])
   end
 
   #to delete post by post_id
