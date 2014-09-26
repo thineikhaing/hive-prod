@@ -97,7 +97,6 @@ class HiveapplicationController < ApplicationController
         @hive_applications = user.hive_applications.order("id ASC")
       end
     end
-
   end
 
   def sign_up
@@ -502,5 +501,76 @@ class HiveapplicationController < ApplicationController
           end
       end
     end
+  end
+
+  #to display the list of topics and post under each app
+  def edit_topic_post
+    session[:app_id] = params[:app_id]
+    topic_ids = []
+    @topics = Topic.where(hiveapplication_id: session[:app_id])
+    if @topics.present?
+      @topics.each do |t|
+        topic_ids.push(t.id)
+      end
+      @posts = Post.where(topic_id:topic_ids)
+    end
+
+    if Rails.env.development?
+      @image_url = AWS_Link::AWS_Image_D_Link
+      @audio_url = AWS_Link::AWS_Audio_D_Link
+    elsif Rails.env.staging?
+      @image_url = AWS_Link::AWS_Image_S_Link
+      @audio_url = AWS_Link::AWS_Audio_S_Link
+    else
+      @image_url = AWS_Link::AWS_Image_P_Link
+      @audio_url = AWS_Link::AWS_Audio_P_Link
+    end
+  end
+
+  #to edit topic by topic_id
+  def edit_topic
+    if params[:topic_id].present?
+      topic = Topic.find_by_id(params[:topic_id])
+      if topic.present?
+        topic.title = params[:title]
+        topic.save!
+      end
+    end
+  end
+
+
+  #to delete topic by topic_id
+  def delete_topic
+    if params[:topic_id].present?
+      topic = Topic.find_by_id(params[:topic_id])
+      if topic.present?
+        topic.remove_records
+        topic.delete
+      end
+    end
+    redirect_to hiveapplication_edit_topic_post_path(:app_id => session[:app_id])
+  end
+
+  #to edit post by post_id
+  def edit_post
+    if params[:post_id].present?
+      post = Post.find_by_id(params[:post_id])
+      if post.present?
+        post.content = params[:content]
+        post.save!
+      end
+    end
+  end
+
+  #to delete post by post_id
+  def delete_post
+    if params[:post_id].present?
+      post = Post.find_by_id(params[:post_id])
+      if post.present?
+        post.remove_records
+        post.delete
+      end
+    end
+    redirect_to hiveapplication_edit_topic_post_path(:app_id => session[:app_id])
   end
 end
