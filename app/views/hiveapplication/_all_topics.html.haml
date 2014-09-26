@@ -7,19 +7,20 @@
             - @topics.each do |t|
               %tr{height: "40px"}
                 %td{width:"5%"}
-                  #edit_topic
+                  #edit_link
                     = "Edit"
                 %td{width:"10%"}
                   -#= link_to "DEL", hiveapplication_all_topics_path(:topic_id=> t.id), remote:true
                   -#%a{:href => hiveapplication_all_topics_path(:topic_id=> t.id), :style => "color: #FF9B00;text-decoration: none;"}
-                  #del_topic
+                  #del_link
                     = "Del"
                 %td{width:"%5"}
-                  %input{:name => "topic_id", :type => "hidden", :value => t.id, :id => "topic_id"}/
-                %td{width:"65%"}
-                  // text message
-                  -if t.topic_type==0
-                    =t.title
+                  %input{:name => "topic_id", :type => "hidden", :value => t.id, :id => "topic_id", style: "visibility:hidden;"}/
+                %td{width:"30%"}
+                  =t.title
+                %td{width:"20%"}
+                  %input{:name => "title", :type => "input", :value => t.title, :id => "txt_title",  style: "visibility:hidden;"}/
+                %td{width:"15%"}
                   // image message
                   -if t.topic_type==1
                     %img{:height => "40", :src => @image_url+ t.image_url, :width => "40"}/

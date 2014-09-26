@@ -7,17 +7,18 @@
             - @posts.each do |p|
               %tr{height: "40px"}
                 %td{width:"5%"}
-                  #edit_post
+                  #edit_link
                     = "Edit"
                 %td{width:"10%"}
-                  #del_post
+                  #del_link
                     = "Del"
                 %td{width:"%5"}
                   %input{:name => "post_id", :type => "hidden", :value => p.id, :id => "post_id"}/
-                %td{width:"65%"}
-                  //text message
-                  -if p.post_type==0
-                    =p.content
+                %td{width:"30%"}
+                  =p.content
+                %td{width:"20%"}
+                  %input{:name => "content", :type => "input", :value => p.content, :id => "txt_content",  style: "visibility:hidden;"}/
+                %td{width:"15%"}
                   //image message
                   -if p.post_type==1
                     %img{:height => "40", :src => @image_url+p.img_url, :width => "40"}/
