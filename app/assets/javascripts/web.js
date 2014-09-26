@@ -7,6 +7,7 @@
 //= require views/devportal
 //= require views/signup
 //= require views/edit_column
+//= require views/edit_topic_post
 //= require views/edit_column_post
 //= require views/app_list
 //= require jquery
