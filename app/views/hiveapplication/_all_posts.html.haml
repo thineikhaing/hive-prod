@@ -1,0 +1,28 @@
+%table
+  %tr
+    %td
+      #topic_fields_list
+        - if @posts.present?
+          %table{class: "add_col_post_list"}
+            - @posts.each do |p|
+              %tr{height: "40px"}
+                %td{width:"5%"}
+                  #edit_post
+                    = "Edit"
+                %td{width:"10%"}
+                  #del_post
+                    = "Del"
+                %td{width:"%5"}
+                  %input{:name => "post_id", :type => "hidden", :value => p.id, :id => "post_id"}/
+                %td{width:"65%"}
+                  //text message
+                  -if p.post_type==0
+                    =p.content
+                  //image message
+                  -if p.post_type==1
+                    %img{:height => "40", :src => @image_url+p.img_url, :width => "40"}/
+                  //audio message
+                  -if p.post_type==2
+                    %embed.upload_video_container{:src => @audio_url + p.img_url}/
+                %td{width:"15%"}
+                  =p.created_at.strftime("%d-%m-%Y")

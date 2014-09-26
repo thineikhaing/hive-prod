@@ -19,15 +19,18 @@
       %tr
         %td{width:"3%"}
           %img{ src:hive_app.icon_url, class:"img_app_icon"}
-        %td{width:"42%"}
+        %td{width:"30%"}
           %a{:href => hiveapplication_edit_application_path(:app_id=> hive_app.id), :style => "color: #FF9B00;text-decoration: none;"}
             .individual_app_cell
               = hive_app.app_name
         %td{width:"10%"}
           .individual_app_cell
             = hive_app.app_type
-        %td{width:"45%"}
+        %td{width:"42%"}
           = hive_app.api_key
+        %td{width:"15%"}
+          %a{:href => hiveapplication_edit_topic_post_path(:app_id=> hive_app.id), :style => "color: #FF9B00;text-decoration: none;"}
+            = "edit topic/post"
         -#%td{width:"10%"}
         -#  = link_to "Re-generate API Key", hiveapplication_regenerate_api_key_path(:app_id=> hive_app.id), remote:true
         -#%td{width:"30%"}

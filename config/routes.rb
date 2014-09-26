@@ -27,6 +27,12 @@ Rails.application.routes.draw do
   match "hiveapplication/create_additional_field",path:"create_additional_field", via: [:get,:post]
   match "hiveapplication/clear_columns_changes", path:"clear_columns_changes"   , via: [:get,:post]
   match "hiveapplication/save_columns_changes" , path:"save_columns_changes"    , via: [:get,:post]
+  match "hiveapplication/edit_topic_post"      , path:"edit_topic_post"         , via: [:get,:post]
+  match "hiveapplication/delete_topic"         , path:"delete_topic"            , via: [:get,:post]
+  match "hiveapplication/delete_post"          , path:"delete_post"              , via: [:get,:post]
+  match "hiveapplication/edit_topic"           , path:"edit_topic"              , via: [:get,:post]
+  match "hiveapplication/edit_post"            , path:"edit_post"               , via: [:get,:post]
+
   #get "hiveapplication/sign_up", path: "sign_up"
   #post "hiveapplication/sign_up", path: "sign_up"
   resources :places

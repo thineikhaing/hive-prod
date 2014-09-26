@@ -1,0 +1,39 @@
+%table{class: "tbl_create_app_container"}
+  %tr
+    %td{colspan:"2"}
+      #additional_field_list_container_topic
+        #additional_field_list
+          %table
+            %tr
+              %td
+                = "DEL/ EDIT TOPIC"
+        #separator_line
+        %table{class: "app_list", width: "850px"}
+          %tr
+            %th{width:"85%"}
+              ="TITLE"
+            %th{width:"15%"}
+              ="CREATED DATE"
+        #list_of_topic_fields_container
+          = render :partial => "all_topics"
+  %tr
+    %td{colspan:"2"}
+      #additional_field_list_container_post
+        #additional_field_list
+          %table
+            %tr
+              %td
+                = "DEL/ EDIT POST"
+        #separator_line
+        %table{class: "app_list", width: "850px"}
+          %tr
+            %th{width:"85%"}
+              ="TITLE"
+            %th{width:"15%"}
+              ="CREATED DATE"
+        #list_of_post_fields_container
+          = render :partial => "all_posts"
+
+
+  :javascript
+    EditTopicPost.init();

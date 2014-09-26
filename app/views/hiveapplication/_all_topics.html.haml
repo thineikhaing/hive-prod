@@ -1,0 +1,30 @@
+%table
+  %tr
+    %td
+      #topic_fields_list
+        - if @topics.present?
+          %table{class: "add_col_topic_list"}
+            - @topics.each do |t|
+              %tr{height: "40px"}
+                %td{width:"5%"}
+                  #edit_topic
+                    = "Edit"
+                %td{width:"10%"}
+                  -#= link_to "DEL", hiveapplication_all_topics_path(:topic_id=> t.id), remote:true
+                  -#%a{:href => hiveapplication_all_topics_path(:topic_id=> t.id), :style => "color: #FF9B00;text-decoration: none;"}
+                  #del_topic
+                    = "Del"
+                %td{width:"%5"}
+                  %input{:name => "topic_id", :type => "hidden", :value => t.id, :id => "topic_id"}/
+                %td{width:"65%"}
+                  // text message
+                  -if t.topic_type==0
+                    =t.title
+                  // image message
+                  -if t.topic_type==1
+                    %img{:height => "40", :src => @image_url+ t.image_url, :width => "40"}/
+                  // audio message
+                  -if t.topic_type==3
+                    %embed.upload_video_container{:src => @audio_url+ t.image_url}/
+                %td{width:"15%"}
+                  =t.created_at.strftime("%d-%m-%Y")
