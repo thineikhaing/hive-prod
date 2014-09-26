@@ -102,3 +102,14 @@ module Urbanairship_Const
   CM_D_Secret = "k9KS0BvZTnaHxqjf7-Jrpg"
   CM_D_Master_Secret="utulmLxMRL6w7Y-iAwI2fw"
 end
+
+module AWS_Link
+ AWS_Image_D_Link = "https://hivedevimages.s3.amazonaws.com/"
+ AWS_Audio_D_Link = "https://hivedevaudios.s3.amazonaws.com/"
+
+ AWS_Image_S_Link = "https://hivestagingimages.s3.amazonaws.com/"
+ AWS_Audio_S_Link = "https://hivestagingaudios.s3.amazonaws.com/"
+
+ AWS_Audio_P_Link= "https://hivestagingimages.s3.amazonaws.com/"
+ AWS_Audio_P_Link = "https://hivestagingaudios.s3.amazonaws.com/"
+end
