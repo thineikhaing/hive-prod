@@ -564,6 +564,7 @@ class Topic < ActiveRecord::Base
     p users_to_push
     p isprivatemsg
     if Rails.env.production?
+      p "Production"
       app_key = Urbanairship_Const::CM_P_Key
       app_secret = Urbanairship_Const::CM_P_Secret
       master_secret= Urbanairship_Const::CM_P_Master_Secret

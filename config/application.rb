@@ -94,9 +94,9 @@ module Urbanairship_Const
   CM_S_Secret = "FxtkH7jzR4GgNdKbPi2A8Q"
   CM_S_Master_Secret="u5WlHjJTRZmqeieL1lakzA"
 
-  CM_P_Key = "lBV269r5TSmhpQ3eC-A05A"
-  CM_P_Secret = "FxtkH7jzR4GgNdKbPi2A8Q"
-  CM_P_Master_Secret="u5WlHjJTRZmqeieL1lakzA"
+  CM_P_Key = "vCYzT3kCQimr16p9A-GIMQ"
+  CM_P_Secret = "WOnEfbuWRPa9Nvo3t7Mr2Q"
+  CM_P_Master_Secret="wSBsSu3xRWOv3fSPZAeEpg"
 
   CM_D_Key = "qn5A6ujOSaONpcn--rg_NA"
   CM_D_Secret = "k9KS0BvZTnaHxqjf7-Jrpg"

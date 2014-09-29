@@ -372,6 +372,7 @@ class Post < ActiveRecord::Base
     p user_to_push
 
     if Rails.env.production?
+      p "production"
       app_key = Urbanairship_Const::CM_P_Key
       app_secret = Urbanairship_Const::CM_P_Secret
       master_secret= Urbanairship_Const::CM_P_Master_Secret
