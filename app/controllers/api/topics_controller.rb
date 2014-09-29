@@ -72,8 +72,10 @@ class Api::TopicsController < ApplicationController
           tag.add_record(topic.id, params[:locationtag], Tag::LOCATION) if params[:locationtag].present?  and topic.present?
           if Rails.env.development?
             carmmunicate_key = Carmmunicate_key::Development_Key
-          else
+          elsif Rails.env.staging?
             carmmunicate_key = Carmmunicate_key::Staging_Key
+          else
+            carmmunicate_key = Carmmunicate_key::Production_Key
           end
           p carmmunicate_key
           if hiveapplication.api_key == carmmunicate_key  and topic.present?

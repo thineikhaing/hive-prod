@@ -76,11 +76,13 @@ end
 module Mealbox_key
   Staging_Key= "81e75dccf4934e7224211d5e8096ea41"
   Development_Key = "f3b6eed28269900bc7eea17ebac5e701"
+  Production_Key = "e1dff49b39072847a4e1ccad404529e3"
 end
 
 module Carmmunicate_key
   Staging_Key= "f8472f0781cf474624915066d4d57da7"
   Development_Key = "58de665af6db2812702682085777a3a8"
+  Production_Key = "7a5a7255d7da220dbf612ed874487d8b"
 end
 
 module App_Password #constant variable to be used for encryption and decryption

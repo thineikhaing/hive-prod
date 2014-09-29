@@ -27,8 +27,10 @@ class Api::PlacesController < ApplicationController
         mealbox_key = ""
         if Rails.env.development?
           mealbox_key = Mealbox_key::Development_Key
-        else
+        elsif Rails.env.staging?
           mealbox_key = Mealbox_key::Staging_Key
+        else
+          mealbox_key = Mealbox_key::Production_Key
         end
         choice = "luncheon" if app_key ==  mealbox_key
       end

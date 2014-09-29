@@ -47,8 +47,10 @@ class Topic < ActiveRecord::Base
       mealbox_key = ""
       if Rails.env.development?
         mealbox_key = Mealbox_key::Development_Key
-      else
+      elsif Rails.env.staging?
         mealbox_key = Mealbox_key::Staging_Key
+      else
+        mealbox_key = Mealbox_key::Production_Key
       end
       if hiveapplication.api_key ==  mealbox_key   #api key for mealbox
         postsArray = self.posts.where(["likes > ? OR dislikes > ?", 0, 0])
