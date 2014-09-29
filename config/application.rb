@@ -107,11 +107,11 @@ end
 
 module AWS_Link
  AWS_Image_D_Link = "https://hivedevimages.s3.amazonaws.com/"
- AWS_Audio_D_Link = "https://hivedevaudios.s3.amazonaws.com/"
+ AWS_Audio_D_Link = "https://hivedevaudioclips.s3.amazonaws.com/"
 
  AWS_Image_S_Link = "https://hivestagingimages.s3.amazonaws.com/"
- AWS_Audio_S_Link = "https://hivestagingaudios.s3.amazonaws.com/"
+ AWS_Audio_S_Link = "https://hivestagingaudioclipss.s3.amazonaws.com/"
 
- AWS_Audio_P_Link= "https://hivestagingimages.s3.amazonaws.com/"
- AWS_Audio_P_Link = "https://hivestagingaudios.s3.amazonaws.com/"
+ AWS_Audio_P_Link= "https://hiveproductionimages.s3.amazonaws.com/"
+ AWS_Audio_P_Link = "https://hiveproductionaudioclips.s3.amazonaws.com/"
 end
