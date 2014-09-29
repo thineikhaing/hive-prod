@@ -70,14 +70,19 @@ class Api::TopicsController < ApplicationController
           #create tag
           tag.add_record(topic.id, params[:tag], Tag::NORMAL) if params[:tag].present?  and topic.present?
           tag.add_record(topic.id, params[:locationtag], Tag::LOCATION) if params[:locationtag].present?  and topic.present?
+          p "before enviroment"
           if Rails.env.development?
+            p "enviroment"
             carmmunicate_key = Carmmunicate_key::Development_Key
           elsif Rails.env.staging?
+            p "staging"
             carmmunicate_key = Carmmunicate_key::Staging_Key
           else
+            p "production"
             carmmunicate_key = Carmmunicate_key::Production_Key
           end
           p carmmunicate_key
+
           if hiveapplication.api_key == carmmunicate_key  and topic.present?
             if params[:users_to_push].present?
               #broadcast to selected user group
