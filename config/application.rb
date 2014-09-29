@@ -90,9 +90,9 @@ module App_Password #constant variable to be used for encryption and decryption
 end
 
 module Urbanairship_Const
-  CM_S_Key = "lBV269r5TSmhpQ3eC-A05A"
-  CM_S_Secret = "FxtkH7jzR4GgNdKbPi2A8Q"
-  CM_S_Master_Secret="u5WlHjJTRZmqeieL1lakzA"
+  CM_S_Key = "p3JOVu9XS1qzVFyktPS1WA"
+  CM_S_Secret = "Qycncj2tQOSGS6kHQFAGAg"
+  CM_S_Master_Secret="vQNqcpuPRjS3ZE-ICg1d6w"
 
   CM_P_Key = "vCYzT3kCQimr16p9A-GIMQ"
   CM_P_Secret = "WOnEfbuWRPa9Nvo3t7Mr2Q"
