@@ -126,8 +126,8 @@ class Api::UsersController < ApplicationController
         p carmmunicate_key
         if hive_application.present?
           if hive_application.api_key ==carmmunicate_key
-            #time_allowance = Time.now - 10.seconds.ago
-            time_allowance = Time.now - 5.minutes.ago
+            time_allowance = Time.now - 20.seconds.ago
+            #time_allowance = Time.now - 5.minutes.ago
             #time_allowance = Time.now - 1.minute.ago
           else
             time_allowance = Time.now - 10.minutes.ago

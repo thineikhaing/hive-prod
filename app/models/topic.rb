@@ -623,7 +623,8 @@ class Topic < ActiveRecord::Base
     activeUsersArray = []
 
     users = User.nearest(current_lat, current_lng, raydius)
-    time_allowance = Time.now - 10.minutes.ago
+    #time_allowance = Time.now - 10.minutes.ago
+    time_allowance = Time.now - 20.seconds.ago
 
     users.each do |u|
       if u.check_in_time.present?
