@@ -129,6 +129,13 @@ class Api::UsersController < ApplicationController
             time_allowance = Time.now - 20.seconds.ago
             #time_allowance = Time.now - 5.minutes.ago
             #time_allowance = Time.now - 1.minute.ago
+            if params[:data].present?
+              data = getHashValuefromString(params[:data])
+              speed = data["speed"]
+              direction = data ["direction"]
+              activity = data["activity"]
+              user.update_user_peerdrivedata(speed,direction,activity)
+            end
           else
             time_allowance = Time.now - 10.minutes.ago
           end
@@ -154,7 +161,7 @@ class Api::UsersController < ApplicationController
       usersArray.each do |ua|
         unless ua.id == current_user.id
           user = User.find(ua.id)
-          active_users = { id: ua.id, username: ua.username, last_known_latitude: ua.last_known_latitude, last_known_longitude: ua.last_known_longitude , data: ua.data}
+          active_users = { id: ua.id, username: ua.username, last_known_latitude: ua.last_known_latitude, last_known_longitude: ua.last_known_longitude , data: ua.data, updated_at: ua.updated_at}
           activeUsersArray.push(active_users)
         end
       end

@@ -120,6 +120,40 @@ class User < ActiveRecord::Base
     User.where(last_known_latitude: box[0] .. box[2], last_known_longitude: box[1] .. box[3])
   end
 
+
+  def update_user_peerdrivedata (speed, direction, activity)
+    update_data_column("speed", speed, self.id)
+    update_data_column("direction", direction, self.id)
+    update_data_column("activity", activity, self.id)
+  end
+
+
+  def update_data_column(name, value, user_id)
+    u = User.find(user_id)
+    unless u.data.present?
+      data_hash = {}
+      data_hash[name] = value
+      u.data = data_hash
+      u.save!
+    else
+      if u.data.has_key?(name)== false
+        data_hash = u.data
+        data_hash[name] = value
+        u.data = data_hash
+        u.data_will_change!
+        u.save!
+      else
+        if value.length > 0
+          data_hash = u.data.except(name)
+          data_hash[name] = value
+          u.data = data_hash
+          u.data_will_change!
+          u.save!
+        end
+      end
+    end
+  end
+
   private
 
   def email_required?
