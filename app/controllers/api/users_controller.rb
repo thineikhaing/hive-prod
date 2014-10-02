@@ -38,7 +38,11 @@ class Api::UsersController < ApplicationController
         if appAdditionalField.present?
           defined_Fields = Hash.new
           appAdditionalField.each do |field|
-            defined_Fields[field.additional_column_name] = nil
+            if field.additional_column_name == "speed" or   field.additional_column_name == "direction" #default value of speed and direction is -1
+              defined_Fields[field.additional_column_name] = "-1"
+            else
+              defined_Fields[field.additional_column_name] = ""
+            end
           end
           #get all extra columns that define in app setting against with the params data
           if data.present?
@@ -131,9 +135,9 @@ class Api::UsersController < ApplicationController
             #time_allowance = Time.now - 1.minute.ago
             if params[:data].present?
               data = getHashValuefromString(params[:data])
-              speed = data["speed"]
-              direction = data ["direction"]
-              activity = data["activity"]
+              data["speed"].present? ? speed = data["speed"]  : speed = "-1"
+              data ["direction"].present? ? direction = data["direction"]  : direction= "-1"
+              data["activity"].present? ? activity = data["activity"] : activity=""
               user.update_user_peerdrivedata(speed,direction,activity)
             end
           else
