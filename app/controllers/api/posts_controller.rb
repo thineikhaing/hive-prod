@@ -57,6 +57,7 @@ class Api::PostsController < ApplicationController
 
         #push the urban airship reply message to the topic owner if params[:notify_topic_owner] is true
         if post.present? and params[:notify_topic_owner].present?
+          p params[:notify_topic_owner]
           if params[:notify_topic_owner].to_i==1
             p "inside"
             post.notify_reply_message_to_topic_owner
@@ -128,6 +129,31 @@ class Api::PostsController < ApplicationController
             post.delete_event_broadcast_hive
             post.delete_event_broadcast_other_app
           end
+
+          bucket_name = ""
+          file_name=""
+          if post.post_type == Post::IMAGE
+            file_name = post.img_url
+            if Rails.env.development?
+              bucket_name = AWS_Bucket::Image_D
+            elsif Rails.env.staging?
+              bucket_name = AWS_Bucket::Image_S
+            else
+              bucket_name = AWS_Bucket::Image_P
+            end
+            post.delete_S3_file(bucket_name, file_name)
+          elsif post.post_type == Post::AUDIO
+            file_name = post.img_url
+            if Rails.env.development?
+              bucket_name = AWS_Bucket::Audio_D
+            elsif Rails.env.staging?
+              bucket_name = AWS_Bucket::Audio_S
+            else
+              bucket_name = AWS_Bucket::Audio_P
+            end
+            post.delete_S3_file(bucket_name, file_name)
+          end
+
           #post.delete_event_broadcast
           post.delete
 

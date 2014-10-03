@@ -234,6 +234,32 @@ class Api::TopicsController < ApplicationController
             topic.delete_event_broadcast_hive
             topic.delete_event_broadcast_other_app
           end
+
+          #delete file from S3 if topic type is IMAGE AUDIO VIDEO
+          bucket_name = ""
+          file_name=""
+          if topic.topic_type == Topic::IMAGE
+            file_name = topic.image_url
+            if Rails.env.development?
+              bucket_name = AWS_Bucket::Image_D
+            elsif Rails.env.staging?
+              bucket_name = AWS_Bucket::Image_S
+            else
+              bucket_name = AWS_Bucket::Image_P
+            end
+            topic.delete_S3_file(bucket_name, file_name)
+          elsif topic.topic_type == Topic::AUDIO
+            file_name = topic.image_url
+            if Rails.env.development?
+              bucket_name = AWS_Bucket::Audio_D
+            elsif Rails.env.staging?
+              bucket_name = AWS_Bucket::Audio_S
+            else
+              bucket_name = AWS_Bucket::Audio_P
+            end
+            topic.delete_S3_file(bucket_name, file_name)
+          end
+
           #topic.delete_event_broadcast
           topic.delete
 
@@ -248,8 +274,6 @@ class Api::TopicsController < ApplicationController
       render json: { error_msg: "Params topic_id and app_key must be presented" }
     end
   end
-
-
   #private
   #def restrict_access
   #  hiveapplication = HiveApplication.find_by(api_key: params[:api_key])

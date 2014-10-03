@@ -123,3 +123,14 @@ module AWS_Link
  AWS_Image_P_Link= "https://hiveproductionimages.s3.amazonaws.com/"
  AWS_Audio_P_Link = "https://hiveproductionaudioclips.s3.amazonaws.com/"
 end
+
+module AWS_Bucket
+  Image_D = "hivedevimages"
+  Audio_D = "hivedevaudioclips"
+
+  Image_S = "hivestagingimages"
+  Audio_S = "hivestagingaudioclipss"
+
+  Image_P = "hiveproductionimages"
+  Audio_P = "hiveproductionimages"
+end

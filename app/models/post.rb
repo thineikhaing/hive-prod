@@ -342,6 +342,18 @@ class Post < ActiveRecord::Base
 
   end
 
+  def delete_S3_file(bucket_name, file_name)
+    s3= AWS::S3::new(
+        :access_key_id      => 'AKIAIJMZ5RLXRO6LJHPQ',     # required
+        :secret_access_key  => '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',    # required
+        :region => "ap-southeast-1",
+    )
+    bucket = s3.buckets[bucket_name]
+    object = bucket.objects[file_name]
+    object.delete
+
+  end
+
   def notify_reply_message_to_topic_owner
     topic = Topic.find(self.topic_id)
     user_to_push= []
