@@ -141,7 +141,7 @@ class Api::PostsController < ApplicationController
             else
               bucket_name = AWS_Bucket::Image_P
             end
-            post.delete_S3_file(bucket_name, file_name)
+            post.delete_S3_file(bucket_name, file_name,post.post_type)
           elsif post.post_type == Post::AUDIO
             file_name = post.img_url
             if Rails.env.development?
@@ -151,7 +151,7 @@ class Api::PostsController < ApplicationController
             else
               bucket_name = AWS_Bucket::Audio_P
             end
-            post.delete_S3_file(bucket_name, file_name)
+            post.delete_S3_file(bucket_name, file_name,post.post_type)
           end
 
           #post.delete_event_broadcast

@@ -342,7 +342,7 @@ class Post < ActiveRecord::Base
 
   end
 
-  def delete_S3_file(bucket_name, file_name)
+  def delete_S3_file(bucket_name, file_name,post_type)
     s3= AWS::S3::new(
         :access_key_id      => 'AKIAIJMZ5RLXRO6LJHPQ',     # required
         :secret_access_key  => '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',    # required
@@ -351,6 +351,18 @@ class Post < ActiveRecord::Base
     bucket = s3.buckets[bucket_name]
     object = bucket.objects[file_name]
     object.delete
+
+    if post_type == Post::IMAGE    #delete medium and small version
+      names = file_name.split(".")
+      sfilename = names[0] +  "_s." +  names[1]
+      mfilename =  names[0] +  "_m." + names[1]
+
+      object = bucket.objects[sfilename]
+      object.delete
+
+      object = bucket.objects[mfilename]
+      object.delete
+    end
 
   end
 
