@@ -569,6 +569,15 @@ class HiveapplicationController < ApplicationController
           topic.delete_S3_file(bucket_name, file_name,topic.topic_type)
         end
 
+        #broadcast delete topic pusher message
+        if topic.hiveapplication_id ==1 #Hive Application
+                                        #if hiveapplication.devuser_id == 1
+          topic.delete_event_broadcast_hive
+        else
+          topic.delete_event_broadcast_hive
+          topic.delete_event_broadcast_other_app
+        end
+
         topic.delete
       end
     end
@@ -616,6 +625,16 @@ class HiveapplicationController < ApplicationController
             bucket_name = AWS_Bucket::Audio_P
           end
           post.delete_S3_file(bucket_name, file_name,post.post_type)
+        end
+
+        #broadcast delete post pusher message
+        topic = Topic.find_by_id(post.topic_id)
+        if topic.hiveapplication_id ==1 #Hive Application
+                                        #if hiveapplication.devuser_id == 1
+          post.delete_event_broadcast_hive
+        else
+          post.delete_event_broadcast_hive
+          post.delete_event_broadcast_other_app
         end
 
         post.delete

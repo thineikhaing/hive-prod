@@ -261,6 +261,15 @@ class Api::TopicsController < ApplicationController
           end
 
           #topic.delete_event_broadcast
+
+          if topic.hiveapplication_id ==1 #Hive Application
+                                          #if hiveapplication.devuser_id == 1
+            topic.delete_event_broadcast_hive
+          else
+            topic.delete_event_broadcast_hive
+            topic.delete_event_broadcast_other_app
+          end
+
           topic.delete
 
           render json: { status: true }
