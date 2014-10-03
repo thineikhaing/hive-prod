@@ -236,14 +236,12 @@ class HiveapplicationController < ApplicationController
         topics = Topic.where(:hiveapplication_id =>  params[:app_id])
         if topics.present?
           topics.each do |topic|
-            Post.where(:topic_id=>topic.id).delete_all
-            tags = TopicWithTag.where(:topic_id=> topic.id)
-            if tags.present?
-              tags.each do |tag|
-                Tag.find(tag.tag_id).delete
-              end
+            topic.remove_record
+            posts = Post.where(:topic_id=>topic.id).delete_all
+            posts.each do|post|
+              post.remove_record
             end
-            ActionLog.where(:type_name => "topic", :type_id => topic.id).delete_all
+            posts.delete_all
           end
           topics.delete_all
         end
@@ -545,6 +543,32 @@ class HiveapplicationController < ApplicationController
       topic = Topic.find_by_id(params[:topic_id])
       if topic.present?
         topic.remove_records
+
+        #delete file from S3 if topic type is IMAGE AUDIO VIDEO
+        bucket_name = ""
+        file_name=""
+        if topic.topic_type == Topic::IMAGE
+          file_name = topic.image_url
+          if Rails.env.development?
+            bucket_name = AWS_Bucket::Image_D
+          elsif Rails.env.staging?
+            bucket_name = AWS_Bucket::Image_S
+          else
+            bucket_name = AWS_Bucket::Image_P
+          end
+          topic.delete_S3_file(bucket_name, file_name,topic.topic_type)
+        elsif topic.topic_type == Topic::AUDIO
+          file_name = topic.image_url
+          if Rails.env.development?
+            bucket_name = AWS_Bucket::Audio_D
+          elsif Rails.env.staging?
+            bucket_name = AWS_Bucket::Audio_S
+          else
+            bucket_name = AWS_Bucket::Audio_P
+          end
+          topic.delete_S3_file(bucket_name, file_name,topic.topic_type)
+        end
+
         topic.delete
       end
     end
@@ -569,6 +593,31 @@ class HiveapplicationController < ApplicationController
       post = Post.find_by_id(params[:post_id])
       if post.present?
         post.remove_records
+
+        bucket_name = ""
+        file_name=""
+        if post.post_type == Post::IMAGE
+          file_name = post.img_url
+          if Rails.env.development?
+            bucket_name = AWS_Bucket::Image_D
+          elsif Rails.env.staging?
+            bucket_name = AWS_Bucket::Image_S
+          else
+            bucket_name = AWS_Bucket::Image_P
+          end
+          post.delete_S3_file(bucket_name, file_name,post.post_type)
+        elsif post.post_type == Post::AUDIO
+          file_name = post.img_url
+          if Rails.env.development?
+            bucket_name = AWS_Bucket::Audio_D
+          elsif Rails.env.staging?
+            bucket_name = AWS_Bucket::Audio_S
+          else
+            bucket_name = AWS_Bucket::Audio_P
+          end
+          post.delete_S3_file(bucket_name, file_name,post.post_type)
+        end
+
         post.delete
       end
     end
