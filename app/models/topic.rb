@@ -563,6 +563,15 @@ class Topic < ActiveRecord::Base
   end
 
   def notify_carmmunicate_msg_to_selected_users (users_to_push, isprivatemsg )
+    to_plate_number =""
+    if (isprivatemsg)  and users_to_push.length>0
+      user_id = users_to_push.first.to_i
+      user= User.find_by_id(user_id)
+      if user.data.present?
+        hash_array = u.data
+        to_plate_number = hash_array["plate_number"] if  hash_array["plate_number"].present?
+      end
+    end
     notification = {
         aliases: users_to_push,
         aps: { alert: self.title, badge: "+1", sound: "default" },
@@ -589,7 +598,8 @@ class Topic < ActiveRecord::Base
             username: username,
             place_information: self.place_information,
             tag_information: self.tag_information,
-            is_private_message: isprivatemsg
+            is_private_message: isprivatemsg,
+            to_plate_number: to_plate_number
           }
         }
     }.to_json
