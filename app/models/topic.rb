@@ -583,6 +583,7 @@ class Topic < ActiveRecord::Base
         offensive: self.offensive,
         notification_range: self.notification_range,
         special_type: self.special_type,
+        created_at: self.created_at,
         data: self.data,
         methods: {
             username: username,
