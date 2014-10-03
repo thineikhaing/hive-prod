@@ -568,10 +568,11 @@ class Topic < ActiveRecord::Base
       user_id = users_to_push.first.to_i
       user= User.find_by_id(user_id)
       if user.data.present?
-        hash_array = u.data
+        hash_array = user.data
         to_plate_number = hash_array["plate_number"] if  hash_array["plate_number"].present?
       end
     end
+    p to_plate_number
     notification = {
         aliases: users_to_push,
         aps: { alert: self.title, badge: "+1", sound: "default" },
