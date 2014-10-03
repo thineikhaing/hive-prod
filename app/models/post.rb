@@ -127,6 +127,7 @@ class Post < ActiveRecord::Base
         likes: self.likes,
         dislikes: self.dislikes,
         offensive: self.offensive,
+        data: self.data
     }
 
     channel_name = "hive_topic_" + self.topic_id.to_s+ "_channel"
