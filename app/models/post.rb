@@ -14,7 +14,7 @@ class Post < ActiveRecord::Base
   validates :content, obscenity: { sanitize: true, replacement: "snork" }
 
   def as_json(options=nil)
-    super(only: [:id, :topic_id, :content, :created_at, :user_id, :post_type,:place_id,:likes, :dislikes, :offensive, :width, :height, :data], methods: [:username, :image_url])
+    super(only: [:id, :topic_id, :content, :created_at, :user_id, :post_type,:place_id,:likes, :dislikes, :offensive, :width, :height, :data, :created_at], methods: [:username, :image_url])
   end
 
   def image_url
@@ -38,6 +38,7 @@ class Post < ActiveRecord::Base
           dislikes: self.dislikes,
           offensive: self.offensive,
           temp_id: temp_id,
+          created_at: created_at,
           data: self.data
       }
     channel_name = "topic_" + self.topic_id.to_s+ "_channel"
@@ -60,6 +61,7 @@ class Post < ActiveRecord::Base
         likes: self.likes,
         dislikes: self.dislikes,
         offensive: self.offensive,
+        created_at: created_at,
         data: self.data,
     }
     channel_name = "hive_topic_" + self.topic_id.to_s+ "_channel"
@@ -81,7 +83,9 @@ class Post < ActiveRecord::Base
         place_id: self.place_id,
         likes: self.likes,
         dislikes: self.dislikes,
-        offensive: self.offensive
+        offensive: self.offensive,
+        created_at: created_at,
+        data: self.data
     }
 
     channel_name = "hive_topic_" + self.topic_id.to_s+ "_channel"
@@ -104,6 +108,7 @@ class Post < ActiveRecord::Base
         likes: self.likes,
         dislikes: self.dislikes,
         offensive: self.offensive,
+        created_at: created_at,
         data: self.data
     }
 
@@ -127,6 +132,7 @@ class Post < ActiveRecord::Base
         likes: self.likes,
         dislikes: self.dislikes,
         offensive: self.offensive,
+        created_at: created_at,
         data: self.data
     }
 
@@ -150,6 +156,7 @@ class Post < ActiveRecord::Base
         likes: self.likes,
         dislikes: self.dislikes,
         offensive: self.offensive,
+        created_at: created_at,
         data: self.data
     }
 
@@ -388,6 +395,7 @@ class Post < ActiveRecord::Base
           likes: self.likes,
           dislikes: self.dislikes,
           offensive: self.offensive,
+          created_at: self.created_at,
           data: self.data
       }
     }.to_json
