@@ -473,42 +473,32 @@ class Topic < ActiveRecord::Base
   end
 
   def user_offensive_topic(current_user, topic_id, topic)
-    p "inside offensive"
     actionlog = ActionLog.new
     user = User.find(current_user.id)
     admin_user = User.find_by_email("info@raydiusapp.com")
     admin_user1 = User.find_by_email("gamebot@raydiusapp.com")
     check = ActionLog.where(type_name: "topic", type_id: topic_id, action_type: "offensive", action_user_id: user.id)
-    p "before checking"
     unless check.present?
       unless self.user_id == admin_user.id #or self.user_id == admin_user1.id
-        p "111111"
         topic.offensive +=1
         topic.save!
         topic.reload
-        p "before email"
         mail = UserMailer.report_offensive_topic(user, topic)
         mail.deliver
-        p "after email"
         actionlog =   ActionLog.create(type_name: "topic", type_id: topic_id, action_type: "offensive", action_user_id: user.id)
-        p "save action log"
         hiveapplication = HiveApplication.find(topic.hiveapplication_id)
         if hiveapplication.id ==1
-          p "22222222"
           #broadcast new topic creation to hive_channel only
           topic.update_event_broadcast_hive
         elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1
-          p "33333333"
           #All Applications under Herenow except Hive
           topic.update_event_broadcast_hive
           topic.update_event_broadcast_other_app_with_content
         else
-          p"44444444"
           #3rd party app
           topic.update_event_broadcast_hive
           topic.update_event_broadcast_other_app
         end
-        p "end"
       end
     end
   end

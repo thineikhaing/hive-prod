@@ -22,15 +22,10 @@ class UserMailer < ActionMailer::Base
   end
 
   def report_offensive_topic(user, topic)
-    p "L1"
     @user = user
-    p "L2"
     @topic = topic
-    p "L3"
     receiver = User.find_by_email("info@raydiusapp.com")
-    p "L4"
     mail(:to => receiver.email, :subject => "Report for offensive topic")
-    p "L5"
   end
 
   def report_offensive_post(user, post)
