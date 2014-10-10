@@ -708,7 +708,6 @@ class Topic < ActiveRecord::Base
     current_lng = place.longitude
     user = User.find(self.user_id)
 
-
     #get the user within 5KM
     users_to_push = get_active_users_to_push(current_lat, current_lng, 5, user.id)
 
@@ -752,12 +751,12 @@ class Topic < ActiveRecord::Base
     if users_to_push.present?
       if Rails.env.development?
         p "11111111"
-        topic.notify_carmmunicate_msg_to_selected_users(users_to_push, false,app_key,master_secret)
+        notify_carmmunicate_msg_to_selected_users(users_to_push, false,app_key,master_secret)
       else
         p "222222222"
-        topic.notify_carmmunicate_msg_to_selected_users(users_to_push, false, dev_app_key, dev_master_secret)
+        notify_carmmunicate_msg_to_selected_users(users_to_push, false, dev_app_key, dev_master_secret)
         p "33333333"
-        topic.notify_carmmunicate_msg_to_selected_users(users_to_push, false, adhoc_app_key, adhoc_master_secret)
+        notify_carmmunicate_msg_to_selected_users(users_to_push, false, adhoc_app_key, adhoc_master_secret)
         p "44444444"
       end
     end
