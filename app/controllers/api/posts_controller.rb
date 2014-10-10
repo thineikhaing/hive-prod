@@ -61,10 +61,10 @@ class Api::PostsController < ApplicationController
           if params[:notify_topic_owner].to_i==1
             p "inside"
             if Rails.env.development?
-              post.notify_reply_message_to_topic_owner_Dev
+              post.notify_reply_message_to_topic_owner_dev
             else
-              post.notify_reply_message_to_topic_owner_Dev
-              post.notify_reply_message_to_topic_owner_Adhoc
+              post.notify_reply_message_to_topic_owner_dev
+              post.notify_reply_message_to_topic_owner_adhoc
             end
           end
         end

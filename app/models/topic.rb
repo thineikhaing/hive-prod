@@ -560,7 +560,7 @@ class Topic < ActiveRecord::Base
     }
   end
 
-  def notify_carmmunicate_msg_to_selected_users_Dev (users_to_push, isprivatemsg )
+  def notify_carmmunicate_msg_to_selected_users_dev (users_to_push, isprivatemsg )
     to_plate_number =""
     p "notify_carmmunicate_msg_to_selected_users_dev"
     if (isprivatemsg)  and users_to_push.length>0
@@ -638,7 +638,7 @@ class Topic < ActiveRecord::Base
 
   end
 
-  def notify_carmmunicate_msg_to_selected_users_Adhoc (users_to_push, isprivatemsg )
+  def notify_carmmunicate_msg_to_selected_users_adhoc (users_to_push, isprivatemsg )
     to_plate_number =""
     p "notify_carmmunicate_msg_to_selected_users_Adhoc"
     if (isprivatemsg)  and users_to_push.length>0
@@ -738,11 +738,11 @@ class Topic < ActiveRecord::Base
     if users_to_push.present?
       if Rails.env.development?
         p "11111111"
-        topic.notify_carmmunicate_msg_to_selected_users_Dev(users_to_push, false)
+        topic.notify_carmmunicate_msg_to_selected_users_dev(users_to_push, false)
       else
         p "222222222"
-        topic.notify_carmmunicate_msg_to_selected_users_Dev(users_to_push, false)
-        topic.notify_carmmunicate_msg_to_selected_users_Adhoc(users_to_push, false)
+        topic.notify_carmmunicate_msg_to_selected_users_dev(users_to_push, false)
+        topic.notify_carmmunicate_msg_to_selected_users_adhoc(users_to_push, false)
       end
     end
   end

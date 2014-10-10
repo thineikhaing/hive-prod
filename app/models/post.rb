@@ -373,7 +373,7 @@ class Post < ActiveRecord::Base
 
   end
 
-  def notify_reply_message_to_topic_owner_Dev
+  def notify_reply_message_to_topic_owner_dev
     topic = Topic.find(self.topic_id)
     user_to_push= []
     user_to_push.push(topic.user_id.to_s)
@@ -432,7 +432,7 @@ class Post < ActiveRecord::Base
     logger.info "\n\n##############\n\n  " + "Resonse body: " + r.body + "  \n\n##############\n\n"
   end
 
-  def notify_reply_message_to_topic_owner_Adhoc
+  def notify_reply_message_to_topic_owner_adhoc
     topic = Topic.find(self.topic_id)
     user_to_push= []
     user_to_push.push(topic.user_id.to_s)
