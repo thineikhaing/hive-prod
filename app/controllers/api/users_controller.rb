@@ -109,7 +109,6 @@ class Api::UsersController < ApplicationController
     activeUsersArray = [ ]
 
     if current_user.present? && params[:latitude].present? && params[:longitude].present?
-      p current_user
       current_user.update_attributes(last_known_latitude: params[:latitude], last_known_longitude: params[:longitude])
       user = User.find(current_user.id)
       user.check_in_time = Time.now
@@ -127,7 +126,6 @@ class Api::UsersController < ApplicationController
         else
           carmmunicate_key = Carmmunicate_key::Production_Key
         end
-        p carmmunicate_key
         if hive_application.present?
           if hive_application.api_key ==carmmunicate_key
             time_allowance = Time.now - 20.seconds.ago
