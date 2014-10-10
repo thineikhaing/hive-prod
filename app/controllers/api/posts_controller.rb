@@ -55,16 +55,42 @@ class Api::PostsController < ApplicationController
           post.delay.post_image_upload_delayed_job(params[:image_url]) if params[:post_type] == Post::IMAGE.to_s
         end
 
+        if Rails.env.production?
+          p "production"
+          dev_app_key = Urbanairship_Const::CM_P_Dev_Key
+          dev_app_secret = Urbanairship_Const::CM_P_Dev_Secret
+          dev_master_secret= Urbanairship_Const::CM_P_Dev_Master_Secret
+
+          adhoc_app_key = Urbanairship_Const::CM_P_Dev_Key
+          adhoc_app_secret = Urbanairship_Const::CM_P_Dev_Secret
+          adhoc_master_secret= Urbanairship_Const::CM_P_Dev_Master_Secret
+
+        elsif Rails.env.staging?
+          p "staging"
+          dev_app_key = Urbanairship_Const::CM_S_Dev_Key
+          dev_app_secret= Urbanairship_Const::CM_S_Dev_Secret
+          dev_master_secret= Urbanairship_Const::CM_S_Dev_Master_Secret
+
+          adhoc_app_key = Urbanairship_Const::CM_S_Dev_Key
+          adhoc_app_secret= Urbanairship_Const::CM_S_Dev_Secret
+          adhoc_master_secret= Urbanairship_Const::CM_S_Dev_Master_Secret
+        else
+          p "development"
+          dev_app_key = Urbanairship_Const::CM_D_Key
+          dev_app_secret= Urbanairship_Const::CM_D_Secret
+          dev_master_secret= Urbanairship_Const::CM_D_Master_Secret
+        end
+
         #push the urban airship reply message to the topic owner if params[:notify_topic_owner] is true
         if post.present? and params[:notify_topic_owner].present?
           p params[:notify_topic_owner]
           if params[:notify_topic_owner].to_i==1
             p "inside"
             if Rails.env.development?
-              post.notify_reply_message_to_topic_owner_dev
+              post.notify_reply_message_to_topic_owner(dev_app_key,dev_master_secret)
             else
-              post.notify_reply_message_to_topic_owner_dev
-              post.notify_reply_message_to_topic_owner_adhoc
+              post.notify_reply_message_to_topic_owner(dev_app_key, dev_master_secret)
+              post.notify_reply_message_to_topic_owner(adhoc_app_key, adhoc_master_secret)
             end
           end
         end
