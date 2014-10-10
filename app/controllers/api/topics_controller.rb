@@ -90,11 +90,37 @@ class Api::TopicsController < ApplicationController
               #broadcast to selected user group
               p "params[:users_to_push]"
               p params[:users_to_push]
-              if Rails.env.development?
-                topic.notify_carmmunicate_msg_to_selected_users_Dev(params[:users_to_push], true)
+
+              if Rails.env.production?
+                p "Production"
+                dev_app_key = Urbanairship_Const::CM_P_Dev_Key
+                dev_app_secret = Urbanairship_Const::CM_P_Dev_Secret
+                dev_master_secret= Urbanairship_Const::CM_P_Dev_Master_Secret
+
+                adhoc_app_key = Urbanairship_Const::CM_P_Adhoc_Key
+                adhoc_app_secret = Urbanairship_Const::CM_P_Adhoc_Secret
+                adhoc_master_secret= Urbanairship_Const::CM_P_Adhoc_Master_Secret
+              elsif Rails.env.staging?
+                p "staging"
+                dev_app_key = Urbanairship_Const::CM_S_Dev_Key
+                dev_app_secret= Urbanairship_Const::CM_S_Dev_Secret
+                dev_master_secret= Urbanairship_Const::CM_S_Dev_Master_Secret
+
+                adhoc_app_key = Urbanairship_Const::CM_S_Adhoc_Key
+                adhoc_app_secret = Urbanairship_Const::CM_S_Adhoc_Secret
+                adhoc_master_secret= Urbanairship_Const::CM_S_Adhoc_Master_Secret
               else
-                topic.notify_carmmunicate_msg_to_selected_users_Dev(params[:users_to_push], true)
-                topic.notify_carmmunicate_msg_to_selected_users_Adhoc(params[:users_to_push], true)
+                p "development"
+                app_key = Urbanairship_Const::CM_D_Key
+                app_secret= Urbanairship_Const::CM_D_Secret
+                master_secret= Urbanairship_Const::CM_D_Master_Secret
+              end
+
+              if Rails.env.development?
+                topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true, dev_app_key, dev_master_secret)
+              else
+                topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true, dev_app_key, dev_master_secret)
+                topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true, adhoc_app_key, adhoc_master_secret)
               end
             else
               #broadcast users within 5km/10km
