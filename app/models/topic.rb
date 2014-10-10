@@ -562,6 +562,7 @@ class Topic < ActiveRecord::Base
 
   def notify_carmmunicate_msg_to_selected_users_Dev (users_to_push, isprivatemsg )
     to_plate_number =""
+    p "notify_carmmunicate_msg_to_selected_users_dev"
     if (isprivatemsg)  and users_to_push.length>0
       user_id = users_to_push.first.to_i
       user= User.find_by_id(user_id)
@@ -639,6 +640,7 @@ class Topic < ActiveRecord::Base
 
   def notify_carmmunicate_msg_to_selected_users_Adhoc (users_to_push, isprivatemsg )
     to_plate_number =""
+    p "notify_carmmunicate_msg_to_selected_users_Adhoc"
     if (isprivatemsg)  and users_to_push.length>0
       user_id = users_to_push.first.to_i
       user= User.find_by_id(user_id)
