@@ -733,10 +733,14 @@ class Topic < ActiveRecord::Base
     end
     p "users_to_push"
     p users_to_push
+    p "Enviroment"
+    p Rails.env
     if users_to_push.present?
       if Rails.env.development?
+        p "11111111"
         topic.notify_carmmunicate_msg_to_selected_users_Dev(users_to_push, false)
       else
+        p "222222222"
         topic.notify_carmmunicate_msg_to_selected_users_Dev(users_to_push, false)
         topic.notify_carmmunicate_msg_to_selected_users_Adhoc(users_to_push, false)
       end
