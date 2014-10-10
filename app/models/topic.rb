@@ -746,8 +746,8 @@ class Topic < ActiveRecord::Base
       master_secret= Urbanairship_Const::CM_D_Master_Secret
     end
 
-    p app_key
-    p master_secret
+    p dev_app_key
+    p dev_master_secret
 
     if users_to_push.present?
       if Rails.env.development?
