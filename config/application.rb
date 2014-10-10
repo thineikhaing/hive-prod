@@ -92,21 +92,21 @@ module App_Password #constant variable to be used for encryption and decryption
 end
 
 module Urbanairship_Const
-  #CM_S_Key = "0NEm0U0jRky2BdqtV6l3GQ"
-  #CM_S_Secret = "Y7y0bqs4Q-G7aFRmelnS4g"
-  #CM_S_Master_Secret="8oq947c7QECzlBwtaiCemA"
+  CM_S_Dev_Key = "0NEm0U0jRky2BdqtV6l3GQ"
+  CM_S_Dev_Secret = "Y7y0bqs4Q-G7aFRmelnS4g"
+  CM_S_Dev_Master_Secret="8oq947c7QECzlBwtaiCemA"
 
-  CM_S_Key = "p3JOVu9XS1qzVFyktPS1WA"
-  CM_S_Secret = "Qycncj2tQOSGS6kHQFAGAg"
-  CM_S_Master_Secret="vQNqcpuPRjS3ZE-ICg1d6w"
+  CM_S_Adhoc_Key = "p3JOVu9XS1qzVFyktPS1WA"
+  CM_S_Adhoc_Secret = "Qycncj2tQOSGS6kHQFAGAg"
+  CM_S_Adhoc_Master_Secret="vQNqcpuPRjS3ZE-ICg1d6w"
 
-  #CM_P_Key = "vCYzT3kCQimr16p9A-GIMQ"
-  #CM_P_Secret = "WOnEfbuWRPa9Nvo3t7Mr2Q"
-  #CM_P_Master_Secret="wSBsSu3xRWOv3fSPZAeEpg"
+  CM_P_Adhoc_Key = "vCYzT3kCQimr16p9A-GIMQ"
+  CM_P_Adhoc_Secret = "WOnEfbuWRPa9Nvo3t7Mr2Q"
+  CM_P_Adhoc_Master_Secret="wSBsSu3xRWOv3fSPZAeEpg"
 
-  CM_P_Key = "jgUrWRe6SGGUmU-zixDvbw"
-  CM_P_Secret = "kXm5DrQQRCSv_GjUGx6ROQ"
-  CM_P_Master_Secret="H8EFnM6WQmCBjvBFtI9Zdg"
+  CM_P_Dev_Key = "jgUrWRe6SGGUmU-zixDvbw"
+  CM_P_Dev_Secret = "kXm5DrQQRCSv_GjUGx6ROQ"
+  CM_P_Dev_Master_Secret="H8EFnM6WQmCBjvBFtI9Zdg"
 
   CM_D_Key = "qn5A6ujOSaONpcn--rg_NA"
   CM_D_Secret = "k9KS0BvZTnaHxqjf7-Jrpg"

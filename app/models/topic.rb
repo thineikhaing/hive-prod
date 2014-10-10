@@ -560,7 +560,7 @@ class Topic < ActiveRecord::Base
     }
   end
 
-  def notify_carmmunicate_msg_to_selected_users (users_to_push, isprivatemsg )
+  def notify_carmmunicate_msg_to_selected_users_Dev (users_to_push, isprivatemsg )
     to_plate_number =""
     if (isprivatemsg)  and users_to_push.length>0
       user_id = users_to_push.first.to_i
@@ -608,14 +608,91 @@ class Topic < ActiveRecord::Base
     p isprivatemsg
     if Rails.env.production?
       p "Production"
-      app_key = Urbanairship_Const::CM_P_Key
-      app_secret = Urbanairship_Const::CM_P_Secret
-      master_secret= Urbanairship_Const::CM_P_Master_Secret
+      app_key = Urbanairship_Const::CM_P_Dev_Key
+      app_secret = Urbanairship_Const::CM_P_Dev_Secret
+      master_secret= Urbanairship_Const::CM_P_Dev_Master_Secret
     elsif Rails.env.staging?
       p "staging"
-      app_key = Urbanairship_Const::CM_S_Key
-      app_secret= Urbanairship_Const::CM_S_Secret
-      master_secret= Urbanairship_Const::CM_S_Master_Secret
+      app_key = Urbanairship_Const::CM_S_Dev_Key
+      app_secret= Urbanairship_Const::CM_S_Dev_Secret
+      master_secret= Urbanairship_Const::CM_S_Dev_Master_Secret
+    else
+      p "development"
+      app_key = Urbanairship_Const::CM_D_Key
+      app_secret= Urbanairship_Const::CM_D_Secret
+      master_secret= Urbanairship_Const::CM_D_Master_Secret
+    end
+    full_path = 'https://go.urbanairship.com/api/push/'
+    url = URI.parse(full_path)
+    req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+    req.body = notification
+    req.basic_auth app_key, master_secret
+    con = Net::HTTP.new(url.host, url.port)
+    con.use_ssl = true
+
+    r = con.start {|http| http.request(req)}
+    p "after sent"
+    logger.info "\n\n##############\n\n  " + "Resonse body: " + r.body + "  \n\n##############\n\n"
+    p "after urban airship"
+
+  end
+
+  def notify_carmmunicate_msg_to_selected_users_Adhoc (users_to_push, isprivatemsg )
+    to_plate_number =""
+    if (isprivatemsg)  and users_to_push.length>0
+      user_id = users_to_push.first.to_i
+      user= User.find_by_id(user_id)
+      if user.data.present?
+        hash_array = user.data
+        to_plate_number = hash_array["plate_number"] if  hash_array["plate_number"].present?
+      end
+    end
+    p to_plate_number
+    notification = {
+        aliases: users_to_push,
+        aps: { alert: self.title, badge: "+1", sound: "default" },
+        topic:{id: self.id,
+               title: self.title,
+               user_id: self.user_id,
+               topic_type: self.topic_type,
+               topic_sub_type: self.topic_sub_type,
+               place_id: self.place_id,
+               image_url: self.image_url,
+               width:  self.width,
+               height: self.height,
+               hiveapplication_id: self.hiveapplication_id,
+               value:  self.value,
+               unit: self.unit,
+               likes: self.likes,
+               dislikes: self.dislikes,
+               offensive: self.offensive,
+               notification_range: self.notification_range,
+               special_type: self.special_type,
+               created_at: self.created_at,
+               data: self.data,
+               methods: {
+                   username: username,
+                   place_information: self.place_information,
+                   tag_information: self.tag_information,
+                   is_private_message: isprivatemsg,
+                   to_plate_number: to_plate_number
+               }
+        }
+    }.to_json
+
+    p "users_to_push"
+    p users_to_push
+    p isprivatemsg
+    if Rails.env.production?
+      p "Production"
+      app_key = Urbanairship_Const::CM_P_Adhoc_Key
+      app_secret = Urbanairship_Const::CM_P_Adhoc_Secret
+      master_secret= Urbanairship_Const::CM_P_Adhoc_Master_Secret
+    elsif Rails.env.staging?
+      p "staging"
+      app_key = Urbanairship_Const::CM_S_Adhoc_Key
+      app_secret= Urbanairship_Const::CM_S_Adhoc_Secret
+      master_secret= Urbanairship_Const::CM_S_Adhoc_Master_Secret
     else
       p "development"
       app_key = Urbanairship_Const::CM_D_Key
@@ -655,7 +732,12 @@ class Topic < ActiveRecord::Base
     p "users_to_push"
     p users_to_push
     if users_to_push.present?
-      notify_carmmunicate_msg_to_selected_users(users_to_push,false)
+      if Rails.env.development?
+        topic.notify_carmmunicate_msg_to_selected_users_Dev(params[:users_to_push], false)
+      else
+        topic.notify_carmmunicate_msg_to_selected_users_Dev(params[:users_to_push], false)
+        topic.notify_carmmunicate_msg_to_selected_users_Adhoc(params[:users_to_push], false)
+      end
     end
   end
 

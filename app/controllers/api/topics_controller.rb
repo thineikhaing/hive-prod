@@ -47,7 +47,8 @@ class Api::TopicsController < ApplicationController
             end
           end
           result = nil unless result.present?
-
+          p data
+          p result
           params[:likes].present? ? likes = params[:likes].to_i : likes = 0
           params[:dislikes].present? ? dislikes = params[:dislikes].to_i : dislikes = 0
           params[:topic_sub_type].present? ? topic_sub_type = params[:topic_sub_type] :  topic_sub_type = 0
@@ -86,7 +87,14 @@ class Api::TopicsController < ApplicationController
           if hiveapplication.api_key == carmmunicate_key  and topic.present?
             if params[:users_to_push].present?
               #broadcast to selected user group
-              topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true)
+              p "params[:users_to_push]"
+              p params[:users_to_push]
+              if Rails.env.development?
+                topic.notify_carmmunicate_msg_to_selected_users_Dev(params[:users_to_push], true)
+              else
+                topic.notify_carmmunicate_msg_to_selected_users_Dev(params[:users_to_push], true)
+                topic.notify_carmmunicate_msg_to_selected_users_Adhoc(params[:users_to_push], true)
+              end
             else
               #broadcast users within 5km/10km
               topic.notify_carmmunicate_msg_to_nearby_users

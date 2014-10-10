@@ -319,8 +319,8 @@ class Post < ActiveRecord::Base
         post.offensive += 1
         post.save!
         post.reload
-        #mail = UserMailer.report_offensive_post(user, post)
-        #mail.deliver
+        mail = UserMailer.report_offensive_post(user, post)
+        mail.deliver
         #actionlog.create_record("post", post_id, "offensive", current_user.id)
         actionlog=    ActionLog.create(type_name: "post", type_id: post_id, action_type: "offensive", action_user_id: current_user.id)
         #history.create_record("post", self.id, "update", self.topic_id)
@@ -373,7 +373,7 @@ class Post < ActiveRecord::Base
 
   end
 
-  def notify_reply_message_to_topic_owner
+  def notify_reply_message_to_topic_owner_Dev
     topic = Topic.find(self.topic_id)
     user_to_push= []
     user_to_push.push(topic.user_id.to_s)
@@ -405,14 +405,14 @@ class Post < ActiveRecord::Base
 
     if Rails.env.production?
       p "production"
-      app_key = Urbanairship_Const::CM_P_Key
-      app_secret = Urbanairship_Const::CM_P_Secret
-      master_secret= Urbanairship_Const::CM_P_Master_Secret
+      app_key = Urbanairship_Const::CM_P_Dev_Key
+      app_secret = Urbanairship_Const::CM_P_Dev_Secret
+      master_secret= Urbanairship_Const::CM_P_Dev_Master_Secret
     elsif Rails.env.staging?
       p "staging"
-      app_key = Urbanairship_Const::CM_S_Key
-      app_secret= Urbanairship_Const::CM_S_Secret
-      master_secret= Urbanairship_Const::CM_S_Master_Secret
+      app_key = Urbanairship_Const::CM_S_Dev_Key
+      app_secret= Urbanairship_Const::CM_S_Dev_Secret
+      master_secret= Urbanairship_Const::CM_S_Dev_Master_Secret
     else
       p "development"
       app_key = Urbanairship_Const::CM_D_Key
@@ -432,6 +432,64 @@ class Post < ActiveRecord::Base
     logger.info "\n\n##############\n\n  " + "Resonse body: " + r.body + "  \n\n##############\n\n"
   end
 
+  def notify_reply_message_to_topic_owner_Adhoc
+    topic = Topic.find(self.topic_id)
+    user_to_push= []
+    user_to_push.push(topic.user_id.to_s)
+    notification = {
+        aliases: user_to_push,
+        aps: { alert: self.content, badge: "+1", sound: "default" },
+        post:{
+            id: self.id,
+            topic_id: self.topic_id,
+            content: self.content,
+            image_url: self.img_url,
+            width:  self.width,
+            height: self.height,
+            created_at: self.created_at,
+            user_id: self.user_id,
+            username: self.username,
+            post_type: self.post_type,
+            place_id: self.place_id,
+            likes: self.likes,
+            dislikes: self.dislikes,
+            offensive: self.offensive,
+            created_at: self.created_at,
+            data: self.data
+        }
+    }.to_json
+
+    p "user_to_push"
+    p user_to_push
+
+    if Rails.env.production?
+      p "production"
+      app_key = Urbanairship_Const::CM_P_Adhoc_Key
+      app_secret = Urbanairship_Const::CM_P_Adhoc_Secret
+      master_secret= Urbanairship_Const::CM_P_Adhoc_Master_Secret
+    elsif Rails.env.staging?
+      p "staging"
+      app_key = Urbanairship_Const::CM_S_Adhoc_Key
+      app_secret= Urbanairship_Const::CM_S_Adhoc_Secret
+      master_secret= Urbanairship_Const::CM_S_Adhoc_Master_Secret
+    else
+      p "development"
+      app_key = Urbanairship_Const::CM_D_Key
+      app_secret= Urbanairship_Const::CM_D_Secret
+      master_secret= Urbanairship_Const::CM_D_Master_Secret
+    end
+    full_path = 'https://go.urbanairship.com/api/push/'
+    url = URI.parse(full_path)
+    req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+    req.body = notification
+    req.basic_auth app_key, master_secret
+    con = Net::HTTP.new(url.host, url.port)
+    con.use_ssl = true
+
+    r = con.start {|http| http.request(req)}
+    p "after sent"
+    logger.info "\n\n##############\n\n  " + "Resonse body: " + r.body + "  \n\n##############\n\n"
+  end
 
   def post_image_upload_delayed_job(filename)
     p "delayed job starts!"
