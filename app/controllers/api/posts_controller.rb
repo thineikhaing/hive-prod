@@ -87,9 +87,12 @@ class Api::PostsController < ApplicationController
           if params[:notify_topic_owner].to_i==1
             p "inside"
             if Rails.env.development?
+              p "1111111111"
               post.notify_reply_message_to_topic_owner(dev_app_key,dev_master_secret)
             else
+              p "2222222222"
               post.notify_reply_message_to_topic_owner(dev_app_key, dev_master_secret)
+              p "33333333"
               post.notify_reply_message_to_topic_owner(adhoc_app_key, adhoc_master_secret)
             end
           end
