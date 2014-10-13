@@ -402,11 +402,11 @@ class Post < ActiveRecord::Base
 
     p "user_to_push"
     p user_to_push
-    p notification
+    p JSON.parse(notification)
     full_path = 'https://go.urbanairship.com/api/push/'
     url = URI.parse(full_path)
     req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-    req.body = notification
+    req.body = JSON.parse(notification)
     req.basic_auth app_key, master_secret
     con = Net::HTTP.new(url.host, url.port)
     con.use_ssl = true
