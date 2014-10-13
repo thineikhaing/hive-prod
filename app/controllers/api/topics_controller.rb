@@ -123,7 +123,7 @@ class Api::TopicsController < ApplicationController
                 p "2222222222"
                 topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true, dev_app_key, dev_master_secret)
                 p "3333333333"
-                topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true, adhoc_app_key, adhoc_master_secret)
+                #topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true, adhoc_app_key, adhoc_master_secret)
               end
             else
               #broadcast users within 5km/10km
