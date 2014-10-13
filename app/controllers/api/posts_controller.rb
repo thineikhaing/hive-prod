@@ -92,7 +92,7 @@ class Api::PostsController < ApplicationController
               p "2222222222"
               post.notify_reply_message_to_topic_owner(dev_app_key, dev_master_secret, topic.user_id)
               p "33333333"
-              #post.notify_reply_message_to_topic_owner(adhoc_app_key, adhoc_master_secret, topic.user_id)
+              post.notify_reply_message_to_topic_owner(adhoc_app_key, adhoc_master_secret, topic.user_id)
             end
           end
         end
