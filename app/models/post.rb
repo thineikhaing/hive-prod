@@ -402,7 +402,7 @@ class Post < ActiveRecord::Base
 
     p "user_to_push"
     p user_to_push
-
+    p notification
     full_path = 'https://go.urbanairship.com/api/push/'
     url = URI.parse(full_path)
     req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
