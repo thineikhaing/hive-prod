@@ -373,10 +373,10 @@ class Post < ActiveRecord::Base
 
   end
 
-  def notify_reply_message_to_topic_owner(app_key, master_secret)
-    topic = Topic.find(self.topic_id)
+  def notify_reply_message_to_topic_owner(app_key, master_secret, user_id)
+    #topic = Topic.find(self.topic_id)
     user_to_push= []
-    user_to_push.push(topic.user_id.to_s)
+    user_to_push.push(user_id.to_s)
     notification = {
       aliases: user_to_push,
       aps: { alert: self.content, badge: "+1", sound: "default" },

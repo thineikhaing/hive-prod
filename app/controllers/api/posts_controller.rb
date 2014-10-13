@@ -56,24 +56,23 @@ class Api::PostsController < ApplicationController
         end
 
         if Rails.env.production?
-          p "production"
+          p "Production"
           dev_app_key = Urbanairship_Const::CM_P_Dev_Key
           dev_app_secret = Urbanairship_Const::CM_P_Dev_Secret
           dev_master_secret= Urbanairship_Const::CM_P_Dev_Master_Secret
 
-          adhoc_app_key = Urbanairship_Const::CM_P_Dev_Key
-          adhoc_app_secret = Urbanairship_Const::CM_P_Dev_Secret
-          adhoc_master_secret= Urbanairship_Const::CM_P_Dev_Master_Secret
-
+          adhoc_app_key = Urbanairship_Const::CM_P_Adhoc_Key
+          adhoc_app_secret = Urbanairship_Const::CM_P_Adhoc_Secret
+          adhoc_master_secret= Urbanairship_Const::CM_P_Adhoc_Master_Secret
         elsif Rails.env.staging?
           p "staging"
           dev_app_key = Urbanairship_Const::CM_S_Dev_Key
           dev_app_secret= Urbanairship_Const::CM_S_Dev_Secret
           dev_master_secret= Urbanairship_Const::CM_S_Dev_Master_Secret
 
-          adhoc_app_key = Urbanairship_Const::CM_S_Dev_Key
-          adhoc_app_secret= Urbanairship_Const::CM_S_Dev_Secret
-          adhoc_master_secret= Urbanairship_Const::CM_S_Dev_Master_Secret
+          adhoc_app_key = Urbanairship_Const::CM_S_Adhoc_Key
+          adhoc_app_secret = Urbanairship_Const::CM_S_Adhoc_Secret
+          adhoc_master_secret= Urbanairship_Const::CM_S_Adhoc_Master_Secret
         else
           p "development"
           dev_app_key = Urbanairship_Const::CM_D_Key
@@ -88,12 +87,12 @@ class Api::PostsController < ApplicationController
             p "inside"
             if Rails.env.development?
               p "1111111111"
-              post.notify_reply_message_to_topic_owner(dev_app_key,dev_master_secret)
+              post.notify_reply_message_to_topic_owner(dev_app_key,dev_master_secret, topic.user_id)
             else
               p "2222222222"
-              post.notify_reply_message_to_topic_owner(dev_app_key, dev_master_secret)
+              post.notify_reply_message_to_topic_owner(dev_app_key, dev_master_secret, topic.user_id)
               p "33333333"
-              post.notify_reply_message_to_topic_owner(adhoc_app_key, adhoc_master_secret)
+              post.notify_reply_message_to_topic_owner(adhoc_app_key, adhoc_master_secret, topic.user_id)
             end
           end
         end
