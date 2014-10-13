@@ -111,15 +111,18 @@ class Api::TopicsController < ApplicationController
                 adhoc_master_secret= Urbanairship_Const::CM_S_Adhoc_Master_Secret
               else
                 p "development"
-                app_key = Urbanairship_Const::CM_D_Key
-                app_secret= Urbanairship_Const::CM_D_Secret
-                master_secret= Urbanairship_Const::CM_D_Master_Secret
+                dev_app_key = Urbanairship_Const::CM_D_Key
+                dev_app_secret= Urbanairship_Const::CM_D_Secret
+                dev_master_secret= Urbanairship_Const::CM_D_Master_Secret
               end
 
               if Rails.env.development?
+                p "111111111111"
                 topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true, dev_app_key, dev_master_secret)
               else
+                p "2222222222"
                 topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true, dev_app_key, dev_master_secret)
+                p "3333333333"
                 topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true, adhoc_app_key, adhoc_master_secret)
               end
             else
