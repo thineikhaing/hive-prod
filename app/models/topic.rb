@@ -689,6 +689,8 @@ class Topic < ActiveRecord::Base
         activeUsersArray.push(ua.id.to_s)
       end
     end
+    p "activeUsersArray"
+    p activeUsersArray
   end
 
   def user_favourite_topic(current_user, topic_id, choice)
