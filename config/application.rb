@@ -75,13 +75,13 @@ module Factual_Const
 end
 module Mealbox_key
   Staging_Key= "81e75dccf4934e7224211d5e8096ea41"
-  Development_Key = "f3b6eed28269900bc7eea17ebac5e701"
+  Development_Key = "635d359ad1f1f4897f3be07b9aed439d"
   Production_Key = "e1dff49b39072847a4e1ccad404529e3"
 end
 
 module Carmmunicate_key
   Staging_Key= "f8472f0781cf474624915066d4d57da7"
-  Development_Key = "58de665af6db2812702682085777a3a8"
+  Development_Key = "f3bd8d730d1fcfe1fefb91fd5932a76e"
   Production_Key = "7a5a7255d7da220dbf612ed874487d8b"
 end
 
