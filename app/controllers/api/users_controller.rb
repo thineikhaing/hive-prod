@@ -107,7 +107,7 @@ class Api::UsersController < ApplicationController
 
     usersArray = [ ]
     activeUsersArray = [ ]
-
+    p params
     if current_user.present? && params[:latitude].present? && params[:longitude].present?
       current_user.update_attributes(last_known_latitude: params[:latitude], last_known_longitude: params[:longitude])
       user = User.find(current_user.id)
