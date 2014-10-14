@@ -3,7 +3,6 @@ class Api::TopicsController < ApplicationController
 
   def create
     if params[:app_key].present?
-      p params
       hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
       tag = Tag.new
       if hiveapplication.present?
@@ -48,8 +47,6 @@ class Api::TopicsController < ApplicationController
             end
           end
           result = nil unless result.present?
-          p data
-          p result
           params[:likes].present? ? likes = params[:likes].to_i : likes = 0
           params[:dislikes].present? ? dislikes = params[:dislikes].to_i : dislikes = 0
           params[:topic_sub_type].present? ? topic_sub_type = params[:topic_sub_type] :  topic_sub_type = 0
@@ -72,27 +69,19 @@ class Api::TopicsController < ApplicationController
           #create tag
           tag.add_record(topic.id, params[:tag], Tag::NORMAL) if params[:tag].present?  and topic.present?
           tag.add_record(topic.id, params[:locationtag], Tag::LOCATION) if params[:locationtag].present?  and topic.present?
-          p "before enviroment"
           if Rails.env.development?
-            p "enviroment"
             carmmunicate_key = Carmmunicate_key::Development_Key
           elsif Rails.env.staging?
-            p "staging"
             carmmunicate_key = Carmmunicate_key::Staging_Key
           else
-            p "production"
             carmmunicate_key = Carmmunicate_key::Production_Key
           end
-          p carmmunicate_key
 
           if hiveapplication.api_key == carmmunicate_key  and topic.present?
             if params[:users_to_push].present?
               #broadcast to selected user group
-              p "params[:users_to_push]"
-              p params[:users_to_push]
 
               if Rails.env.production?
-                p "Production"
                 dev_app_key = Urbanairship_Const::CM_P_Dev_Key
                 dev_app_secret = Urbanairship_Const::CM_P_Dev_Secret
                 dev_master_secret= Urbanairship_Const::CM_P_Dev_Master_Secret
@@ -101,7 +90,6 @@ class Api::TopicsController < ApplicationController
                 adhoc_app_secret = Urbanairship_Const::CM_P_Adhoc_Secret
                 adhoc_master_secret= Urbanairship_Const::CM_P_Adhoc_Master_Secret
               elsif Rails.env.staging?
-                p "staging"
                 dev_app_key = Urbanairship_Const::CM_S_Dev_Key
                 dev_app_secret= Urbanairship_Const::CM_S_Dev_Secret
                 dev_master_secret= Urbanairship_Const::CM_S_Dev_Master_Secret
@@ -110,19 +98,15 @@ class Api::TopicsController < ApplicationController
                 adhoc_app_secret = Urbanairship_Const::CM_S_Adhoc_Secret
                 adhoc_master_secret= Urbanairship_Const::CM_S_Adhoc_Master_Secret
               else
-                p "development"
                 dev_app_key = Urbanairship_Const::CM_D_Key
                 dev_app_secret= Urbanairship_Const::CM_D_Secret
                 dev_master_secret= Urbanairship_Const::CM_D_Master_Secret
               end
 
               if Rails.env.development?
-                p "111111111111"
                 topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true, dev_app_key, dev_master_secret)
               else
-                p "2222222222"
                 topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true, dev_app_key, dev_master_secret)
-                p "3333333333"
                 topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true, adhoc_app_key, adhoc_master_secret)
               end
             else

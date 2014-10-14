@@ -35,7 +35,7 @@ class Api::PlacesController < ApplicationController
         choice = "luncheon" if app_key ==  mealbox_key
       end
 
-      place = Place.new()
+      place = Place.new
       place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
       #Checkinplace.create(place_id: places.id, user_id: current_user.id) if places.present?
       render json: place
@@ -103,8 +103,6 @@ class Api::PlacesController < ApplicationController
     else
       render json: {error_msg: "Params user id and authentication token must be presented"},status: 400
     end
-
-
   end
 
   def select_venue
