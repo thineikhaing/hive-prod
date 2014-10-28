@@ -32,7 +32,11 @@ class Api::DownloaddataController < ApplicationController
       hiveApplication = HiveApplication.find_by_api_key(params[:app_key])
       if hiveApplication.present?
         topics = Topic.find_by_hiveapplication_id(hiveApplication.id)
-        render json: { topics: JSON.parse(topics.to_json())}
+        if topics.present?
+          render json: { topics: JSON.parse(topics.to_json())}
+        else
+          render json: {topics: nil}
+        end
       else
         render json: { error_msg: "Invalid application key" }, status: 400
       end
