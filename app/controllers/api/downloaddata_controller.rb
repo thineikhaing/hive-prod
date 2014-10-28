@@ -27,6 +27,20 @@ class Api::DownloaddataController < ApplicationController
     render json: {apps: JSON.parse(HiveApplication.all.to_json(:test => "true")) }
   end
 
+  def retrieve_topics_by_app_key
+    if params[:app_key].present?
+      hiveApplication = HiveApplication.find_by_api_key(params[:app_key])
+      if hiveApplication.present?
+        topics = Topic.find_by_hiveapplication_id(hiveApplication.id)
+        render json: { topics: JSON.parse(topics.to_json())}
+      else
+        render json: { error_msg: "Invalid application key" }, status: 400
+      end
+    else
+      render json: { error_msg: "Params application key must be presented" } , status: 400
+    end
+  end
+
   def search_database
     topic_array = [ ]
     user_array = [ ]
