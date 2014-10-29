@@ -49,28 +49,31 @@ class Api::MytestController < ApplicationController
 
        if user.present?
          unless user.valid_password?(password)
-           p "1"
            # Redirects back to index if password is wrong
           render json:  { error: error_notice }
 
          else
-           p "4"
            if user.verified == true
              dev_user_id = user.id
              applications = user.hive_applications
              app_key = nil
+             user_id=nil
+             auth_token = nil
              applications.each do |application|
-               app_key = application.api_key if application.app_name.casecmp("testing app")
+               app_key = application.api_key if application.app_name.casecmp("juice app")
+               user = User.find_by_username("JuiceAppBoard")
+               if user.present?
+                  user_id = user.id
+                  auth_token = user.authentication_token
+               end
              end
-             render json: {user_id: dev_user_id, app_key: app_key}
+             render json: {user_id: dev_user_id, app_key: app_key, board_id: user_id, auth_token: auth_token}
            else
-             p "3"
              #if user hasn't verified account.
              render json:{ error: error_notice }
            end
          end
        else
-         p "2"
          # if user enters the wrong email address.
          render json:{ error: error_notice }
        end
