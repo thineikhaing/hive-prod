@@ -31,7 +31,7 @@ class Api::DownloaddataController < ApplicationController
     if params[:app_key].present?
       hiveApplication = HiveApplication.find_by_api_key(params[:app_key])
       if hiveApplication.present?
-        topics = Topic.find_by_hiveapplication_id(hiveApplication.id)
+        topics = Topic.where(:hiveapplication_id => hiveApplication.id)
         if topics.present?
           render json: { topics: JSON.parse(topics.to_json())}
         else
