@@ -8,12 +8,13 @@
 
 #sign_up {
   display: inline-block;
+  font-family: Labrador-A-Light;
   height: 23px;
   width:  80px;
-  font-size: 12px;
+  font-size: 16px;
   background-color: #FF9B00;
   text-align: center;
-  line-height: 23px;
+  line-height: 26px;
   margin-left: 12px;
 }
 
@@ -23,12 +24,15 @@
 }
 
 #email_label, #password_label {
-  font-size: 12px;
+  font-size: 16px;
+  font-family: Labrador-A-Light !important;
   color: #FF9B00
 }
 
 .sign_in_input {
   height: 23px;
+  font-family: Labrador-A-Light;
+  font-size: 16px;
   width: 300px;
   color: #FF9B00;
   border: 1px solid #FF9B00;
@@ -36,9 +40,11 @@
 
 .submit_button,  {
   height: 23px;
-  width: 50px;
-  font-size: 12px;
+  width: 57px;
+  font-family: Labrador-A-Light;
+  font-size: 16px;
   color: white;
+  line-height: 23px;
   background-color: #FF9B00;
   margin-left: 12px;
   border: none;
@@ -46,12 +52,13 @@
 
 #forgot_password {
   display: inline-block;
+  font-family: Labrador-A-Light;
   height: 23px;
   width: 138px;
-  font-size: 12px;
+  font-size: 16px;
   color: white;
   text-align: center;
-  line-height: 23px;
+  line-height: 26px;
   background-color: #FF9B00;
 }
 
@@ -67,4 +74,11 @@
   text-align: center;
   margin: 0 auto;
   margin-top: 180px;
+}
+
+#log_in{
+  display: inline-block;
+  height: 23px;
+  line-height: 26px;
+  width: 60px;
 }

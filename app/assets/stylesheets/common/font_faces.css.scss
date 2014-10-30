@@ -4,3 +4,17 @@
   font-weight: normal;
   font-style: normal;
 }
+
+@font-face {
+  font-family: 'Labrador-A-Light';
+  src: asset-url('Labrador-A-Light.otf', font) format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Labrador-A-Hairline';
+  src: asset-url('Labrador-A-Hairline.otf', font) format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
