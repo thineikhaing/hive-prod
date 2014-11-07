@@ -311,4 +311,53 @@ class Api::TopicsController < ApplicationController
   #  render json: {error_msg: "unauthorized access"} unless hiveapplication
   #end
 
+
+#for now juice app only used this following 2 api's
+
+  def get_topic
+    if params[:topic_id].present? and params[:app_key].present?
+      hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+      if hiveapplication.present?
+        topic = Topic.find_by_id(params[:topic_id])
+        if topic.present?
+          render json: { topic: JSON.parse(topic.to_json(content: true))}
+        end
+      else
+        render json: { error_msg: "Invalid app_key" }
+      end
+    else
+      render json: { error_msg: "Params app_key and topic_ids must be presented" }
+    end
+  end
+
+  def update_topic
+# Show the Topics, Posts, Places, Users
+# Check if APPLICATION_ID and CURRENT_USER exist
+    if params[:app_id].present? && params[:app_key].present?
+      session[:app_id] = params[:app_id].to_i
+      @application = HiveApplication.find(params[:app_id])
+      #@Topicfields = table_list(params[:app_id], "Topic")
+      #save the updated Application information
+      if application.present?
+        application.app_name = params[:dev_portal][:application_name]
+        application.app_type = params[:dev_portal][:application_type]
+        application.description = params[:dev_portal][:description]
+        application.theme_color = params[:dev_portal][:theme_color]
+
+        if params[:dev_portal][:application_icon].present?
+          application.icon_url = params[:dev_portal][:application_icon]
+        end
+
+        application.save!
+
+        #redirect back to Application List Page
+        redirect_to hiveapplication_application_list_path
+      end
+    else
+      #redirect back to Sign in Page
+      redirect_to hiveapplication_index_path
+    end
+
+  end
+
 end
