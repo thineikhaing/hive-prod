@@ -331,33 +331,24 @@ class Api::TopicsController < ApplicationController
   end
 
   def update_topic
-# Show the Topics, Posts, Places, Users
-# Check if APPLICATION_ID and CURRENT_USER exist
-    if params[:app_id].present? && params[:app_key].present?
-      session[:app_id] = params[:app_id].to_i
-      @application = HiveApplication.find(params[:app_id])
+    if params[:app_key].present?
+      application = HiveApplication.find_by_api_key(params[:app_key])
       #@Topicfields = table_list(params[:app_id], "Topic")
       #save the updated Application information
       if application.present?
-        application.app_name = params[:dev_portal][:application_name]
-        application.app_type = params[:dev_portal][:application_type]
-        application.description = params[:dev_portal][:description]
-        application.theme_color = params[:dev_portal][:theme_color]
-
-        if params[:dev_portal][:application_icon].present?
-          application.icon_url = params[:dev_portal][:application_icon]
-        end
-
-        application.save!
-
-        #redirect back to Application List Page
-        redirect_to hiveapplication_application_list_path
+        topics = Topic.where('hiveapplication_id = ?', application.id)
+        topic = topics.select{|top|  top.id == params[:app_id].to_i}.last
+        data = getHashValuefromString(params[:data]) if params[:data].present?
+        data["serving"] = data["serving"].present? ? data["serving"] : topic.data["serving"]
+        data["ingredients"] = data["ingredients"].present? ? data["ingredients"] : topic.data["ingredients"]
+        data["advantages"] = data["advantages"].present? ? data["advantages"] : topic.data["advantages"]
+        data["weather"] = data["weather"].present? ? data["weather"] : topic.data["weather"]
+        topic.update_attributes(:title => params["title"], :image_url => params["image_url"].present? ? params["image_url"] : topic.image_url, :data => data)
+        render json: { topic: JSON.parse(topic.to_json(content: true))}
       end
     else
-      #redirect back to Sign in Page
-      redirect_to hiveapplication_index_path
+      render json: { error_msg: "Params app_key and topic_ids must be presented" }
     end
-
   end
 
 end
