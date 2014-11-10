@@ -71,7 +71,7 @@ Rails.application.routes.draw do
     match "topics/topics_by_ids"                    => "topics#topics_by_ids"                   , via: [:get, :post]
     match "topics/delete"                           => "topics#delete"                          , via: [:get, :post]
     match "topics/get_topic"                        => "topics#get_topic"                       , via: [:get]
-    match "topics/update_topic"                     => "topics#update_topic"                    , via: [:post]
+    match "topics/update_topic"                     => "topics#update_topic"                    , via: [:get]
     match "posts/create"                            => "posts#create"                           , via: [:get, :post]
     match "posts/retrieve_post"                     => "posts#retrieve_post"                    , via: [:get, :post]
     match "posts/post_liked"                        => "posts#post_liked"                       , via: [:get, :post]
