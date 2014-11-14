@@ -3,7 +3,8 @@ class Api::TopicsController < ApplicationController
 
   def create
     if params[:app_key].present?
-      hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+      p 4444444444444
+      p hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
       tag = Tag.new
       if hiveapplication.present?
         if check_banned_profanity(params[:title])
