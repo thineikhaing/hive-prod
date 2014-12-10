@@ -3,7 +3,8 @@ class Api::TopicsController < ApplicationController
 
   def create
     if params[:app_key].present?
-      hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+      p 4444444444444
+      p hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
       tag = Tag.new
       if hiveapplication.present?
         if check_banned_profanity(params[:title])
@@ -305,6 +306,24 @@ class Api::TopicsController < ApplicationController
       render json: { error_msg: "Params topic_id and app_key must be presented" }
     end
   end
+
+  def topic_by_image
+     if params[:image_url].present? and params[:app_key].present?
+       hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+       if hiveapplication.present?
+         topic = Topic.find_by_image_url(params[:image_url])
+         if topic.present?
+           render json: { topic: JSON.parse(topic.to_json(content: true))}
+         end
+       else
+         render json: { error_msg: "Invalid app_key" }
+       end
+     else
+       render json: { error_msg: "Params app_key and image_url must be presented" }
+     end
+  end
+
+
   #private
   #def restrict_access
   #  hiveapplication = HiveApplication.find_by(api_key: params[:api_key])
