@@ -85,6 +85,12 @@ module Carmmunicate_key
   Production_Key = "05c4919a87614b59e5b6814b02ceff07"
 end
 
+module Favr_key
+  Staging_Key= "8241e7f0321e4abdeb72cf1aae828020"
+  Development_Key = "3917aadf42e00b1e10cc4ebfe8cc6356"
+  #Production_Key = "05c4919a87614b59e5b6814b02ceff07"
+end
+
 module App_Password #constant variable to be used for encryption and decryption
   Key = "rebel4six"
   Length = "8 bytes!"

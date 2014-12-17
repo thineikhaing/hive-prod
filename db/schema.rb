@@ -11,17 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140627074919) do
+ActiveRecord::Schema.define(version: 20141217073630) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
 
   create_table "action_logs", force: true do |t|
-    t.string   "action_type"
-    t.string   "type_name"
-    t.integer  "type_id"
-    t.integer  "action_user_id"
+    t.string   "action_type",    null: false
+    t.string   "type_name",      null: false
+    t.integer  "type_id",        null: false
+    t.integer  "action_user_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -30,6 +30,13 @@ ActiveRecord::Schema.define(version: 20140627074919) do
     t.integer  "app_id"
     t.string   "table_name"
     t.string   "additional_column_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "checkinplaces", force: true do |t|
+    t.integer  "place_id",   default: 0
+    t.integer  "user_id",    default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -69,7 +76,8 @@ ActiveRecord::Schema.define(version: 20140627074919) do
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.string   "username"
-    t.string   "email_verification_code"
+    t.string   "email_verification_code", default: "",    null: false
+    t.string   "default",                 default: "",    null: false
     t.hstore   "data"
     t.boolean  "verified",                default: false
     t.datetime "created_at"
@@ -80,93 +88,96 @@ ActiveRecord::Schema.define(version: 20140627074919) do
   add_index "devusers", ["email"], name: "index_devusers_on_email", unique: true, using: :btree
   add_index "devusers", ["reset_password_token"], name: "index_devusers_on_reset_password_token", unique: true, using: :btree
 
-  create_table "facades", force: true do |t|
-    t.string   "social_priority"
+  create_table "historychanges", force: true do |t|
+    t.string   "type_action", default: ""
+    t.string   "type_name",   default: ""
+    t.integer  "type_id",     default: 0
+    t.integer  "parent_id",   default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "user_id"
   end
 
   create_table "hive_applications", force: true do |t|
     t.string   "app_name"
-    t.string   "app_type"
-    t.string   "api_key"
-    t.string   "description"
+    t.string   "app_type",                        null: false
+    t.string   "api_key",                         null: false
+    t.string   "description", default: ""
     t.string   "icon_url"
-    t.string   "theme_color"
-    t.integer  "devuser_id"
+    t.string   "theme_color", default: "#451734"
+    t.integer  "devuser_id",                      null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "places", force: true do |t|
     t.string   "name"
-    t.string   "category"
-    t.string   "address"
-    t.string   "locality"
-    t.string   "region"
-    t.string   "neighbourhood"
-    t.string   "country"
-    t.string   "postal_code"
-    t.string   "website_url"
-    t.string   "chain_name"
-    t.string   "contact_number"
+    t.string   "category",       default: ""
+    t.string   "address",        default: "",  null: false
+    t.string   "locality",       default: ""
+    t.string   "region",         default: ""
+    t.string   "neighbourhood",  default: ""
+    t.string   "country",        default: ""
+    t.string   "postal_code",    default: ""
+    t.string   "website_url",    default: ""
+    t.string   "chain_name",     default: ""
+    t.string   "contact_number", default: ""
     t.string   "img_url"
-    t.string   "source"
-    t.integer  "source_id"
+    t.string   "source",         default: ""
+    t.integer  "source_id",      default: 0
     t.integer  "user_id"
     t.hstore   "data"
-    t.float    "latitude"
-    t.float    "longitude"
+    t.float    "latitude",       default: 0.0, null: false
+    t.float    "longitude",      default: 0.0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "posts", force: true do |t|
-    t.string   "content"
+    t.string   "content",                null: false
     t.string   "img_url"
     t.integer  "width",      default: 0
     t.integer  "height",     default: 0
-    t.integer  "post_type"
+    t.integer  "post_type",  default: 0, null: false
     t.hstore   "data"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "dislikes",   default: 0
+    t.integer  "likes",      default: 0
+    t.integer  "offensive",  default: 0
+    t.integer  "place_id",   default: 0
     t.integer  "user_id"
     t.integer  "topic_id"
   end
 
-  create_table "social_accounts", force: true do |t|
-    t.integer  "account_type"
-    t.integer  "account_id"
-    t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "tags", force: true do |t|
-    t.integer  "tag_type"
-    t.string   "keyword"
+    t.integer  "tag_type",                null: false
+    t.string   "keyword",    default: "", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "topic_with_tags", force: true do |t|
-    t.integer  "topic_id"
-    t.integer  "tag_id"
+    t.integer  "topic_id",   null: false
+    t.integer  "tag_id",     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "topics", force: true do |t|
-    t.string   "title"
+    t.string   "title",                            null: false
     t.string   "image_url"
     t.integer  "width",              default: 0
     t.integer  "height",             default: 0
-    t.integer  "topic_type"
-    t.integer  "topic_sub_type"
-    t.integer  "place_id"
+    t.integer  "topic_type",         default: 0,   null: false
+    t.integer  "topic_sub_type",     default: 0
+    t.string   "special_type",       default: ""
+    t.integer  "place_id",           default: 0
     t.float    "value",              default: 0.0
     t.string   "unit",               default: ""
+    t.integer  "dislikes",           default: 0
+    t.integer  "likes",              default: 0
+    t.integer  "offensive",          default: 0
+    t.float    "notification_range", default: 1.0
     t.hstore   "data"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -175,40 +186,60 @@ ActiveRecord::Schema.define(version: 20140627074919) do
   end
 
   create_table "user_accounts", force: true do |t|
-    t.integer  "user_id"
-    t.string   "account_type"
-    t.string   "linked_account_id"
-    t.integer  "priority"
+    t.integer  "user_id",                       null: false
+    t.string   "account_type",                  null: false
+    t.string   "linked_account_id",             null: false
+    t.integer  "priority",          default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "user_push_tokens", force: true do |t|
-    t.integer  "user_id"
-    t.string   "push_token"
+    t.integer  "user_id",    null: false
+    t.string   "push_token", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "userpreviouslocations", force: true do |t|
+    t.float    "latitude",   default: 0.0
+    t.float    "longitude",  default: 0.0
+    t.integer  "user_id",    default: 0
+    t.integer  "radius",     default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "users", force: true do |t|
-    t.string   "email",                  default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
+    t.string   "email",                  default: "",  null: false
+    t.string   "encrypted_password",     default: "",  null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer  "sign_in_count",          default: 0,   null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.datetime "token_expiry_date"
-    t.string   "username"
+    t.string   "username",               default: "",  null: false
     t.string   "device_id"
     t.string   "authentication_token"
     t.string   "avatar_url"
     t.integer  "role"
-    t.integer  "quid"
-    t.integer  "honor_rating"
+    t.integer  "point",                  default: 0
+    t.integer  "flareMode",              default: 0
+    t.integer  "alert_count",            default: 3
+    t.integer  "paid_alert_count",       default: 0
+    t.float    "credits",                default: 0.0
+    t.float    "last_known_latitude",    default: 0.0
+    t.float    "last_known_longitude",   default: 0.0
+    t.datetime "check_in_time"
+    t.integer  "profanity_counter",      default: 0
+    t.datetime "offence_date"
+    t.integer  "positive_honor",         default: 0
+    t.integer  "negative_honor",         default: 0
+    t.integer  "honored_times",          default: 0
     t.hstore   "data"
     t.datetime "created_at"
     t.datetime "updated_at"

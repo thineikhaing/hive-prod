@@ -3,7 +3,6 @@ class Api::TopicsController < ApplicationController
 
   def create
     if params[:app_key].present?
-      p 4444444444444
       p hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
       tag = Tag.new
       if hiveapplication.present?
@@ -70,10 +69,13 @@ class Api::TopicsController < ApplicationController
           #create tag
           tag.add_record(topic.id, params[:tag], Tag::NORMAL) if params[:tag].present?  and topic.present?
           tag.add_record(topic.id, params[:locationtag], Tag::LOCATION) if params[:locationtag].present?  and topic.present?
+
           if Rails.env.development?
             carmmunicate_key = Carmmunicate_key::Development_Key
+            p favr_key = Favr_key::Development_Key
           elsif Rails.env.staging?
             carmmunicate_key = Carmmunicate_key::Staging_Key
+            p favr_key = Favr_key::Staging_Key
           else
             carmmunicate_key = Carmmunicate_key::Production_Key
           end

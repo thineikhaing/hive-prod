@@ -134,4 +134,214 @@ class Api::DownloaddataController < ApplicationController
     end
   end
 
+  # ************ API for FAVR  ************
+
+  def background_retrieve
+    if params[:choice] == "topics"
+      topics = Topic.all
+
+      render json: { topics: topics }
+    elsif params[:choice] == "posts"
+      topic = Topic.find(params[:topic_id])
+      posts = topic.posts
+
+      render json: { posts: posts }
+    elsif params[:choice] == "media"
+      mediaArray = [ ]
+      posts = Post.all
+      posts.map { |post| mediaArray.push(post) if post.post_type == Post::IMAGE or post.post_type == Post::AUDIO or post.post_type == Post::VIDEO }
+
+      render json: mediaArray
+    elsif params[:choice] == "tags"
+      tagsArray = [ ]
+      tags = Tag.all
+      tags.map { |t| tagsArray.push( { id: t.id, tag: t.tag, tag_type: t.tag_type } ) }
+
+      render json: { tags: tagsArray }
+    elsif params[:choice] == "places"
+      placesArray = [ ]
+      places = Place.all
+      places.map { |place| placesArray.push(place) if place.source == 0 or place.source == 2 or place.source == 4 }
+
+      render json: { places: placesArray }
+    elsif params[:choice] == "luncheon"
+      topics = Topic.where(topic_type: 7)
+
+      render json: { topics: topics }
+    end
+  end
+
+  def retrieve_history
+    topicArray = [ ]
+    luncheonTopicArray = [ ]
+    postArray = [ ]
+    mediaArray = [ ]
+    tagArray = [ ]
+
+    if params[:history_id].present?
+      last_history = Historychange.last
+      current_history = Historychange.find(params[:history_id])
+
+      if params[:choice] == "topic"
+        historyArray = Historychange.where(["id > ? AND id <= ? AND type_name = ?", current_history, last_history, "topic"])
+
+        historyArray.each do |historyChange|
+          if historyChange.type_action == "create"
+            topicArray.push({ topic: Topic.find(historyChange.type_id), status: "created"})
+          elsif historyChange.type_action == "update"
+            topicArray.push({ topic: Topic.find(historyChange.type_id), status: "updated"})
+          elsif historyChange.type_action == "delete"
+            topicArray.push({ topic: { topic_id: historyChange.type_id }, status: "deleted"})
+          end
+        end
+
+        render json: { topics: topicArray }
+      elsif params[:choice] == "post" or params[:choice] == "media"
+        historyArray = Historychange.where(["id > ? AND id <= ? AND type_name = ?", current_history, last_history, "post"])
+
+        historyArray.each do |historyChange|
+          post = Post.find(historyChange.type_id)
+
+          if historyChange.type_action == "create" or historyChange.type_action == "update"
+            mediaArray.push( { media: post, status: "updated" } ) unless post.post_type == Post::TEXT
+            postArray.push({ post: post, status: "updated" })
+          elsif historyChange.type_action == "delete"
+            mediaArray.push( { media: post, status: "deleted" } ) unless post.post_type == Post::TEXT
+            postArray.push({ post: { post_id: historyChange.type_id }, status: "deleted" })
+          end
+        end
+
+        render json: { posts: postArray } if params[:choice] == "post"
+        render json: { media: mediaArray } if params[:choice] == "media"
+      elsif params[:choice] == "tag"
+        historyArray = Historychange.where(["id > ? AND id <= ? AND type_name = ?", current_history, last_history, "tag"])
+
+        historyArray.each do |historyChange|
+          if historyChange.type_action == "create" or historyChange.type_action == "update"
+            tagArray.push({ tag: Tag.find(historyChange.type_id), status: "updated" })
+          elsif historyChange.type_action == "delete"
+            tagArray.push({ tag: { tag_id: historyChange.type_id }, status: "deleted" })
+          end
+        end
+
+        render json: { tags: tagArray }
+      elsif params[:choice] == "luncheon"
+        historyArray = Historychange.where(["id > ? AND id <= ? AND type_name = ?", current_history, last_history, "topic"])
+
+        historyArray.each do |historyChange|
+          if historyChange.type_action == "create" or historyChange.type_action == "update"
+            topic = Topic.find(historyChange.type_id)
+            luncheonTopicArray.push({ topic: topic, status: "updated"}) if topic.topic_type == Topic::LUNCHEON
+          elsif historyChange.type_action == "delete"
+            luncheonTopicArray.push({ topic: { topic_id: historyChange.type_id }, status: "deleted" })
+          end
+        end
+
+        render json: { topics: luncheonTopicArray }
+      else
+        render json: { status: false }
+      end
+    end
+  end
+
+  def latest_history
+    if Historychange.last.present?
+      render json: { history_id: Historychange.last.id }
+    else
+      render json: { status: false }
+    end
+  end
+
+  def posts_retrieve
+    topic = Topic.find(params[:topic_id])
+    posts = topic.posts.first(15).sort
+    check_posts = topic.posts.first(16).sort
+
+    if posts.count != 15
+      render json: { posts: posts, load: false}
+    elsif posts.count == 15
+      if check_posts.count == 16
+        render json: {posts: posts, load: true}
+      else
+        render json: {posts: posts, load: false}
+      end
+    end
+  end
+
+  def retrieve_posts_in_range
+    if params[:from_post_id].present?
+      earlier_posts = Topic.find(params[:topic_id]).posts.where(["id < ?", params[:to_post_id]])
+      posts = Topic.find(params[:topic_id]).posts.where(["id < ? AND id >= ?", params[:from_post_id], params[:to_post_id]])
+
+    end
+  end
+
+  def segmented_posts_retrieve
+    topic = Topic.find(params[:topic_id])
+    posts = topic.posts.where(["id <?", params[:post_id]]).first(15)
+    check_posts = topic.posts.where(["id < ?", params[:post_id]]).first(16)
+    if posts.count != 15
+      render json: { posts: posts, load: false}
+    elsif posts.count != 15
+      if check_posts.count == 16
+        render json: { posts: posts, load: true}
+      else
+        render json: { posts: posts, load: false}
+      end
+    end
+  end
+
+  def retrieve_posts_history
+    postArray = [ ]
+    if params[:history_id].present? and params[:topic_id].present?
+      last_history = Historychange.last
+      current_history = Historychange.find(params[:history_id])
+
+      historyArray = Historychange.where(["id > ? AND id <= ? AND type_name = ? AND parent_id = ?", current_history, last_history, "post", params[:topic_id]])
+
+      historyArray.each do |historyChange|
+        if (historyChange.type_action == "create" or historyChange.type_action == "update")
+          postArray.push({ post: Post.find(historyChange.type_id), status: "updated" })
+        elsif (historyChange.type_action == "delete")
+          postArray.push({ post: { post_id: historyChange.type_id }, status: "deleted" })
+        end
+      end
+
+      render json: { posts: postArray }
+    else
+      render json: { status: false }
+    end
+  end
+
+  def posts_retrieve_for_user
+    if params[:post_id].present?
+      posts = User.find(params[:user_id]).posts.where(["id < ?", params[:post_id]]).first(15)
+      check_posts = User.find(params[:user_id]).posts.where(["id < ?", params[:post_id]]).first(16)
+
+      if posts.count != 15
+        render json: { posts: posts, load: false }
+      elsif posts.count == 15
+        if check_posts.count == 16
+          render json: { posts: posts, load: true }
+        else
+          render json: { posts: posts, load: false }
+        end
+      end
+    else
+      posts = User.find(params[:user_id]).posts.first(15)
+      check_posts = User.find(params[:user_id]).posts.first(16)
+
+      if posts.count != 15
+        render json: { posts: posts, load: false }
+      elsif posts.count == 15
+        if check_posts.count == 16
+          render json: { posts: posts, load: true }
+        else
+          render json: { posts: posts, load: false }
+        end
+      end
+    end
+  end
+
+
 end
