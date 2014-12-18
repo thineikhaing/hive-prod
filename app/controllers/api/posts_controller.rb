@@ -51,7 +51,9 @@ class Api::PostsController < ApplicationController
 
         post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, place_id: place_id, data: result) if params[:post_type] == Post::TEXT.to_s
         if params[:post_type] == Post::IMAGE.to_s  or  params[:post_type] == Post::AUDIO.to_s
-          post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, img_url: params[:image_url], width: params[:width], height: params[:height], place_id: place_id, data: result)
+          post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id],
+                             user_id: current_user.id, img_url: params[:image_url],
+                             width: params[:width], height: params[:height], place_id: place_id, data: result)
           post.delay.post_image_upload_delayed_job(params[:image_url]) if params[:post_type] == Post::IMAGE.to_s
         end
 

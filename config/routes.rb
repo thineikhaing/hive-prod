@@ -73,33 +73,55 @@ Rails.application.routes.draw do
     match "users/register_apn"                      => "users#register_apn"                     , via: [:get, :post]
     match "users/edit_profile"                      => "users#edit_profile"                     , via: [:get, :post]
     match "users/update_carmmunicate_user"          => "users#update_carmmunicate_user"         , via: [:get, :post]
+    match "users/status"                            => "users#status"                           , via: [:get, :post]
+    match "users/regenerate_username"               => "users#regenerate_username"              , via: [:get, :post]
+
     match "topics/create"                           => "topics#create"                          , via: [:get, :post]
+    match "topics/search"                           => "topics#search"                          , via: [:get, :post]
+    match "topics/favr_topics_by_user"              => "topics#favr_topics_by_user"             , via: [:get, :post]
+    match "topics/favr_action"                      => "topics#favr_action"                     , via: [:get, :post]
+    match "topics/honor_to_owner"                   => "topics#honor_to_owner"                  , via: [:get, :post]
+    match "topics/user_rating"                      => "topics#user_rating"                     , via: [:get, :post]
+
     match "topics/topic_liked"                      => "topics#topic_liked"                     , via: [:get, :post]
     match "topics/topic_offensive"                  => "topics#topic_offensive"                 , via: [:get, :post]
     match "topics/topic_favourited"                 => "topics#topic_favourited"                , via: [:get, :post]
     match "topics/topics_by_ids"                    => "topics#topics_by_ids"                   , via: [:get, :post]
     match "topics/delete"                           => "topics#delete"                          , via: [:get, :post]
-    match "topics/get_topic"                        => "topics#get_topic"                       , via: [:get]
-    match "topics/update_topic"                     => "topics#update_topic"                    , via: [:get]
+    match "topics/get_topic"                        => "topics#get_topic"                       , via: [:get, :post]
+    match "topics/update_topic"                     => "topics#update_topic"                    , via: [:get, :post]
+    match "topics/favtopic_create"                  => "topics#favtopic_create"                 , via: [:get, :post]
+
     match "posts/create"                            => "posts#create"                           , via: [:get, :post]
     match "posts/retrieve_post"                     => "posts#retrieve_post"                    , via: [:get, :post]
     match "posts/post_liked"                        => "posts#post_liked"                       , via: [:get, :post]
     match "posts/post_offensive"                    => "posts#post_offensive"                   , via: [:get, :post]
     match "posts/posts_by_ids"                      => "posts#posts_by_ids"                     , via: [:get, :post]
     match "posts/delete"                            => "posts#delete"                           , via: [:get, :post]
+
     match "userpushtokens/create"                   => "userpushtokens#create"                  , via: [:get, :post]
+
     match "places/create"                           => "places#create"                          , via: [:get, :post]
     match "places/retrieve_places"                  => "places#retrieve_places"                 , via: [:get, :post]
     match "places/select_venue"                     => "places#select_venue"                    , via: [:get, :post]
     match "places/user_recent_places"               => "places#user_recent_places"              , via: [:get, :post]
+    match "places/information"                      => "places#information"                     , via: [:get, :post]
+    match "places/top_venue_users"                  => "places#top_venue_users"                 , via: [:get, :post]
+    match "places/currently_active"                 => "places#currently_active"                , via: [:get, :post]
+    match "places/within_location"                  => "places#within_location"                 , via: [:get, :post]
+    match "places/within_locality"                  => "places#within_locality"                 , via: [:get, :post]
+
     match "mytest/test"                             => "mytest#test"                            , via: [:get, :post]
     match "mytest/test2"                            => "mytest#test2"                           , via: [:get, :post]
     match "mytest/test3"                            => "mytest#test3"                           , via: [:get, :post]
     match "mytest/test4"                            => "mytest#test4"                           , via: [:get, :post]
     match "mytest/sign_in"                          => "mytest#sign_in"                         , via: [:get, :post]
+
     match "tags/delete"                             => "tags#delete"                            , via: [:get, :post]
     match "tags/within_location"                    => "tags#within_location"                   , via: [:get, :post]
     match "tags/retrieve_all_tags"                  => "tags#retrieve_all_tags"                 , via: [:get, :post]
+    match "tags/retrieve_meal_tags"                 => "tags#retrieve_meal_tags"                , via: [:get, :post]
+
     match "topics/get_topic_by_image"               => "topics#topic_by_image"                  , via: [:get, :post]
   end
 

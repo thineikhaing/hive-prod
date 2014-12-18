@@ -56,4 +56,8 @@ class Api::TagsController < ApplicationController
     end
   end
 
+  def retrieve_meal_tags
+    render json: [ { tag: "breakfast", id: Tag.find_by_tag("breakfast").id }, { tag: "lunch", id: Tag.find_by_tag("lunch").id }, { tag: "dinner", id: Tag.find_by_tag("dinner").id }, { tag: "supper", id: Tag.find_by_tag("supper").id } ]
+  end
+
 end

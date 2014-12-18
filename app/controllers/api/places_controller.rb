@@ -200,4 +200,147 @@ class Api::PlacesController < ApplicationController
     end
   end
 
+  def information
+    if params[:place_id].present? and params[:year].present?
+      users_array = [ ]
+      visit = 0
+
+      number_of_times_visited_users_array = [ ]
+      count = 1
+
+      place = Place.find(params[:place_id])
+      user_last_checked_in = Checkinplace.where(place_id: params[:place_id], user_id: current_user.id)
+      place_checked_in = Checkinplace.where(place_id: params[:place_id])
+      user_check_in = Checkinplace.where(place_id: params[:place_id], user_id: current_user.id)
+      user_last_checked_in = user_last_checked_in.last.created_at if user_last_checked_in.present?
+
+      if user_check_in.present?
+        user_check_in.each do |uci|
+          visit = visit + 1 if uci.created_at.year == params[:year].to_i
+        end
+      end
+
+      place_checked_in.each do |pci|
+        users_array.push(pci.user_id) unless users_array.include?(pci.user_id)
+      end
+
+      users_array.each do |ua|
+        user = User.find(ua)
+        data = { user_id: ua, username: user.username, times_visited: user.checkinplaces.where(place_id: params[:place_id]).count }
+        number_of_times_visited_users_array.push(data)
+      end
+
+      user =  number_of_times_visited_users_array.select { |s| s[:user_id] == current_user.id }
+      place_information = { place_id: place.id, place_name: place.name, place_latitude: place.latitude, place_longitude: place.longitude, place_address: place.address, last_checked_in: user_last_checked_in, total_people: users_array.count, num_of_visits: visit, user: user }
+
+      render json: place_information
+    else
+      render json: { status: false }
+    end
+  end
+
+  def top_venue_users
+    if params[:place_id].present?
+      place = Checkinplace.where(place_id: params[:place_id])
+      user_array = [ ]
+      number_of_times_visited_array = [ ]
+      number_of_times_visited_users_array = [ ]
+
+      place.each do |pl|
+        user_array.push(pl.user_id) unless user_array.include?(pl.user_id)
+      end
+      user_array.each do |ua|
+        user = User.find(ua)
+
+        number_of_times_visited_array.push(user.checkinplaces.where(place_id: params[:place_id]).count)
+        data = { user_id: ua, username: user.username, times_visited: user.checkinplaces.where(place_id: params[:place_id]).count}
+
+      end
+      checked_in_times = number_of_times_visited_array.sort!.reverse
+      first_place = number_of_times_visited_users_array.select { |c| c[:times_visited] == checked_in_times[0] }
+      second_place = number_of_times_visited_users_array.select { |c| c[:times_visited] == checked_in_times[1] }
+      third_place = number_of_times_visited_users_array.select { |c| c[:times_visited] == checked_in_times[2] }
+
+      if first_place.present? and second_place.present? and third_place.present?
+        if first_place.last[:times_visited] == second_place.last[:times_visited] and second_place.last[:times_visited] == third_place.last[:times_visited]
+          result = { first_place: first_place.last, second_place: second_place.reverse[1], third_place: third_place.reverse[2] } if first_place.last[:username] == second_place.last[:username] and second_place.last[:username] == third_place.last[:username]
+        elsif first_place.last[:times_visited] == second_place.last[:times_visited]
+          result = { first_place: first_place.last, second_place: second_place.reverse[1], third_place: third_place.last } if first_place.last[:username] == second_place.last[:username]
+        elsif second_place.last[:times_visited] == third_place.last[:times_visited]
+          result = { first_place: first_place.last, second_place: second_place.last, third_place: third_place.reverse[1] } if second_place.last[:username] == third_place.last[:username]
+        end
+      elsif first_place.present? and second_place.present?
+        if first_place.last[:times_visited] == second_place.last[:times_visited]
+          if first_place.last[:username] == second_place.last[:username]
+            result = { first_place: first_place.last, second_place: second_place.reverse[1], third_place: third_place.last }
+          end
+        else
+          result = { first_place: first_place.last, second_place: second_place.last, third_place: third_place.last }
+        end
+      else
+        result = { first_place: first_place.last, second_place: second_place.last, third_place: third_place.last }
+      end
+
+      render json: result
+    end
+  end
+
+  def currently_active
+    if params[:place_id].present?
+
+      active_users_array = [ ]
+
+      places = Checkinplace.select(:user_id).uniq.where(:place_id=>params[:place_id])
+      places.each do |ua|
+        time_allowance = Time.now - 1000.minutes.ago
+        user = User.find(ua.user_id)
+        check_in = user.checkinplaces.where(place_id: params[:place_id]).last
+        time_difference = Time.now - check_in.created_at
+
+        if time_difference < time_allowance
+          data = { user_id: user.id, username: user.username }
+          active_users_array.push(data)
+        end
+      end
+
+      render json: active_users_array
+    else
+      render json: { status: false }
+    end
+  end
+
+  data = [ ]
+  def within_location
+    if params[:latitude].present? and params[:longitude].present? and params[:radius].present? and params[:keyword].present?
+
+      factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+      query = factual.table("global").geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]}).search(params[:keyword])
+      box = Geocoder::Calculations.bounding_box("#{params[:latitude]},#{params[:longitude]}", params[:radius], {units: :km})
+      places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
+
+      places.each do |place|
+        if place.name.downcase.include?(params[:keyword])
+          data.push(place)
+        end
+      end
+
+      render json: { database: data, factual: query }
+    else
+      render json: { status: false }
+    end
+  end
+
+  def within_locality
+    if params[:locality].present? and params[:keyword].present?
+      factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+      query = factual.table("global").filters("locality" => params[:locality]).search(params[:keyword])
+
+      render json: query
+    else
+      render json: { status: false }
+    end
+  end
+
+
+
 end

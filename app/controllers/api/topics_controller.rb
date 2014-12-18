@@ -157,6 +157,174 @@ class Api::TopicsController < ApplicationController
     end
   end
 
+  def favtopic_create
+    tag = Tag.new
+    history = Historychange.new
+    factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+    topic = ""
+    place = ""
+    check_profanity = false
+
+    params[:extra_info].present? ? extra_info = params[:extra_info] : extra_info = ""
+    params[:valid_start_date].present? ? valid_start_date = DateTime.parse(params[:valid_start_date]) : valid_start_date = nil
+    params[:valid_end_date].present? ? valid_end_date = DateTime.parse(params[:valid_end_date]) : valid_end_date = nil
+    params[:likes].present? ? likes = params[:likes].to_i : likes = 0
+    params[:dislikes].present? ? dislikes = params[:dislikes].to_i : dislikes = 0
+    params[:given_time].present? ? given_time = params[:given_time].to_i : given_time = 0  #in minutes
+
+    if check_banned_profanity(params[:title])
+      check_profanity = true
+    end
+
+    #title = filter_profanity(params[:title])
+    check_title = params[:title]
+    title = params[:title]
+    special_type = Topic.check_special_type(params[:flare], params[:beacon], params[:sticky], params[:promo], params[:coshoot],params[:question],params[:errand])
+    user = User.find_by_authentication_token (params[:auth_token]) if params[:auth_token].present?
+    params[:points].present? ? points = params[:points].to_i : points = 0
+    params[:free_points].present? ? free_points = params[:free_points].to_i : free_points = 0
+    (params[:topic_type].present? && params[:topic_type].to_i== Topic::FAVR)  ? state = Topic::OPENED : state = Topic::DEFAULT
+    (params[:checker].present?)  ? checker = params[:checker].to_i : checker = Topic::CHECKER_DEFAULT
+    (params[:title_indexes].present?)  ? title_indexes = params[:title_indexes] : title_indexes = ""
+    if params[:place_id]
+      if user.present?
+        topic = Topic.create(title: title, topic_type: params[:topic_type], user_id: user.id, special_type: special_type, place_id: params[:place_id], extra_info: extra_info, valid_start_date: valid_start_date, valid_end_date: valid_end_date, likes: likes, dislikes: dislikes, points: points,free_points: free_points,state: state,title_indexes: title_indexes,checker: checker,given_time: given_time)
+        if likes > 0
+          Actionlog.create(type_action: "like", type_id: topic.id, type_name: "topic", action_user_id: user.id)
+        end
+
+        if dislikes > 0
+          Actionlog.create(type_action: "dislike", type_id: topic.id, type_name: "topic", action_user_id: user.id)
+        end
+      else
+        topic = Topic.create(title: title, topic_type: params[:topic_type], user_id: current_user.id, special_type: special_type, place_id: params[:place_id], extra_info: extra_info, valid_start_date: valid_start_date, valid_end_date: valid_end_date, likes: likes, dislikes: dislikes,points: points,free_points: free_points,state: state,title_indexes: title_indexes,checker: checker,given_time: given_time)
+
+        if likes > 0
+          Actionlog.create(type_action: "like", type_id: topic.id, type_name: "topic", action_user_id: user.id)
+        end
+
+        if dislikes > 0
+          Actionlog.create(type_action: "dislike", type_id: topic.id, type_name: "topic", action_user_id: user.id)
+        end
+      end
+    else
+      query = factual.geocode(params[:latitude],params[:longitude]).first
+
+      if query.present?
+        if query["address"].present?
+          check = Place.find_by_address(query["address"])
+          check.present? ? place = check : place = Place.create(name: query["address"], latitude: params[:latitude], longitude: params[:longitude], address: query["address"], postcode: query["postcode"], locality: query["locality"], country: query["country"], source: Place::UNKNOWN, user_id: current_user.id)
+        elsif query["locality"].present?
+          check = Place.find_by_address("Somewhere in #{query["locality"]}")
+          check.present? ? place = check : place = Place.create(name: "Somewhere in #{query["locality"]}", latitude: params[:latitude], longitude: params[:longitude], address: "Somewhere in #{query["locality"]}", postcode: query["postcode"], locality: query["locality"], country: query["country"], source: Place::UNKNOWN, user_id: current_user.id)
+        end
+      else
+
+        geocoder = Geocoder.search("#{params[:latitude]},#{params[:longitude]}").first
+
+        if geocoder.present? and geocoder.country.present?
+          check = Place.find_by_address("Somewhere in #{geocoder.country}")
+          check2 = Place.find_by_address("Somewhere in the world")
+
+          check.present? ? place = check : place = Place.create(name: "Somewhere in #{geocoder.country}", latitude: params[:latitude], longitude: params[:longitude], address: "Somewhere in #{geocoder.country}", source: Place::UNKNOWN, user_id: current_user.id)
+        else
+          check2.present? ? place = check2 : place = Place.create(name: "Somewhere in the world", latitude: params[:latitude], longitude: params[:longitude], address: "Somewhere in the world", source: Place::UNKNOWN, user_id: current_user.id)
+        end
+      end
+
+      if user.present?
+        topic = Topic.create(title: title, topic_type: params[:topic_type], user_id: user.id, special_type: special_type, place_id: place.id, extra_info: extra_info, valid_start_date: valid_start_date, valid_end_date: valid_end_date, likes: likes, dislikes: dislikes, points: points,free_points: free_points,state: state,title_indexes: title_indexes,checker: checker,given_time: given_time)
+
+        if likes > 0
+          Actionlog.create(type_action: "like", type_id: topic.id, type_name: "topic",  action_user_id: user.id)
+        end
+
+        if dislikes > 0
+          Actionlog.create(type_action: "dislike", type_id: topic.id, type_name: "topic", action_user_id: user.id)
+        end
+      else
+        topic = Topic.create(title: title, topic_type: params[:topic_type], user_id: current_user.id, special_type: special_type, place_id: place.id, extra_info: extra_info, valid_start_date: valid_start_date, valid_end_date: valid_end_date, likes: likes, dislikes: dislikes, points: points,free_points: free_points,state: state,title_indexes: title_indexes,checker: checker,given_time: given_time)
+
+        if likes > 0
+          Actionlog.create(type_action: "like", type_id: topic.id, type_name: "topic", action_user_id: user.id)
+        end
+
+        if dislikes > 0
+          Actionlog.create(type_action: "dislike", type_id: topic.id, type_name: "topic", action_user_id: user.id)
+        end
+      end
+    end
+
+    if topic.save
+      if (topic.topic_type == Topic::FAVR) && user.present?
+        user.points -= points
+        user.save!
+        add_favr_action_delay_job(topic.id)
+
+      end
+      post = Post.create(content: title, topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude)
+      if post.save
+        if topic.topic_type == Topic::IMAGE
+          post2 = Post.create(content: params[:img_url], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::IMAGE, height: params[:height], width: params[:width])
+          post2.delay.image_upload_delayed_job(params[:img_url])
+          history.create_record("post", post2.id, "create", topic.id)
+        end
+
+        if topic.topic_type == Topic::LUNCHEON
+          post2 = Post.create(content: params[:img_url], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::IMAGE, height: params[:height], width: params[:width])
+          post2.delay.image_upload_delayed_job(params[:img_url])
+          post3 = Post.create(content: params[:extra_content], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::TEXT)
+          history.create_record("post", post2.id, "create", topic.id)
+          history.create_record("post", post3.id, "create", topic.id)
+
+          if params[:promo].present?
+            post4 = Post.create(content: params[:promo_content], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::TEXT)
+            history.create_record("post", post4.id, "create", topic.id)
+          end
+
+          if params[:coshoot].present?
+            post5 = Post.create(content: params[:coshoot_img_url], topic_id: topic.id, user_id: params[:coshoot_user_id], latitude: topic.latitude, longitude: topic.longitude, post_type: Post::IMAGE, height: params[:coshoot_height], width: params[:coshoot_width])
+            post5.delay.image_upload_delayed_job(params[:coshoot_img_url])
+            history.create_record("post", post5.id, "create", topic.id)
+          end
+        end
+
+        if topic.topic_type == Topic::FAVR
+          post2 = Post.create(content: params[:extra_content], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::TEXT)
+          history.create_record("post", post2.id, "create", topic.id)
+        end
+        topic.update_attributes(radius: params[:radius]) if params[:radius].present? and params[:beacon].present?
+        topic.flare if params[:flare].present?
+
+        history.create_record("topic", topic.id, "create", nil)
+        tag.create_record(topic.id, params[:tag], Tag::NORMAL) if params[:tag].present?
+        tag.create_record(topic.id, params[:locationtag], Tag::LOCATION) if params[:locationtag].present?
+
+        history.create_record("post", post.id, "create", topic.id)
+        history.create_record("topic", topic.id, "update", nil)
+        #post.broadcast
+        topic.reload
+        topic.overall_broadcast
+
+        if check_profanity
+          current_user.profanity_counter += 1
+          current_user.offence_date = Time.now
+          current_user.save!
+        end
+
+        check_profanity = false
+
+        render json: { topic: topic, profanity_counter: current_user.profanity_counter, offence_date: current_user.offence_date }
+      else
+        topic.delete
+
+        render json: { status: false }
+      end
+    else
+      render json: { status: false }
+    end
+  end
+
   def topic_liked
     if (params[:topic_id].present? && params[:choice].present?)
       topic = Topic.find_by_id(params[:topic_id])
@@ -369,6 +537,211 @@ class Api::TopicsController < ApplicationController
       end
     else
       render json: { error_msg: "Params app_key and topic_ids must be presented" }
+    end
+  end
+
+
+  def search
+    if params[:title].present?
+      topic = Topic.find_by_topic_type_and_title(Topic::WEB, params[:title])
+      if topic.present?
+        render json: { topic_id: topic.id }
+      else
+        render json: { topic_id: nil }
+      end
+    else
+      render json: { status: false }
+    end
+  end
+
+  def favr_topics_by_user
+    if params[:auth_token].present?
+      user = User.find_by_authentication_token(params[:auth_token])
+      owner_current_record = []
+      doer_current_record = []
+      owner_closed_record = []
+      doer_closed_record = []
+      owner_incomplete_record = []
+      doer_incomplete_record = []
+      topic_ids = []
+      action_ids = []
+
+      #OWNER FAVRS
+
+      owner_favrs = Topic.where(:user_id => user.id, :topic_type => Topic::FAVR)
+      if owner_favrs.present?
+        owner_favrs.each do |topic|
+          if topic.state == Topic::OPENED || topic.state == Topic::IN_PROGRESS || topic.state == Topic::FINISHED
+            owner_current_record.push(topic.id)
+            topic_ids << topic.id unless topic_ids.include?(topic.id)
+          elsif topic.state == Topic::ACKNOWLEDGED
+            owner_closed_record.push(topic.id)
+            topic_ids << topic.id unless topic_ids.include?(topic.id)
+          elsif topic.state == Topic::REVOKED || topic.state == Topic::EXPIRED || topic.state == Topic::TASK_EXPIRED || topic.state == Topic::REJECTED
+            favr_actions =  Favraction.where(:topic_id => topic.id)
+            owner_incomplete_record.push(topic.id)
+            topic_ids << topic.id unless topic_ids.include?(topic.id)
+          end
+          owner_actions = Favraction.where(:topic_id => topic.id)
+          if owner_actions.present?
+            owner_actions.each do |action|
+              action_ids<< action.id unless action_ids.include? (action.id)
+            end
+          end
+        end
+      end
+
+      myrequests= {current: owner_current_record, incomplete: owner_incomplete_record,completed: owner_closed_record}
+
+      # DOER FAVRS
+      doer_favrs = Favraction.where(:doer_user_id => user.id)
+      if doer_favrs.present?
+        doer_favrs.each do |topic|
+          if topic.status == Favraction::DOER_STARTED || topic.status == Favraction::COMPLETION_REMINDER_SENT || topic.status == Favraction::DOER_FINISHED
+            doer_current_record.push(topic.topic_id)
+            topic_ids << topic.topic_id unless topic_ids.include?(topic.topic_id)
+          elsif topic.status == Favraction::OWNER_ACKNOWLEDGED || topic.status == Favraction::DOER_RESPONDED_ACK
+            doer_closed_record.push(topic.topic_id)
+            topic_ids << topic.topic_id unless topic_ids.include?(topic.topic_id)
+          end
+          action_ids<< topic.id unless action_ids.include? (topic.id)
+        end
+      end
+
+      doer_incomplete_favrs = Favraction.where(:doer_user_id => user.id,:status => [Favraction::OWNER_REJECTED,Favraction::DOER_RESPONDED_REJ,Favraction::EXPIRED_AFTER_STARTED,Favraction::EXPIRED_AFTER_FINISHED])
+      if doer_incomplete_favrs.present?
+        doer_incomplete_favrs.each do |favraction|
+          doer_incomplete_record << (favraction.topic_id) unless doer_incomplete_record.include? (favraction.topic_id)
+          topic_ids << favraction.topic_id unless topic_ids.include?(favraction.topic_id)
+        end
+      end
+      mytasks= {current: doer_current_record, incomplete: doer_incomplete_record,completed: doer_closed_record}
+
+      topic_lists = Topic.where(:id=> topic_ids)
+
+      action_lists = Favraction.where(:id=>action_ids)
+      actions=[]
+      post_id = -1
+      post_content=""
+      post_created_at=""
+      if action_lists.present?
+        action_lists.each do |favraction|
+          topic= Topic.find(favraction.topic_id)
+          favr_action_id = favraction.id
+          last_favr_action_status =  favraction.status.to_i
+          doer_id= favraction.doer_user_id
+          doer = User.find(doer_id)
+          doer_name = doer.username
+          unless favraction.post_id.nil?
+            post= Post.find(favraction.post_id)
+            post_id = post.id
+            post_content = post.content
+            post_created_at = post.created_at
+          end
+          honor_to_doer = favraction.honor_to_doer.to_i
+          honor_to_owner  = favraction.honor_to_owner.to_i
+          actions.push({action_id: favr_action_id,topic_id:topic.id,status: last_favr_action_status,doer_id:doer_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: honor_to_doer, honor_to_owner: honor_to_owner,user_id: favraction.user_id,created_at:favraction.created_at,updated_at:favraction.updated_at})
+        end
+      end
+      render json: { user_points:user.points, user_positive_honor: user.positive_honor, user_negative_honor: user.negative_honor, user_honored_count: user.honored_times , topics: topic_lists, actions: actions,my_requests: myrequests, my_tasks:mytasks}
+    end
+  end
+
+  def favr_action
+    if (params[:action_id].present? || params[:topic_id].present?) && params[:auth_token].present? && params[:action_type].present? && params[:temp_id].present? && params[:latitude].present? && params[:longitude].present?
+      params[:topic_id].present? ? topic_id = params[:topic_id].to_i : topic_id = -1
+      params[:action_id].present? ? favr_action_id = params[:action_id].to_i : favr_action_id = -1
+      user = User.find_by_authentication_token (params[:auth_token])
+
+      p "=========="
+      p topic_id
+      p favr_action_idw
+      p params[:action_type]
+      p "========="
+
+      if params[:action_type].to_i== Topic::START
+        start_favr(topic_id, user.id, params[:temp_id], params[:latitude],params[:longitude])
+      elsif params[:action_type].to_i== Topic::FINISH
+        finish_favr(favr_action_id, user.id, params[:temp_id], params[:latitude],params[:longitude])
+      elsif params[:action_type].to_i== Topic::ACKNOWLEDGE
+        acknowledge_favr(favr_action_id, user.id, params[:temp_id], params[:latitude],params[:longitude], params[:honor].to_i)
+      elsif params[:action_type].to_i== Topic::REJECT
+        reject_favr(favr_action_id, user.id, params[:temp_id], params[:latitude],params[:longitude], params[:honor].to_i, params[:reason])
+      elsif params[:action_type].to_i== Topic::REOPEN
+        if params[:points].present? && params[:free_points].present?
+          reopen_favr(topic_id, user.id,params[:points],params[:free_points], params[:temp_id], params[:latitude],params[:longitude])
+        end
+      elsif params[:action_type].to_i== Topic::REVOKE
+        revoke_favr_by_owner(topic_id, user.id, params[:temp_id], params[:latitude],params[:longitude])
+      elsif params[:action_type].to_i== Topic::EXTEND
+        if params[:extended_time].present?
+          p "Extended"
+          extend_time(favr_action_id, user.id, params[:extended_time].to_i, params[:temp_id], params[:latitude],params[:longitude])
+        end
+      else
+        p "it was something else"
+      end
+
+    end
+  end
+
+  def honor_to_owner
+    if params[:action_id].present? && params[:auth_token] && params[:honor]
+      lat = params[:latitude]
+      lng = params[:longitude]
+      temp_id = params[:temp_id]
+      doer_user = User.find_by_authentication_token(params[:auth_token])
+      last_favr_action = Favraction.find(params[:action_id].to_i)
+      post_special_type = 0
+      if last_favr_action.present?
+        action_topic = Topic.find(last_favr_action.topic_id)
+        last_favr_action.honor_to_owner =   params[:honor].to_i
+        if last_favr_action.status == Favraction::OWNER_REJECTED
+          last_favr_action.status= Favraction::DOER_RESPONDED_REJ
+          post_special_type = Post::DOER_RESPONDED_REJ
+        elsif last_favr_action.status== Favraction::OWNER_ACKNOWLEDGED
+          last_favr_action.status=Favraction::DOER_RESPONDED_ACK
+          post_special_type = Post::DOER_RESPONDED_ACK
+        end
+        last_favr_action.save!
+        if action_topic.present?
+          owner_user = User.find(action_topic.user_id)
+          if (params[:honor].to_i >0)
+            owner_user.positive_honor += params[:honor].to_i
+          else
+            owner_user.negative_honor += (params[:honor].to_i * -1)
+          end
+          owner_user.honored_times +=1
+          owner_user.save!
+
+          ranking = get_honor_rank(params[:honor].to_i)
+          title = doer_user.username + " has rated " + owner_user.username.to_s  + " * " + ranking + " * "
+          create_user = User.find_by_username("FavrBot")
+          p "before post"
+          post = Post.new
+          p action_topic
+          post = post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,last_favr_action.id,post_special_type)
+          p post
+        end
+        doer_name = doer_user.username
+        unless last_favr_action.post_id.nil?
+          post= Post.find(last_favr_action.post_id)
+          post_id = post.id
+          post_content = post.content
+          post_created_at = post.created_at
+        end
+        action = {action_id: last_favr_action.id,topic_id:last_favr_action.topic_id,status: last_favr_action.status,doer_id:last_favr_action.doer_user_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: last_favr_action.honor_to_doer, honor_to_owner: last_favr_action.honor_to_owner,user_id: last_favr_action.user_id,created_at:last_favr_action.created_at,updated_at:last_favr_action.updated_at}
+        render json: {topic: action_topic , action: action}
+      end
+    end
+  end
+
+  def user_rating
+    if params[:user_id].present? and params[:topic_id].present?
+      check_like = Actionlog.where(type_name: "topic", type_id: params[:topic_id], type_action: "like", action_user_id: params[:user_id]).count
+      check_dislike = Actionlog.where(type_name: "topic", type_id: params[:topic_id], type_action: "dislike", action_user_id: params[:user_id]).count
+
+      render json: { likes: check_like, dislikes: check_dislike }
     end
   end
 

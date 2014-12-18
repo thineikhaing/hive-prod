@@ -456,6 +456,79 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def status
+    users = User.all
+    blockedArray = [ ]
+    favArray = [ ]
+    favTopicArray = [ ]
+    likedTopicArray = [ ]
+    likedPostArray = [ ]
+    usersArray = [ ]
+
+    count = 1
+    totalUsers = users.count
+
+    checkBlockedArray = Actionlog.where(type_name: "user", type_action: "block", action_user_id: current_user.id)
+    checkFavouriteArray = Actionlog.where(type_name: "user", type_action: "favourite", action_user_id: current_user.id)
+    checkFavouriteTopicArray = Actionlog.where(type_name: "topic", type_action: "favourite", action_user_id: current_user.id)
+    checkLikedTopicArray = Actionlog.where(type_name: "topic", type_action: "like", action_user_id: current_user.id)
+    checkLikedPostArray = Actionlog.where(type_name: "post", type_action: "liked", action_user_id: current_user.id)
+
+    users.each do |u|
+      data = { user_id: u.id, username: u.username, points: u.points }
+      usersArray.push(data)
+    end
+
+    usersArray.sort! { |a, b| a[:points] <=> b[:points] }
+    usersArray = usersArray.reverse
+
+    usersArray.each do |ua|
+      ua.merge!(rank: count)
+      count = count + 1
+    end
+
+    user = usersArray.select { |s| s[:user_id] == current_user.id }
+
+    checkBlockedArray.each do |cba|
+      blockedArray.push( { user_id: cba.type_id, username: User.find(cba.type_id).username } )
+    end
+
+    checkFavouriteArray.each do |cfa|
+      favArray.push( { user_id: cfa.type_id, username: User.find(cfa.type_id).username } )
+    end
+
+    checkFavouriteTopicArray.each do |cfta|
+      favTopicArray.push(cfta.type_id)
+    end
+
+    checkLikedTopicArray.each do |clta|
+      likedTopicArray.push(clta.type_id)
+    end
+
+    checkLikedPostArray.each do |clpa|
+      likedPostArray.push(clpa.type_id)
+    end
+
+    data = {
+        id: current_user.id,
+        username: current_user.username,
+        points: current_user.points,
+        favourite_topics: favTopicArray,
+        liked_posts: likedPostArray,
+        liked_topics: likedTopicArray,
+        block_users: blockedArray,
+        favourite_users: favArray,
+        rank: user.first[:rank],
+        total_users: totalUsers
+    }
+
+    render json: { user: data }
+  end
+
+  def regenerate_username
+    render json: { username: User.generate_new_username }
+  end
+
   private
 
   def user_params

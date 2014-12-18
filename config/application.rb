@@ -117,6 +117,19 @@ module Urbanairship_Const
   CM_D_Key = "qn5A6ujOSaONpcn--rg_NA"
   CM_D_Secret = "k9KS0BvZTnaHxqjf7-Jrpg"
   CM_D_Master_Secret="utulmLxMRL6w7Y-iAwI2fw"
+
+  FV_S_Key = "LSA3cn4IR1K7Hl96MS1I1w"
+  FV_S_Secret = "bjCQ6p4LRfCuHOTbWyuqHA"
+  FV_S_Master_Secret="kgKRIrkpTsiXp4vUO1Utsg"
+
+  FV_P_Key = "2WOYSZRTRLiyanfEg2PQ2w"
+  FV_P_Secret = "qV5S-fplRUCA78Fk25xThw"
+  FV_P_Master_Secret="4wX2m2ZiSsCiLfR2elX_rw"
+
+  FV_D_Key = "7wgMq0dkSWeqo-TbcBvEyg"
+  FV_D_Secret = "xB8kEzjdT4WeqgEm3CKclQ"
+  FV_D_Master_Secret="1EXyDmHxTNSZRV0raeCthA"
+
 end
 
 module AWS_Link
