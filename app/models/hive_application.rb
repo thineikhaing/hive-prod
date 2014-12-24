@@ -1,6 +1,6 @@
 class HiveApplication < ActiveRecord::Base
   belongs_to :devuser
-  has_many :topics
+  has_many :topics  , :foreign_key => 'hiveapplication_id'
   # **must** specify class of uploader, otherwise base uploader is used, and no
   # ...
 

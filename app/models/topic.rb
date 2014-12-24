@@ -7,20 +7,10 @@ class Topic < ActiveRecord::Base
   # Setup hstore
   store_accessor :data
   #enums for topic type
-  enums %w(NORMAL IMAGE AUDIO VIDEO WEB FAVR)
-  enums %w(NONE FLARE BEACON STICKY PROMO COSHOOT QUESTION ERRAND)
+  #enums %w(NORMAL IMAGE AUDIO VIDEO)
+  #enums %w(NONE FLARE BEACON STICKY PROMO COSHOOT QUESTION ERRAND)
 
-  #Topic states
-  enums %w(DEFAULT OPENED IN_PROGRESS FINISHED ACKNOWLEDGED REJECTED REVOKED TASK_EXPIRED EXPIRED)
-
-  #Favr Actions
-  enums %w(CREATE START FINISH ACKNOWLEDGE REJECT REVOKE REOPEN EXTEND REMINDER_TIMEUP TASK_TIMEUP FAVR_TIMEUP )
-
-  #Topic checker enum
-  enums %w(CHECKER_DEFAULT PHOTO_PROOF)
-
-
-  attr_accessible :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :data, :created_at, :image_url, :width, :height, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type
+   attr_accessible :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :data, :created_at, :image_url, :width, :height, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type
 
   # Return the tags and location tags related to the topic
 

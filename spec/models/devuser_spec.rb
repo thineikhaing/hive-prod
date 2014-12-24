@@ -1,47 +1,34 @@
 require 'spec_helper'
 
 describe Devuser do
-    pending "add some examples to (or delete) #{__FILE__}"
-end
+    it { should have_many(:hive_applications) }
 
-
-
-require 'spec_helper'
-
-describe Devuser do
-  #context "associations" do
-  #  it { should have_many(:topics) }
-  #  it { should have_many(:posts)  }
-  #end
 
   context "after_initialize" do
-    #let(:user) { FactoryGirl.build(:user) } # Factory excludes authentication_token and username
+    let (:user) {FactoryGirl.create(:devuser, email: "user1@example.com", username: "testuser",password:"password")}
+    it "Test the user creation"do
+        user.username.should_not be_blank
+        user.reset_password_token.should be_blank
+    end
 
-    let(:devuser) { @user_attr = FactoryGirl.attributes_for(:devuser);devuser.create!(@user_attr)}
-  #  describe "#ensure_authentication_token" do
-  #    it "sets authentication_token"do
-  #      user.authentication_token.should_not be_blank
-  #    end
-  #  end
-  #
-  #  describe "#ensure_username" do
-  #    it "sets username" do
-  #      user.username.should_not be_blank
-  #    end
-  #  end
-  #end
-  #
-  #describe "#initialize" do
-  #  context "without email" do
-  #    it "is valid with device_id" do
-  #      user = User.new(device_id: "12345", password: Devise.friendly_token)
-  #      user.should be_valid
-  #    end
-  #
-  #    #it "is invalid without device_id" do
-  #    #  user = User.new(password: Devise.friendly_token)
-  #    #  user.should_not be_valid
-  #    #end
-  #  end
+    it "fails validation with no username (using errors_on)" do
+      FactoryGirl.build(:devuser, email: "user1@example.com", username: nil, password: "password").should_not be_valid
+    end
+
+    it "fails validation with no email (using errors_on)" do
+      FactoryGirl.build(:devuser, email: nil, username: "testuser", password: "password").should_not be_valid
+    end
+
+    it "fails validation with no password (using errors_on)" do
+      FactoryGirl.build(:devuser, email: "user1@example.com", username: "testuser", password: nil).should_not be_valid
+    end
+
+    describe "Sent reset password token to user" do
+      it "should return user password token " do
+        expect { user.send_password_reset }.to change { ActionMailer::Base.deliveries.count }.by(1)
+        expect(ActionMailer::Base.deliveries.first.subject).to eql('Password Reset')
+      end
+    end
+
   end
 end
