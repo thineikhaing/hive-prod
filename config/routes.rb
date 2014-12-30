@@ -89,6 +89,8 @@ Rails.application.routes.draw do
     match "topics/topics_by_ids"                    => "topics#topics_by_ids"                   , via: [:get, :post]
     match "topics/delete"                           => "topics#delete"                          , via: [:get, :post]
     match "topics/get_topic"                        => "topics#get_topic"                       , via: [:get, :post]
+    match "topics/get_alltopic"                     => "topics#get_alltopic"                    , via: [:get, :post]
+
     match "topics/update_topic"                     => "topics#update_topic"                    , via: [:get, :post]
     match "topics/favtopic_create"                  => "topics#favtopic_create"                 , via: [:get, :post]
 

@@ -519,6 +519,16 @@ class Api::TopicsController < ApplicationController
     end
   end
 
+  def get_alltopic
+    topic = Topic.all.order(:hiveapplication_id)
+    if topic.present?
+      render json: { topic: JSON.parse(topic.to_json(content: true))}
+
+    else
+      render json: { error_msg: "No Topic" }
+    end
+  end
+
   def update_topic
     if params[:app_key].present?
       application = HiveApplication.find_by_api_key(params[:app_key])
