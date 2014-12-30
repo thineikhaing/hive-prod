@@ -520,7 +520,7 @@ class Api::TopicsController < ApplicationController
   end
 
   def get_alltopic
-    topic = Topic.all.order(:hiveapplication_id)
+    topic = Topic.all.where("hiveapplication_id < > 4").order(:hiveapplication_id)
     if topic.present?
       render json: { topic: JSON.parse(topic.to_json(content: true))}
 
