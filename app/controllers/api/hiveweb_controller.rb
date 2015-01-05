@@ -62,6 +62,83 @@ class Api::HivewebController < ApplicationController
 
   end
 
+  def get_all_topics_for_place
+    place_array = [ ]
+    topicsInView_array = [ ]
+
+    address = params[:add]
+
+    lat1 = params[:lat]
+    long1 = params[:lng]
+
+    @place_array = params[:place_arr].split(',')
+
+    #Retrieve the sticky topic
+    #stickyTopic = Topic.where(:special_type => "3", :topic_type => 0)
+    stickyTopic = Topic.where("special_type =? and topic_type in (?)", "3", [0,1,2,3])
+    if @place_array.present?
+      place_array = @place_array
+      places= Place.where(:id=>@place_array)
+      for pl in places
+        topics = nil
+        topics =  pl.topics.where("special_type<>?","3") if pl.topics.present?
+        unless topics.nil?
+          for topic in topics
+            topicsInView_array.push(topic)
+          end
+        end
+      end
+      listOfTopics = topicsInView_array
+      listOfTopics.sort! { |a,b| a.created_at <=> b.created_at }
+      listOfTopics.reverse!
+    end
+    @topics_list= stickyTopic
+    @topics_list+= listOfTopics
+    @distance = Hash.new  # @distance[topicid, distance]
+    @topic_avatar_url = Hash.new
+    #adding avatar photo and calculate the distance from the current location
+    if not @topics_list.nil?
+      for topic in @topics_list
+        #getting avatar url
+        if topic.offensive < 3 and topic.special_type == 3
+          @topic_avatar_url[topic.id] = "assets/Avatars/Chat-Avatar-Admin.png"
+        else
+          username = topic.user.username
+          get_avatar(username)
+          @topic_avatar_url[topic.id] = request.url.split('?').first + @avatar_url
+        end
+
+        #calculate distance from current location
+        #set the current position
+        location1 = [ ]
+        location1.push (lat1)
+        location1.push (long1)
+
+        #set the topic position
+        location2 = [ ]
+        location2.push (topic.place.latitude)
+        location2.push (topic.place.longitude)
+        #@distance[topic.id] = get_distance(location1, location2,"topic")
+
+        #the max no of characters to show the topic title is 50
+        if topic.title.length > 45
+          topic.title = topic.title[0..42] + "..."
+        end
+      end
+      @post_lists = params[:id]
+      if params[:id].present?
+        get_all_posts(params[:id])
+      end
+    end
+
+    topic = {  topic_list: @topics_list,
+               topic_avatar: @topic_avatar_url
+
+    }
+    render json: topic
+
+  end
+
 
 
   def get_avatar(username)
@@ -257,8 +334,8 @@ class Api::HivewebController < ApplicationController
       flash.now[:notice] = 'Please enter the message'
     else
       if @post.save
-        #history = Historychange.new
-        #history.create_record("post", @post.id, "create", @post.topic_id)
+        history = Historychange.new
+        history.create_record("post", @post.id, "create", @post.topic_id)
         #history.create_record("topic", @post.topic.id, "update", @post.topic.place_id)
 
         @post.latitude = params[:lat].to_f

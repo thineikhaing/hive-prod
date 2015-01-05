@@ -50,6 +50,7 @@ class Post < ActiveRecord::Base
     Pusher[self.pub_sub_channel].trigger_async("broadcast", data)
   end
 
+
   def broadcast_other_app(temp_id)
       data = {
           id: self.id,
