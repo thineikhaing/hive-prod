@@ -20,12 +20,16 @@ class Api::HivewebController < ApplicationController
             @topic_avatar_url[topic.id] = "assets/Avatars/Chat-Avatar-Admin.png"
           else
             username = topic.user.username
-            get_avatar(username)
-            @topic_avatar_url[topic.id] = request.url.split('?').first + @avatar_url
+            p "get avatar"
+            p get_avatar(username)
+            p @topic_avatar_url[topic.id] =  @avatar_url
+
           end
         end
       end
     end
+
+    p @topic_avatar_url
 
     @placesMap = Place.order("created_at DESC").reload
     @latestTopics = [ ]
@@ -153,7 +157,7 @@ class Api::HivewebController < ApplicationController
         else
           username = topic.user.username
           get_avatar(username)
-          @topic_avatar_url[topic.id] = request.url.split('?').first + @avatar_url
+          @topic_avatar_url[topic.id] =  @avatar_url
         end
 
         #calculate distance from current location
@@ -184,31 +188,31 @@ class Api::HivewebController < ApplicationController
     topicid = params[:topicid]
     p lat = params[:lat]
     p lng = params[:lng]
-      @topic_title = Topic.find(topicid).title
-      lat1 =Float(lat)
-      long1 =Float(lng)
-      @postdistance = Hash.new  # @distance[postid, distance]
+    @topic_title = Topic.find(topicid).title
+    lat1 =Float(lat)
+    long1 =Float(lng)
+    @postdistance = Hash.new  # @distance[postid, distance]
 
-      location1 = [ ]
-      location1.push (lat1)
-      location1.push (long1)
+    location1 = [ ]
+    location1.push (lat1)
+    location1.push (long1)
 
-      @topic = Topic.where(id: topicid).first.reload
-      @posts = @topic.posts.includes(:user).sort #limits max 20 posts???
-      @post_avatar_url = Hash.new
+    @topic = Topic.where(id: topicid).first.reload
+    @posts = @topic.posts.includes(:user).sort #limits max 20 posts???
+    @post_avatar_url = Hash.new
 
-      @posts.each do |post|
-        username = post.user.username
-        get_avatar(username)
-        @post_avatar_url[post.id] = request.url.split('?').first + (@avatar_url)
-        #get the post location
-        location2 = [ ]
-        location2.push (post.latitude)
-        location2.push (post.longitude)
-        @postdistance[post.id] = get_distance(location1, location2,"")
-      end
+    @posts.each do |post|
+      username = post.user.username
+      get_avatar(username)
+      @post_avatar_url[post.id] = request.url.split('?').first + (@avatar_url)
+      #get the post location
+      location2 = [ ]
+      location2.push (post.latitude)
+      location2.push (post.longitude)
+      @postdistance[post.id] = get_distance(location1, location2,"")
+    end
     @topicid = Integer(topicid)
-    posts = {  posts: @posts}
+    posts = {  posts: @posts, topic: @topic}
     render :json => posts
 
   end
@@ -236,5 +240,46 @@ class Api::HivewebController < ApplicationController
     #  distance_msg = "here"
     return distance_msg
   end
+
+
+  def create_post
+
+
+    user = User.find(1)
+    if user.present?
+      @post = user.posts.build({ topic_id: params[:topic_id], content: params[:post] })
+    end
+
+    #@post.content = Rinku.auto_link(filter_profanity(@post.content))
+    if @post.content.length > 255 #check for max length of content
+      flash.now[:notice] =  'The max length message is 255'
+    elsif @post.content.length == 0  #check content is blank?
+      flash.now[:notice] = 'Please enter the message'
+    else
+      if @post.save
+        history = Historychange.new
+        history.create_record("post", @post.id, "create", @post.topic_id)
+        #history.create_record("topic", @post.topic.id, "update", @post.topic.place_id)
+
+        @post.latitude = params[:lat].to_f
+        @post.longitude = params[:lng].to_f
+        #factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+        #factual_result = factual.table("global").geo("$circle" => {"$center" => [@post.latitude, @post.longitude], "$meters" => 1000}).first
+        #@post.address = factual_result["address"]
+
+        @post.save!
+        @post.broadcast
+      else
+        flash.now[:notice] = 'Error in creating message'
+      end
+    end
+    render :json => {status: "Created!"}
+
+    #respond_to do |format|
+    #  get_all_posts (params[:id])
+    #  format.js
+    #end
+  end
+
 
 end
