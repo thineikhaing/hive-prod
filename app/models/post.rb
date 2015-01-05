@@ -4,6 +4,7 @@ class Post < ActiveRecord::Base
   belongs_to :topic
   belongs_to :user
   delegate :username, to: :user
+  delegate :pub_sub_channel, to: :topic
 
   # Setup hstore
   store_accessor :data
@@ -19,6 +20,34 @@ class Post < ActiveRecord::Base
 
   def image_url
     self.img_url
+  end
+
+  # Topic main channel
+
+  def pub_sub_channel
+    "topics_#{self.id}"
+  end
+
+  def broadcast
+    data = {
+        id: self.id,
+        topic_id: self.topic_id,
+        content: self.content,
+        created_at: self.created_at,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        user_id: self.user_id,
+        offensive: self.offensive,
+        username: self.username,
+        latitude: self.latitude,
+        longitude: self.longitude,
+        post_type: self.post_type,
+        height: self.height,
+        width: self.width,
+        history_id: 0
+    }
+
+    Pusher[self.pub_sub_channel].trigger_async("broadcast", data)
   end
 
   def broadcast_other_app(temp_id)
