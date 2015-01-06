@@ -71,7 +71,9 @@ class Api::UsersController < ApplicationController
   def sign_up
     if params[:auth_token].present?
       user = User.find_by_authentication_token(params[:auth_token])
+      
       if current_user.present?
+        
         if user.id == current_user.id
           checkEmail = User.find_by_email(params[:email])
           var = [ ]
@@ -90,11 +92,23 @@ class Api::UsersController < ApplicationController
             var.push(11)
             render json: { :error => var }, status: 400 # Email already exist
           end
+          
         end
+        
       else
         render json: { error_msg: "Invalid user id/ authentication token" }, status: 400
       end
+      
+    elsif params[:hiveweb].present?
+      user.email = params[:email]
+      user.password = params[:password]
+      user.password_confirmation = params[:password]
+      user.authentication_token =  Devise.friendly_token
+      user.token_expiry_date= Date.today + 6.months
+      user.save!
+      
     else
+      
       render json: { error_msg: "Param application key must be presented" }, status: 400
     end
   end
