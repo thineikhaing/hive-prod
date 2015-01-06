@@ -357,6 +357,33 @@ class Api::HivewebController < ApplicationController
     #  format.js
     #end
   end
+  
+  def map_view
+    @placesMap = Place.order("created_at DESC").reload
+
+    #filtering for normal topic, image, audio and video
+    @latestTopics = [ ]
+    @latestTopicUser = [ ]
+
+    @placesMap.map { |f|
+      @latestTopics.push(f.topics.last)
+    }
+
+    @latestTopics.each do |topic|
+      if topic.present?
+        @latestTopicUser.push(topic.username)
+      else
+        @latestTopicUser.push("nothing")
+      end
+    end
+    #gon.watch.newplaces = @placesMap
+    mapView =  {places: @placesMap.as_json,
+               latestTopicUser: @latestTopicUser,
+               latestTopics: @latestTopics}
+              
+    render :json =>mapView
+    
+  end
 
 
 end
