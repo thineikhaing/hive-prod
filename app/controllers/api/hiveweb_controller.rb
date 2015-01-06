@@ -322,7 +322,7 @@ class Api::HivewebController < ApplicationController
   def create_post
 
 
-    user = User.find(1)
+    user = User.find(params[:user])
     if user.present?
       @post = user.posts.build({ topic_id: params[:topic_id], content: params[:post] })
     end
@@ -334,8 +334,8 @@ class Api::HivewebController < ApplicationController
       flash.now[:notice] = 'Please enter the message'
     else
       if @post.save
-        history = Historychange.new
-        history.create_record("post", @post.id, "create", @post.topic_id)
+        #history = Historychange.new
+        #history.create_record("post", @post.id, "create", @post.topic_id)
         #history.create_record("topic", @post.topic.id, "update", @post.topic.place_id)
 
         @post.latitude = params[:lat].to_f
