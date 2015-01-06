@@ -105,7 +105,7 @@ class Api::HivewebController < ApplicationController
         else
           username = topic.user.username
           get_avatar(username)
-          @topic_avatar_url[topic.id] = request.url.split('?').first + @avatar_url
+          @topic_avatar_url[topic.id] = @avatar_url
         end
 
         #calculate distance from current location
@@ -281,7 +281,7 @@ class Api::HivewebController < ApplicationController
     @posts.each do |post|
       username = post.user.username
       get_avatar(username)
-      @post_avatar_url[post.id] = request.url.split('?').first + (@avatar_url)
+      @post_avatar_url[post.id] = (@avatar_url)
       #get the post location
       location2 = [ ]
       location2.push (post.latitude)
@@ -289,7 +289,7 @@ class Api::HivewebController < ApplicationController
       @postdistance[post.id] = get_distance(location1, location2,"")
     end
     @topicid = Integer(topicid)
-    posts = {  posts: @posts, topic: @topic}
+    posts = {  posts: @posts, post_avatar_url: @post_avatar_url , postdistance: @postdistance, topic: @topic}
     render :json => posts
 
   end
@@ -344,8 +344,14 @@ class Api::HivewebController < ApplicationController
         #factual_result = factual.table("global").geo("$circle" => {"$center" => [@post.latitude, @post.longitude], "$meters" => 1000}).first
         #@post.address = factual_result["address"]
 
+        p params[:topic_id]
+
+        p "Topic ID"
+        p @post.topic_id = params[:topic_id]
+
         @post.save!
         @post.broadcast
+
       else
         flash.now[:notice] = 'Error in creating message'
       end
