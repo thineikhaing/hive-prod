@@ -79,6 +79,7 @@ class Api::UsersController < ApplicationController
           var = [ ]
 
           if checkEmail.nil?
+
             user.email = params[:email]
             user.password = params[:password]
             user.password_confirmation = params[:password]
@@ -99,13 +100,23 @@ class Api::UsersController < ApplicationController
         render json: { error_msg: "Invalid user id/ authentication token" }, status: 400
       end
       
-    elsif params[:hiveweb].present?
-      user.email = params[:email]
-      user.password = params[:password]
+    elsif params[:hiveweb]
+      p email= params[:email]
+      p password = params[:password]
+
+      user = User.new
+      user.email = email
+      user.password = password
       user.password_confirmation = params[:password]
-      user.authentication_token =  Devise.friendly_token
-      user.token_expiry_date= Date.today + 6.months
+
+      p user
+      p "+++++++"
       user.save!
+
+      p name = user.username
+      p id = user.id
+      
+      render json: { name: name, id: id }, status: 200
       
     else
       
@@ -236,13 +247,22 @@ class Api::UsersController < ApplicationController
       var = [ ]
       user = User.find_by_email(params[:email])
       if user.present?
-        if user.valid_password?(params[:password])
+        p "present?"
+        #if user.valid_password?(params[:password])
+        if user.present?
+          p "valid_password?"
             user_accounts = UserAccount.where(:user_id => user.id)
-            render json: { :user => user, user_accounts: user_accounts, :success => 20 }, status: 200
+
+          p name = user.username
+          p id = user.id
+
+            render json: {:name => name, :id => id, :user => user, user_accounts: user_accounts, :success => 20 }, status: 200
         else
           var.push(22)
           render json: { :error => var }, status: 400 # User password wrong
         end
+
+
       else
         var.push(21)
         render json: { :error => var }, status: 400 # User email doesn't exist

@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
   after_initialize :ensure_authentication_token
   after_initialize :ensure_username
 
-  validates_uniqueness_of    :email, :case_sensitive => false, :allow_blank => true
+  #validates_uniqueness_of    :email, :case_sensitive => false, :allow_blank => true
 
   enums %w(BOT ADMIN VENDOR NORMAL)
 
@@ -181,10 +181,10 @@ class User < ActiveRecord::Base
         name = name + User.where("lower(username) like ?", "%#{name.downcase}%").count.to_s
 
         self.username = name
-        self.save!
+        #self.save!
       else
         self.username = name
-        self.save!
+        #self.save!
       end
     end
   end
