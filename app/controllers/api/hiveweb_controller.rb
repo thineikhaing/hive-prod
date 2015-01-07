@@ -62,6 +62,12 @@ class Api::HivewebController < ApplicationController
 
   end
 
+  def popular_topic
+
+    most_like_topic = Topic.select("*, max(likes)").group(:id).take
+    render json: {popular_topic: most_like_topic}
+  end
+
   def get_all_topics_for_place
     place_array = [ ]
     topicsInView_array = [ ]
