@@ -67,7 +67,44 @@ class Api::HivewebController < ApplicationController
     most_like_topic = Topic.select("*, max(likes)").group(:id).take
     username = most_like_topic.user.username
     @pop_avatar_url= get_avatar(username)
-    render json: {popular_topic: most_like_topic, pop_avatar_url: @pop_avatar_url}
+
+    topicid = most_like_topic.id
+    p lat = most_like_topic.latitude
+    p lng = most_like_topic.longitude
+
+    @topic_title = Topic.find(topicid).title
+
+    lat1 =Float(lat)
+    long1 =Float(lng)
+    @postdistance = Hash.new  # @distance[postid, distance]
+
+    location1 = [ ]
+    location1.push (lat1)
+    location1.push (long1)
+
+    @topic = Topic.where(id: topicid).first.reload
+    @posts = @topic.posts.includes(:user).sort #limits max 20 posts???
+    @post_avatar_url = Hash.new
+
+    @posts.each do |post|
+      username = post.user.username
+      get_avatar(username)
+      @post_avatar_url[post.id] = (@avatar_url)
+      #get the post location
+      location2 = [ ]
+      location2.push (post.latitude)
+      location2.push (post.longitude)
+      @postdistance[post.id] = get_distance(location1, location2,"")
+    end
+    @topicid = Integer(topicid)
+
+    #posts = {  pop_posts: @posts, pop_post_avatar_url: @post_avatar_url , postdistance: @postdistance, topic: @topic}
+
+    render json: {popular_topic: most_like_topic,
+                  pop_avatar_url: @pop_avatar_url,
+                  pop_posts: @posts,
+                  pop_post_avatar_url: @post_avatar_url,
+                  pop_postdistance: @postdistance}
   end
 
   def get_all_topics_for_place
