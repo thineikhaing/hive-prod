@@ -69,6 +69,7 @@ class Api::UsersController < ApplicationController
   end
 
   def sign_up
+     p  "sign up"
     if params[:auth_token].present?
       user = User.find_by_authentication_token(params[:auth_token])
       
@@ -101,6 +102,7 @@ class Api::UsersController < ApplicationController
       end
       
     elsif params[:hiveweb]
+      p "sign up from hiveweb"
       p email= params[:email]
       p password = params[:password]
 
@@ -112,6 +114,7 @@ class Api::UsersController < ApplicationController
       p user
       p "+++++++"
       user.save!
+      p "user is saved!"
 
       p name = user.username
       p id = user.id
