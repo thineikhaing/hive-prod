@@ -64,7 +64,7 @@ class Api::HivewebController < ApplicationController
 
   def popular_topic
 
-    p most_like_topic = Topic.select("*, max(likes)").where().group(:id).take
+    p most_like_topic = Topic.select("*, max(likes)").group(:id).take
     username = most_like_topic.user.username
     @pop_avatar_url= get_avatar(username)
 
