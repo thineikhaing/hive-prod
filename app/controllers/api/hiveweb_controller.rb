@@ -65,7 +65,9 @@ class Api::HivewebController < ApplicationController
   def popular_topic
 
     most_like_topic = Topic.select("*, max(likes)").group(:id).take
-    render json: {popular_topic: most_like_topic}
+    username = most_like_topic.user.username
+    @pop_avatar_url= get_avatar(username)
+    render json: {popular_topic: most_like_topic, pop_avatar_url: @pop_avatar_url}
   end
 
   def get_all_topics_for_place
