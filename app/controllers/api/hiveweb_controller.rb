@@ -476,6 +476,6 @@ class Api::HivewebController < ApplicationController
       
       render json: { error_msg: "Param application key must be presented" }, status: 400
     end
-
-
+  end
+  
 end
