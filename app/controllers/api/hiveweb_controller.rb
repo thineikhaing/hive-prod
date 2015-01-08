@@ -444,6 +444,8 @@ class Api::HivewebController < ApplicationController
       else
         var.push(21)
         render json: { :error => var }, status: 400 # User email doesn't exist
+      else
+        render json: {:error => "User Name and Password is mismatched!"}
       end
     else
       render json: {error_msg: "Params email and password must be presented"} , status: 400
