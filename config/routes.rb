@@ -50,7 +50,8 @@ Rails.application.routes.draw do
     match "hiveweb/get_all_topics_for_place"        => "hiveweb#get_all_topics_for_place"       , via: [:get, :post]
     match "hiveweb/map_view"                        => "hiveweb#map_view"                       , via: [:get, :post]
     match "hiveweb/popular_topic"                   => "hiveweb#popular_topic"                  , via: [:get, :post]
-
+    match "hiveweb/sign_in"                         => "hiveweb#sign_in"                        , via: [:get, :post]
+    
     match "downloaddata/initial_retrieve"           => "downloaddata#initial_retrieve"          , via: [:get, :post]
     match "downloaddata/retrieve_hiveapplications"  => "downloaddata#retrieve_hiveapplications" , via: [:get, :post]
     match "downloaddata/retrieve_users"             => "downloaddata#retrieve_users"            , via: [:get, :post]

@@ -422,6 +422,33 @@ class Api::HivewebController < ApplicationController
     render :json =>mapView
     
   end
+  
+  def sign_in
+    if params[:email].present? and params[:password].present?
+      user = User.find_by_email(params[:email])
+      if user.present?
+        p "present?"
+        #if user.valid_password?(params[:password])
+        if user.present?
+          p "valid_password?"
+            user_accounts = UserAccount.where(:user_id => user.id)
+
+          p name = user.username
+          p id = user.id
+
+            render json: {:name => name, :id => id, :user => user, user_accounts: user_accounts, :success => 20 }, status: 200
+        else
+          var.push(22)
+          render json: { :error => var }, status: 400 # User password wrong
+        end
+      else
+        var.push(21)
+        render json: { :error => var }, status: 400 # User email doesn't exist
+      end
+    else
+      render json: {error_msg: "Params email and password must be presented"} , status: 400
+    end
+  end
 
 
 end
