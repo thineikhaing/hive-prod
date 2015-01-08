@@ -449,6 +449,33 @@ class Api::HivewebController < ApplicationController
       render json: {error_msg: "Params email and password must be presented"} , status: 400
     end
   end
+  
+  def sign_up
+
+    if params[:email] and params[:password] 
+      p "sign up from hiveweb"
+      p email= params[:email]
+      p password = params[:password]
+
+      user = User.new
+      user.email = email
+      user.password = password
+      user.password_confirmation = params[:password]
+
+      p user
+      p "+++++++"
+      user.save!
+      p "user is saved!"
+
+      p name = user.username
+      p id = user.id
+      
+      render json: { name: name, id: id }, status: 200
+      
+    else
+      
+      render json: { error_msg: "Param application key must be presented" }, status: 400
+    end
 
 
 end
