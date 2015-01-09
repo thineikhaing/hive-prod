@@ -89,6 +89,8 @@ class Api::HivewebController < ApplicationController
 
     @topic = Topic.where(id: topicid).first.reload
     @posts = @topic.posts.includes(:user).sort #limits max 20 posts???
+    most_like_post =  @posts.select("*, max(likes)").group(:id).take
+
     @post_avatar_url = Hash.new
 
     @posts.each do |post|
@@ -103,7 +105,8 @@ class Api::HivewebController < ApplicationController
     render json: {popular_topic: most_like_topic,
                   pop_avatar_url: @pop_avatar_url,
                   pop_posts: @posts,
-                  pop_post_avatar_url: @post_avatar_url}
+                  pop_post_avatar_url: @post_avatar_url,
+                  most_like_post: most_like_post}
   end
 
   def get_all_topics_for_place
