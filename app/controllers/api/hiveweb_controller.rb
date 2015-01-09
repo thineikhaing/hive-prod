@@ -47,11 +47,23 @@ class Api::HivewebController < ApplicationController
       end
     end
 
+    @postcount = Hash.new
+    @usercount = Hash.new
+    @topics_list.each do |data|
+      post = Post.where("topic_id =?", data.id)
+      user = post.select("count(distinct(user_id)) as usercount").take
+
+      p @postcount[data.id] = post.count
+      p @usercount[data.id] = user.usercount
+    end
+
     topic = {  topic_list: @topics_list,
                topic_avatar: @topic_avatar_url ,
                places: @placesMap.as_json,
                latestTopicUser: @latestTopicUser,
-               latestTopics: @latestTopics
+               latestTopics: @latestTopics ,
+               postcount: @postcount,
+               usercount: @usercount
 
     }
 
@@ -163,9 +175,20 @@ class Api::HivewebController < ApplicationController
       end
     end
 
-    topic = {  topic_list: @topics_list,
-               topic_avatar: @topic_avatar_url
+    @postcount = Hash.new
+    @usercount = Hash.new
+    @topics_list.each do |data|
+      post = Post.where("topic_id =?", data.id)
+      user = post.select("count(distinct(user_id)) as usercount").take
 
+      p @postcount[data.id] = post.count
+      p @usercount[data.id] = user.usercount
+    end
+
+    topic = {  topic_list: @topics_list,
+               topic_avatar: @topic_avatar_url,
+               postcount:  @postcount ,
+               usercount: @usercount
     }
     render json: topic
 
