@@ -59,7 +59,8 @@ class Api::HivewebController < ApplicationController
     car_pcount = 0
     car_ucount = 0
 
-
+    juice_pcount = 0
+    juice_ucount  = 0
 
 
     @topics_list.each do |data|
@@ -71,36 +72,45 @@ class Api::HivewebController < ApplicationController
       p @postcount[data.id] = post.count
       p @usercount[data.id] = user.usercount
 
-
       #Hive APP
 
-      if data.hiveapplication_id  == "1"
-        hivepost = Post.joins(:topic).where("topic_id =? and topics.hiveapplication_id = '1'", data.id)
-        hiveuser = post.select("count(distinct(user_id)) as usercount").take
+      if data.hiveapplication_id  == 1
+        hivepost = Post.joins(:topic).where("topics.hiveapplication_id = '1'")
+        hiveuser = hivepost.select("count(distinct(posts.user_id)) as usercount").take
         p "Hive Count"
         p hive_pcount = hivepost.count
-        p hive_ucount = hiveuser.count
+        p hive_ucount = hiveuser.usercount
 
       end
 
       #MealBox APP
 
-      if data.hiveapplication_id  == "2"
-        mealpost = Post.joins(:topic).where("topic_id =? and topics.hiveapplication_id = '2'", data.id)
-        mealuser = post.select("count(distinct(user_id)) as usercount").take
+      if data.hiveapplication_id  == 2
+        mealpost = Post.joins(:topic).where("topics.hiveapplication_id = '2'")
+        mealuser = mealpost.select("count(distinct(posts.user_id)) as usercount").take
         p "MealBox Count"
         p meal_pcount = mealpost.count
-        p meal_ucount = mealuser.count
+        p meal_ucount = mealuser.usercount
       end
 
       #Carmmunicate APP
 
-      if data.hiveapplication_id  == "3"
-        carpost = Post.joins(:topic).where("topic_id =? and topics.hiveapplication_id = '3'", data.id)
-        caruser = post.select("count(distinct(user_id)) as usercount").take
+      if data.hiveapplication_id  == 3
+        carpost = Post.joins(:topic).where("topics.hiveapplication_id = '3'")
+        caruser = carpost.select("count(distinct(posts.user_id)) as usercount").take
         p "Carmmunicate Count"
         p car_pcount = carpost.count
-        p car_ucount = caruser.count
+        p car_ucount = caruser.usercount
+      end
+
+      #Juice APP
+
+      if data.hiveapplication_id == 4
+        p "Juice Count"
+        juicepost = Post.joins(:topic).where("topics.hiveapplication_id = '4'")
+        juiceuser = juicepost.select("count(distinct(posts.user_id)) as usercount").take
+        p juice_pcount = juicepost.count
+        p juice_ucount = juiceuser.usercount
       end
 
     end
@@ -117,7 +127,9 @@ class Api::HivewebController < ApplicationController
                meal_pcount: meal_pcount,
                meal_ucount: meal_ucount,
                car_pcount: car_pcount,
-               car_ucount: car_ucount
+               car_ucount: car_ucount ,
+               juice_pcount: juice_pcount,
+               juice_ucount: juice_ucount
 
     }
 
@@ -243,45 +255,58 @@ class Api::HivewebController < ApplicationController
     car_pcount = 0
     car_ucount = 0
 
+    juice_pcount= 0
+    juice_ucount = 0
+
     @topics_list.each do |data|
       post = Post.where("topic_id =?", data.id)
       user = post.select("count(distinct(user_id)) as usercount").take
       p "POST USER Count"
       p data.hiveapplication_id
       p "hive id"
-      p @postcount[data.id] = post.count
-      p @usercount[data.id] = user.usercount
+       @postcount[data.id] = post.count
+       @usercount[data.id] = user.usercount
 
 
       #Hive APP
 
-      if data.hiveapplication_id  == "1"
-        hivepost = Post.joins(:topic).where("topic_id =? and topics.hiveapplication_id = '1'", data.id)
-        hiveuser = post.select("count(distinct(user_id)) as usercount").take
+      if data.hiveapplication_id  == 1
+        hivepost = Post.joins(:topic).where("topics.hiveapplication_id = '1'")
+        hiveuser = hivepost.select("count(distinct(posts.user_id)) as usercount").take
         p "Hive Count"
-        p hive_pcount = hivepost.count
-        p hive_ucount = hiveuser.count
+         hive_pcount = hivepost.count
+         hive_ucount = hiveuser.usercount
 
       end
 
       #MealBox APP
 
-      if data.hiveapplication_id  == "2"
-        mealpost = Post.joins(:topic).where("topic_id =? and topics.hiveapplication_id = '2'", data.id)
-        mealuser = post.select("count(distinct(user_id)) as usercount").take
+      if data.hiveapplication_id  == 2
+        mealpost = Post.joins(:topic).where("topics.hiveapplication_id = '2'")
+        mealuser = mealpost.select("count(distinct(posts.user_id)) as usercount").take
         p "MealBox Count"
-        p meal_pcount = mealpost.count
-        p meal_ucount = mealuser.count
+         meal_pcount = mealpost.count
+         meal_ucount = mealuser.usercount
       end
 
       #Carmmunicate APP
 
-      if data.hiveapplication_id  == "3"
-        carpost = Post.joins(:topic).where("topic_id =? and topics.hiveapplication_id = '3'", data.id)
-        caruser = post.select("count(distinct(user_id)) as usercount").take
+      if data.hiveapplication_id  == 3
+        carpost = Post.joins(:topic).where("topics.hiveapplication_id = '3'")
+        caruser = carpost.select("count(distinct(posts.user_id)) as usercount").take
         p "Carmmunicate Count"
-        p car_pcount = carpost.count
-        p car_ucount = caruser.count
+         car_pcount = carpost.count
+         car_ucount = caruser.usercount
+      end
+
+      #Juice APP
+
+      if data.hiveapplication_id == 4
+        p "Juice Count"
+        juicepost = Post.joins(:topic).where("topics.hiveapplication_id = '4'")
+        juiceuser = juicepost.select("count(distinct(posts.user_id)) as usercount").take
+        p juice_pcount = juicepost.count
+        p juice_ucount = juiceuser.usercount
       end
 
     end
@@ -295,7 +320,9 @@ class Api::HivewebController < ApplicationController
                meal_pcount: meal_pcount,
                meal_ucount: meal_ucount,
                car_pcount: car_pcount,
-               car_ucount: car_ucount
+               car_ucount: car_ucount,
+               juice_pcount: juice_pcount,
+               juice_ucount: juice_ucount
     }
     render json: topic
 
