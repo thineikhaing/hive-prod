@@ -50,22 +50,34 @@ class Api::HivewebController < ApplicationController
     @postcount = Hash.new
     @usercount = Hash.new
 
+    hive_pcount = 0
+    hive_ucount = 0
+
+    meal_pcount = 0
+    meal_ucount = 0
+
+    car_pcount = 0
+    car_ucount = 0
+
 
 
 
     @topics_list.each do |data|
       post = Post.where("topic_id =?", data.id)
       user = post.select("count(distinct(user_id)) as usercount").take
-
+      p "POST USER Count"
+      p data.hiveapplication_id
+      p "hive id"
       p @postcount[data.id] = post.count
       p @usercount[data.id] = user.usercount
 
+
       #Hive APP
 
-      if data.hiveapplication_id  == 1
+      if data.hiveapplication_id  == "1"
         hivepost = Post.joins(:topic).where("topic_id =? and topics.hiveapplication_id = '1'", data.id)
         hiveuser = post.select("count(distinct(user_id)) as usercount").take
-
+        p "Hive Count"
         p hive_pcount = hivepost.count
         p hive_ucount = hiveuser.count
 
@@ -73,20 +85,20 @@ class Api::HivewebController < ApplicationController
 
       #MealBox APP
 
-      if data.hiveapplication_id  == 2
+      if data.hiveapplication_id  == "2"
         mealpost = Post.joins(:topic).where("topic_id =? and topics.hiveapplication_id = '2'", data.id)
         mealuser = post.select("count(distinct(user_id)) as usercount").take
-
+        p "MealBox Count"
         p meal_pcount = mealpost.count
         p meal_ucount = mealuser.count
       end
 
       #Carmmunicate APP
 
-      if data.hiveapplication_id  == 3
+      if data.hiveapplication_id  == "3"
         carpost = Post.joins(:topic).where("topic_id =? and topics.hiveapplication_id = '3'", data.id)
         caruser = post.select("count(distinct(user_id)) as usercount").take
-
+        p "Carmmunicate Count"
         p car_pcount = carpost.count
         p car_ucount = caruser.count
       end
@@ -222,20 +234,31 @@ class Api::HivewebController < ApplicationController
 
     @postcount = Hash.new
     @usercount = Hash.new
+    hive_pcount = 0
+    hive_ucount = 0
+
+    meal_pcount = 0
+    meal_ucount = 0
+
+    car_pcount = 0
+    car_ucount = 0
 
     @topics_list.each do |data|
       post = Post.where("topic_id =?", data.id)
       user = post.select("count(distinct(user_id)) as usercount").take
-
+      p "POST USER Count"
+      p data.hiveapplication_id
+      p "hive id"
       p @postcount[data.id] = post.count
       p @usercount[data.id] = user.usercount
 
+
       #Hive APP
 
-      if data.hiveapplication_id  == 1
+      if data.hiveapplication_id  == "1"
         hivepost = Post.joins(:topic).where("topic_id =? and topics.hiveapplication_id = '1'", data.id)
         hiveuser = post.select("count(distinct(user_id)) as usercount").take
-
+        p "Hive Count"
         p hive_pcount = hivepost.count
         p hive_ucount = hiveuser.count
 
@@ -243,20 +266,20 @@ class Api::HivewebController < ApplicationController
 
       #MealBox APP
 
-      if data.hiveapplication_id  == 2
+      if data.hiveapplication_id  == "2"
         mealpost = Post.joins(:topic).where("topic_id =? and topics.hiveapplication_id = '2'", data.id)
         mealuser = post.select("count(distinct(user_id)) as usercount").take
-
+        p "MealBox Count"
         p meal_pcount = mealpost.count
         p meal_ucount = mealuser.count
       end
 
       #Carmmunicate APP
 
-      if data.hiveapplication_id  == 3
+      if data.hiveapplication_id  == "3"
         carpost = Post.joins(:topic).where("topic_id =? and topics.hiveapplication_id = '3'", data.id)
         caruser = post.select("count(distinct(user_id)) as usercount").take
-
+        p "Carmmunicate Count"
         p car_pcount = carpost.count
         p car_ucount = caruser.count
       end
