@@ -638,10 +638,6 @@ class Api::HivewebController < ApplicationController
     end
   end
 
-  #match "hiveweb/get_topics_for_hive"
-  #match "hiveweb/get_topics_for_mealbox"
-  #match "hiveweb/get_topics_for_car"
-
   def get_topics_for_hive
 
   end
@@ -667,8 +663,6 @@ class Api::HivewebController < ApplicationController
           get_avatar(username)
           @topic_avatar_url[topic.id] = @avatar_url
         end
-
-
     end
 
     @postcount = Hash.new
