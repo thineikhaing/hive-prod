@@ -3,9 +3,9 @@ class Api::HivewebController < ApplicationController
   def get_all_topics_for_web
 
 
-    p lat = params[:lat]
-    p lng = params[:lng]
-    places = Place.nearest(lat,lng,5)
+     lat = params[:lat]
+     lng = params[:lng]
+     places = Place.nearest(lat,lng,5)
     if places.present?
       places_id = []
       places.each do |p|
@@ -62,7 +62,7 @@ class Api::HivewebController < ApplicationController
     juice_pcount = 0
     juice_ucount  = 0
 
-
+    if not @topics_list.nil?
     @topics_list.each do |data|
       post = Post.where("topic_id =?", data.id)
       user = post.select("count(distinct(user_id)) as usercount").take
@@ -114,7 +114,7 @@ class Api::HivewebController < ApplicationController
       end
 
     end
-
+    end
     topic = {  topic_list: @topics_list,
                topic_avatar: @topic_avatar_url ,
                places: @placesMap.as_json,
@@ -132,12 +132,7 @@ class Api::HivewebController < ApplicationController
                juice_ucount: juice_ucount
 
     }
-
-
-
     render :json => topic
-
-
   end
 
   def popular_topic
