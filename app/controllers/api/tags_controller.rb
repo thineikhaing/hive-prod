@@ -19,7 +19,7 @@ class Api::TagsController < ApplicationController
 
  def retrieve_all_tags
    tagsArray = [ ]
-   tags = Tag.all
+   tags = Tag.all.order(:keyword)
    tags.map { |t| tagsArray.push( { id: t.id, tag: t.keyword, tag_type: t.tag_type } ) }
 
    render json: { tags: tagsArray }

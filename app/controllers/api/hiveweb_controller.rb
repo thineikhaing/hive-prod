@@ -68,7 +68,9 @@ class Api::HivewebController < ApplicationController
       post = Post.where("topic_id =?", data.id)
       user = post.select("count(distinct(user_id)) as usercount").take
       t_tag = TopicWithTag.select("topic_id, tags.keyword")
-      .joins(:tag).where("topic_id =?", data.id)
+      .joins(:tag).where("topic_id =?", data.id).order("tags.keyword")
+
+      t_tag = TopicWithTag.select("topic_id, tags.keyword").joins(:tag).where("topic_id = 38").order("tags.keyword")
 
       p "POST USER Count"
       p data.hiveapplication_id
@@ -270,7 +272,7 @@ class Api::HivewebController < ApplicationController
       user = post.select("count(distinct(user_id)) as usercount").take
 
       t_tag = TopicWithTag.select("topic_id, tags.keyword")
-      .joins(:tag).where("topic_id =?", data.id)
+      .joins(:tag).where("topic_id =?", data.id).order("tags.keyword")
 
       p "POST USER Count"
       p data.hiveapplication_id
@@ -685,7 +687,7 @@ class Api::HivewebController < ApplicationController
     @topics_list.each do |data|
       post = Post.where("topic_id =?", data.id)
       user = post.select("count(distinct(user_id)) as usercount").take
-      t_tag = TopicWithTag.select("topic_id, tags.keyword")
+      t_tag = TopicWithTag.select("topic_id, tags.keyword").order("tags.keyword")
       .joins(:tag).where("topic_id =?", data.id)
 
       p "POST USER Count"
