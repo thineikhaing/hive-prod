@@ -680,16 +680,20 @@ class Api::HivewebController < ApplicationController
 
     @postcount = Hash.new
     @usercount = Hash.new
-
+    @topic_tag =  Hash.new
 
     @topics_list.each do |data|
       post = Post.where("topic_id =?", data.id)
       user = post.select("count(distinct(user_id)) as usercount").take
+      t_tag = TopicWithTag.select("topic_id, tags.keyword")
+      .joins(:tag).where("topic_id =?", data.id)
+
       p "POST USER Count"
       p data.hiveapplication_id
       p "hive id"
       @postcount[data.id] = post.count
       @usercount[data.id] = user.usercount
+      @topic_tag =  t_tag
 
     end
 
@@ -697,6 +701,7 @@ class Api::HivewebController < ApplicationController
                topic_avatar: @topic_avatar_url,
                postcount: @postcount,
                usercount: @usercount,
+               topic_tag: @topic_tag
 
     }
     render json: topic
