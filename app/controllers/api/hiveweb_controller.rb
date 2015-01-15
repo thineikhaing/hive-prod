@@ -693,7 +693,7 @@ class Api::HivewebController < ApplicationController
       p "hive id"
       @postcount[data.id] = post.count
       @usercount[data.id] = user.usercount
-      @topic_tag =  t_tag
+      @topic_tag[data.id] =  t_tag
 
     end
 
