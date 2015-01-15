@@ -3,6 +3,9 @@ class Topic < ActiveRecord::Base
   belongs_to :user
   belongs_to :place
 
+  has_many :topicwithtags
+
+
   has_many  :posts, :dependent => :destroy
   # Setup hstore
   store_accessor :data

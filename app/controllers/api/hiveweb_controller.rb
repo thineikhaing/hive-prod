@@ -49,6 +49,7 @@ class Api::HivewebController < ApplicationController
 
     @postcount = Hash.new
     @usercount = Hash.new
+    @topic_tag =  Hash.new
 
     hive_pcount = 0
     hive_ucount = 0
@@ -66,11 +67,19 @@ class Api::HivewebController < ApplicationController
     @topics_list.each do |data|
       post = Post.where("topic_id =?", data.id)
       user = post.select("count(distinct(user_id)) as usercount").take
+      t_tag = TopicWithTag.select("topic_id, tags.keyword")
+      .joins(:tag).where("topic_id =?", data.id)
+
       p "POST USER Count"
       p data.hiveapplication_id
       p "hive id"
       p @postcount[data.id] = post.count
       p @usercount[data.id] = user.usercount
+      @topic_tag[data.id] = t_tag
+
+
+      #
+      @topic_tag[data.id]= t_tag
 
       #Hive APP
 
@@ -122,6 +131,7 @@ class Api::HivewebController < ApplicationController
                latestTopics: @latestTopics ,
                postcount: @postcount,
                usercount: @usercount,
+               topic_tag: @topic_tag,
                hive_pcount: hive_pcount,
                hive_ucount: hive_ucount,
                meal_pcount: meal_pcount,
@@ -241,6 +251,8 @@ class Api::HivewebController < ApplicationController
 
     @postcount = Hash.new
     @usercount = Hash.new
+    @topic_tag =  Hash.new
+
     hive_pcount = 0
     hive_ucount = 0
 
@@ -256,11 +268,16 @@ class Api::HivewebController < ApplicationController
     @topics_list.each do |data|
       post = Post.where("topic_id =?", data.id)
       user = post.select("count(distinct(user_id)) as usercount").take
+
+      t_tag = TopicWithTag.select("topic_id, tags.keyword")
+      .joins(:tag).where("topic_id =?", data.id)
+
       p "POST USER Count"
       p data.hiveapplication_id
       p "hive id"
        @postcount[data.id] = post.count
        @usercount[data.id] = user.usercount
+       @topic_tag[data.id] =  t_tag
 
 
       #Hive APP
@@ -310,6 +327,7 @@ class Api::HivewebController < ApplicationController
                topic_avatar: @topic_avatar_url,
                postcount: @postcount,
                usercount: @usercount,
+               topic_tag: @topic_tag,
                hive_pcount: hive_pcount,
                hive_ucount: hive_ucount,
                meal_pcount: meal_pcount,
