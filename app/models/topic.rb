@@ -3,7 +3,7 @@ class Topic < ActiveRecord::Base
   belongs_to :user
   belongs_to :place
 
-  has_many :topicwithtags
+  has_many :topic_with_tags
 
 
   has_many  :posts, :dependent => :destroy

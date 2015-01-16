@@ -662,8 +662,6 @@ class Api::HivewebController < ApplicationController
   end
 
   def get_topics_for_car
-
-
     @topics_list= Topic.where("hiveapplication_id = '3'")
 
     @topic_avatar_url = Hash.new
@@ -707,6 +705,60 @@ class Api::HivewebController < ApplicationController
 
     }
     render json: topic
+
+    end
+
+  end
+
+
+
+  def get_topics_by_tag
+
+    tag = Tag.find_by_keyword(params[:keyword])
+
+    Topic.select("*").joins(:topic_with_tags).where("topic_with_tags.tag_id=?", tag.id)
+
+    @topic_avatar_url = Hash.new
+    #adding avatar photo and calculate the distance from the current location
+    if not @topics_list.nil?
+      for topic in @topics_list
+        #getting avatar url
+        if topic.offensive < 3 and topic.special_type == 3
+          @topic_avatar_url[topic.id] = "assets/Avatars/Chat-Avatar-Admin.png"
+        else
+          username = topic.user.username
+          get_avatar(username)
+          @topic_avatar_url[topic.id] = @avatar_url
+        end
+      end
+
+      @postcount = Hash.new
+      @usercount = Hash.new
+      @topic_tag =  Hash.new
+
+      @topics_list.each do |data|
+        post = Post.where("topic_id =?", data.id)
+        user = post.select("count(distinct(user_id)) as usercount").take
+        t_tag = TopicWithTag.select("topic_id, tags.keyword").order("tags.keyword")
+        .joins(:tag).where("topic_id =?", data.id)
+
+        p "POST USER Count"
+        p data.hiveapplication_id
+        p "hive id"
+        @postcount[data.id] = post.count
+        @usercount[data.id] = user.usercount
+        @topic_tag[data.id] =  t_tag
+
+      end
+
+      topic = {  topic_list: @topics_list,
+                 topic_avatar: @topic_avatar_url,
+                 postcount: @postcount,
+                 usercount: @usercount,
+                 topic_tag: @topic_tag
+
+      }
+      render json: topic
 
     end
 

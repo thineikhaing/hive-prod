@@ -3,7 +3,7 @@ require 'value_enums'
 class Tag < ActiveRecord::Base
   belongs_to :topic
 
-  has_many :topicwithtags
+  has_many :topic_with_tags
 
   enums %w(NORMAL LOCATION)
 
