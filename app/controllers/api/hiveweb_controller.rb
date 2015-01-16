@@ -716,7 +716,7 @@ class Api::HivewebController < ApplicationController
 
     tag = Tag.find_by_keyword(params[:keyword])
 
-    Topic.select("*").joins(:topic_with_tags).where("topic_with_tags.tag_id=?", tag.id)
+    @topics_list = Topic.select("*").joins(:topic_with_tags).where("topic_with_tags.tag_id=?", tag.id)
 
     @topic_avatar_url = Hash.new
     #adding avatar photo and calculate the distance from the current location
