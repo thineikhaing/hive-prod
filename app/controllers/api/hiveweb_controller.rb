@@ -716,7 +716,8 @@ class Api::HivewebController < ApplicationController
 
     tag = Tag.find_by_keyword(params[:keyword])
 
-    @topics_list = Topic.select("*").joins(:topic_with_tags).where("topic_with_tags.tag_id=?", tag.id)
+
+    @topics_list = Topic.select("topics.id , title , topics.created_at ").joins(:topic_with_tags).where("topic_with_tags.tag_id=?", tag.id)
 
     @topic_avatar_url = Hash.new
     #adding avatar photo and calculate the distance from the current location
@@ -739,15 +740,14 @@ class Api::HivewebController < ApplicationController
       @topics_list.each do |data|
         post = Post.where("topic_id =?", data.id)
         user = post.select("count(distinct(user_id)) as usercount").take
-        t_tag = TopicWithTag.select("topic_id, tags.keyword").order("tags.keyword")
-        .joins(:tag).where("topic_id =?", data.id)
+        p t_tag = TopicWithTag.select("topic_id, tags.keyword").order("tags.keyword").joins(:tag).where("topic_id =?", data.id)
 
         p "POST USER Count"
         p data.hiveapplication_id
         p "hive id"
         @postcount[data.id] = post.count
         @usercount[data.id] = user.usercount
-        @topic_tag[data.id] =  t_tag
+        p @topic_tag[data.id] =  t_tag
 
       end
 
