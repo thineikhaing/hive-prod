@@ -57,6 +57,7 @@ Rails.application.routes.draw do
     match "hiveweb/get_topics_for_hive"                   => "hiveweb#get_topics_for_hive"      , via: [:get, :post]
     match "hiveweb/get_topics_for_mealbox"                => "hiveweb#get_topics_for_mealbox"   , via: [:get, :post]
     match "hiveweb/get_topics_for_car"                    => "hiveweb#get_topics_for_car"       , via: [:get, :post]
+    match "hiveweb/get_topics_by_tag"                    => "hiveweb#get_topics_by_tag"       , via: [:get, :post]
 
 
     match "downloaddata/initial_retrieve"           => "downloaddata#initial_retrieve"          , via: [:get, :post]

@@ -2,6 +2,9 @@ require 'value_enums'
 
 class Tag < ActiveRecord::Base
   belongs_to :topic
+
+  has_many :topic_with_tags
+
   enums %w(NORMAL LOCATION)
 
   attr_accessible :tag_type, :keyword
