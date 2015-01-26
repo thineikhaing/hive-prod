@@ -128,6 +128,7 @@ Rails.application.routes.draw do
     match "places/currently_active"                 => "places#currently_active"                , via: [:get, :post]
     match "places/within_location"                  => "places#within_location"                 , via: [:get, :post]
     match "places/within_locality"                  => "places#within_locality"                 , via: [:get, :post]
+    match "places/getlatlngbyname"                  => "places#getlatlngbyname"                 , via: [:get, :post]
 
     match "mytest/test"                             => "mytest#test"                            , via: [:get, :post]
     match "mytest/test2"                            => "mytest#test2"                           , via: [:get, :post]
