@@ -11,7 +11,7 @@ class Topic < ActiveRecord::Base
   store_accessor :data
   #enums for topic type
 
-  #enums %w(NORMAL IMAGE AUDIO VIDEO)
+  enums %w(NORMAL IMAGE AUDIO VIDEO)
 
   #enums %w(NONE FLARE BEACON STICKY PROMO COSHOOT QUESTION ERRAND)
 
