@@ -341,6 +341,22 @@ class Api::PlacesController < ApplicationController
     end
   end
 
+  def getlatlngbyname
+    if params[:place_name].present?
+      place = Place.find_by_name(params[:place_name])
+      if !place.nil?
+        lat = place.latitude
+        lng = place.longitude
+        add = place.address
+      end
+
+      render json: {lat: lat, lng: lng, add: add}
+    else
+      render json: { status: false }
+    end
+
+  end
+
 
 
 end

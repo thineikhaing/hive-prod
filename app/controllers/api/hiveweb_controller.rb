@@ -2,7 +2,6 @@ class Api::HivewebController < ApplicationController
 
   def get_all_topics_for_web
 
-
      lat = params[:lat]
      lng = params[:lng]
      places = Place.nearest(lat,lng,5)
@@ -715,7 +714,6 @@ class Api::HivewebController < ApplicationController
   def get_topics_by_tag
 
     tag = Tag.find_by_keyword(params[:keyword])
-
 
     @topics_list = Topic.select("topics.id , title , topics.created_at, offensive, special_type, topics.user_id ,hiveapplication_id,place_id")
     .joins(:topic_with_tags).where("topic_with_tags.tag_id=?", tag.id)
