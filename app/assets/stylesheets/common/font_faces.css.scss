@@ -1,20 +1,20 @@
 @font-face {
   font-family: 'Labrador-A-Medium';
-  src: asset-url('Labrador-A-Medium.otf', font) format('opentype');
+  src: asset-url("Labrador-A-Medium.otf") format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Labrador-A-Light';
-  src: asset-url('Labrador-A-Light.otf', font) format('opentype');
+  src: asset-url("Labrador-A-Light.otf") format('opentype');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Labrador-A-Hairline';
-  src: asset-url('Labrador-A-Hairline.otf', font) format('opentype');
+  src: asset-url('Labrador-A-Hairline.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
 }

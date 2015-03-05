@@ -572,4 +572,46 @@ class Api::UsersController < ApplicationController
     params.require(:user).permit(:username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :point, :honor_rating, :created_at, :data, :device_id)
   end
 
+  def juice_sign_in
+    if params[:email].present? and params[:password].present?
+      email = params[:email]
+      password = params[:password]
+      # Check for user authentication
+      user = Devuser.find_by_email(email)
+      error_notice = "WE COULDN'T FIND AN ACCOUNT WITH THAT USER ID/PASSWORD COMBINATION. PLEASE TRY AGAIN"
+
+      if user.present?
+        unless user.valid_password?(password)
+          # Redirects back to index if password is wrong
+          render json:  { error: error_notice }
+
+        else
+          if user.verified == true
+            dev_user_id = user.id
+            applications = user.hive_applications
+            app_key = nil
+            user_id=nil
+            auth_token = nil
+            applications.each do |application|
+              app_key = application.api_key if application.app_name.casecmp("juice app")
+              user = User.find_by_username("JuiceAppBoard")
+              if user.present?
+                user_id = user.id
+                auth_token = user.authentication_token
+              end
+            end
+            render json: {user_id: dev_user_id, app_key: app_key, board_id: user_id, auth_token: auth_token}
+          else
+            #if user hasn't verified account.
+            render json:{ error: error_notice }
+          end
+        end
+      else
+        # if user enters the wrong email address.
+        render json:{ error: error_notice }
+      end
+
+    end
+  end
+
 end

@@ -1,7 +1,10 @@
 source 'https://rubygems.org'
 ruby "1.9.3"
 
+#gem 'rails', :git => 'git://github.com/rails/rails.git', :tag => 'v4.1.0.beta1'
+
 gem 'rails'                       , '4.1.0' # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+
 gem 'thin'                        , '~> 1.5.0'
 gem 'sprockets-rails'             , '~> 2.1.0'
 gem 'haml-rails'                  , '~> 0.5.3' # Haml-rails provides Haml generators for Rails 3. It also enables Haml as the templating engine for you, so you don't have to screw around in your own application.rb when your Gemfile already clearly indicated what templating engine you have installed. Hurrah.
