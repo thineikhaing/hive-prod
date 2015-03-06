@@ -1,7 +1,6 @@
 class Api::HivewebController < ApplicationController
 
   def get_all_topics_for_web
-
      lat = params[:lat]
      lng = params[:lng]
      places = Place.nearest(lat,lng,5)

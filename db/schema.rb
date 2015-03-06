@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150105055338) do
+ActiveRecord::Schema.define(version: 20150306082709) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -160,6 +160,18 @@ ActiveRecord::Schema.define(version: 20150105055338) do
     t.float    "longitude"
   end
 
+  create_table "suggesteddates", force: true do |t|
+    t.integer  "topic_id"
+    t.integer  "user_id"
+    t.string   "invitation_code"
+    t.datetime "suggested_datetime"
+    t.time     "suggesttime"
+    t.integer  "vote"
+    t.boolean  "admin_confirm"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "tags", force: true do |t|
     t.integer  "tag_type",                null: false
     t.string   "keyword",    default: "", null: false
@@ -258,5 +270,15 @@ ActiveRecord::Schema.define(version: 20150105055338) do
 
   add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+
+  create_table "votes", force: true do |t|
+    t.integer  "vote"
+    t.datetime "selected_datetime"
+    t.integer  "user_id"
+    t.integer  "topic_id"
+    t.integer  "suggesteddate_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end

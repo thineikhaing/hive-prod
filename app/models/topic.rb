@@ -1,3 +1,4 @@
+require 'value_enums'
 class Topic < ActiveRecord::Base
   belongs_to :hiveapplication
   belongs_to :user
