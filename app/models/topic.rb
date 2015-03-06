@@ -5,15 +5,15 @@ class Topic < ActiveRecord::Base
 
   has_many :topic_with_tags
 
-
   has_many  :posts, :dependent => :destroy
+
   # Setup hstore
   store_accessor :data
   #enums for topic type
 
   enums %w(NORMAL IMAGE AUDIO VIDEO)
 
-  #enums %w(NONE FLARE BEACON STICKY PROMO COSHOOT QUESTION ERRAND)
+  enums %w(NONE FLARE BEACON STICKY PROMO COSHOOT QUESTION ERRAND)
 
    attr_accessible :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :data, :created_at, :image_url, :width, :height, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type
 

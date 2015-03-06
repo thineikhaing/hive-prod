@@ -73,22 +73,29 @@ module Factual_Const
   Key = "qG4dfx6KUELOXYR3mxdE2o7fXKay7qTQ3zWTnOFx"
   Secret = "yes4DHYok4jefKCSydsfO6NsYPbmvuMSU5ZcRnjR"
 end
+
 module Mealbox_key
-  Staging_Key= "7c64b6ba8eebebb73bcdf605b052562e"
   Development_Key = "635d359ad1f1f4897f3be07b9aed439d"
+  Staging_Key= "7c64b6ba8eebebb73bcdf605b052562e"
   Production_Key = "d80eab337c8eeba960ecf65772e1f2af"
 end
 
 module Carmmunicate_key
-  Staging_Key= "63547bb73e27bc8e55c000e126c2c254"
   Development_Key = "c000b7908db971224ccbed439fb171c6"
+  Staging_Key= "63547bb73e27bc8e55c000e126c2c254"
   Production_Key = "05c4919a87614b59e5b6814b02ceff07"
 end
 
 module Favr_key
-  Staging_Key= "8241e7f0321e4abdeb72cf1aae828020"
   Development_Key = "3917aadf42e00b1e10cc4ebfe8cc6356"
+  Staging_Key= "8241e7f0321e4abdeb72cf1aae828020"
   #Production_Key = "05c4919a87614b59e5b6814b02ceff07"
+end
+
+module Socal_key
+  Development_Key = "dd38aff2963566af582e8d59d65aff16"
+  Staging_Key = "93dc338faf53138be3b10da1338461a0"
+  Production_Key = "89433f46a2f596f3f1c8259e8f262c3e"
 end
 
 module App_Password #constant variable to be used for encryption and decryption
