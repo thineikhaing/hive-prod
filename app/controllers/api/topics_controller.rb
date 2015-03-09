@@ -6,6 +6,7 @@ class Api::TopicsController < ApplicationController
       p hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
       tag = Tag.new
       if hiveapplication.present?
+
         if check_banned_profanity(params[:title])
           user = User.find(current_user.id)
           user.profanity_counter += 1
@@ -20,10 +21,12 @@ class Api::TopicsController < ApplicationController
         else
           #create place first if the place_id is null
           place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
+
           if place.present?
             place_id = place.id
             Checkinplace.create(place_id: place.id, user_id: current_user.id)
           end
+
         end
 
         if current_user.present?
@@ -550,7 +553,6 @@ class Api::TopicsController < ApplicationController
     end
   end
 
-
   def search
     if params[:title].present?
       topic = Topic.find_by_topic_type_and_title(Topic::WEB, params[:title])
@@ -754,5 +756,10 @@ class Api::TopicsController < ApplicationController
       render json: { likes: check_like, dislikes: check_dislike }
     end
   end
+
+
+  # *********** for Socal ***********
+
+
 
 end

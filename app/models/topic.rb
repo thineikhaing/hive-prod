@@ -7,6 +7,9 @@ class Topic < ActiveRecord::Base
   has_many :topic_with_tags
 
   has_many  :posts, :dependent => :destroy
+  has_many :suggesteddates
+  has_many :votes
+  has_many :invitees
 
   # Setup hstore
   store_accessor :data
@@ -717,5 +720,103 @@ class Topic < ActiveRecord::Base
     uploader.store!
     p "delayed job ends!"
   end
+
+  # ********* For Socal  **************
+
+  def retrieve_socaldata
+    datetime = [ ]
+    vote_maybe = 0
+    vote_yes = 0
+    vote_no = 0
+
+    self.suggesteddates.each do |sd|
+      votes = sd.votes
+
+      votes.each do |v|
+        if v.vote == Vote::MAYBE
+          vote_maybe = vote_maybe + 1
+        elsif v.vote == Vote::YES
+          vote_yes = vote_yes + 1
+        elsif v.vote == Vote::NO
+          vote_no = vote_no + 1
+        end
+      end
+
+      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no })
+
+      vote_maybe = 0
+      vote_yes = 0
+      vote_no = 0
+    end
+
+    confirmed_event_date = nil
+    if (self.confirmed_date != 0)
+      confirmed_event_date = Suggesteddate.find(self.confirmed_date).suggested_datetime
+    end
+
+    data = {
+        title: self.title,
+        latitude: self.latitude,
+        longitude: self.longitude,
+        address: self.address,
+        place_name: self.place_name,
+        description: self.content,
+        datetime: datetime,
+        invitation_code: self.invitation_code,
+        creator_name: self.creator_name,
+        creator_email: self.creator_email,
+        confirm_state: self.confirm_state,
+        confirmed_date: confirmed_event_date
+    }
+  end
+
+
+  def broadcast_event
+    vote_maybe = 0
+    vote_yes = 0
+    vote_no = 0
+    datetime = [ ]
+
+    self.suggesteddates.each do |sd|
+      votes = sd.votes
+
+      votes.each do |v|
+        if v.vote == Vote::MAYBE
+          vote_maybe = vote_maybe + 1
+        elsif v.vote == Vote::YES
+          vote_yes = vote_yes + 1
+        elsif v.vote == Vote::NO
+          vote_no = vote_no + 1
+        end
+      end
+
+      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no })
+    end
+
+    confirmed_event_date = nil
+
+    if (self.confirmed_date != 0)
+
+      confirmed_event_date = Suggesteddate.find(self.confirmed_date).suggested_datetime
+
+    end
+    data = {
+        title: self.title,
+        latitude: self.latitude,
+        longitude: self.longitude,
+        address: self.address,
+        place_name: self.place_name,
+        description: self.content,
+        datetime: datetime,
+        invitation_code: self.invitation_code,
+        creator_name: self.creator_name,
+        creator_email: self.creator_email,
+        confirm_state: self.confirm_state,
+        confirmed_date: confirmed_event_date
+    }
+
+    Pusher["#{self.invitation_code}_channel"].trigger_async("broadcast_event", data)
+  end
+
   handle_asynchronously :topic_image_upload_job
 end

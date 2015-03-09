@@ -20,6 +20,9 @@ class Createdata < ActiveRecord::Migration
     HiveApplication.create(devuser_id: 1, app_name: "MealBox",app_type: "food",description: "Mealbox",api_key: api_key )
     api_key = SecureRandom.hex
     app = HiveApplication.create(devuser_id: 1, app_name: "Carmmunicate",app_type: "social",description: "Carmmunicate",api_key: api_key )
+    api_key = SecureRandom.hex
+    HiveApplication.create(devuser_id: 1, app_name: "Socal",app_type: "social",description: "Socal",api_key: api_key )
+
 
     if app.present?
       AppAdditionalField.create(app_id: app.id,table_name: "User", additional_column_name: "color")

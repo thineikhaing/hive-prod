@@ -44,6 +44,16 @@ Rails.application.routes.draw do
   #get "sign_in", to: "hiveapplication#sign_in"
 
   namespace :api do
+
+    match "socal/create_event"                      => "socal#create_event"                     , via: [:get, :post]
+    match "socal/retrieve_invitation_code"          => "socal#retrieve_invitation_code"         , via: [:get, :post]
+    match "socal/retrieve_event"                    => "socal#retrieve_event"                   , via: [:get, :post]
+    match "socal/create_post"                       => "socal#create_post"                      , via: [:get, :post]
+    match "socal/download_posts"                    => "socal#download_posts"                   , via: [:get, :post]
+    match "socal/topic_state"                       => "socal#topic_state"                      , via: [:get, :post]
+    match "socal/retrieve_popular_date"             => "socal#retrieve_popular_date"            , via: [:get, :post]
+
+
     match "hiveweb/get_all_topics_for_web"          => "hiveweb#get_all_topics_for_web"         , via: [:get, :post]
     match "hiveweb/get_all_posts_for_web"           => "hiveweb#get_all_posts_for_web"          , via: [:get, :post]
     match "hiveweb/create_post"                     => "hiveweb#create_post"                    , via: [:get, :post]
@@ -54,10 +64,10 @@ Rails.application.routes.draw do
     match "hiveweb/sign_up"                         => "hiveweb#sign_up"                        , via: [:get, :post]
 
 
-    match "hiveweb/get_topics_for_hive"                   => "hiveweb#get_topics_for_hive"      , via: [:get, :post]
-    match "hiveweb/get_topics_for_mealbox"                => "hiveweb#get_topics_for_mealbox"   , via: [:get, :post]
-    match "hiveweb/get_topics_for_car"                    => "hiveweb#get_topics_for_car"       , via: [:get, :post]
-    match "hiveweb/get_topics_by_tag"                    => "hiveweb#get_topics_by_tag"       , via: [:get, :post]
+    match "hiveweb/get_topics_for_hive"             => "hiveweb#get_topics_for_hive"            , via: [:get, :post]
+    match "hiveweb/get_topics_for_mealbox"          => "hiveweb#get_topics_for_mealbox"         , via: [:get, :post]
+    match "hiveweb/get_topics_for_car"              => "hiveweb#get_topics_for_car"             , via: [:get, :post]
+    match "hiveweb/get_topics_by_tag"               => "hiveweb#get_topics_by_tag"              , via: [:get, :post]
 
 
     match "downloaddata/initial_retrieve"           => "downloaddata#initial_retrieve"          , via: [:get, :post]
@@ -145,58 +155,4 @@ Rails.application.routes.draw do
     match "topics/get_topic_by_image"               => "topics#topic_by_image"                  , via: [:get, :post]
   end
 
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
-
-  # You can have the root of your site routed with "root"
-  # root 'welcome#index'
-
-  # Example of regular route:
-  #   get 'products/:id' => 'catalog#view'
-
-  # Example of named route that can be invoked with purchase_url(id: product.id)
-  #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
-
-  # Example resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
-
-  # Example resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
-
-  # Example resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
-
-  # Example resource route with more complex sub-resources:
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', on: :collection
-  #     end
-  #   end
-
-  # Example resource route with concerns:
-  #   concern :toggleable dcco
-  #     post 'toggle'
-  #   end
-  #   resources :posts, concerns: :toggleable
-  #   resources :photos, concerns: :toggleable
-
-  # Example resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
 end

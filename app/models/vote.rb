@@ -1,3 +1,4 @@
+require 'value_enums'
 class Vote < ActiveRecord::Base
   belongs_to :topic
   belongs_to :user

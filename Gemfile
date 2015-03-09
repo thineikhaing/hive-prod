@@ -41,17 +41,7 @@ gem 'browser'                     , '~> 0.5.0' # Do some browser detection with 
 gem 'clockwork'                   , :git => "https://github.com/tomykaira/clockwork.git"
 gem 'aws-sdk'
 gem 'jquery-minicolors-rails'
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
-
-# Use unicorn as the app server
-# gem 'unicorn'
-
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
-
-# Use debugger
-# gem 'debugger', group: [:development, :test]
+gem 'rqrcode_png'           , '~> 0.1.2'
 
 group :assets do
   gem 'sass-rails'                , '>= 4.0.3' # Sass adapter for the Rails asset pipeline.

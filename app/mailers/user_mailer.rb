@@ -35,4 +35,50 @@ class UserMailer < ActionMailer::Base
     mail(:to => receiver.email, :subject => "Report for offensive post")
   end
 
+  def send_invitation(contact, pub_inv_code, inv_code, title, count)
+    @invitation_code = pub_inv_code
+    @title = title
+
+    topic = Topic.find_by_invitation_code(pub_inv_code)
+    @creator_name = topic.creator_name
+
+    emails = ""
+
+    user = User.find_or_create_by_email(contact[:email])
+    user.username = contact[:name]
+    user.save!
+
+    count_str = count.to_s
+
+    while count_str.length < 4
+      count_str = "0" << count_str
+    end
+
+    @personal_invitation_code = inv_code.to_s
+    @personal_invitation_code = @personal_invitation_code[0..15] + count_str  + @personal_invitation_code[16..17]
+
+    Invitee.create!(user_id: user.id, topic_id: topic.id, invitation_code: @personal_invitation_code)
+    @user = user
+
+    pub_img = Topic.find_by_invitation_code(pub_inv_code).qr_code
+
+    qr = RQRCode::QRCode.new("#{ActionMailer::Base.default_url_options[:host]}/use_invitation?i_code=#{@personal_invitation_code}", size: 14)
+    png = qr.to_img
+    img = png.resize(400,400).save("public/personalized_qr_code.png")
+
+    attachments.inline["pub_qrcode"] = {
+        :content => File.read(File.open(pub_img).path),
+        :mime_type => "image/png",
+        :encoding => "base64"
+    }
+
+    attachments.inline["qrcode"] = {
+        :content => File.read(File.open(img).path),
+        :mime_type => "image/png",
+        :encoding => "base64"
+    }
+
+    mail(:to => contact[:email], :subject => "You have been invited to #{@title}")
+  end
+
 end
