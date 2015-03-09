@@ -22,8 +22,8 @@ class Api::SocalController < ApplicationController
       inv_code = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
       inv_code = inv_code.data["invitation_code"]
 
-      mail = UserMailer.delay.send_invitation({ name: temp[0], email: temp[1] }, params[:invitation_code], inv_code, params[:event_name], index+1)
-      mail.deliver
+      #mail = UserMailer.delay.send_invitation({ name: temp[0], email: temp[1] }, params[:invitation_code], inv_code, params[:event_name], index+1)
+      #mail.deliver
     end
 
     if topic.valid?
@@ -142,6 +142,7 @@ class Api::SocalController < ApplicationController
 
   def retrieve_popular_date
     topic = Topic.where("data -> 'invitation_code' =? ", params[:invitation_code]).take
+
     suggesteddates = topic.suggesteddates
     summary = []
     fav_date = ""

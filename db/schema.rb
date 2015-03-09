@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150306082709) do
+ActiveRecord::Schema.define(version: 20150309090304) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -114,6 +114,14 @@ ActiveRecord::Schema.define(version: 20150306082709) do
     t.string   "icon_url"
     t.string   "theme_color", default: "#451734"
     t.integer  "devuser_id",                      null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "invitees", force: true do |t|
+    t.string   "invitation_code"
+    t.integer  "topic_id"
+    t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
