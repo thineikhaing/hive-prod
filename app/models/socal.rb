@@ -2,10 +2,18 @@ require 'value_enums'
 
 class Socal
 
-  def create_event (event_name,invitation_code,latitude,longitude,place_name,address,description,datetime,creator)
-    user = User.find_or_create_by_email(creator[:email])
-    user.username = creator[:name]
+  def create_event (event_name,invitation_code,latitude,longitude,place_name,address,description,datetime,email, name)
+
+    user = User.find_by_email(email)
+    if user.nil?
+      user = User.new
+      user.email = email
+    else
+      user.username = name
+    end
+    user.password = '12345678'
     user.save!
+
 
     appAdditionalField = AppAdditionalField.where(:app_id => 4, :table_name => "Topic")
     result = Hash.new
@@ -27,7 +35,7 @@ class Socal
     if datetime.present?
       temp_array = datetime.split(",")
       temp_array.each do |dt|
-        Suggesteddate.create(topic_id: topic.id, suggested_datetime: dt, invitation_code: topic.invitation_code)
+        Suggesteddate.create(topic_id: topic.id, suggested_datetime: dt, invitation_code: topic.data["invitation_code"])
       end
     end
 

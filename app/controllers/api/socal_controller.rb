@@ -11,7 +11,8 @@ class Api::SocalController < ApplicationController
     params[:address],
     params[:description],
     params[:datetime],
-    {email: params[:email], name: params[:name]})
+    params[:email],
+    params[:name])
 
     invitee_list = params[:invitees].split("{")
 
@@ -38,9 +39,9 @@ class Api::SocalController < ApplicationController
   end
 
   def retrieve_event
-    p_invite_code = params[:invitation_code]
+    p_invite_code = params[:invitation_code].to_s
 
-    if p_invite_code.length = 22
+    if p_invite_code.length == 22
 
       #personalized code
       n_invite_code = "" + p_invite_code
@@ -105,7 +106,7 @@ class Api::SocalController < ApplicationController
     data={
         id: post.id,
         content: post.content,
-        invitation_code: topic.invitation_code,
+        invitation_code: topic.data["]invitation_code"],
         username: user.username,
         created_at: post.created_at
     }
@@ -142,11 +143,9 @@ class Api::SocalController < ApplicationController
 
   def retrieve_popular_date
     topic = Topic.where("data -> 'invitation_code' =? ", params[:invitation_code]).take
-
     suggesteddates = topic.suggesteddates
     summary = []
     fav_date = ""
-
     yes = 0
     no = 0
     maybe = 0
@@ -164,8 +163,7 @@ class Api::SocalController < ApplicationController
             end
           end
         end
-
-        summary.push(suggesteddate_id: sd.id, date: sd.suggested_datetime, yes: yes, no: no, maybe: maybe, favourite: false)
+      summary.push(suggesteddate_id: sd.id, date: sd.suggested_datetime, yes: yes, no: no, maybe: maybe, favourite: false)
       end
       yes = 0
       no = 0

@@ -756,16 +756,16 @@ class Topic < ActiveRecord::Base
 
     data = {
         title: self.title,
-        latitude: self.latitude,
-        longitude: self.longitude,
-        address: self.address,
-        place_name: self.place_name,
-        description: self.content,
+        latitude: self.data["latitude"],
+        longitude: self.data["longitude"],
+        address: self.data["address"],
+        place_name: self.data["place_name"],
+        description: self.data["content"],
         datetime: datetime,
-        invitation_code: self.invitation_code,
-        creator_name: self.creator_name,
-        creator_email: self.creator_email,
-        confirm_state: self.confirm_state,
+        invitation_code: self.data["invitation_code"],
+        #creator_name: self.creator_name,
+        #creator_email: self.creator_email,
+        confirm_state: self.data["confirm_state"],
         confirmed_date: confirmed_event_date
     }
   end
@@ -795,27 +795,80 @@ class Topic < ActiveRecord::Base
 
     confirmed_event_date = nil
 
-    if (self.confirmed_date != 0)
+    p "confirmed date"
+    p self.data["confirmed_date"]
 
-      confirmed_event_date = Suggesteddate.find(self.confirmed_date).suggested_datetime
+    if (self.data["confirmed_date"] != "")
+
+      confirmed_event_date = Suggesteddate.find(self.data["confirmed_date"]).suggested_datetime
 
     end
     data = {
         title: self.title,
-        latitude: self.latitude,
-        longitude: self.longitude,
-        address: self.address,
-        place_name: self.place_name,
-        description: self.content,
+        latitude: self.data["latitude"],
+        longitude: self.data["longitude"],
+        address: self.data["address"],
+        place_name: self.data["place_name"],
+        description: self.data["content"],
         datetime: datetime,
-        invitation_code: self.invitation_code,
-        creator_name: self.creator_name,
-        creator_email: self.creator_email,
-        confirm_state: self.confirm_state,
+        invitation_code: self.data["invitation_code"],
+        #creator_name: self.creator_name,
+        #creator_email: self.creator_email,
+        confirm_state: self.data["confirm_state"],
         confirmed_date: confirmed_event_date
     }
 
-    Pusher["#{self.invitation_code}_channel"].trigger_async("broadcast_event", data)
+    Pusher["#{self.data["invitation_code"]}_channel"].trigger_async("broadcast_event", data)
+  end
+
+
+  # *********** Socal ************
+
+  def retrieve_data
+    datetime = [ ]
+    vote_maybe = 0
+    vote_yes = 0
+    vote_no = 0
+
+    self.suggesteddates.each do |sd|
+      votes = sd.votes
+
+      votes.each do |v|
+        if v.vote == Vote::MAYBE
+          vote_maybe = vote_maybe + 1
+        elsif v.vote == Vote::YES
+          vote_yes = vote_yes + 1
+        elsif v.vote == Vote::NO
+          vote_no = vote_no + 1
+        end
+      end
+
+      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no })
+
+      vote_maybe = 0
+      vote_yes = 0
+      vote_no = 0
+    end
+
+    confirmed_event_date = nil
+    if (self.data["confirmed_date"] != nil)
+      confirmed_event_date = Suggesteddate.find(self.data["confirmed_date"]).suggested_datetime
+    end
+
+    data = {
+        title: self.title,
+        latitude: self.data["latitude"],
+        longitude: self.data["longitude"],
+        address: self.data["address"],
+        place_name: self.data["place_name"],
+        description: self.data["content"],
+        datetime: datetime,
+        invitation_code: self.data["invitation_code"],
+        #creator_name: self.creator_name,
+        #creator_email: self.creator_email,
+        confirm_state: self.data["confirm_state"],
+        confirmed_date: confirmed_event_date
+    }
   end
 
   handle_asynchronously :topic_image_upload_job
