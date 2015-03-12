@@ -1,31 +1,29 @@
 class Api::SocalController < ApplicationController
 
   def create_event
+    data = getHashValuefromString(params[:data]) if params[:data].present?
+
     invitee_array = []
     topic = Socal.new
-    topic = topic.create_event(params[:event_name],
-    params[:invitation_code],
-    params[:latitude],
-    params[:longitude],
-    params[:place_name],
-    params[:address],
-    params[:description],
-    params[:datetime],
-    params[:email],
-    params[:name])
-
-    invitee_list = params[:invitees].split("{")
-
-    invitee_list.each_with_index do |i, index|
-      temp = i.split(",")
-      invitee_array.push({name: temp[0], email: temp[1]})
-
-      inv_code = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
-      inv_code = inv_code.data["invitation_code"]
-
-      #mail = UserMailer.delay.send_invitation({ name: temp[0], email: temp[1] }, params[:invitation_code], inv_code, params[:event_name], index+1)
-      #mail.deliver
-    end
+    topic = topic.create_event(
+        params[:event_name],
+        params[:datetime],
+        params[:email],
+        params[:name],
+        data)
+    #
+    #invitee_list = params[:invitees].split("{")
+    #
+    #invitee_list.each_with_index do |i, index|
+    #  temp = i.split(",")
+    #  invitee_array.push({name: temp[0], email: temp[1]})
+    #
+    #  inv_code = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
+    #  inv_code = inv_code.data["invitation_code"]
+    #
+    #  mail = UserMailer.delay.send_invitation({ name: temp[0], email: temp[1] }, params[:invitation_code], inv_code, params[:event_name], index+1)
+    #  mail.deliver
+    #end
 
     if topic.valid?
       render json: {status: true}
