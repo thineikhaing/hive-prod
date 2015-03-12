@@ -4,13 +4,16 @@ class Api::SocalController < ApplicationController
     data = getHashValuefromString(params[:data]) if params[:data].present?
 
     invitee_array = []
+
+    hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+
     topic = Socal.new
     topic = topic.create_event(
         params[:event_name],
         params[:datetime],
         params[:email],
         params[:name],
-        data)
+        data, hiveapplication.id)
     #
     #invitee_list = params[:invitees].split("{")
     #

@@ -2,7 +2,7 @@ require 'value_enums'
 
 class Socal
 
-  def create_event (event_name,datetime,email, name,data)
+  def create_event (event_name,datetime,email, name,data,app_id)
 
     user = User.find_by_email(email)
     if user.nil?
@@ -16,7 +16,7 @@ class Socal
 
 
     #get all extra columns that define in app setting
-    appAdditionalField = AppAdditionalField.where(:app_id => 4, :table_name => "Topic")
+    appAdditionalField = AppAdditionalField.where(:app_id => app_id, :table_name => "Topic")
     if appAdditionalField.present?
       defined_Fields = Hash.new
       appAdditionalField.each do |field|
@@ -34,7 +34,7 @@ class Socal
       end
     end
 
-    topic = Topic.create(title: event_name, data: result,user_id: user.id,hiveapplication_id: 4)
+    topic = Topic.create(title: event_name, data: result,user_id: user.id,hiveapplication_id: app_id)
 
     if datetime.present?
       temp_array = datetime.split(",")
