@@ -14,7 +14,7 @@ class Api::SocalController < ApplicationController
         params[:email],
         params[:name],
         data, hiveapplication.id)
-    #
+
     #invitee_list = params[:invitees].split("{")
     #
     #invitee_list.each_with_index do |i, index|
