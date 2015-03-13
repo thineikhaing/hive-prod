@@ -28,8 +28,11 @@ class Api::SocalController < ApplicationController
     #  mail.deliver
     #end
 
+    user = User.find(topic.user_id)
+    first_sug = Suggesteddate.find_by_topic_id(topic.id)
+    suggesteddates = Suggesteddate.where(topic_id: topic.id)
     if topic.valid?
-      render json: {status: true}
+      render json: {status: true, topic: topic, user: user,first_sug:first_sug, suggesteddates: suggesteddates}
     else
       render json: {status: false}
     end
