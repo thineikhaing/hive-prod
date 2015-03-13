@@ -39,7 +39,7 @@ class Socal
     if datetime.present?
       temp_array = datetime.split(",")
       temp_array.each do |dt|
-        Suggesteddate.create(topic_id: topic.id, suggested_datetime: dt, invitation_code: topic.data["invitation_code"])
+        Suggesteddate.create(topic_id: topic.id, user_id: user.id,suggested_datetime: dt, invitation_code: topic.data["invitation_code"])
       end
     end
 

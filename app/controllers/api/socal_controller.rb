@@ -82,6 +82,7 @@ class Api::SocalController < ApplicationController
 
   def vote_date
     temp_votes = params[:votes].split("{")
+
     user = User.find_by_email(params[:email])
     temp_votes.each do |v|
       v_array = v.split(",")
@@ -100,6 +101,9 @@ class Api::SocalController < ApplicationController
     topic.broadcast_event
 
     render json:{status: true}
+
+    sug_id = params[:id]
+
   end
 
   def create_post
