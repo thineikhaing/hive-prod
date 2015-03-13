@@ -66,16 +66,16 @@ class Api::SocalController < ApplicationController
         votes = Vote.where(user_id: p_user.id, topic_id: p_topic.id)
 
         if votes.present?
-          render json: { topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_states: 1 }
+          render json: {status: 'host', topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_states: 1 }
         else
-          render json: { topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_state: 0 }
+          render json: { status: 'host', topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_state: 0 }
         end
 
       end
     else
       #normal code
       p_topic = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
-      render json: { topic: p_topic.retrieve_data }
+      render json: { status: 'invitee',topic: p_topic.retrieve_data }
     end
 
   end

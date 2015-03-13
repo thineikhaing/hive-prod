@@ -855,7 +855,10 @@ class Topic < ActiveRecord::Base
       confirmed_event_date = Suggesteddate.find(self.data["confirmed_date"]).suggested_datetime
     end
 
+    user = User.find(self.user_id)
+
     data = {
+        host: user.username,
         title: self.title,
         latitude: self.data["latitude"],
         longitude: self.data["longitude"],
