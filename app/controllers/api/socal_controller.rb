@@ -57,7 +57,7 @@ class Api::SocalController < ApplicationController
         p_topic = Topic.where("data -> 'invitation_code' = ? ", n_invite_code).take
         p_creator = User.find(p_topic.user_id)
 
-        render json:{topic: p_topic.retrieve_socaldata, invitee_name: p_creator.username, invitee_email: p_creator.email }
+        render json:{status: 'host', topic: p_topic.retrieve_data, invitee_name: p_creator.username, invitee_email: p_creator.email }
 
       else
         p_invitee = Invitee.find_by_invitation_code(p_invite_code)

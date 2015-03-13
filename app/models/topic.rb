@@ -750,8 +750,9 @@ class Topic < ActiveRecord::Base
     end
 
     confirmed_event_date = nil
-    if (self.confirmed_date != 0)
-      confirmed_event_date = Suggesteddate.find(self.confirmed_date).suggested_datetime
+
+    if (self.data["confirmed_date"] != nil)
+      confirmed_event_date = Suggesteddate.find(self.data["confirmed_date"]).suggested_datetime
     end
 
     data = {
