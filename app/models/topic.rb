@@ -771,7 +771,7 @@ class Topic < ActiveRecord::Base
   end
 
 
-  def broadcast_event
+  def broadcast_event(confirm_date)
     vote_maybe = 0
     vote_yes = 0
     vote_no = 0
@@ -800,7 +800,7 @@ class Topic < ActiveRecord::Base
 
     if (self.data["confirmed_date"] != "")
 
-      confirmed_event_date = Suggesteddate.find(self.data["confirmed_date"]).suggested_datetime
+      confirmed_event_date = Suggesteddate.find(confirm_date).suggested_datetime
 
     end
     data = {

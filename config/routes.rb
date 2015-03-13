@@ -52,7 +52,7 @@ Rails.application.routes.draw do
     match "socal/download_posts"                    => "socal#download_posts"                   , via: [:get, :post]
     match "socal/topic_state"                       => "socal#topic_state"                      , via: [:get, :post]
     match "socal/retrieve_popular_date"             => "socal#retrieve_popular_date"            , via: [:get, :post]
-
+    match "socal/vote_date"                         => "socal#vote_date"                        , via: [:get, :post]
 
     match "hiveweb/get_all_topics_for_web"          => "hiveweb#get_all_topics_for_web"         , via: [:get, :post]
     match "hiveweb/get_all_posts_for_web"           => "hiveweb#get_all_posts_for_web"          , via: [:get, :post]

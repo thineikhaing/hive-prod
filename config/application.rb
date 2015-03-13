@@ -93,7 +93,7 @@ module Favr_key
 end
 
 module Socal_key
-  Development_Key = "dd38aff2963566af582e8d59d65aff16"
+  Development_Key = "98f1e96b8db2275c5b69164048be89b7"
   Staging_Key = "93dc338faf53138be3b10da1338461a0"
   Production_Key = "89433f46a2f596f3f1c8259e8f262c3e"
 end

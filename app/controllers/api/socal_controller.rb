@@ -81,28 +81,37 @@ class Api::SocalController < ApplicationController
   end
 
   def vote_date
-    temp_votes = params[:votes].split("{")
+    confirm_date = params[:id]
+    invitee_email = params[:invitee_email]
 
-    user = User.find_by_email(params[:email])
-    temp_votes.each do |v|
-      v_array = v.split(",")
-      suggesteddate  = Suggesteddate.find(v_array[0])
-      vote = Vote.find_by_topic_id_and_suggesteddate_id_and_user_id(suggesteddate.topic_id, suggesteddate.id,user.id)
+    suggesteddate = Suggesteddate.find(confirm_date)
+    suggesteddate.vote +=1
+    suggesteddate.save!
 
-      if vote.present?
-        vote.vote = v_array[1]
-        vote.save!
-      else
-        Vote.create(topic_id: suggesteddate.topic_id, selected_datetime: suggesteddate.suggested_datetime, suggesteddate_id: suggesteddate.id, vote: v_array[1], user_id: user.id)
+    user = User.find(suggesteddate.user_id)
+
+    vote = Vote.find_by_topic_id_and_suggesteddate_id_and_user_id(suggesteddate.topic_id, suggesteddate.id, user.id)
+    if vote.present?
+      vote.vote = Vote::YES
+      vote.save!
+    else
+      Vote.create(topic_id: suggesteddate.topic_id, selected_datetime: suggesteddate.suggested_datetime, suggesteddate_id: suggesteddate.id, vote: Vote::YES, user_id: user.id)
+    end
+
+    if !invitee_email.nil?
+      t_inv = TopicInvitees.where(topic_id: suggesteddate.topic_id, invitee_email: invitee_email)
+      if t_inv.count == 0
+        t_inv = TopicInvitees.new
+        t_inv.topic_id = suggesteddate.topic_id
+        t_inv.invitee_email = invitee_email
+        t_inv.save!
       end
     end
 
-    topic = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
-    topic.broadcast_event
+    topic = Topic.find(suggesteddate.topic_id)
+    topic.broadcast_event(confirm_date)
 
     render json:{status: true}
-
-    sug_id = params[:id]
 
   end
 
