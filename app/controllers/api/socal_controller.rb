@@ -220,7 +220,7 @@ class Api::SocalController < ApplicationController
   def get_suggesteddates
     sug = Suggesteddate.where(topic_id: params[:topic]).order(:suggested_datetime)
     topic = Topic.find(params[:topic])
-    render json:{status: 'ok', suggesteddats: sug, topic: topic}
+    render json:{status: 'ok', suggesteddats: sug, topic: topic.retrieve_data}
   end
 
   def confirm_dates
@@ -258,6 +258,23 @@ class Api::SocalController < ApplicationController
       render json: {status: 'update'}
 
     end
+
+  end
+
+  def update_topic
+
+    topic = Topic.find(params[:update_id])
+    topic.title = params[:title]
+    topic.data["place_name"] = params[:place_name]
+    topic.data["latitude"] = params[:latitude]
+    topic.data["longitude"] = params[:longitude]
+    topic.save
+
+    sug = Suggesteddate.where(topic_id: params[:update_id])
+    first_sug = Suggesteddate.find_by_topic_id(topic.id)
+    invitees = TopicInvitees.where(topic_id: params[:update_id])
+
+    render json: {status: 'update_topic', topic: topic.retrieve_data, suggesteddates: sug,invitees: invitees,first_sug: first_sug}
 
   end
 

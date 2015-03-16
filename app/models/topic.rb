@@ -754,6 +754,7 @@ class Topic < ActiveRecord::Base
     if (self.data["confirmed_date"] != nil)
       confirmed_event_date = Suggesteddate.find(self.data["confirmed_date"]).suggested_datetime
     end
+    user = User.find(self.user_id)
 
     data = {
         topic_id: self.id,
@@ -765,8 +766,8 @@ class Topic < ActiveRecord::Base
         description: self.data["content"],
         datetime: datetime,
         invitation_code: self.data["invitation_code"],
-        #creator_name: self.creator_name,
-        #creator_email: self.creator_email,
+        creator_name: user.username,
+        creator_email: user.email,
         confirm_state: self.data["confirm_state"],
         confirmed_date: confirmed_event_date
     }
@@ -805,6 +806,7 @@ class Topic < ActiveRecord::Base
       confirmed_event_date = Suggesteddate.find(confirm_date).suggested_datetime
 
     end
+    user = User.find(self.user_id)
     data = {
         topic_id: self.id,
         title: self.title,
@@ -815,8 +817,8 @@ class Topic < ActiveRecord::Base
         description: self.data["content"],
         datetime: datetime,
         invitation_code: self.data["invitation_code"],
-        #creator_name: self.creator_name,
-        #creator_email: self.creator_email,
+        creator_name: user.username,
+        creator_email: user.email,
         confirm_state: self.data["confirm_state"],
         confirmed_date: confirmed_event_date
     }
@@ -871,8 +873,8 @@ class Topic < ActiveRecord::Base
         description: self.data["content"],
         datetime: datetime,
         invitation_code: self.data["invitation_code"],
-        #creator_name: self.creator_name,
-        #creator_email: self.creator_email,
+        creator_name: user.username,
+        creator_email: user.email,
         confirm_state: self.data["confirm_state"],
         confirmed_date: confirmed_event_date
     }
