@@ -55,6 +55,7 @@ Rails.application.routes.draw do
     match "socal/vote_date"                         => "socal#vote_date"                        , via: [:get, :post]
     match "socal/get_suggesteddates"                => "socal#get_suggesteddates"               , via: [:get, :post]
     match "socal/confirm_dates"                     => "socal#confirm_dates"                    , via: [:get, :post]
+    match "socal/mvc_suggesteddate"                 => "socal#mvc_suggesteddate"             , via: [:get, :post]
 
 
     match "hiveweb/get_all_topics_for_web"          => "hiveweb#get_all_topics_for_web"         , via: [:get, :post]

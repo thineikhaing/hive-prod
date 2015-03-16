@@ -234,8 +234,30 @@ class Api::SocalController < ApplicationController
     Suggesteddate.where(topic_id: topic, admin_confirm: false).delete_all
 
     status ='ok'
-
     render json: {status: status}
+
+  end
+
+  def mvc_suggesteddate
+
+    if params[:delete_id]
+      Suggesteddate.find(params[:delete_id]).destroy rescue ActiveRecord::RecordNotFound
+      render json: {status: 'delete'}
+    end
+
+    if params[:update_id]
+
+      updatesug = Suggesteddate.find(params[:update_id])
+
+      c_date = params[:rawdate] +" " + params[:time] + "+800"
+      strdate = Time.parse(c_date).to_s
+      str_date_array = strdate.split(" ")
+      strdate = str_date_array[0] + "T" + str_date_array[1] + str_date_array[2]
+      updatesug.suggested_datetime  = strdate
+      updatesug.save
+      render json: {status: 'update'}
+
+    end
 
   end
 
