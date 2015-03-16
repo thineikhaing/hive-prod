@@ -742,7 +742,7 @@ class Topic < ActiveRecord::Base
         end
       end
 
-      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no })
+      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no, vote: sd.vote })
 
       vote_maybe = 0
       vote_yes = 0
@@ -756,6 +756,7 @@ class Topic < ActiveRecord::Base
     end
 
     data = {
+        topic_id: self.id,
         title: self.title,
         latitude: self.data["latitude"],
         longitude: self.data["longitude"],
@@ -791,7 +792,7 @@ class Topic < ActiveRecord::Base
         end
       end
 
-      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no })
+      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no, vote: sd.vote })
     end
 
     confirmed_event_date = nil
@@ -805,6 +806,7 @@ class Topic < ActiveRecord::Base
 
     end
     data = {
+        topic_id: self.id,
         title: self.title,
         latitude: self.data["latitude"],
         longitude: self.data["longitude"],
@@ -844,7 +846,7 @@ class Topic < ActiveRecord::Base
         end
       end
 
-      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no })
+      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no , vote: sd.vote })
 
       vote_maybe = 0
       vote_yes = 0
@@ -859,6 +861,7 @@ class Topic < ActiveRecord::Base
     user = User.find(self.user_id)
 
     data = {
+        topic_id: self.id,
         host: user.username,
         title: self.title,
         latitude: self.data["latitude"],

@@ -217,4 +217,26 @@ class Api::SocalController < ApplicationController
 
   end
 
+  def get_suggesteddates
+    sug = Suggesteddate.where(topic_id: params[:topic]).order(:suggested_datetime)
+    topic = Topic.find(params[:topic])
+    render json:{status: 'ok', suggesteddats: sug, topic: topic}
+  end
+
+  def confirm_dates
+
+    id =  params[:sug_id]
+    topic = params[:topic]
+    sug = Suggesteddate.where(id: id, topic_id: topic).take
+    sug.admin_confirm = true
+    sug.save
+
+    Suggesteddate.where(topic_id: topic, admin_confirm: false).delete_all
+
+    status ='ok'
+
+    render json: {status: status}
+
+  end
+
 end
