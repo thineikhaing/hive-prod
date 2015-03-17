@@ -59,6 +59,19 @@ class HiveApplication < ActiveRecord::Base
       return false
     end
   end
+
+  def self.is_a_valid_password(pass)
+    # Check the number of '@' signs.
+    if pass.length < 8 then
+      return false
+      # check the pass has one number
+    elsif pass =~/\d/ then
+      return true
+    else
+      return false
+    end
+  end
+
 end
 
 
