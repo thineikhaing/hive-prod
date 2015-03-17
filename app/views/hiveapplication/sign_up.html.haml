@@ -8,28 +8,36 @@
       %fieldset
         = f.label :username, "PLEASE CHOOSE A DEVELOPER ID"
         %br
-        = f.text_field :username, autofocus: true, required:true, value: @username
-      #error
+        = f.text_field :username, autofocus: true, value: @username , onchange: 'validate_username(this)'
+      #usererror.error
         =@err_username rescue ''
-      -if @err_username.nil?  && @submit == true
+      #userTick
+        ✔
+      -if @err_username.nil?  && @submit == true  && @username != ''
         .tick
           ✔
       %br
+
+
       %fieldset
         = f.label :email, "PLEASE ENTER YOUR EMAIL ADDRESS"
         %br
-        = f.email_field :email, required:true , value: @email
-      #error
+        = f.email_field :email, value: @email  , onchange: 'validate_email(this)'
+      #emailerror.error
         =@err_email rescue ''
+      #emailTick
+        ✔
       -if @err_email.nil? && @err_confirmEmail.nil? && @submit == true
         .tick
           ✔
       %br
+
+
       %fieldset
         = f.label :confirm_email, "CONFIRM YOUR EMAIL ADDRESS"
         %br
-        = f.email_field :confirm_email, required:true , value: @confirm_email
-      #error
+        = f.email_field :confirm_email, value: @confirm_email , onchange: 'submit_onOff()'
+      #confirmerror.error
         =@err_confirmEmail rescue ''
       -if @err_email.nil? && @err_confirmEmail.nil? && @submit == true
         .tick
@@ -38,8 +46,8 @@
       %fieldset
         = f.label :password, "PASSWORD [MIN 8 CHARACTERS INCLUDING A NUMBER]"
         %br
-        = f.password_field :password, autocomplete: "off",required:true  , value: @password
-      #error
+        = f.password_field :password, autocomplete: "off", value: @password , onchange: 'submit_onOff()'
+      #passerror.error
         =@err_password rescue ''
       -if @err_password.nil? && @err_confirmPassword.nil? && @submit == true
         .tick
@@ -48,25 +56,55 @@
       %fieldset
         = f.label :confirm_password, "CONFIRM YOUR PASSWORD"
         %br
-        = f.password_field :confirm_password, autocomplete: "off",required:true , value: @confirm_password
-      #error
+        = f.password_field :confirm_password, autocomplete: "off", value: @confirm_password , onchange: 'submit_onOff()'
+      #passconfirmerror.error
         =@err_confirmPassword rescue ''
       -if @err_password.nil? && @err_confirmPassword.nil? && @submit == true
         .tick
           ✔
       %br
       =link_to 'Cancel', hiveapplication_index_path , class: 'button'
-
       = f.submit "OK" , id: 'submit'
 
-    = flash.now[:notice]
 
 :javascript
   $("form").on("change", function (e) {
-    console.log('change');
-    $('form').submit();
-
   });
 
+  function validate_username(obj){
+    var username = $(obj).val();
+    $.ajax({
+      url: "/sign_up",
+      data:{username: username}
+    }).done(function(html) {
+       console.log(gon.err_username);
+
+       if (gon.flag === true){
+          $("#userTick").show();
+       }else{
+        $("#usererror").html(gon.err_username);
+       }
+
+    })
+  }
+
+  function validate_email(obj){
+    var email = $(obj).val();
+    $.ajax({
+      url: "/sign_up",
+      data:{email: email}
+    }).done(function(html) {
+       console.log(gon.err_email);
+
+       if (gon.emailflag == false){
+          $("#emailerror").html(gon.err_email);
+
+       }else{
+        $("#emailTick").show();
+        $("#emailerror").html('');
+       }
+
+    })
+  }
 
 

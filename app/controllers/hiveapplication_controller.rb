@@ -99,55 +99,100 @@ class HiveapplicationController < ApplicationController
     end
   end
 
+  def verify_signup
+
+  end
+
   def sign_up
+    @flag = true
+
+    if !params[:username].nil?
+      username = Devuser.find_by_username(params[:username])
+
+      if username.present?
+        p gon.err_username = "THIS ID IS NOT AVAILABLE"
+        p gon.flag = false
+      else
+        p gon.flag = true
+      end
+
+    end
+
+    if !params[:email].nil?
+      email = Devuser.find_by_email(params[:email])
+      p gon.emailflag = true
+
+      if HiveApplication.is_a_valid_email(params[:email]) == false
+        p "+++++++"
+        p gon.err_email = "PLEASE ENTER A VALID EMAIL ADDRESS"
+        p gon.emailflag = false
+        @err_email = "PLEASE ENTER A VALID EMAIL ADDRESS"
+        @emailflag = false
+      end
+
+      if email.present?
+        p gon.err_email = "EMAIL ALREADY EXISTS"
+        p gon.emailflag = false
+
+        @err_email = "EMAIL ALREADY EXISTS"
+        @emailflag = false
+      end
+
+    end
+
+
+
     if params[:sign_up].present?
       @submit = true
       # Check if email exists
       dev_user = Devuser.find_by_email(params[:sign_up][:email])
       dev_username = Devuser.find_by_username(params[:sign_up][:username])
-      flag = true
 
       # Verifications
       if dev_user.present?
         @err_email = "EMAIL ALREADY EXISTS"
-        flag = false
+        @flag = false
       elsif HiveApplication.is_a_valid_email(params[:sign_up][:email]) == false
         @err_email = "PLEASE ENTER A VALID EMAIL ADDRESS"
-        flag = false
+        @flag = false
       else
         @email = params[:sign_up][:email]
       end
 
       if params[:sign_up][:email]!= params[:sign_up][:confirm_email]
         @err_confirmEmail = "EMAIL DO NOT MATCH"
-        flag = false
+        @flag = false
       else
         @confirm_email = params[:sign_up][:confirm_email]
       end
 
       if params[:sign_up][:password]!= params[:sign_up][:confirm_password]
         @err_confirmPassword = "PASSWORDS DO NOT MATCH"
-        flag = false
+        @flag = false
       else
         @password = params[:sign_up][:password]
       end
 
       if HiveApplication.is_a_valid_password(params[:sign_up][:password])  == false
         @err_password = "PASSWORDS MUST BE AT LEAST A CHARACTERS LONG AND INCLUDE A NUMBER"
-        flag = false
+        @flag = false
       else
         @confirm_password = params[:sign_up][:confirm_password]
       end
 
       if dev_username.present?
-
         @err_username = "THIS ID IS NOT AVAILABLE"
-        flag = false
+        @flag = false
       else
         @username = params[:sign_up][:username]
       end
 
-      if flag ==  true
+      if @username == ''
+        @err_username = "THIS ID IS REQUIRED"
+        @flag = false
+      end
+
+      if @flag ==  true
         #generate verification code
         verification_code = HiveApplication.generate_verification_code
 

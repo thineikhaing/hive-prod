@@ -17,6 +17,9 @@ Rails.application.routes.draw do
   match "hiveapplication/edit_application"    , path: "edit_application"        , via: [:get, :post]
   match "hiveapplication/add_application"     , path: "add_application"         , via: [:get, :post]
   match "hiveapplication/sign_up"             , path: "sign_up"                 , via: [:get, :post]
+
+  match "hiveapplication/verify_signup"       , path: "verify_signup"           , via: [:get, :post]
+
   match "hiveapplication/forget_password"     , path: "forget_password"         , via: [:get, :post]
   match "hiveapplication/reset_password"      , path: "reset_password"          , via: [:get, :post]
   match "hiveapplication/update_password"     , path: "update_password"         , via: [:get, :post]
