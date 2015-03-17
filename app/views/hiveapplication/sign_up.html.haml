@@ -3,47 +3,70 @@
     %h3
       %strong SIGN UP FOR A HIVE DEVELOPER ACCOUNT
     %br
-    = form_for :sign_up, url: { controller: "hiveapplication", action: "sign_up" }, method: "post" do |f|
+    = form_for :sign_up, url: { controller: "hiveapplication", action: "sign_up" }, html: {id: "user_signup" } , method: "post" do |f|
+
       %fieldset
         = f.label :username, "PLEASE CHOOSE A DEVELOPER ID"
         %br
-        = f.text_field :username, autofocus: true, required:true
-        #error
-          =@err_username rescue ''
+        = f.text_field :username, autofocus: true, required:true, value: @username
+      #error
+        =@err_username rescue ''
+      -if @err_username.nil?  && @submit == true
+        .tick
+          ✔
       %br
       %fieldset
         = f.label :email, "PLEASE ENTER YOUR EMAIL ADDRESS"
         %br
-        = f.email_field :email, required:true
-        #error
-          =@err_email rescue ''
+        = f.email_field :email, required:true , value: @email
+      #error
+        =@err_email rescue ''
+      -if @err_email.nil? && @err_confirmEmail.nil? && @submit == true
+        .tick
+          ✔
       %br
       %fieldset
         = f.label :confirm_email, "CONFIRM YOUR EMAIL ADDRESS"
         %br
-        = f.email_field :confirm_email, required:true
-        #error
-          =@err_confirmEmail rescue ''
+        = f.email_field :confirm_email, required:true , value: @confirm_email
+      #error
+        =@err_confirmEmail rescue ''
+      -if @err_email.nil? && @err_confirmEmail.nil? && @submit == true
+        .tick
+          ✔
       %br
       %fieldset
         = f.label :password, "PASSWORD [MIN 8 CHARACTERS INCLUDING A NUMBER]"
         %br
-        = f.password_field :password, autocomplete: "off",required:true
-        #error
-          =@err_password rescue ''
+        = f.password_field :password, autocomplete: "off",required:true  , value: @password
+      #error
+        =@err_password rescue ''
+      -if @err_password.nil? && @err_confirmPassword.nil? && @submit == true
+        .tick
+          ✔
       %br
       %fieldset
         = f.label :confirm_password, "CONFIRM YOUR PASSWORD"
         %br
-        = f.password_field :confirm_password, autocomplete: "off",required:true
-        #error
-          =@err_confirmPassword rescue ''
+        = f.password_field :confirm_password, autocomplete: "off",required:true , value: @confirm_password
+      #error
+        =@err_confirmPassword rescue ''
+      -if @err_password.nil? && @err_confirmPassword.nil? && @submit == true
+        .tick
+          ✔
       %br
       =link_to 'Cancel', hiveapplication_index_path , class: 'button'
+
       = f.submit "OK" , id: 'submit'
 
     = flash.now[:notice]
 
 :javascript
+  $("form").on("change", function (e) {
+    console.log('change');
+    $('form').submit();
+
+  });
+
 
 
