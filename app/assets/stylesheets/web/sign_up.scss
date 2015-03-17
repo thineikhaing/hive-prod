@@ -1,10 +1,45 @@
 #sign_up_form {
   height: 300px;
-  width:  500px;
+  width:  300px;
   margin: 0 auto;
-  margin-top: 200px;
-  background-color: black;
-  color: white;
+  margin-top: 100px;
+  color: #FF9B00;
   text-align: center;
-  font-size: 32px;
+  font-size: 16px;
+  font-family: Labrador-A-Light !important;
+  text-align: left;
+}
+
+#sign_up_form {
+
+  input{
+    height: 23px;
+    font-family: Labrador-A-Light;
+    font-size: 16px;
+    width: 300px;
+    color: #FF9B00;
+    border: 1px solid #FF9B00;
+  }
+
+  #submit{
+    background-color: #FF9B00;
+    color: white !important;
+    width: 138px !important;
+    float: right;
+  }
+
+}
+
+.button{
+  display: inline-block;
+  font-family: Labrador-A-Light;
+  height: 23px;
+  width: 138px !important;
+  font-size: 16px;
+  color: white !important;
+  text-align: center;
+  line-height: 26px;
+  background-color: #FF9B00;
+  text-decoration: none;
+
 }

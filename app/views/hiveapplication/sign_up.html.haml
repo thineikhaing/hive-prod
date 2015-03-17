@@ -1,21 +1,33 @@
 #sign_up_form
+  %h3 SIGN UP FOR A HIVE DEVELOPER ACCOUNT
+  %br
   = form_for :sign_up, url: { controller: "hiveapplication", action: "sign_up" }, method: "post" do |f|
     %fieldset
-      = f.label :username, "Name: "
+      = f.label :username, "PLEASE CHOOSE A DEVELOPER ID"
+      %br
       = f.text_field :username, autofocus: true, required:true
-
+    %br
     %fieldset
-      = f.label :email, "Email: "
+      = f.label :email, "PLEASE ENTER YOUR EMAIL ADDRESS"
+      %br
       = f.email_field :email, required:true
-
+    %br
     %fieldset
-      = f.label :password, "Password: "
+      = f.label :confirm_email, "CONFIRM YOUR EMAIL ADDRESS"
+      %br
+      = f.email_field :confirm_email, required:true
+    %br
+    %fieldset
+      = f.label :password, "PASSWORD [MIN 8 CHARACTERS INCLUDING A NUMBER]"
+      %br
       = f.password_field :password, autocomplete: "off",required:true
-
+    %br
     %fieldset
-      = f.label :confirm_password, "Confirm Password: "
+      = f.label :confirm_password, "CONFIRM YOUR PASSWORD"
+      %br
       = f.password_field :confirm_password, autocomplete: "off",required:true
-
-    = f.submit "Sign Up"
+    %br
+    =link_to 'Cancel', hiveapplication_index_path , class: 'button'
+    = f.submit "OK" , id: 'submit'
 
   = flash.now[:notice]
