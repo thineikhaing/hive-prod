@@ -110,35 +110,28 @@ class HiveapplicationController < ApplicationController
       username = Devuser.find_by_username(params[:username])
 
       if username.present?
-        p gon.err_username = "THIS ID IS NOT AVAILABLE"
-        p gon.flag = false
+        @err_username = "THIS ID IS NOT AVAILABLE"
+        @flag = false
       else
-        p gon.flag = true
+        p @username = params[:username]
+        p @err_username = ''
       end
 
     end
 
-    if !params[:email].nil?
-      email = Devuser.find_by_email(params[:email])
-      p gon.emailflag = true
-
-      if HiveApplication.is_a_valid_email(params[:email]) == false
-        p "+++++++"
-        p gon.err_email = "PLEASE ENTER A VALID EMAIL ADDRESS"
-        p gon.emailflag = false
-        @err_email = "PLEASE ENTER A VALID EMAIL ADDRESS"
-        @emailflag = false
-      end
-
-      if email.present?
-        p gon.err_email = "EMAIL ALREADY EXISTS"
-        p gon.emailflag = false
-
-        @err_email = "EMAIL ALREADY EXISTS"
-        @emailflag = false
-      end
-
-    end
+    #if !params[:email].nil?
+    #  email = Devuser.find_by_email(params[:email])
+    #  if email.present?
+    #    @err_email = "EMAIL ALREADY EXISTS"
+    #    @flag = false
+    #  elsif HiveApplication.is_a_valid_email(params[:email]) == false
+    #    @err_email = "PLEASE ENTER A VALID EMAIL ADDRESS"
+    #    @flag = false
+    #  else
+    #    @email = params[:email]
+    #  end
+    #
+    #end
 
 
 

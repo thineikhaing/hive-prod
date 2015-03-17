@@ -1,3 +1,4 @@
+= include_gon
 .sign_up
   #sign_up_form
     %h3
@@ -13,7 +14,8 @@
         =@err_username rescue ''
       #userTick
         ✔
-      -if @err_username.nil?  && @submit == true  && @username != ''
+
+      -if @err_username.nil? &&  @submit == true  &&  @username != ''
         .tick
           ✔
       %br
@@ -71,40 +73,47 @@
   $("form").on("change", function (e) {
   });
 
-  function validate_username(obj){
-    var username = $(obj).val();
-    $.ajax({
-      url: "/sign_up",
-      data:{username: username}
-    }).done(function(html) {
-       console.log(gon.err_username);
+  //function validate_username(obj){
+  //  var username = $(obj).val();
+  //  $.ajax({
+  //    data: {username: username},
+  //    url: '/sign_up',
+  //    cache: false,
+  //    success: function(html){
+  //
+  //      var htmlobject = $(html);
+  //
+  //      var prev = htmlobject.find("#sign_up_form")[0];
+  //      var output_prev = new XMLSerializer().serializeToString(prev);
+  //      $("#sign_up_form").replaceWith(output_prev);
+  //      //alert(output_prev)
+  //
+  //    }
+  //  });
+  //
+  //}
 
-       if (gon.flag === true){
-          $("#userTick").show();
-       }else{
-        $("#usererror").html(gon.err_username);
-       }
+  //function validate_email(obj){
+  //  gon.emailflag =''
+  //  gon.err_email =''
+  //  var email = $(obj).val();
+  //
+  //  $.ajax({
+  //    data: {email: email},
+  //    url: '/sign_up',
+  //    success: function(html){
+  //
+  //      var htmlobject = $(html);
+  //
+  //      var prev = htmlobject.find("#sign_up_form")[0];
+  //      var output_prev = new XMLSerializer().serializeToString(prev);
+  //      $("#sign_up_form").replaceWith(output_prev);
+  //
+  //
+  //    }
+  //  });
 
-    })
-  }
 
-  function validate_email(obj){
-    var email = $(obj).val();
-    $.ajax({
-      url: "/sign_up",
-      data:{email: email}
-    }).done(function(html) {
-       console.log(gon.err_email);
-
-       if (gon.emailflag == false){
-          $("#emailerror").html(gon.err_email);
-
-       }else{
-        $("#emailTick").show();
-        $("#emailerror").html('');
-       }
-
-    })
   }
 
 
