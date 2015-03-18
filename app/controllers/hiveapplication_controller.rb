@@ -38,8 +38,12 @@ class HiveapplicationController < ApplicationController
   def sign_in
     # Check for user authentication
     user = Devuser.find_by_email(params[:dev_users][:email])
+
     error_notice = "WE COULDN'T FIND AN ACCOUNT WITH THAT USER ID/PASSWORD COMBINATION. PLEASE TRY AGAIN"
 
+    if user.nil?
+      user = Devuser.find_by_username(params[:dev_users][:email])
+    end
     if user.present?
       unless user.valid_password?(params[:dev_users][:password])
         # Redirects back to index if password is wrong

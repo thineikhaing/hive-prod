@@ -6,7 +6,11 @@
       %td{width:"50%"}
         #header_info
           - if current_user.present?
+
             = session[:no_of_apps].to_s + " CONNECTED APPS"
-      %td{width:"20%"}
+      %td{width:"20%", style:'font-size: 20px;'}
         - if current_user.present?
+          Hello,
+          =current_user.username
+          %br
           = link_to "Logout", hiveapplication_index_path

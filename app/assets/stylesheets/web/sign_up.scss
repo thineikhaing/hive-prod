@@ -41,7 +41,10 @@
   }
 
   .error{
-    color: red;
+
+    color:red;
+
+
   }
 
 }
@@ -68,13 +71,4 @@
   margin-top: -7%;
 
   }
-
-#userTick,#emailTick{
-  content: '✔' !important;
-  font-size: 28px;
-  color: #ff9b00;
-  float: right;
-  margin-top: -7%;
-  display: none;
-}
 

@@ -10,7 +10,7 @@
         = f.label :username, "PLEASE CHOOSE A DEVELOPER ID"
         %br
         = f.text_field :username,value: @username , onchange: 'validate_form(this)'
-      #usererror.error
+      .error
         =@err_username rescue ''
 
 
@@ -24,7 +24,7 @@
         = f.label :email, "PLEASE ENTER YOUR EMAIL ADDRESS"
         %br
         = f.email_field :email, value: @email  , onchange: 'validate_form(this)'
-      #emailerror.error
+      .error
         =@err_email rescue ''
 
       -if @err_email.nil? && @err_confirmEmail.nil? && @email.present?
@@ -37,7 +37,7 @@
         = f.label :confirm_email, "CONFIRM YOUR EMAIL ADDRESS"
         %br
         = f.email_field :confirm_email, value: @confirm_email , onchange: 'validate_form(this)'
-      #confirmerror.error
+      .error
         =@err_confirmEmail rescue ''
       -if @err_email.nil? && @err_confirmEmail.nil? &&  @confirm_email.present?
         .tick
@@ -47,7 +47,7 @@
         = f.label :password, "PASSWORD [MIN 8 CHARACTERS INCLUDING A NUMBER]"
         %br
         = f.password_field :password, autocomplete: "off", value: @password , onchange: 'validate_form(this)'
-      #passerror.error
+      .error
         =@err_password rescue ''
       -if @err_password.nil? && @err_confirmPassword.nil? &&   @password.present?
         .tick
@@ -57,7 +57,7 @@
         = f.label :confirm_password, "CONFIRM YOUR PASSWORD"
         %br
         = f.password_field :confirm_password, autocomplete: "off", value: @confirm_password , onchange: 'validate_form(this)'
-      #passconfirmerror.error
+      .error
         =@err_confirmPassword rescue ''
       -if @err_password.nil? && @err_confirmPassword.nil? && @confirm_password.present?
         .tick
