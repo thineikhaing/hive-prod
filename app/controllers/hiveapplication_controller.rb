@@ -106,7 +106,8 @@ class HiveapplicationController < ApplicationController
   def sign_up
     @flag = true
 
-    if !params[:username].nil?
+    if !params[:username].blank?
+      @submit = true
       username = Devuser.find_by_username(params[:username])
 
       if username.present?
@@ -114,24 +115,60 @@ class HiveapplicationController < ApplicationController
         @flag = false
       else
         p @username = params[:username]
-        p @err_username = ''
+        p @err_username = nil
+        @flag = true
       end
 
     end
 
-    #if !params[:email].nil?
-    #  email = Devuser.find_by_email(params[:email])
-    #  if email.present?
-    #    @err_email = "EMAIL ALREADY EXISTS"
-    #    @flag = false
-    #  elsif HiveApplication.is_a_valid_email(params[:email]) == false
-    #    @err_email = "PLEASE ENTER A VALID EMAIL ADDRESS"
-    #    @flag = false
-    #  else
-    #    @email = params[:email]
-    #  end
-    #
-    #end
+    if !params[:email].blank?
+
+      email = Devuser.find_by_email(params[:email])
+      if email.present?
+        @err_email = "EMAIL ALREADY EXISTS"
+        @flag = false
+      elsif HiveApplication.is_a_valid_email(params[:email]) == false
+        @err_email = "PLEASE ENTER A VALID EMAIL ADDRESS"
+        @flag = false
+      else
+        @email = params[:email]
+        @flag = true
+      end
+
+    end
+
+    if !params[:confirm_email].blank?
+      if params[:email]!= params[:confirm_email]
+        @err_confirmEmail = "EMAIL DO NOT MATCH"
+        @flag = false
+      else
+        @confirm_email = params[:confirm_email]
+        @flag = true
+      end
+
+    end
+
+    if !params[:password].blank?
+      if HiveApplication.is_a_valid_password(params[:password])  == false
+        @err_password = "PASSWORDS MUST BE AT LEAST A CHARACTERS LONG AND INCLUDE A NUMBER"
+        @flag = false
+      else
+        @password = params[:password]
+        @flag = true
+      end
+    end
+
+    if !params[:confirm_password].blank?
+
+      if params[:password]!= params[:confirm_password]
+        @err_confirmPassword = "PASSWORDS DO NOT MATCH"
+        @flag = false
+      else
+        @confirm_password = params[:confirm_password]
+        @flag = true
+      end
+
+    end
 
 
 

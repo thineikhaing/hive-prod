@@ -9,13 +9,12 @@
       %fieldset
         = f.label :username, "PLEASE CHOOSE A DEVELOPER ID"
         %br
-        = f.text_field :username, autofocus: true, value: @username , onchange: 'validate_username(this)'
+        = f.text_field :username, autofocus: true, value: @username , onchange: 'validate_form()'
       #usererror.error
         =@err_username rescue ''
-      #userTick
-        ✔
 
-      -if @err_username.nil? &&  @submit == true  &&  @username != ''
+
+      -if @err_username.nil? &&  @username.present?
         .tick
           ✔
       %br
@@ -24,12 +23,11 @@
       %fieldset
         = f.label :email, "PLEASE ENTER YOUR EMAIL ADDRESS"
         %br
-        = f.email_field :email, value: @email  , onchange: 'validate_email(this)'
+        = f.email_field :email, value: @email  , onchange: 'validate_form()'
       #emailerror.error
         =@err_email rescue ''
-      #emailTick
-        ✔
-      -if @err_email.nil? && @err_confirmEmail.nil? && @submit == true
+
+      -if @err_email.nil? && @err_confirmEmail.nil? && @email.present?
         .tick
           ✔
       %br
@@ -38,82 +36,66 @@
       %fieldset
         = f.label :confirm_email, "CONFIRM YOUR EMAIL ADDRESS"
         %br
-        = f.email_field :confirm_email, value: @confirm_email , onchange: 'submit_onOff()'
+        = f.email_field :confirm_email, value: @confirm_email , onchange: 'validate_form()'
       #confirmerror.error
         =@err_confirmEmail rescue ''
-      -if @err_email.nil? && @err_confirmEmail.nil? && @submit == true
+      -if @err_email.nil? && @err_confirmEmail.nil? &&  @confirm_email.present?
         .tick
           ✔
       %br
       %fieldset
         = f.label :password, "PASSWORD [MIN 8 CHARACTERS INCLUDING A NUMBER]"
         %br
-        = f.password_field :password, autocomplete: "off", value: @password , onchange: 'submit_onOff()'
+        = f.password_field :password, autocomplete: "off", value: @password , onchange: 'validate_form()'
       #passerror.error
         =@err_password rescue ''
-      -if @err_password.nil? && @err_confirmPassword.nil? && @submit == true
+      -if @err_password.nil? && @err_confirmPassword.nil? &&   @password.present?
         .tick
           ✔
       %br
       %fieldset
         = f.label :confirm_password, "CONFIRM YOUR PASSWORD"
         %br
-        = f.password_field :confirm_password, autocomplete: "off", value: @confirm_password , onchange: 'submit_onOff()'
+        = f.password_field :confirm_password, autocomplete: "off", value: @confirm_password , onchange: 'validate_form()'
       #passconfirmerror.error
         =@err_confirmPassword rescue ''
-      -if @err_password.nil? && @err_confirmPassword.nil? && @submit == true
+      -if @err_password.nil? && @err_confirmPassword.nil? && @confirm_password.present?
         .tick
           ✔
       %br
       =link_to 'Cancel', hiveapplication_index_path , class: 'button'
-      = f.submit "OK" , id: 'submit'
+      -if @flag == true
+        = f.submit "OK" , id: 'submit'
+      -else
+        = f.submit "OK" , id: 'submit' , disabled: true, style: "background: rgb(255,205,127) !important"
 
 
 :javascript
   $("form").on("change", function (e) {
   });
 
-  //function validate_username(obj){
-  //  var username = $(obj).val();
-  //  $.ajax({
-  //    data: {username: username},
-  //    url: '/sign_up',
-  //    cache: false,
-  //    success: function(html){
-  //
-  //      var htmlobject = $(html);
-  //
-  //      var prev = htmlobject.find("#sign_up_form")[0];
-  //      var output_prev = new XMLSerializer().serializeToString(prev);
-  //      $("#sign_up_form").replaceWith(output_prev);
-  //      //alert(output_prev)
-  //
-  //    }
-  //  });
-  //
-  //}
+  function validate_form(){
+    var username = $("#sign_up_username").val();
+    var email =  $("#sign_up_email").val();
+    var confirm_email = $("#sign_up_confirm_email").val();
+    var password = $("#sign_up_password").val();
+    var confirm_password = $("#sign_up_confirm_password").val();
 
-  //function validate_email(obj){
-  //  gon.emailflag =''
-  //  gon.err_email =''
-  //  var email = $(obj).val();
-  //
-  //  $.ajax({
-  //    data: {email: email},
-  //    url: '/sign_up',
-  //    success: function(html){
-  //
-  //      var htmlobject = $(html);
-  //
-  //      var prev = htmlobject.find("#sign_up_form")[0];
-  //      var output_prev = new XMLSerializer().serializeToString(prev);
-  //      $("#sign_up_form").replaceWith(output_prev);
-  //
-  //
-  //    }
-  //  });
+    $.ajax({
+      data: {username: username, email: email, confirm_email: confirm_email, password: password, confirm_password: confirm_password},
+      url: '/sign_up',
+      cache: false,
+      success: function(html){
+
+        var htmlobject = $(html);
+
+        var prev = htmlobject.find("#sign_up_form")[0];
+        var output_prev = new XMLSerializer().serializeToString(prev);
+        $("#sign_up_form").replaceWith(output_prev);
 
 
+      }
+    });
   }
 
 
