@@ -9,7 +9,7 @@
       %fieldset
         = f.label :username, "PLEASE CHOOSE A DEVELOPER ID"
         %br
-        = f.text_field :username, autofocus: true, value: @username , onchange: 'validate_form()'
+        = f.text_field :username,value: @username , onchange: 'validate_form(this)'
       #usererror.error
         =@err_username rescue ''
 
@@ -23,7 +23,7 @@
       %fieldset
         = f.label :email, "PLEASE ENTER YOUR EMAIL ADDRESS"
         %br
-        = f.email_field :email, value: @email  , onchange: 'validate_form()'
+        = f.email_field :email, value: @email  , onchange: 'validate_form(this)'
       #emailerror.error
         =@err_email rescue ''
 
@@ -36,7 +36,7 @@
       %fieldset
         = f.label :confirm_email, "CONFIRM YOUR EMAIL ADDRESS"
         %br
-        = f.email_field :confirm_email, value: @confirm_email , onchange: 'validate_form()'
+        = f.email_field :confirm_email, value: @confirm_email , onchange: 'validate_form(this)'
       #confirmerror.error
         =@err_confirmEmail rescue ''
       -if @err_email.nil? && @err_confirmEmail.nil? &&  @confirm_email.present?
@@ -46,7 +46,7 @@
       %fieldset
         = f.label :password, "PASSWORD [MIN 8 CHARACTERS INCLUDING A NUMBER]"
         %br
-        = f.password_field :password, autocomplete: "off", value: @password , onchange: 'validate_form()'
+        = f.password_field :password, autocomplete: "off", value: @password , onchange: 'validate_form(this)'
       #passerror.error
         =@err_password rescue ''
       -if @err_password.nil? && @err_confirmPassword.nil? &&   @password.present?
@@ -56,7 +56,7 @@
       %fieldset
         = f.label :confirm_password, "CONFIRM YOUR PASSWORD"
         %br
-        = f.password_field :confirm_password, autocomplete: "off", value: @confirm_password , onchange: 'validate_form()'
+        = f.password_field :confirm_password, autocomplete: "off", value: @confirm_password , onchange: 'validate_form(this)'
       #passconfirmerror.error
         =@err_confirmPassword rescue ''
       -if @err_password.nil? && @err_confirmPassword.nil? && @confirm_password.present?
@@ -74,7 +74,7 @@
   $("form").on("change", function (e) {
   });
 
-  function validate_form(){
+  function validate_form(obj){
     var username = $("#sign_up_username").val();
     var email =  $("#sign_up_email").val();
     var confirm_email = $("#sign_up_confirm_email").val();
@@ -92,10 +92,15 @@
         var prev = htmlobject.find("#sign_up_form")[0];
         var output_prev = new XMLSerializer().serializeToString(prev);
         $("#sign_up_form").replaceWith(output_prev);
-
-
       }
     });
+
+   $(obj).focus();
+
+    //console.log($(obj).attr('id'))
+    //cur_input = document.getElementById($(obj).attr('id'));
+    //cur_input.focus();
+
   }
 
 
