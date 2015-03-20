@@ -742,7 +742,7 @@ class Topic < ActiveRecord::Base
         end
       end
 
-      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no, vote: sd.vote })
+      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no, vote: sd.vote, admin_confirm: sd.admin_confirm })
 
       vote_maybe = 0
       vote_yes = 0
@@ -793,7 +793,7 @@ class Topic < ActiveRecord::Base
         end
       end
 
-      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no, vote: sd.vote })
+      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no, vote: sd.vote , admin_confirm: sd.admin_confirm})
     end
 
     confirmed_event_date = nil
@@ -848,7 +848,7 @@ class Topic < ActiveRecord::Base
         end
       end
 
-      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no , vote: sd.vote })
+      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no , vote: sd.vote , admin_confirm: sd.admin_confirm })
 
       vote_maybe = 0
       vote_yes = 0
