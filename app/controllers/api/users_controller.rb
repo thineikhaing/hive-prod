@@ -164,7 +164,8 @@ class Api::UsersController < ApplicationController
               data["speed"].present? ? speed = data["speed"]  : speed = "-1"
               data ["direction"].present? ? direction = data["direction"]  : direction= "-1"
               data["activity"].present? ? activity = data["activity"] : activity=""
-              user.update_user_peerdrivedata(speed,direction,activity)
+              data["heartrate"].present? ? heartrate = data["heartrate"] : heartrate=""
+              user.update_user_peerdrivedata(speed,direction,activity,heartrate)
             end
           else
             time_allowance = Time.now - 10.minutes.ago
