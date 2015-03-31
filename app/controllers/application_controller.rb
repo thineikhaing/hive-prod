@@ -7,6 +7,12 @@ class ApplicationController < ActionController::Base
 
   before_filter :current_browser
 
+  def authorize
+    #if current_user.nil?
+    #  redirect_to root_path, alert: "Not authorized"
+    #end
+  end
+
   def current_browser
     @browser = Browser.new(ua: request.user_agent)
   end
@@ -16,7 +22,6 @@ class ApplicationController < ActionController::Base
     content.downcase!
     profanity_filter = YAML.load_file("config/banned_profanity.yml") # From file
     profanity_filter.each do |profanity|
-
 
       if content.include?(" ")
         contentArray = content.split(" ")

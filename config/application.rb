@@ -81,7 +81,7 @@ module Mealbox_key
 end
 
 module Carmmunicate_key
-  Development_Key = "c000b7908db971224ccbed439fb171c6"
+  Development_Key = "971940c5901bbdcf741a1bf66c5a3d04"
   Staging_Key= "63547bb73e27bc8e55c000e126c2c254"
   Production_Key = "05c4919a87614b59e5b6814b02ceff07"
 end

@@ -1,6 +1,8 @@
 class HiveapplicationController < ApplicationController
   require 'securerandom'  #to generate api key for application
-  before_filter :detect_format, :set_cache_buster
+
+  before_filter :detect_format, :set_cache_buster ,:authorize
+
 
   #Reset session if user click back button in browser
   def set_cache_buster

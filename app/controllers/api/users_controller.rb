@@ -4,6 +4,8 @@ class Api::UsersController < ApplicationController
 
   respond_to :json
 
+  skip_before_filter :verify_authenticity_token
+
   def ssl_configured?
     !Rails.env.development?
   end
@@ -157,8 +159,6 @@ class Api::UsersController < ApplicationController
         if hive_application.present?
           if hive_application.api_key ==carmmunicate_key
             time_allowance = Time.now - 20.seconds.ago
-            #time_allowance = Time.now - 5.minutes.ago
-            #time_allowance = Time.now - 1.minute.ago
             if params[:data].present?
               data = getHashValuefromString(params[:data])
               data["speed"].present? ? speed = data["speed"]  : speed = "-1"
