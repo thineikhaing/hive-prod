@@ -28,4 +28,5 @@ module AuthenticationHelper
     data = encrypt_data.scan(/../).map{|b|b.hex}.pack('c*')
     plain_text = cipher.update(data) << cipher.final
   end
+
 end

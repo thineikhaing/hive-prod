@@ -4,7 +4,7 @@ class Api::UsersController < ApplicationController
 
   respond_to :json
 
-  skip_before_filter :verify_authenticity_token
+  #skip_before_filter :verify_authenticity_token
 
   def ssl_configured?
     !Rails.env.development?
