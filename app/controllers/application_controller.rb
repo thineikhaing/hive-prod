@@ -7,6 +7,22 @@ class ApplicationController < ActionController::Base
 
   before_filter :current_browser
 
+  # This token check if the client device is login and has a valid token.
+  # Token is generate from Application API token has encryption key.
+  # Validity is configuratable
+  # author : Thin 31 March 2015
+  def verify_authenticity_api_token
+    authenticate_or_request_with_http_token do |token, options|
+      p token
+      p "authenticate ::::"
+    end
+    authenticate_or_request_with_http_token do |token, options|
+      Devuser.find_by(auth_token: token)
+      p "authenticate_or_request_with_http_token"
+    end
+  end
+
+
   def authorize
     #if current_user.nil?
     #  redirect_to root_path, alert: "Not authorized"
