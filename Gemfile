@@ -44,6 +44,7 @@ gem 'jquery-minicolors-rails'
 gem 'rqrcode_png'           , '~> 0.1.2'
 
 gem 'html5'
+gem 'xss_terminate', '~> 0.22'
 
 group :assets do
   gem 'sass-rails'                , '>= 4.0.3' # Sass adapter for the Rails asset pipeline.
