@@ -9,7 +9,9 @@ gem 'thin'                        , '~> 1.5.0'
 gem 'sprockets-rails'             , '~> 2.1.0'
 gem 'haml-rails'                  , '~> 0.5.3' # Haml-rails provides Haml generators for Rails 3. It also enables Haml as the templating engine for you, so you don't have to screw around in your own application.rb when your Gemfile already clearly indicated what templating engine you have installed. Hurrah.
 gem 'rails-backbone'              , '~> 0.9.10' # Quickly setup backbone.js for use with rails 3.1. Generators are provided to quickly get started.
+
 gem 'urbanairship'                , '~> 2.3.3' # Urbanairship is a Ruby library for interacting with the Urban Airship (http://urbanairship.com) API.
+
 gem 'protected_attributes'        , '~> 1.0.7' # Protect attributes from mass assignment
 gem 'delayed_job'                              # Delayed_job (or DJ) encapsulates the common pattern of asynchronously executing longer tasks in the background. It is a direct extraction from Shopify where the job table is responsible for a multitude of core tasks.
 gem 'delayed_job_active_record'             # ActiveRecord backend for Delayed::Job
