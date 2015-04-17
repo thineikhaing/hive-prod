@@ -579,6 +579,8 @@ class Topic < ActiveRecord::Base
         to_plate_number = hash_array["plate_number"] if  hash_array["plate_number"].present?
       end
     end
+
+
     notification = {
         aliases: users_to_push,
         aps: { alert: self.title, badge: "+1", sound: "default" },
@@ -614,18 +616,84 @@ class Topic < ActiveRecord::Base
     p "users_to_push"
     p users_to_push
 
-    full_path = 'https://go.urbanairship.com/api/push/'
+    #full_path = 'https://go.urbanairship.com/api/push/'
+    #url = URI.parse(full_path)
+    #req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+    #req.body = notification
+    #req.basic_auth app_key, master_secret
+    #con = Net::HTTP.new(url.host, url.port)
+    #con.use_ssl = true
+    #
+    #r = con.start {|http| http.request(req)}
+    #p "after sent"
+    #logger.info "\n\n##############\n\n  " + "Resonse body: " + r.body + "  \n\n##############\n\n"
+    #p "after urban airship"
+
+    @auth = {:application  => "B48C7-FE962",:auth => "y5dMhjeQ1pcAf3SNnMqy4LBexlqTR0d86p2o3c84NhEajv3Mxsffz8QuEVshTklJ6Qn9JpwVPJKjx0bmsCBn"}
+
+#- Default options, uncomment :data or :devices if needed
+    default_notification_options = {
+        send_date: "now",
+        badge: "1",
+        sound: "default",
+        content:{
+            fr:self.title,
+            en:self.title
+        },
+
+        data:{
+            topic:{id: self.id,
+             title: self.title,
+             user_id: self.user_id,
+             topic_type: self.topic_type,
+             topic_sub_type: self.topic_sub_type,
+             place_id: self.place_id,
+             image_url: self.image_url,
+             width:  self.width,
+             height: self.height,
+             hiveapplication_id: self.hiveapplication_id,
+             value:  self.value,
+             unit: self.unit,
+             likes: self.likes,
+             dislikes: self.dislikes,
+             offensive: self.offensive,
+             notification_range: self.notification_range,
+             special_type: self.special_type,
+             created_at: self.created_at,
+             data: self.data,
+             methods: {
+                 username: username,
+                 place_information: self.place_information,
+                 tag_information: self.tag_information,
+                 is_private_message: isprivatemsg,
+                 to_plate_number: to_plate_number
+             }
+          }
+        }.to_json,
+        # omit this field (push notification will be delivered to all the devices for the application), or provide the list of devices IDs
+        #devices: {}
+    }
+    #- Merging with specific options
+    final_notification_options = default_notification_options
+
+    #- Constructing the final call
+    options = @auth.merge({:notifications  => [final_notification_options]})
+    options = {:request  => options}
+    #- Executing the POST API Call with HTTPARTY - :body => options.to_json allows us to send the json as an object instead of a string
+
+
+    full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
     url = URI.parse(full_path)
     req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-    req.body = notification
-    req.basic_auth app_key, master_secret
+    req.body = options.to_json
     con = Net::HTTP.new(url.host, url.port)
     con.use_ssl = true
 
     r = con.start {|http| http.request(req)}
-    p "after sent"
-    logger.info "\n\n##############\n\n  " + "Resonse body: " + r.body + "  \n\n##############\n\n"
-    p "after urban airship"
+
+
+
+    p "pushwoosh"
 
   end
 

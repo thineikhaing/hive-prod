@@ -137,8 +137,8 @@ module Urbanairship_Const
   FV_D_Key = "7wgMq0dkSWeqo-TbcBvEyg"
   FV_D_Secret = "xB8kEzjdT4WeqgEm3CKclQ"
   FV_D_Master_Secret="1EXyDmHxTNSZRV0raeCthA"
-
 end
+
 
 module AWS_Link
  AWS_Image_D_Link = "https://hivedevimages.s3.amazonaws.com/"
