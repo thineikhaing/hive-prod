@@ -87,33 +87,11 @@ class Api::TopicsController < ApplicationController
             if params[:users_to_push].present?
               #broadcast to selected user group
 
-              if Rails.env.production?
-                dev_app_key = Urbanairship_Const::CM_P_Dev_Key
-                dev_app_secret = Urbanairship_Const::CM_P_Dev_Secret
-                dev_master_secret= Urbanairship_Const::CM_P_Dev_Master_Secret
-
-                adhoc_app_key = Urbanairship_Const::CM_P_Adhoc_Key
-                adhoc_app_secret = Urbanairship_Const::CM_P_Adhoc_Secret
-                adhoc_master_secret= Urbanairship_Const::CM_P_Adhoc_Master_Secret
-              elsif Rails.env.staging?
-                dev_app_key = Urbanairship_Const::CM_S_Dev_Key
-                dev_app_secret= Urbanairship_Const::CM_S_Dev_Secret
-                dev_master_secret= Urbanairship_Const::CM_S_Dev_Master_Secret
-
-                adhoc_app_key = Urbanairship_Const::CM_S_Adhoc_Key
-                adhoc_app_secret = Urbanairship_Const::CM_S_Adhoc_Secret
-                adhoc_master_secret= Urbanairship_Const::CM_S_Adhoc_Master_Secret
-              else
-                dev_app_key = Urbanairship_Const::CM_D_Key
-                dev_app_secret= Urbanairship_Const::CM_D_Secret
-                dev_master_secret= Urbanairship_Const::CM_D_Master_Secret
-              end
-
               if Rails.env.development?
-                topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true, dev_app_key, dev_master_secret)
+                topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true)
               else
-                topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true, dev_app_key, dev_master_secret)
-                topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true, adhoc_app_key, adhoc_master_secret)
+                topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true)
+                topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true)
               end
             else
               #broadcast users within 5km/10km
@@ -121,6 +99,7 @@ class Api::TopicsController < ApplicationController
             end
           end
           #increase like and dislike count
+
           if likes > 0
             ActionLog.create(action_type: "like", type_id: topic.id, type_name: "topic", action_user_id: current_user.id) if topic.present?
           end

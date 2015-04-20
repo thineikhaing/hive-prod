@@ -57,36 +57,14 @@ class Api::PostsController < ApplicationController
           post.delay.post_image_upload_delayed_job(params[:image_url]) if params[:post_type] == Post::IMAGE.to_s
         end
 
-        if Rails.env.production?
-          dev_app_key = Urbanairship_Const::CM_P_Dev_Key
-          dev_app_secret = Urbanairship_Const::CM_P_Dev_Secret
-          dev_master_secret= Urbanairship_Const::CM_P_Dev_Master_Secret
 
-          adhoc_app_key = Urbanairship_Const::CM_P_Adhoc_Key
-          adhoc_app_secret = Urbanairship_Const::CM_P_Adhoc_Secret
-          adhoc_master_secret= Urbanairship_Const::CM_P_Adhoc_Master_Secret
-        elsif Rails.env.staging?
-          dev_app_key = Urbanairship_Const::CM_S_Dev_Key
-          dev_app_secret= Urbanairship_Const::CM_S_Dev_Secret
-          dev_master_secret= Urbanairship_Const::CM_S_Dev_Master_Secret
-
-          adhoc_app_key = Urbanairship_Const::CM_S_Adhoc_Key
-          adhoc_app_secret = Urbanairship_Const::CM_S_Adhoc_Secret
-          adhoc_master_secret= Urbanairship_Const::CM_S_Adhoc_Master_Secret
-        else
-          dev_app_key = Urbanairship_Const::CM_D_Key
-          dev_app_secret= Urbanairship_Const::CM_D_Secret
-          dev_master_secret= Urbanairship_Const::CM_D_Master_Secret
-        end
-
-        #push the urban airship reply message to the topic owner if params[:notify_topic_owner] is true
         if post.present? and params[:notify_topic_owner].present?
           if params[:notify_topic_owner].to_i==1
             if Rails.env.development?
-              post.notify_reply_message_to_topic_owner(dev_app_key,dev_master_secret, topic.user_id)
+              post.notify_reply_message_to_topic_owner(topic.user_id)
             else
-              post.notify_reply_message_to_topic_owner(dev_app_key, dev_master_secret, topic.user_id)
-              post.notify_reply_message_to_topic_owner(adhoc_app_key, adhoc_master_secret, topic.user_id)
+              post.notify_reply_message_to_topic_owner(topic.user_id)
+              post.notify_reply_message_to_topic_owner(topic.user_id)
             end
           end
         end

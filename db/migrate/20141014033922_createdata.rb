@@ -31,6 +31,7 @@ class Createdata < ActiveRecord::Migration
       AppAdditionalField.create(app_id: app.id,table_name: "User", additional_column_name: "speed")
       AppAdditionalField.create(app_id: app.id,table_name: "User", additional_column_name: "activity")
       AppAdditionalField.create(app_id: app.id,table_name: "User", additional_column_name: "direction")
+      AppAdditionalField.create(app_id: app.id,table_name: "User", additional_column_name: "device_id")
       AppAdditionalField.create(app_id: app.id,table_name: "User", additional_column_name: "heartrate")
     end
 

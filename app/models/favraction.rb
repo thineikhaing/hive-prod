@@ -27,47 +27,49 @@ class Favraction < ActiveRecord::Base
     user_to_push=[]
     user_to_push.push(doer.id.to_s)
 
-    p "before urban airship"
-    if action_topic.present?
-      notification = {
-          aliases: user_to_push,
-          aps: { alert: "Remember to finish the task", badge: "+1", sound: "default" },
-          topic_id: action_topic.id
-      }.to_json
-      p notification
-      if Rails.env.production?
-        p "production"
-        app_key = Urbanairship_Const::FV_P_Key
-        app_secret = Urbanairship_Const::FV_P_Secret
-        master_secret= Urbanairship_Const::FV_P_Master_Secret
-      elsif Rails.env.staging?
-        p "staging"
-        app_key = Urbanairship_Const::FV_S_Key
-        app_secret= Urbanairship_Const::FV_S_Secret
-        master_secret= Urbanairship_Const::FV_S_Master_Secret
-      else
-        p "development"
-        app_key = Urbanairship_Const::FV_D_Key
-        app_secret= Urbanairship_Const::FV_D_Secret
-        master_secret= Urbanairship_Const::FV_D_Master_Secret
-      end
-      p "after setting"
-      full_path = 'https://go.urbanairship.com/api/push/'
-      url = URI.parse(full_path)
-      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-      req.body = notification
-      req.basic_auth app_key, master_secret
-      p "HTTP New"
-      con = Net::HTTP.new(url.host, url.port)
-      con.use_ssl = true
+    if Rails.env.production?
+      appID = PushWoosh_Const::CM_P_APP_ID
+    elsif Rails.env.staging?
+      appID = PushWoosh_Const::CM_S_APP_ID
+    else
+      appID = PushWoosh_Const::CM_D_APP_ID
+    end
 
-      r = con.start {|http| http.request(req)}
-      p "after sent"
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::CM_API_ACCESS}
 
-      logger.info "\n\n##############\n\n  " + "Resonse body: " + r.body + "  \n\n##############\n\n"
+    user = User.find(doer.id)
 
-      p "after urban airship"
-      p user_to_push
+    if user.data.present?
+      hash_array = user.data
+      to_device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+    end
+
+    notification_options = {
+        send_date: "now",
+        badge: "1",
+        sound: "default",
+        topic_id: action_topic.id,
+        content:{
+            fr:"Remember to finish the task",
+            en:"Remember to finish the task"
+        },
+        devices: [to_device_id]
+    }.to_json
+
+    options = @auth.merge({:notifications  => [notification_options]})
+    options = {:request  => options}
+
+    full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+    url = URI.parse(full_path)
+    req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+    req.body = options.to_json
+    con = Net::HTTP.new(url.host, url.port)
+    con.use_ssl = true
+
+    r = con.start {|http| http.request(req)}
+
+    p "pushwoosh"
+
 
       self.status= COMPLETION_REMINDER_SENT
       self.save!
@@ -123,53 +125,62 @@ class Favraction < ActiveRecord::Base
   end
 
   def sent_expire_notificatoin
-    p "inside urban airship function"
+
     action_topic = Topic.find(self.topic_id)
     p action_topic
     users_to_sent=[]
     users_to_sent.push ( action_topic.user_id.to_s )
     users_to_sent.push ( self.doer_user_id.to_s )
 
-    p "before urban airship"
+    if Rails.env.production?
+      appID = PushWoosh_Const::CM_P_APP_ID
+    elsif Rails.env.staging?
+      appID = PushWoosh_Const::CM_S_APP_ID
+    else
+      appID = PushWoosh_Const::CM_D_APP_ID
+    end
+
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::CM_API_ACCESS}
+
     if action_topic.present?
-      notification = {
-          aliases: users_to_sent,
-          aps: { alert: "Your favr request is expired", badge: "+1", sound: "default" },
-          topic_id: action_topic.id
+
+      to_device_id = []
+
+      users= User.where("id = ? or id =?", action_topic.user_id , self.doer_user_id)
+      users.each do |user|
+        if user.data.present?
+          hash_array = user.data
+          device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+          to_device_id.push(device_id)
+        end
+      end
+
+      notification_options = {
+          send_date: "now",
+          badge: "1",
+          sound: "default",
+          content:{
+              fr:"Your favr request is expired",
+              en:"Your favr request is expired"
+          },
+          devices: to_device_id
       }.to_json
 
-      if Rails.env.production?
-        p "production"
-        app_key = Urbanairship_Const::FV_P_Key
-        app_secret = Urbanairship_Const::FV_P_Secret
-        master_secret= Urbanairship_Const::FV_P_Master_Secret
-      elsif Rails.env.staging?
-        p "staging"
-        app_key = Urbanairship_Const::FV_S_Key
-        app_secret= Urbanairship_Const::FV_S_Secret
-        master_secret= Urbanairship_Const::FV_S_Master_Secret
-      else
-        p "development"
-        app_key = Urbanairship_Const::FV_D_Key
-        app_secret= Urbanairship_Const::FV_D_Secret
-        master_secret= Urbanairship_Const::FV_D_Master_Secret
-      end
-      p "after setting"
-      full_path = 'https://go.urbanairship.com/api/push/'
+      options = @auth.merge({:notifications  => [notification_options]})
+      options = {:request  => options}
+
+      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
       url = URI.parse(full_path)
       req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-      req.body = notification
-      req.basic_auth app_key, master_secret
-      p "HTTP New"
+      req.body = options.to_json
       con = Net::HTTP.new(url.host, url.port)
       con.use_ssl = true
 
       r = con.start {|http| http.request(req)}
-      p "after sent"
-      p users_to_sent
-      logger.info "\n\n##############\n\n  " + "Resonse body: " + r.body + "  \n\n##############\n\n"
 
-      p "after urban airship"
+      p "pushwoosh"
+
+
     end
   end
 

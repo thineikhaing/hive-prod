@@ -105,46 +105,45 @@ module App_Password #constant variable to be used for encryption and decryption
   Size =1024
 end
 
-module Urbanairship_Const
-  CM_S_Dev_Key = "0NEm0U0jRky2BdqtV6l3GQ"
-  CM_S_Dev_Secret = "Y7y0bqs4Q-G7aFRmelnS4g"
-  CM_S_Dev_Master_Secret="8oq947c7QECzlBwtaiCemA"
-
-  CM_S_Adhoc_Key = "p3JOVu9XS1qzVFyktPS1WA"
-  CM_S_Adhoc_Secret = "Qycncj2tQOSGS6kHQFAGAg"
-  CM_S_Adhoc_Master_Secret="vQNqcpuPRjS3ZE-ICg1d6w"
-
-  CM_P_Adhoc_Key = "vCYzT3kCQimr16p9A-GIMQ"
-  CM_P_Adhoc_Secret = "WOnEfbuWRPa9Nvo3t7Mr2Q"
-  CM_P_Adhoc_Master_Secret="wSBsSu3xRWOv3fSPZAeEpg"
-
-  CM_P_Dev_Key = "jgUrWRe6SGGUmU-zixDvbw"
-  CM_P_Dev_Secret = "kXm5DrQQRCSv_GjUGx6ROQ"
-  CM_P_Dev_Master_Secret="H8EFnM6WQmCBjvBFtI9Zdg"
-
-  CM_D_Key = "qn5A6ujOSaONpcn--rg_NA"
-  CM_D_Secret = "k9KS0BvZTnaHxqjf7-Jrpg"
-  CM_D_Master_Secret="utulmLxMRL6w7Y-iAwI2fw"
-
-  FV_S_Key = "LSA3cn4IR1K7Hl96MS1I1w"
-  FV_S_Secret = "bjCQ6p4LRfCuHOTbWyuqHA"
-  FV_S_Master_Secret="kgKRIrkpTsiXp4vUO1Utsg"
-
-  FV_P_Key = "2WOYSZRTRLiyanfEg2PQ2w"
-  FV_P_Secret = "qV5S-fplRUCA78Fk25xThw"
-  FV_P_Master_Secret="4wX2m2ZiSsCiLfR2elX_rw"
-
-  FV_D_Key = "7wgMq0dkSWeqo-TbcBvEyg"
-  FV_D_Secret = "xB8kEzjdT4WeqgEm3CKclQ"
-  FV_D_Master_Secret="1EXyDmHxTNSZRV0raeCthA"
-end
+#module Urbanairship_Const
+#  CM_S_Dev_Key = "0NEm0U0jRky2BdqtV6l3GQ"
+#  CM_S_Dev_Secret = "Y7y0bqs4Q-G7aFRmelnS4g"
+#  CM_S_Dev_Master_Secret="8oq947c7QECzlBwtaiCemA"
+#
+#  CM_S_Adhoc_Key = "p3JOVu9XS1qzVFyktPS1WA"
+#  CM_S_Adhoc_Secret = "Qycncj2tQOSGS6kHQFAGAg"
+#  CM_S_Adhoc_Master_Secret="vQNqcpuPRjS3ZE-ICg1d6w"
+#
+#  CM_P_Adhoc_Key = "vCYzT3kCQimr16p9A-GIMQ"
+#  CM_P_Adhoc_Secret = "WOnEfbuWRPa9Nvo3t7Mr2Q"
+#  CM_P_Adhoc_Master_Secret="wSBsSu3xRWOv3fSPZAeEpg"
+#
+#  CM_P_Dev_Key = "jgUrWRe6SGGUmU-zixDvbw"
+#  CM_P_Dev_Secret = "kXm5DrQQRCSv_GjUGx6ROQ"
+#  CM_P_Dev_Master_Secret="H8EFnM6WQmCBjvBFtI9Zdg"
+#
+#  CM_D_Key = "qn5A6ujOSaONpcn--rg_NA"
+#  CM_D_Secret = "k9KS0BvZTnaHxqjf7-Jrpg"
+#  CM_D_Master_Secret="utulmLxMRL6w7Y-iAwI2fw"
+#
+#  FV_S_Key = "LSA3cn4IR1K7Hl96MS1I1w"
+#  FV_S_Secret = "bjCQ6p4LRfCuHOTbWyuqHA"
+#  FV_S_Master_Secret="kgKRIrkpTsiXp4vUO1Utsg"
+#
+#  FV_P_Key = "2WOYSZRTRLiyanfEg2PQ2w"
+#  FV_P_Secret = "qV5S-fplRUCA78Fk25xThw"
+#  FV_P_Master_Secret="4wX2m2ZiSsCiLfR2elX_rw"
+#
+#  FV_D_Key = "7wgMq0dkSWeqo-TbcBvEyg"
+#  FV_D_Secret = "xB8kEzjdT4WeqgEm3CKclQ"
+#  FV_D_Master_Secret="1EXyDmHxTNSZRV0raeCthA"
+#end
 
 
 module PushWoosh_Const
   CM_D_APP_ID = "B48C7-FE962"
   CM_S_APP_ID = "82255-61ADD"
   CM_P_APP_ID = "40C8F-B20ED"
-
   CM_API_ACCESS = "y5dMhjeQ1pcAf3SNnMqy4LBexlqTR0d86p2o3c84NhEajv3Mxsffz8QuEVshTklJ6Qn9JpwVPJKjx0bmsCBn"
 end
 

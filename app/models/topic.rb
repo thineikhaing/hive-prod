@@ -569,7 +569,7 @@ class Topic < ActiveRecord::Base
     }
   end
 
-  def notify_carmmunicate_msg_to_selected_users (users_to_push, isprivatemsg, app_key, master_secret )
+  def notify_carmmunicate_msg_to_selected_users (users_to_push, isprivatemsg)
     to_plate_number =""
     if (isprivatemsg)  and users_to_push.length>0
       user_id = users_to_push.first.to_i
@@ -577,46 +577,49 @@ class Topic < ActiveRecord::Base
       if user.data.present?
         hash_array = user.data
         to_plate_number = hash_array["plate_number"] if  hash_array["plate_number"].present?
+        to_device_id = hash_array["device_id"] if  hash_array["device_id"].present?
       end
     end
 
+    p "device_id"
+    p to_device_id
 
-    notification = {
-        aliases: users_to_push,
-        aps: { alert: self.title, badge: "+1", sound: "default" },
-        topic:{id: self.id,
-        title: self.title,
-        user_id: self.user_id,
-        topic_type: self.topic_type,
-        topic_sub_type: self.topic_sub_type,
-        place_id: self.place_id,
-        image_url: self.image_url,
-        width:  self.width,
-        height: self.height,
-        hiveapplication_id: self.hiveapplication_id,
-        value:  self.value,
-        unit: self.unit,
-        likes: self.likes,
-        dislikes: self.dislikes,
-        offensive: self.offensive,
-        notification_range: self.notification_range,
-        special_type: self.special_type,
-        created_at: self.created_at,
-        data: self.data,
-        methods: {
-            username: username,
-            place_information: self.place_information,
-            tag_information: self.tag_information,
-            is_private_message: isprivatemsg,
-            to_plate_number: to_plate_number
-          }
-        }
-    }.to_json
+    #notification = {
+    #    aliases: users_to_push,
+    #    aps: { alert: self.title, badge: "+1", sound: "default" },
+    #    topic:{id: self.id,
+    #    title: self.title,
+    #    user_id: self.user_id,
+    #    topic_type: self.topic_type,
+    #    topic_sub_type: self.topic_sub_type,
+    #    place_id: self.place_id,
+    #    image_url: self.image_url,
+    #    width:  self.width,
+    #    height: self.height,
+    #    hiveapplication_id: self.hiveapplication_id,
+    #    value:  self.value,
+    #    unit: self.unit,
+    #    likes: self.likes,
+    #    dislikes: self.dislikes,
+    #    offensive: self.offensive,
+    #    notification_range: self.notification_range,
+    #    special_type: self.special_type,
+    #    created_at: self.created_at,
+    #    data: self.data,
+    #    methods: {
+    #        username: username,
+    #        place_information: self.place_information,
+    #        tag_information: self.tag_information,
+    #        is_private_message: isprivatemsg,
+    #        to_plate_number: to_plate_number,
+    #        to_device_id: to_device_id
+    #      }
+    #    }
+    #}.to_json
 
     p "users_to_push"
     p users_to_push
 
-    #full_path = 'https://go.urbanairship.com/api/push/'
     #url = URI.parse(full_path)
     #req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
     #req.body = notification
@@ -627,7 +630,6 @@ class Topic < ActiveRecord::Base
     #r = con.start {|http| http.request(req)}
     #p "after sent"
     #logger.info "\n\n##############\n\n  " + "Resonse body: " + r.body + "  \n\n##############\n\n"
-    #p "after urban airship"
 
     if Rails.env.production?
       appID = PushWoosh_Const::CM_P_APP_ID
@@ -639,8 +641,7 @@ class Topic < ActiveRecord::Base
 
     @auth = {:application  => appID ,:auth => PushWoosh_Const::CM_API_ACCESS}
 
-#- Default options, uncomment :data or :devices if needed
-    default_notification_options = {
+    notification_options = {
         send_date: "now",
         badge: "1",
         sound: "default",
@@ -674,21 +675,16 @@ class Topic < ActiveRecord::Base
                  place_information: self.place_information,
                  tag_information: self.tag_information,
                  is_private_message: isprivatemsg,
-                 to_plate_number: to_plate_number
+                 to_plate_number: to_plate_number,
+                 to_device_id: to_device_id
              }
           }
-        }.to_json,
-        # omit this field (push notification will be delivered to all the devices for the application), or provide the list of devices IDs
-        #devices: {}
-    }
-    #- Merging with specific options
-    final_notification_options = default_notification_options
+        },
+        devices: [to_device_id]
+    }.to_json
 
-    #- Constructing the final call
-    options = @auth.merge({:notifications  => [final_notification_options]})
+    options = @auth.merge({:notifications  => [notification_options]})
     options = {:request  => options}
-    #- Executing the POST API Call with HTTPARTY - :body => options.to_json allows us to send the json as an object instead of a string
-
 
     full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
     url = URI.parse(full_path)
@@ -698,8 +694,6 @@ class Topic < ActiveRecord::Base
     con.use_ssl = true
 
     r = con.start {|http| http.request(req)}
-
-
 
     p "pushwoosh"
 
@@ -720,34 +714,12 @@ class Topic < ActiveRecord::Base
       users_to_push = get_active_users_to_push(current_lat, current_lng, 10, user.id)
     end
 
-    if Rails.env.production?
-      dev_app_key = Urbanairship_Const::CM_P_Dev_Key
-      dev_app_secret = Urbanairship_Const::CM_P_Dev_Secret
-      dev_master_secret= Urbanairship_Const::CM_P_Dev_Master_Secret
-
-      adhoc_app_key = Urbanairship_Const::CM_P_Adhoc_Key
-      adhoc_app_secret = Urbanairship_Const::CM_P_Adhoc_Secret
-      adhoc_master_secret= Urbanairship_Const::CM_P_Adhoc_Master_Secret
-    elsif Rails.env.staging?
-      dev_app_key = Urbanairship_Const::CM_S_Dev_Key
-      dev_app_secret= Urbanairship_Const::CM_S_Dev_Secret
-      dev_master_secret= Urbanairship_Const::CM_S_Dev_Master_Secret
-
-      adhoc_app_key = Urbanairship_Const::CM_S_Adhoc_Key
-      adhoc_app_secret = Urbanairship_Const::CM_S_Adhoc_Secret
-      adhoc_master_secret= Urbanairship_Const::CM_S_Adhoc_Master_Secret
-    else
-      app_key = Urbanairship_Const::CM_D_Key
-      app_secret= Urbanairship_Const::CM_D_Secret
-      master_secret= Urbanairship_Const::CM_D_Master_Secret
-    end
-
     if users_to_push.present?
       if Rails.env.development?
-        notify_carmmunicate_msg_to_selected_users(users_to_push, false,app_key,master_secret)
+        notify_carmmunicate_msg_to_selected_users(users_to_push, false)
       else
-        notify_carmmunicate_msg_to_selected_users(users_to_push, false, dev_app_key, dev_master_secret)
-        notify_carmmunicate_msg_to_selected_users(users_to_push, false, adhoc_app_key, adhoc_master_secret)
+        notify_carmmunicate_msg_to_selected_users(users_to_push, false)
+        notify_carmmunicate_msg_to_selected_users(users_to_push, false)
       end
     end
   end

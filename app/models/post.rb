@@ -400,49 +400,99 @@ class Post < ActiveRecord::Base
       object = bucket.objects[mfilename]
       object.delete
     end
-
   end
 
-  def notify_reply_message_to_topic_owner(app_key, master_secret, user_id)
-    #topic = Topic.find(self.topic_id)
+  def notify_reply_message_to_topic_owner(user_id)
+
     user_to_push= []
     user_to_push.push(user_id.to_s)
-    notification = {
-      aliases: user_to_push,
-      aps: { alert: self.content, badge: "+1", sound: "default" },
-      post:{
-          id: self.id,
-          topic_id: self.topic_id,
-          content: self.content,
-          image_url: self.img_url,
-          width:  self.width,
-          height: self.height,
-          created_at: self.created_at,
-          user_id: self.user_id,
-          username: self.username,
-          post_type: self.post_type,
-          place_id: self.place_id,
-          likes: self.likes,
-          dislikes: self.dislikes,
-          offensive: self.offensive,
-          created_at: self.created_at,
-          data: self.data
-      }
+
+    #notification = {
+    #  aliases: user_to_push,
+    #  aps: { alert: self.content, badge: "+1", sound: "default" },
+    #  post:{
+    #      id: self.id,
+    #      topic_id: self.topic_id,
+    #      content: self.content,
+    #      image_url: self.img_url,
+    #      width:  self.width,
+    #      height: self.height,
+    #      created_at: self.created_at,
+    #      user_id: self.user_id,
+    #      username: self.username,
+    #      post_type: self.post_type,
+    #      place_id: self.place_id,
+    #      likes: self.likes,
+    #      dislikes: self.dislikes,
+    #      offensive: self.offensive,
+    #      created_at: self.created_at,
+    #      data: self.data
+    #  }
+    #}.to_json
+
+
+    user= User.find_by_id(user_id)
+    if user.data.present?
+      hash_array = user.data
+      to_device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+    end
+
+    if Rails.env.production?
+      appID = PushWoosh_Const::CM_P_APP_ID
+    elsif Rails.env.staging?
+      appID = PushWoosh_Const::CM_S_APP_ID
+    else
+      appID = PushWoosh_Const::CM_D_APP_ID
+    end
+
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::CM_API_ACCESS}
+
+    notification_options = {
+        send_date: "now",
+        badge: "1",
+        sound: "default",
+        content:{
+            fr:self.content,
+            en:self.content
+        },
+
+        data:{
+            post:{
+                id: self.id,
+                topic_id: self.topic_id,
+                content: self.content,
+                image_url: self.img_url,
+                width:  self.width,
+                height: self.height,
+                created_at: self.created_at,
+                user_id: self.user_id,
+                username: self.username,
+                post_type: self.post_type,
+                place_id: self.place_id,
+                likes: self.likes,
+                dislikes: self.dislikes,
+                offensive: self.offensive,
+                created_at: self.created_at,
+                data: self.data
+            }
+        },
+        devices: [to_device_id]
     }.to_json
 
-    p "user_to_push"
-    p user_to_push
-    full_path = 'https://go.urbanairship.com/api/push/'
+    options = @auth.merge({:notifications  => [notification_options]})
+    options = {:request  => options}
+
+    full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
     url = URI.parse(full_path)
     req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-    req.body = notification
-    req.basic_auth app_key, master_secret
+    req.body = options.to_json
     con = Net::HTTP.new(url.host, url.port)
     con.use_ssl = true
 
     r = con.start {|http| http.request(req)}
-    p "after sent"
-    logger.info "\n\n##############\n\n  " + "Resonse body: " + r.body + "  \n\n##############\n\n"
+
+    p "pushwoosh"
+
   end
 
   def post_image_upload_delayed_job(filename)
