@@ -629,7 +629,15 @@ class Topic < ActiveRecord::Base
     #logger.info "\n\n##############\n\n  " + "Resonse body: " + r.body + "  \n\n##############\n\n"
     #p "after urban airship"
 
-    @auth = {:application  => "B48C7-FE962",:auth => "y5dMhjeQ1pcAf3SNnMqy4LBexlqTR0d86p2o3c84NhEajv3Mxsffz8QuEVshTklJ6Qn9JpwVPJKjx0bmsCBn"}
+    if Rails.env.production?
+      appID = PushWoosh_Const::CM_P_APP_ID
+    elsif Rails.env.staging?
+      appID = PushWoosh_Const::CM_S_APP_ID
+    else
+      appID = PushWoosh_Const::CM_D_APP_ID
+    end
+
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::CM_API_ACCESS}
 
 #- Default options, uncomment :data or :devices if needed
     default_notification_options = {

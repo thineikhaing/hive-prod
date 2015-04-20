@@ -140,6 +140,15 @@ module Urbanairship_Const
 end
 
 
+module PushWoosh_Const
+  CM_D_APP_ID = "B48C7-FE962"
+  CM_S_APP_ID = "82255-61ADD"
+  CM_P_APP_ID = "40C8F-B20ED"
+
+  CM_API_ACCESS = "y5dMhjeQ1pcAf3SNnMqy4LBexlqTR0d86p2o3c84NhEajv3Mxsffz8QuEVshTklJ6Qn9JpwVPJKjx0bmsCBn"
+end
+
+
 module AWS_Link
  AWS_Image_D_Link = "https://hivedevimages.s3.amazonaws.com/"
  AWS_Audio_D_Link = "https://hivedevaudioclips.s3.amazonaws.com/"
