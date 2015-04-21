@@ -86,13 +86,7 @@ class Api::TopicsController < ApplicationController
           if hiveapplication.api_key == carmmunicate_key  and topic.present?
             if params[:users_to_push].present?
               #broadcast to selected user group
-
-              if Rails.env.development?
                 topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true)
-              else
-                topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true)
-                topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true)
-              end
             else
               #broadcast users within 5km/10km
               topic.notify_carmmunicate_msg_to_nearby_users

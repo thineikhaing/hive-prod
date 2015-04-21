@@ -656,8 +656,6 @@ class Topic < ActiveRecord::Base
     r = con.start {|http| http.request(req)}
 
     p "pushwoosh"
-    p "Device ID"
-    p to_device_id
 
   end
 
