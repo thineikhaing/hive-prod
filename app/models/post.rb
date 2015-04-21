@@ -477,7 +477,7 @@ class Post < ActiveRecord::Base
             }
         },
         devices: [to_device_id]
-    }.to_json
+    }
 
     options = @auth.merge({:notifications  => [notification_options]})
     options = {:request  => options}
@@ -490,7 +490,7 @@ class Post < ActiveRecord::Base
     con.use_ssl = true
 
     r = con.start {|http| http.request(req)}
-
+    p "create post broadcast"
     p "pushwoosh"
 
   end

@@ -54,7 +54,7 @@ class Favraction < ActiveRecord::Base
             en:"Remember to finish the task"
         },
         devices: [to_device_id]
-    }.to_json
+    }
 
     options = @auth.merge({:notifications  => [notification_options]})
     options = {:request  => options}
@@ -164,7 +164,7 @@ class Favraction < ActiveRecord::Base
               en:"Your favr request is expired"
           },
           devices: to_device_id
-      }.to_json
+      }
 
       options = @auth.merge({:notifications  => [notification_options]})
       options = {:request  => options}

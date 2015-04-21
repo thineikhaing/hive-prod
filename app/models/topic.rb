@@ -584,52 +584,8 @@ class Topic < ActiveRecord::Base
     p "device_id"
     p to_device_id
 
-    #notification = {
-    #    aliases: users_to_push,
-    #    aps: { alert: self.title, badge: "+1", sound: "default" },
-    #    topic:{id: self.id,
-    #    title: self.title,
-    #    user_id: self.user_id,
-    #    topic_type: self.topic_type,
-    #    topic_sub_type: self.topic_sub_type,
-    #    place_id: self.place_id,
-    #    image_url: self.image_url,
-    #    width:  self.width,
-    #    height: self.height,
-    #    hiveapplication_id: self.hiveapplication_id,
-    #    value:  self.value,
-    #    unit: self.unit,
-    #    likes: self.likes,
-    #    dislikes: self.dislikes,
-    #    offensive: self.offensive,
-    #    notification_range: self.notification_range,
-    #    special_type: self.special_type,
-    #    created_at: self.created_at,
-    #    data: self.data,
-    #    methods: {
-    #        username: username,
-    #        place_information: self.place_information,
-    #        tag_information: self.tag_information,
-    #        is_private_message: isprivatemsg,
-    #        to_plate_number: to_plate_number,
-    #        to_device_id: to_device_id
-    #      }
-    #    }
-    #}.to_json
-
     p "users_to_push"
     p users_to_push
-
-    #url = URI.parse(full_path)
-    #req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-    #req.body = notification
-    #req.basic_auth app_key, master_secret
-    #con = Net::HTTP.new(url.host, url.port)
-    #con.use_ssl = true
-    #
-    #r = con.start {|http| http.request(req)}
-    #p "after sent"
-    #logger.info "\n\n##############\n\n  " + "Resonse body: " + r.body + "  \n\n##############\n\n"
 
     if Rails.env.production?
       appID = PushWoosh_Const::CM_P_APP_ID
@@ -640,6 +596,10 @@ class Topic < ActiveRecord::Base
     end
 
     @auth = {:application  => appID ,:auth => PushWoosh_Const::CM_API_ACCESS}
+
+    p "Push Woosh Authentication"
+    p appID
+
 
     notification_options = {
         send_date: "now",
@@ -678,10 +638,10 @@ class Topic < ActiveRecord::Base
                  to_plate_number: to_plate_number,
                  to_device_id: to_device_id
              }
-          }
+          }.to_json
         },
         devices: [to_device_id]
-    }.to_json
+    }
 
     options = @auth.merge({:notifications  => [notification_options]})
     options = {:request  => options}
@@ -696,6 +656,8 @@ class Topic < ActiveRecord::Base
     r = con.start {|http| http.request(req)}
 
     p "pushwoosh"
+    p "Device ID"
+    p to_device_id
 
   end
 
