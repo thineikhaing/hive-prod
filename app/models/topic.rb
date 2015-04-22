@@ -581,6 +581,19 @@ class Topic < ActiveRecord::Base
       end
     end
 
+
+    #to_device_id = []
+    #
+    #users= User.where("id = ? or id =?", action_topic.user_id , self.doer_user_id)
+    #users.each do |user|
+    #  if user.data.present?
+    #    hash_array = user.data
+    #    device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+    #    to_device_id.push(device_id)
+    #  end
+    #end
+
+
     p "device_id"
     p to_device_id
 
@@ -675,12 +688,8 @@ class Topic < ActiveRecord::Base
     end
 
     if users_to_push.present?
-      if Rails.env.development?
         notify_carmmunicate_msg_to_selected_users(users_to_push, false)
-      else
-        notify_carmmunicate_msg_to_selected_users(users_to_push, false)
-        notify_carmmunicate_msg_to_selected_users(users_to_push, false)
-      end
+
     end
   end
 
