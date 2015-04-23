@@ -616,15 +616,15 @@ class Topic < ActiveRecord::Base
 
     notification_options = {
         send_date: "now",
-        badge: "1",
+        badge: "+1",
         sound: "default",
         content:{
-            fr:self.title,
-            en:self.title
+            fr:self.title.match(":").post_match,
+            en:self.title.match(":").post_match
         },
 
         data:{
-            topic:{id: self.id,
+             id: self.id,
              title: self.title,
              user_id: self.user_id,
              topic_type: self.topic_type,
@@ -651,7 +651,6 @@ class Topic < ActiveRecord::Base
                  to_plate_number: to_plate_number,
                  to_device_id: to_device_id
              }
-          }.to_json
         },
         devices: [to_device_id]
     }
