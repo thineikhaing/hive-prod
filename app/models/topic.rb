@@ -614,13 +614,21 @@ class Topic < ActiveRecord::Base
     p appID
 
 
+
+    if !self.title.nil?
+      title = self.title.match(":").post_match
+    else
+      title = ""
+    end
+
+
     notification_options = {
         send_date: "now",
         badge: "+1",
         sound: "default",
         content:{
-            fr:self.title.match(":").post_match,
-            en:self.title.match(":").post_match
+            fr:title,
+            en:title
         },
 
         data:{
