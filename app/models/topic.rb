@@ -577,28 +577,29 @@ class Topic < ActiveRecord::Base
       if user.data.present?
         hash_array = user.data
         to_plate_number = hash_array["plate_number"] if  hash_array["plate_number"].present?
-        to_device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+
       end
     end
 
 
-    #to_device_id = []
-    #
-    #users= User.where("id = ? or id =?", action_topic.user_id , self.doer_user_id)
-    #users.each do |user|
-    #  if user.data.present?
-    #    hash_array = user.data
-    #    device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-    #    to_device_id.push(device_id)
-    #  end
-    #end
+    p "users_to_push"
+    p users_to_push
+
+    to_device_id = []
+
+    users_to_push.each do |u|
+      user= User.find_by_id(u)
+      if user.data.present?
+        hash_array = user.data
+        device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+        to_device_id.push(device_id)
+      end
+    end
 
 
     p "device_id"
     p to_device_id
 
-    p "users_to_push"
-    p users_to_push
 
     if Rails.env.production?
       appID = PushWoosh_Const::CM_P_APP_ID
@@ -611,12 +612,13 @@ class Topic < ActiveRecord::Base
     @auth = {:application  => appID ,:auth => PushWoosh_Const::CM_API_ACCESS}
 
     p "Push Woosh Authentication"
-    p appID
-
-
 
     if !self.title.nil?
-      title = self.title.match(":").post_match
+      if self.title.include? ":"
+        title = self.title.match(":").post_match
+      else
+        title = self.title
+      end
     else
       title = ""
     end
@@ -660,7 +662,7 @@ class Topic < ActiveRecord::Base
                  to_device_id: to_device_id
              }
         },
-        devices: [to_device_id]
+        devices: to_device_id
     }
 
     options = @auth.merge({:notifications  => [notification_options]})
