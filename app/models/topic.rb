@@ -623,6 +623,7 @@ class Topic < ActiveRecord::Base
       title = ""
     end
 
+    avatar = get_avatar(username)
 
     notification_options = {
         send_date: "now",
@@ -655,6 +656,7 @@ class Topic < ActiveRecord::Base
              data: self.data,
              methods: {
                  username: username,
+                 avatar: avatar,
                  place_information: self.place_information,
                  tag_information: self.tag_information,
                  is_private_message: isprivatemsg,
@@ -680,6 +682,64 @@ class Topic < ActiveRecord::Base
     p "pushwoosh"
 
   end
+
+
+  def get_avatar(username)
+    avatar_url = nil
+
+    #GET AVATAR URL
+    #check for special case that cannot match the avatar
+    avatar_url = "assets/Avatars/Chat-Avatar-Puppy.png" if(username.index("Snorkie").present?)
+    avatar_url = "assets/Avatars/Chat-Avatar-Koala.png" if(username.index("Bear").present?)
+    avatar_url = "assets/Avatars/Chat-Avatar-Kitten.png" if(username.index("Cat").present?)
+    avatar_url = "assets/Avatars/Chat-Avatar-Kitten.png" if(username.index("Jaguar").present?)
+    avatar_url = "assets/Avatars/Chat-Avatar-Kitten.png" if(username.index("Lion").present?)
+    avatar_url = "assets/Avatars/Chat-Avatar-Admin.png" if(username.index("Raydius GameBot").present?)
+
+    urls = ["assets/Avatars/Chat-Avatar-Chipmunk.png",
+            "assets/Avatars/Chat-Avatar-Puppy.png",
+            "assets/Avatars/Chat-Avatar-Panda.png",
+            "assets/Avatars/Chat-Avatar-Koala.png",
+            "assets/Avatars/Chat-Avatar-Husky.png",
+            "assets/Avatars/Chat-Avatar-Horse.png",
+            "assets/Avatars/Chat-Avatar-Llama.png",
+            "assets/Avatars/Chat-Avatar-Aardvark.png",
+            "assets/Avatars/Chat-Avatar-Alligator.png",
+            "assets/Avatars/Chat-Avatar-Beaver.png",
+            "assets/Avatars/Chat-Avatar-Bluebird.png",
+            "assets/Avatars/Chat-Avatar-Butterfly.png",
+            "assets/Avatars/Chat-Avatar-Eagle.png",
+            "assets/Avatars/Chat-Avatar-Elephant.png",
+            "assets/Avatars/Chat-Avatar-Giraffe.png",
+            "assets/Avatars/Chat-Avatar-Kangaroo.png",
+            "assets/Avatars/Chat-Avatar-Monkey.png",
+            "assets/Avatars/Chat-Avatar-Swan.png",
+            "assets/Avatars/Chat-Avatar-Whale.png",
+            "assets/Avatars/Chat-Avatar-Penguin.png",
+            "assets/Avatars/Chat-Avatar-Duck.png",
+            "assets/Avatars/Chat-Avatar-Admin.png",]
+
+    urls.each do |url|
+      if avatar_url.nil?
+        url_one = [ ]
+        url_one= url.split ('.png')
+        url_two = [ ]
+        url_two = url_one[0].split('-')
+        user_names = username.split (" ")
+        last_index = user_names.length
+        if user_names[Integer(last_index)-1] == url_two[Integer(url_two.length)-1]
+          avatar_url = url
+        end
+      end
+    end
+
+    #if still blank put the default avatar
+    if avatar_url.nil?
+      avatar_url = "assets/Avatars/Chat-Avatar.png"
+    end
+    @avatar_url = avatar_url
+  end
+
 
   def notify_carmmunicate_msg_to_nearby_users
     users_to_push=[]
