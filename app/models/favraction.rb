@@ -14,6 +14,7 @@ class Favraction < ActiveRecord::Base
   def create_record(topic_id, doer_user_id, status, user_id)
     Favraction.create(topic_id: topic_id, doer_user_id: doer_user_id, status: status, user_id: user_id)
   end
+
   def as_json(options=nil)
     super(only: [:id, :topic_id, :content, :doer_user_id, :status, :user_id, :created_at, :updated_at, :post_id, :honor_to_owner, :honor_to_doer])
   end
@@ -184,5 +185,3 @@ class Favraction < ActiveRecord::Base
     end
   end
 
-
-end
