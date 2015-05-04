@@ -12,16 +12,28 @@ class Api::DownloaddataController < ApplicationController
           render json: { topics: JSON.parse(topics.to_json())}
         elsif hiveApplication.devuser_id==1 and hiveApplication.id!=1 #All Applications under Herenow account except Hive
           render json: { topics: JSON.parse(topics.to_json(content: true))}
+
+        elsif params[:choice].present? and params[:choice] == "favr"
+          favr_topics = [ ]
+
+          topics.each do |topic|
+            favr_topics.push(topic) if topic.topic_type == Topic::FAVR && topic.state != Topic::ACKNOWLEDGED && topic.state != Topic::EXPIRED && topic.state != Topic::REVOKED
+          end
+          render json: { topics: favr_topics }
+
         else #3rd party App
           render json: { topics: JSON.parse(topics.to_json())}
         end
       else
         render json: { error_msg: "Invalid application key" }, status: 400
       end
+
     else
       render json: { error_msg: "Params application key must be presented" } , status: 400
     end
   end
+
+
 
   def retrieve_hiveapplications
     render json: {apps: JSON.parse(HiveApplication.all.to_json(:test => "true")) }

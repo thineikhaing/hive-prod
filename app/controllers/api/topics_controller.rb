@@ -81,6 +81,7 @@ class Api::TopicsController < ApplicationController
             p favr_key = Favr_key::Staging_Key
           else
             carmmunicate_key = Carmmunicate_key::Production_Key
+            p favr_key = Favr_key::Production_Key
           end
 
           if hiveapplication.api_key == carmmunicate_key  and topic.present?
@@ -233,11 +234,13 @@ class Api::TopicsController < ApplicationController
 
     if topic.save
       if (topic.topic_type == Topic::FAVR) && user.present?
-        user.points -= points
+        user.point -= points
         user.save!
         add_favr_action_delay_job(topic.id)
 
       end
+
+      current_user = User.find_by_authentication_token(params[:auth_token])
       post = Post.create(content: title, topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude)
       if post.save
         if topic.topic_type == Topic::IMAGE
@@ -246,24 +249,24 @@ class Api::TopicsController < ApplicationController
           history.create_record("post", post2.id, "create", topic.id)
         end
 
-        if topic.topic_type == Topic::LUNCHEON
-          post2 = Post.create(content: params[:img_url], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::IMAGE, height: params[:height], width: params[:width])
-          post2.delay.image_upload_delayed_job(params[:img_url])
-          post3 = Post.create(content: params[:extra_content], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::TEXT)
-          history.create_record("post", post2.id, "create", topic.id)
-          history.create_record("post", post3.id, "create", topic.id)
-
-          if params[:promo].present?
-            post4 = Post.create(content: params[:promo_content], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::TEXT)
-            history.create_record("post", post4.id, "create", topic.id)
-          end
-
-          if params[:coshoot].present?
-            post5 = Post.create(content: params[:coshoot_img_url], topic_id: topic.id, user_id: params[:coshoot_user_id], latitude: topic.latitude, longitude: topic.longitude, post_type: Post::IMAGE, height: params[:coshoot_height], width: params[:coshoot_width])
-            post5.delay.image_upload_delayed_job(params[:coshoot_img_url])
-            history.create_record("post", post5.id, "create", topic.id)
-          end
-        end
+        #if topic.topic_type == Topic::LUNCHEON
+        #  post2 = Post.create(content: params[:img_url], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::IMAGE, height: params[:height], width: params[:width])
+        #  post2.delay.image_upload_delayed_job(params[:img_url])
+        #  post3 = Post.create(content: params[:extra_content], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::TEXT)
+        #  history.create_record("post", post2.id, "create", topic.id)
+        #  history.create_record("post", post3.id, "create", topic.id)
+        #
+        #  if params[:promo].present?
+        #    post4 = Post.create(content: params[:promo_content], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::TEXT)
+        #    history.create_record("post", post4.id, "create", topic.id)
+        #  end
+        #
+        #  if params[:coshoot].present?
+        #    post5 = Post.create(content: params[:coshoot_img_url], topic_id: topic.id, user_id: params[:coshoot_user_id], latitude: topic.latitude, longitude: topic.longitude, post_type: Post::IMAGE, height: params[:coshoot_height], width: params[:coshoot_width])
+        #    post5.delay.image_upload_delayed_job(params[:coshoot_img_url])
+        #    history.create_record("post", post5.id, "create", topic.id)
+        #  end
+        #end
 
         if topic.topic_type == Topic::FAVR
           post2 = Post.create(content: params[:extra_content], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::TEXT)
@@ -272,12 +275,13 @@ class Api::TopicsController < ApplicationController
         topic.update_attributes(radius: params[:radius]) if params[:radius].present? and params[:beacon].present?
         topic.flare if params[:flare].present?
 
-        history.create_record("topic", topic.id, "create", nil)
+        #history.create_record("topic" , topic.id , "create" , nil )
+
         tag.create_record(topic.id, params[:tag], Tag::NORMAL) if params[:tag].present?
         tag.create_record(topic.id, params[:locationtag], Tag::LOCATION) if params[:locationtag].present?
 
-        history.create_record("post", post.id, "create", topic.id)
-        history.create_record("topic", topic.id, "update", nil)
+        #history.create_record("post", post.id, "create", topic.id)
+        #history.create_record("topic", topic.id, "update", nil)
         #post.broadcast
         topic.reload
         topic.overall_broadcast
@@ -628,7 +632,7 @@ class Api::TopicsController < ApplicationController
           actions.push({action_id: favr_action_id,topic_id:topic.id,status: last_favr_action_status,doer_id:doer_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: honor_to_doer, honor_to_owner: honor_to_owner,user_id: favraction.user_id,created_at:favraction.created_at,updated_at:favraction.updated_at})
         end
       end
-      render json: { user_points:user.points, user_positive_honor: user.positive_honor, user_negative_honor: user.negative_honor, user_honored_count: user.honored_times , topics: topic_lists, actions: actions,my_requests: myrequests, my_tasks:mytasks}
+      render json: { user_points:user.point, user_positive_honor: user.positive_honor, user_negative_honor: user.negative_honor, user_honored_count: user.honored_times , topics: topic_lists, actions: actions,my_requests: myrequests, my_tasks:mytasks}
     end
   end
 

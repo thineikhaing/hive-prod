@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150316054712) do
+ActiveRecord::Schema.define(version: 20150504095452) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -221,6 +221,15 @@ ActiveRecord::Schema.define(version: 20150316054712) do
     t.datetime "updated_at"
     t.integer  "hiveapplication_id"
     t.integer  "user_id"
+    t.string   "extra_info"
+    t.datetime "valid_start_date"
+    t.datetime "valid_end_date"
+    t.integer  "points"
+    t.integer  "free_points"
+    t.integer  "state"
+    t.string   "title_indexes"
+    t.integer  "checker"
+    t.integer  "given_time"
   end
 
   create_table "user_accounts", force: true do |t|

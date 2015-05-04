@@ -124,9 +124,9 @@ class Place < ActiveRecord::Base
           return { place: private_place, status: 71 }
         else
           if choice == "luncheon"
-            place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, category: "Food and Dining",img_url: img_url,country: country,postcode: postcode,locality: locality) unless place.present?
+            place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, category: "Food and Dining",img_url: img_url,country: country,postal_code: postcode,locality: locality) unless place.present?
           else
-            place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, img_url: img_url,category: category,country: country,postcode: postcode,locality: locality) unless place.present?
+            place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, img_url: img_url,category: category,country: country,postal_code: postcode,locality: locality) unless place.present?
           end
 
           Checkinplace.create(place_id: place.id, user_id: user_id)

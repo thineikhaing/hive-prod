@@ -88,9 +88,9 @@ module Carmmunicate_key
 end
 
 module Favr_key
-  Development_Key = "3917aadf42e00b1e10cc4ebfe8cc6356"
-  Staging_Key= "8241e7f0321e4abdeb72cf1aae828020"
-  #Production_Key = "05c4919a87614b59e5b6814b02ceff07"
+  Development_Key = "d6d9f8516e270aa9fd83970de26aed8b"
+  Staging_Key= "643e879e71eb4f624d49ecd3ef01122f"
+  Production_Key = "582045053ce9f2310ee9ab0d2a7217d6"
 end
 
 module Socal_key

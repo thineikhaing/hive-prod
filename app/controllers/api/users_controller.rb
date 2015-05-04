@@ -243,6 +243,8 @@ class Api::UsersController < ApplicationController
   end
 
   def sign_in
+    params[:bt_mac_address].present? ? bt_mac_address = params[:bt_mac_address] : bt_mac_address = ""
+
     if params[:email].present? and params[:password].present?
       var = [ ]
       user = User.find_by_email(params[:email])
@@ -267,6 +269,21 @@ class Api::UsersController < ApplicationController
         var.push(21)
         render json: { :error => var }, status: 400 # User email doesn't exist
       end
+
+    elsif params[:device_id]
+      user = User.find_by_device_id(params[:device_id])
+
+      if user.present?
+        user.update_attributes(device_token: params[:device_token], bt_mac_address: bt_mac_address)
+      else
+        user = User.new(device_id: params[:device_id], password: Devise.friendly_token)
+        user.save
+      end
+
+      p "user :::"
+      p user
+
+      render json: { :user => user, :success => 20 }, status: 200
     else
       render json: {error_msg: "Params email and password must be presented"} , status: 400
     end
@@ -546,7 +563,7 @@ class Api::UsersController < ApplicationController
     data = {
         id: current_user.id,
         username: current_user.username,
-        points: current_user.points,
+        points: current_user.point,
         favourite_topics: favTopicArray,
         liked_posts: likedPostArray,
         liked_topics: likedTopicArray,

@@ -11,15 +11,27 @@ class Topic < ActiveRecord::Base
   has_many :votes
   has_many :invitees
 
+  delegate :latitude, :longitude, :address, :name, to: :place
+
   # Setup hstore
   store_accessor :data
   #enums for topic type
 
-  enums %w(NORMAL IMAGE AUDIO VIDEO)
+  enums %w(NORMAL IMAGE AUDIO VIDEO FAVR)
 
   enums %w(NONE FLARE BEACON STICKY PROMO COSHOOT QUESTION ERRAND)
 
-   attr_accessible :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :data, :created_at, :image_url, :width, :height, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type
+  #Topic states
+  enums %w(DEFAULT OPENED IN_PROGRESS FINISHED ACKNOWLEDGED REJECTED REVOKED TASK_EXPIRED EXPIRED)
+
+  #Favr Actions
+  enums %w(CREATE START FINISH ACKNOWLEDGE REJECT REVOKE REOPEN EXTEND REMINDER_TIMEUP TASK_TIMEUP FAVR_TIMEUP )
+
+
+  attr_accessible :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :data, :created_at,
+                  :image_url, :width, :height, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
+                  :special_type , :extra_info, :valid_start_date, :valid_end_date, :points, :free_points, :state,
+                  :title_indexes, :checker, :given_time
 
   # Return the tags and location tags related to the topic
 
@@ -81,6 +93,20 @@ class Topic < ActiveRecord::Base
         end
      end
     end
+  end
+
+  # Check for special type for topic creation
+
+  def self.check_special_type(flare, beacon, sticky, promo, coshoot,question,errand)
+    special_type = ""
+    special_type.present? ? special_type << "," << FLARE.to_s : special_type << FLARE.to_s if flare.present?
+    special_type.present? ? special_type << "," << BEACON.to_s : special_type << BEACON.to_s if beacon.present?
+    special_type.present? ? special_type << "," << STICKY.to_s : special_type << STICKY.to_s if sticky.present?
+    special_type.present? ? special_type << "," << PROMO.to_s : special_type << PROMO.to_s if promo.present?
+    special_type.present? ? special_type << "," << COSHOOT.to_s : special_type << COSHOOT.to_s if coshoot.present?
+    special_type.present? ? special_type << "," << QUESTION.to_s : special_type << QUESTION.to_s if question.present?
+    special_type.present? ? special_type << "," << ERRAND.to_s : special_type << ERRAND.to_s if errand.present?
+    special_type
   end
 
   def hive_broadcast
@@ -337,6 +363,42 @@ class Topic < ActiveRecord::Base
     channel_name = hiveapplication.api_key + "_channel"
     Pusher[channel_name].trigger_async("delete_topic", data)
   end
+
+  def overall_broadcast
+    data = {
+        id: self.id,
+        title: self.title,
+        user_id: self.user_id,
+        topic_type: self.topic_type,
+        offensive: self.offensive,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        extra_info: self.extra_info,
+        state: self.state,
+        points: self.points,
+        free_points:self.free_points,
+        title_indexes:self.title_indexes,
+        checker: self.checker,
+        given_time: self.given_time,
+        valid_start_date: self.valid_start_date,
+        valid_end_date: self.valid_end_date,
+        methods: [
+
+            username: self.username,
+
+            place_information: self.place_information,
+            tag_information: self.tag_information
+        ],
+    }
+
+    if self.topic_type == FAVR
+      Pusher["favr_channel"].trigger_async("new_topic", data)
+      Pusher["raydius_channel"].trigger_async("new_topic", data)
+    else
+      Pusher["raydius_channel"].trigger_async("new_topic", data)
+    end
+  end
+
 
   # Search the database for related titles
 

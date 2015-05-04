@@ -39,6 +39,29 @@ class Api::PlacesController < ApplicationController
       place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
       #Checkinplace.create(place_id: places.id, user_id: current_user.id) if places.present?
       render json: place
+    elsif params[:place_id] || params[:source]
+      place = Place.new
+
+      params[:name].present? ? name = params[:name] : name = nil
+      params[:latitude].present? ? latitude = params[:latitude] : latitude = nil
+      params[:longitude].present? ? longitude = params[:longitude] : longitude = nil
+      params[:address].present? ? address = params[:address] : address = nil
+      params[:source].present? ? source = params[:source] : source = nil
+      params[:source_id].present? ? source_id = params[:source_id] : source_id = nil
+      params[:place_id].present? ? place_id = params[:place_id] : place_id = nil
+      params[:choice].present? ? choice = params[:choice] : choice = nil
+      params[:img_url].present? ? img_url = params[:img_url] : img_url = nil
+      params[:place_type].present? ? place_type = params[:place_type] : place_type = nil
+      params[:locality].present? ? locality = params[:locality] : locality=""
+      params[:country].present? ? country = params[:country] : country=""
+      params[:postcode].present? ? postcode = params[:postcode] : postcode=""
+
+      currentuser = User.find_by_authentication_token(params[:auth_token])
+      place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, currentuser.id, params[:auth_token], choice,img_url,place_type,locality,country,postcode )
+
+      render json: place
+
+
     else
       render json: { error_msg: "Params user id and/ or authentication token must be presented" } , status: 400
     end
