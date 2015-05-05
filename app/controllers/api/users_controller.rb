@@ -288,14 +288,18 @@ class Api::UsersController < ApplicationController
       user = User.find_by_device_id(params[:device_id])
 
       if user.present?
-        user.update_attributes(device_token: params[:device_token], bt_mac_address: bt_mac_address)
+        result = Hash.new
+        result[:device_id] = params[:device_token]
+        user.data = result
+        user.save!
       else
         user = User.new(device_id: params[:device_id], password: Devise.friendly_token)
         user.save
       end
 
-      p "user :::"
+      p " favr user :::"
       p user
+
 
       render json: { :user => user, :success => 20 }, status: 200
     else
