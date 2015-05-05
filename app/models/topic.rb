@@ -391,12 +391,8 @@ class Topic < ActiveRecord::Base
         ],
     }
 
-    if self.topic_type == FAVR
       Pusher["favr_channel"].trigger_async("new_topic", data)
-      Pusher["raydius_channel"].trigger_async("new_topic", data)
-    else
-      Pusher["raydius_channel"].trigger_async("new_topic", data)
-    end
+    p "Favr Channer Trigger"
   end
 
 
@@ -671,7 +667,7 @@ class Topic < ActiveRecord::Base
       appID = PushWoosh_Const::CM_D_APP_ID
     end
 
-    @auth = {:application  => appID ,:auth => PushWoosh_Const::CM_API_ACCESS}
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
     p "Push Woosh Authentication"
 

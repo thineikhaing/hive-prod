@@ -275,7 +275,15 @@ class Api::TopicsController < ApplicationController
         topic.update_attributes(radius: params[:radius]) if params[:radius].present? and params[:beacon].present?
         topic.flare if params[:flare].present?
 
-        #history.create_record("topic" , topic.id , "create" , nil )
+       # history.create_record("topic" , topic.id , "create" , nil )
+        #(type_name: type, type_id: type_id, type_action: type_action, parent_id: parent_id)
+
+        history= Historychange.new
+        history.type_action = 'create'
+        history.type_name = 'topic'
+        history.type_id = topic.id
+        history.parent_id = nil
+        history.save
 
         tag.create_record(topic.id, params[:tag], Tag::NORMAL) if params[:tag].present?
         tag.create_record(topic.id, params[:locationtag], Tag::LOCATION) if params[:locationtag].present?
@@ -644,7 +652,7 @@ class Api::TopicsController < ApplicationController
 
       p "=========="
       p topic_id
-      p favr_action_idw
+      p favr_action_id
       p params[:action_type]
       p "========="
 
@@ -737,6 +745,805 @@ class Api::TopicsController < ApplicationController
 
   # *********** for Socal ***********
 
+  def start_favr(topic_id, user_id, temp_id, lat,lng)
+    user = User.find(user_id)
+    action_topic = Topic.find(topic_id)
 
+    if (user.id == action_topic.user_id)
+      #err doer and owner user_id should not be the same
+      render json: {err_message: "owner of favr topic cannot be the doer"}
+    else
+      unless action_topic.nil?
+        if action_topic.state == Topic::OPENED && action_topic.topic_type == Topic::FAVR
+          favr_action = Favraction.new
+          favr_action = favr_action.create_record(topic_id,user.id,Favraction::DOER_STARTED,user.id)
+          if favr_action.present?
+            action_topic.state = Topic::IN_PROGRESS
+            action_topic.save!
+            title = user.username + " has started favr request"
+            create_user = User.find_by_username("FavrBot")
+            post = Post.new
+            new_post = post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::DOER_STARTED)
+            favr_action.post_id = new_post.id
+            favr_action.save!
+            extend_favr_action_delay_job(action_topic.id)
+            add_favr_task_reminder_job(favr_action.id)
+            add_favr_task_job(favr_action.id)
+
+            doer = User.find(favr_action.doer_user_id)
+            doer_name = doer.username
+            unless favr_action.post_id.nil?
+              post= Post.find(favr_action.post_id)
+              post_id = post.id
+              post_content = post.content
+              post_created_at = post.created_at
+            end
+            action = {action_id: favr_action.id,topic_id:favr_action.topic_id,status: favr_action.status,doer_id:favr_action.doer_user_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: favr_action.honor_to_doer, honor_to_owner: favr_action.honor_to_owner,user_id: favr_action.user_id,created_at:favr_action.created_at,updated_at:favr_action.updated_at}
+            render json: {topic: action_topic , action: action}
+          end
+        else
+          #topic is not in open state
+          render json: {err_message: "Topic status must be OPENED"}
+        end
+      end
+    end
+  end
+
+  def finish_favr (favr_action_id, user_id, temp_id, lat,lng)
+    user = User.find(user_id)
+    favr_action =  Favraction.find(favr_action_id)
+    if favr_action.present?
+      action_topic = Topic.find(favr_action.topic_id)
+      unless action_topic.nil?
+        if action_topic.state == Topic::IN_PROGRESS && action_topic.topic_type == Topic::FAVR
+          if favr_action.present?
+            favr_action.status = Favraction::DOER_FINISHED
+            favr_action.user_id = user.id
+            favr_action.save!
+            action_topic.state = Topic::FINISHED
+            action_topic.save!
+            title = user.username + " has finished favr request"
+            create_user = User.find_by_username("FavrBot")
+            post = Post.new
+            new_post = post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::DOER_FINISHED)
+            favr_action.post_id = new_post.id
+            favr_action.save!
+            remove_favr_task_reminder_job(favr_action_id)
+            notify_owner_to_acknowledge(action_topic.id)
+            #render json: {topic: action_topic, action_status: Favraction::DOER_FINISHED}
+            doer = User.find(favr_action.doer_user_id)
+            doer_name = doer.username
+            unless favr_action.post_id.nil?
+              post= Post.find(favr_action.post_id)
+              post_id = post.id
+              post_content = post.content
+              post_created_at = post.created_at
+            end
+            action = {action_id: favr_action.id,topic_id:favr_action.topic_id,status: favr_action.status,doer_id:favr_action.doer_user_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: favr_action.honor_to_doer, honor_to_owner: favr_action.honor_to_owner,user_id: favr_action.user_id,created_at:favr_action.created_at,updated_at:favr_action.updated_at}
+            render json: {topic: action_topic , action: action}
+          else
+            render json: {err_message: "Topic status must be IN_PROGRESS"}
+          end
+        else
+          #topic is not in in_progress state
+          render json: {err_message: "Topic status must be IN_PROGRESS"}
+        end
+      end
+    end
+  end
+
+  def notify_owner_to_acknowledge(topic_id)
+    p "inside urban airship function"
+    p topic_id
+    action_topic = Topic.find(topic_id)
+    p action_topic
+    user = User.find_by_username("FavrBot")
+    p action_topic.user_id.to_s
+    p "before urban airship"
+    user_to_push=[]
+    user_to_push.push(action_topic.user_id.to_s)
+    p user_to_push
+
+    users= User.find(action_topic.user_id)
+
+    if user.data.present?
+      hash_array = user.data
+      device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+      to_device_id.push(device_id)
+    end
+
+
+    if action_topic.present?
+
+      if Rails.env.production?
+        appID = PushWoosh_Const::FV_P_APP_ID
+      elsif Rails.env.staging?
+        appID = PushWoosh_Const::FV_S_APP_ID
+      else
+        appID = PushWoosh_Const::FV_D_APP_ID
+      end
+
+      @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+
+
+      notification_options = {
+          send_date: "now",
+          badge: "1",
+          sound: "default",
+          content:{
+              fr:"Your favr request is finished",
+              en:"Your favr request is finished"
+          },
+          data:{
+              topic_id:action_topic.id
+          },
+          devices: to_device_id
+      }
+
+      options = @auth.merge({:notifications  => [notification_options]})
+      options = {:request  => options}
+
+      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+      url = URI.parse(full_path)
+      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+      req.body = options.to_json
+      con = Net::HTTP.new(url.host, url.port)
+      con.use_ssl = true
+
+      r = con.start {|http| http.request(req)}
+
+      p "pushwoosh"
+
+    end
+  end
+
+  def get_honor_rank(honor)
+    if honor < 1
+      return "Fail"
+    elsif honor < 2
+      return "B"
+    elsif honor < 3
+      return "A"
+    else
+      return "A+"
+    end
+  end
+
+  def acknowledge_favr (favr_action_id, user_id, temp_id, lat,lng,honor)
+    user = User.find(user_id)
+    favr_action = Favraction.find(favr_action_id)
+    if favr_action.present?
+      action_topic = Topic.find(favr_action.topic_id)
+      unless action_topic.nil?
+        if action_topic.state == Topic::FINISHED && action_topic.topic_type == Topic::FAVR
+          favr_action.status = Favraction::OWNER_ACKNOWLEDGED
+          favr_action.user_id = user.id
+          favr_action.honor_to_doer = honor
+          favr_action.save!
+
+          doer_user = User.find_by_id(favr_action.doer_user_id)
+          action_topic.state = Topic::ACKNOWLEDGED
+          action_topic.save!
+
+          #update points
+          total_points = action_topic.points + action_topic.free_points
+          doer_user.points += total_points
+          doer_user.honored_times +=1
+          if (honor>0)
+            doer_user.positive_honor += honor
+          else
+            doer_user.negative_honor += (-1 * honor)
+          end
+          doer_user.save!
+          #doer_user.update_user_points
+          data = {
+              user_id: doer_user.id,
+              points: doer_user.points
+          }
+
+          Pusher["favr_channel"].trigger  "update_user_points", data
+
+          ranking = get_honor_rank(honor)
+          title = user.username + " has acknowledged and rated the " + doer_user.username.to_s  + " * " + ranking  + " * "
+          create_user = User.find_by_username("FavrBot")
+          post = Post.new
+          new_post = post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_ACKNOWLEDGED)
+
+          favr_action.post_id = new_post.id
+          favr_action.save!
+
+          remove_favr_action_delay_job(favr_action.topic_id)
+          remove_favr_task_reminder_job(favr_action.id)
+          remove_favr_task_job(favr_action.id)
+
+          #render json: {topic: action_topic, action_status: Favraction::OWNER_ACKNOWLEDGED}
+          doer = User.find(favr_action.doer_user_id)
+          doer_name = doer.username
+          unless favr_action.post_id.nil?
+            post= Post.find(favr_action.post_id)
+            post_id = post.id
+            post_content = post.content
+            post_created_at = post.created_at
+          end
+          action = {action_id: favr_action.id,topic_id:favr_action.topic_id,status: favr_action.status,doer_id:favr_action.doer_user_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: favr_action.honor_to_doer, honor_to_owner: favr_action.honor_to_owner,user_id: favr_action.user_id,created_at:favr_action.created_at,updated_at:favr_action.updated_at}
+          render json: {topic: action_topic , action: action}
+          #elsif (action_topic.state == Topic::TASK_EXPIRED || action_topic.state == Topic::EXPIRED) && action_topic.topic_type == Topic::FAVR
+          #topic must be with expired_after_completed sts
+        elsif (action_topic.topic_type == Topic::FAVR)
+          if (favr_action.status == Favraction::EXPIRED_AFTER_FINISHED)
+            favr_action.status= Favraction::OWNER_ACKNOWLEDGED
+            favr_action.user_id = user.id
+            favr_action.honor_to_doer = honor
+            favr_action.save!
+
+            doer_user = User.find_by_id(favr_action.doer_user_id)
+            action_topic.state = Topic::ACKNOWLEDGED
+            action_topic.save!
+
+            #update points
+            total_points = action_topic.points + action_topic.free_points
+            half_point = (total_points/2.0).ceil
+            remaining_point = total_points- half_point
+            doer_user.points += remaining_point
+            doer_user.honored_times +=1
+            if (honor>0)
+              doer_user.positive_honor += honor
+            else
+              doer_user.negative_honor += (-1 * honor)
+            end
+            doer_user.save!
+            #doer_user.update_user_points
+            data = {
+                user_id: doer_user.id,
+                points: doer_user.points
+            }
+
+            Pusher["favr_channel"].trigger  "update_user_points", data
+
+            ranking = get_honor_rank(honor)
+            title = user.username + " has acknowledged and rated the " + doer_user.username.to_s  + " * " + ranking + " * "
+            create_user = User.find_by_username("FavrBot")
+            post = Post.new
+            new_post = post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_ACKNOWLEDGED)
+
+            favr_action.post_id = new_post.id
+            favr_action.save!
+
+            remove_favr_action_delay_job(favr_action.topic_id)
+            remove_favr_task_reminder_job(favr_action.id)
+            remove_favr_task_job(favr_action.id)
+
+            #render json: {topic: action_topic, action_status: Favraction::OWNER_ACKNOWLEDGED}
+            doer = User.find(favr_action.doer_user_id)
+            doer_name = doer.username
+            unless favr_action.post_id.nil?
+              post= Post.find(favr_action.post_id)
+              post_id = post.id
+              post_content = post.content
+              post_created_at = post.created_at
+            end
+            action = {action_id: favr_action.id,topic_id:favr_action.topic_id,status: favr_action.status,doer_id:favr_action.doer_user_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: favr_action.honor_to_doer, honor_to_owner: favr_action.honor_to_owner,user_id: favr_action.user_id,created_at:favr_action.created_at,updated_at:favr_action.updated_at}
+            render json: {topic: action_topic , action: action}
+          else
+            render json: {err_message: "Topic state must be FINISHED/ action status must be EXPIRED_AFTER_FINISHED"}
+          end
+        end
+      end
+    else
+      render json: {err_message: "Invalid favr_action_id"}
+    end
+  end
+
+  def reject_favr(favr_action_id, user_id, temp_id, lat,lng,honor, reason)
+    user = User.find(user_id)
+    favr_action = Favraction.find(favr_action_id)
+    if favr_action.present?
+      action_topic = Topic.find(favr_action.topic_id)
+      unless action_topic.nil?
+        if action_topic.state == Topic::FINISHED && action_topic.topic_type == Topic::FAVR
+          doer_user = User.find_by_id(favr_action.doer_user_id)
+          #update points
+          total_points = action_topic.points + action_topic.free_points
+          p "tootal point is "
+          p total_points
+          half_point = (total_points.to_d/2.0).ceil
+          p "half point is"
+          p half_point
+          doer_user.points += half_point
+          doer_user.honored_times +=1
+          if (honor>0)
+            doer_user.positive_honor += honor
+          else
+            doer_user.negative_honor += (-1 * honor )
+          end
+
+          doer_user.save!
+          p "doer's point is"
+          p doer_user.points
+          #doer_user.update_user_points
+
+          data = {
+              user_id: doer_user.id,
+              points: doer_user.points
+          }
+
+          Pusher["favr_channel"].trigger  "update_user_points", data
+
+
+          ranking = get_honor_rank(honor)
+          title = user.username + " has rejected and rated the " + doer_user.username.to_s + " * " +ranking + " * "
+          create_user = User.find_by_username("FavrBot")
+          post = Post.new
+
+          post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_REJECTED)
+
+          action_topic.state = Topic::REJECTED
+          action_topic.save!
+
+          favr_action.status = Favraction::OWNER_REJECTED
+          favr_action.user_id = user.id
+          favr_action.honor_to_doer = honor
+          favr_action.save!
+
+          post2 = Post.new
+          reason_title = "reason to reject: " +reason
+          temp_id = temp_id + "1"
+          new_post = post2.create_record(reason_title, action_topic.id, user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_REJECTED)
+
+          favr_action.post_id = new_post.id
+          favr_action.save!
+
+          remove_favr_task_reminder_job(favr_action.id)
+          remove_favr_task_job(favr_action.id)
+
+          doer = User.find(favr_action.doer_user_id)
+          doer_name = doer.username
+          unless favr_action.post_id.nil?
+            post= Post.find(favr_action.post_id)
+            post_id = post.id
+            post_content = post.content
+            post_created_at = post.created_at
+          end
+          action = {action_id: favr_action.id,topic_id:favr_action.topic_id,status: favr_action.status,doer_id:favr_action.doer_user_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: favr_action.honor_to_doer, honor_to_owner: favr_action.honor_to_owner,user_id: favr_action.user_id,created_at:favr_action.created_at,updated_at:favr_action.updated_at}
+          render json: {topic: action_topic , action: action}
+          #render json: {topic: action_topic, action_status: Favraction::OWNER_REJECTED, reason_post_id:new_post.id, reason_post_content: new_post.content}
+        elsif (action_topic.state == Topic::TASK_EXPIRED || action_topic.state == Topic::EXPIRED)  && action_topic.topic_type == Topic::FAVR
+
+          doer_user = User.find_by_id(favr_action.doer_user_id)
+
+          #total_points = action_topic.points + action_topic.free_points
+          #half_point = (total_points/2).ceil
+          #remaining_point = total_points- half_point
+          #if remaining_point >= action_topic.points
+          #  user.points += action_topic.points
+          #else
+          #  user.points += remaining_point
+          #end
+
+
+          doer_user.honored_times +=1
+          if (honor>0)
+            doer_user.positive_honor += honor
+          else
+            doer_user.negative_honor += (-1 * honor )
+          end
+          doer_user.save!
+
+          ranking = get_honor_rank(honor)
+          title = user.username + " has rejected and rated the " + doer_user.username.to_s  + " * " + ranking + " * "
+          create_user = User.find_by_username("FavrBot")
+          post = Post.new
+          post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_REJECTED)
+
+          #action_topic.state = Topic::EXPIRED
+          #action_topic.save!
+
+          favr_action.status = Favraction::OWNER_REJECTED
+          favr_action.user_id = user.id
+          favr_action.honor_to_doer = honor
+          favr_action.save!
+
+          temp_id = temp_id + "1"
+          post2 = Post.new
+          reason_title = "reason to reject: " +reason
+          new_post = post2.create_record(reason_title, action_topic.id, user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_REJECTED)
+
+
+          favr_action.post_id = new_post.id
+          favr_action.save!
+
+          remove_favr_task_reminder_job(favr_action.id)
+          remove_favr_task_job(favr_action.id)
+
+          doer = User.find(favr_action.doer_user_id)
+          doer_name = doer.username
+          unless favr_action.post_id.nil?
+            post= Post.find(favr_action.post_id)
+            post_id = post.id
+            post_content = post.content
+            post_created_at = post.created_at
+          end
+          action = {action_id: favr_action.id,topic_id:favr_action.topic_id,status: favr_action.status,doer_id:favr_action.doer_user_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: favr_action.honor_to_doer, honor_to_owner: favr_action.honor_to_owner,user_id: favr_action.user_id,created_at:favr_action.created_at,updated_at:favr_action.updated_at}
+          render json: {topic: action_topic , action: action}
+          #render json: {topic: action_topic, action_status: Favraction::OWNER_REJECTED, reason_post_id:new_post.id, reason_post_content: new_post.content}
+        else
+          render json: {err_message: "Topic status must be FINISHED"}
+        end
+      end
+    end
+  end
+
+  def reopen_favr(topic_id, user_id, points, free_points, temp_id, lat,lng)
+    user = User.find(user_id)
+    action_topic = Topic.find(topic_id)
+    unless action_topic.nil?
+      if action_topic.state == Topic::REJECTED && action_topic.topic_type == Topic::FAVR
+        action_topic.state = Topic::OPENED
+        time = action_topic.valid_end_date
+
+        t = time + ((action_topic.given_time.to_i+2)*60)
+
+        action_topic.valid_end_date = t
+        action_topic.save!
+
+        title = user.username + " has reopened"
+        create_user = User.find_by_username("FavrBot")
+
+        post = Post.new
+        post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REOPENED)
+
+        if post.present?
+          topic_points = action_topic.points
+          topic_free_points= action_topic.free_points
+          total_points = topic_points + topic_free_points
+          half_points = (total_points/2.0).ceil
+
+          point_difference = free_points.to_i-half_points
+
+          if (point_difference>0)
+            action_topic.points = topic_points  +  points.to_i
+            action_topic.free_points = point_difference + free_points.to_i
+          else
+            action_topic.points =  topic_points  - (point_difference).abs + points.to_i
+            action_topic.free_points = free_points.to_i
+          end
+          action_topic.save!
+
+          user.points -= points.to_i
+          user.save!
+        end
+
+        #action_topic.update_event_broadcast
+        render json: {topic: action_topic}
+      elsif action_topic.state == Topic::TASK_EXPIRED && action_topic.topic_type == Topic::FAVR
+        action_record = Favraction.where(:topic_id => action_topic.id).order("id")
+        if action_record.present?
+          last_action_record = action_record.last
+          if last_action_record.present?
+            if last_action_record.status == Favraction::EXPIRED_AFTER_STARTED
+              action_topic.state = Topic::OPENED
+              time = action_topic.valid_end_date
+
+              t = time + ((action_topic.given_time.to_i+2)*60)
+
+              action_topic.valid_end_date = t
+              action_topic.save!
+
+              title = user.username + " has reopened"
+              create_user = User.find_by_username("FavrBot")
+
+              post = Post.new
+              post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REOPENED)
+
+              render json: {topic: action_topic}
+            end
+          end
+        end
+      else
+        render json: {err_message: "Topic status must be REJECTED/TASK_EXPIRED"}
+      end
+    else
+      render json: {err_message: "Invalid Topic_id"}
+    end
+  end
+
+  def extend_time(favr_action_id, user_id, extended_time, temp_id, lat,lng)
+    user = User.find(user_id)
+    favr_action = Favraction.find(favr_action_id)
+    action_topic = Topic.find(favr_action.topic_id)
+    if favr_action.present?
+      p "action topic state"
+      p action_topic.state
+      if action_topic.state== Topic::IN_PROGRESS
+        p  "favr_action.status"
+        p favr_action.status
+        if favr_action.status==Favraction::COMPLETION_REMINDER_SENT
+          endtime = extended_time.to_i
+          p endtime
+          job =Delayed::Job.enqueue FavrTaskReminderJob.new(favr_action_id),:priority => 0,:run_at => endtime.minutes.from_now
+        else
+          p "extend favr tak reminder job"
+          extend_favr_task_reminder_job(favr_action.id,extended_time.to_i)
+        end
+
+        time = action_topic.valid_end_date
+        #t = time + ((extended_time.to_i+10)*60)
+        t = time + ((extended_time.to_i+2)*60)
+        action_topic.valid_end_date = t
+        action_topic.save!
+
+        p "before extend favr task job"
+        p favr_action.id
+        extend_favr_task_job(favr_action.id,extended_time.to_i)
+        p "after extend favr task job"
+        extend_favr_action_delay_job(favr_action.topic_id,extended_time.to_i)
+        p "after favr action delay job"
+        title = user.username + " has extended the time for the task "
+        create_user = User.find_by_username("FavrBot")
+        post = Post.new
+        post = post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id)
+        p post
+        render json: {topic: action_topic}
+      else
+        render json: {err_message: "Topic status must be IN_PROGRESS"}
+      end
+    else
+      render json: {err_message: "Invalid favr_action_id"}
+    end
+  end
+
+  def honor_to_owner
+    if params[:action_id].present? && params[:auth_token] && params[:honor]
+      lat = params[:latitude]
+      lng = params[:longitude]
+      temp_id = params[:temp_id]
+      doer_user= User.find_by_authentication_token(params[:auth_token])
+      last_favr_action= Favraction.find(params[:action_id].to_i)
+      post_special_type = 0
+      if last_favr_action.present?
+        action_topic = Topic.find(last_favr_action.topic_id)
+        last_favr_action.honor_to_owner =   params[:honor].to_i
+        if last_favr_action.status == Favraction::OWNER_REJECTED
+          last_favr_action.status= Favraction::DOER_RESPONDED_REJ
+          post_special_type = Post::DOER_RESPONDED_REJ
+        elsif last_favr_action.status== Favraction::OWNER_ACKNOWLEDGED
+          last_favr_action.status=Favraction::DOER_RESPONDED_ACK
+          post_special_type = Post::DOER_RESPONDED_ACK
+        end
+        last_favr_action.save!
+        if action_topic.present?
+          owner_user = User.find(action_topic.user_id)
+          if (params[:honor].to_i >0)
+            owner_user.positive_honor += params[:honor].to_i
+          else
+            owner_user.negative_honor += (params[:honor].to_i * -1)
+          end
+          owner_user.honored_times +=1
+          owner_user.save!
+
+          ranking = get_honor_rank(params[:honor].to_i)
+          title = doer_user.username + " has rated " + owner_user.username.to_s  + " * " + ranking + " * "
+          create_user = User.find_by_username("FavrBot")
+          p "before post"
+          post = Post.new
+          p action_topic
+          post = post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,last_favr_action.id,post_special_type)
+          p post
+        end
+        doer_name = doer_user.username
+        unless last_favr_action.post_id.nil?
+          post= Post.find(last_favr_action.post_id)
+          post_id = post.id
+          post_content = post.content
+          post_created_at = post.created_at
+        end
+        action = {action_id: last_favr_action.id,topic_id:last_favr_action.topic_id,status: last_favr_action.status,doer_id:last_favr_action.doer_user_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: last_favr_action.honor_to_doer, honor_to_owner: last_favr_action.honor_to_owner,user_id: last_favr_action.user_id,created_at:last_favr_action.created_at,updated_at:last_favr_action.updated_at}
+        render json: {topic: action_topic , action: action}
+      end
+
+    end
+  end
+
+  def revoke_favr_by_owner(topic_id, user_id, temp_id, lat,lng)
+    user= User.find(user_id)
+    action_topic = Topic.find(topic_id)
+    if action_topic.present?
+      if action_topic.state == Topic::REJECTED && action_topic.topic_type == Topic::FAVR
+        action_topic.state = Topic::REVOKED
+        action_topic.save!
+
+        total_points = action_topic.points + action_topic.free_points
+        half_point = (total_points/2.0).ceil
+        remaining_point = total_points- half_point
+        if(remaining_point >= action_topic.points)
+          user.points += action_topic.points
+        else
+          user.points  += remaining_point
+        end
+        user.save!
+        #user.update_user_points
+        data = {
+            user_id: user.id,
+            points: user.points
+        }
+
+        Pusher["favr_channel"].trigger  "update_user_points", data
+
+        title = user.username + " has revoked the request"
+        create_user = User.find_by_username("FavrBot")
+        post = Post.new
+        post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REVOKED)
+
+        #action_topic.update_event_broadcast
+        #render json: {topic: action_topic, action_status: Favraction::OWNER_REVOKED}
+      elsif action_topic.state == Topic::TASK_EXPIRED && action_topic.topic_type == Topic::FAVR
+        action_record = Favraction.where(:topic_id => action_topic.id).order("id")
+        if action_record.present?
+          last_action_record = action_record.first
+          if last_action_record.present?
+            if last_action_record.status == Favraction::EXPIRED_AFTER_STARTED
+              user.points += action_topic.points
+              user.save!
+              #user.update_user_points
+              data = {
+                  user_id: user.id,
+                  points: user.points
+              }
+
+              Pusher["favr_channel"].trigger  "update_user_points", data
+
+              action_topic.state = Topic::REVOKED
+              action_topic.save!
+
+              title = user.username + " has revoked the request"
+              create_user = User.find_by_username("FavrBot")
+              post = Post.new
+              post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REVOKED)
+            end
+            #action_topic.update_event_broadcast
+            render json: {topic: action_topic, action_status: Favraction::OWNER_REVOKED}
+          end
+        end
+      elsif action_topic.state == Topic::OPENED && action_topic.topic_type == Topic::FAVR
+        #action_record = Favraction.where(:topic_id => action_topic.id).order("id desc")
+        action_topic.state = Topic::REVOKED
+        action_topic.save!
+
+        user.points += action_topic.points
+        user.save!
+        #user.update_user_points
+
+        data = {
+            user_id: user.id,
+            points: user.points
+        }
+
+        Pusher["favr_channel"].trigger  "update_user_points", data
+
+        title = user.username + " has revoked the request"
+        create_user = User.find_by_username("FavrBot")
+        post = Post.new
+        post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REVOKED)
+
+
+      else
+        render json: {err_message: "Topic status must be REJECTED/ OPENED/ EXPIREED_AFTER_STARTED"}
+      end
+    end
+  end
+
+  def remove_favr_action_delay_job(topic_id)
+    jobs= Delayed::Job.all
+    jobs.each do |job|
+      if job.name == "favraction-Topic-#{topic_id}"
+        p job.name+ " has been removed from queue"
+        job.delete
+      end
+    end
+  end
+
+  def remove_favr_task_job(favr_action_id)
+    jobs= Delayed::Job.all
+    jobs.each do |job|
+      if job.name == "favraction-task-#{favr_action_id}"
+        p job.name+ " has been removed from queue"
+        job.delete
+      end
+    end
+  end
+
+  def remove_favr_task_reminder_job(favr_action_id)
+    jobs= Delayed::Job.all
+    jobs.each do |job|
+      if job.name == "favraction-task-reminder-#{favr_action_id}"
+        p job.name+ " has been removed from queue"
+        job.delete
+      end
+    end
+  end
+
+  def extend_favr_action_delay_job(topic_id,extended_time=0)  #timer1 extends
+    topic = Topic.find(topic_id)
+    jobs= Delayed::Job.all
+    jobs.each do |job|
+      if job.name == "favraction-Topic-#{topic_id}"
+        endtime = job.run_at
+        start_time = Time.parse(DateTime.now.to_s)
+        time_diff = (TimeDifference.between(start_time, endtime).in_minutes).ceil
+        if  extended_time > 0
+          #time_diff = time_diff + 10 + extended_time.to_i
+          time_diff = time_diff + 2 + extended_time.to_i
+        else
+          #time_diff = time_diff + 10 +topic.given_time
+          time_diff = time_diff + 2 +topic.given_time
+        end
+        job.delete
+        Delayed::Job.enqueue FavrActionJob.new(topic_id),:priority => 0,:run_at => time_diff.minutes.from_now
+      end
+    end
+  end
+
+  def extend_favr_task_job(favr_action_id,extended_time) #timer3 extends
+    p "inside extend favr task job"
+    p favr_action_id
+    jobs= Delayed::Job.all
+    jobs.each do |job|
+      if job.name == "favraction-task-#{favr_action_id}"
+        endtime = job.run_at
+        start_time = Time.parse(DateTime.now.to_s)
+        time_diff = (TimeDifference.between(start_time, endtime).in_minutes).ceil
+        p time_diff
+        #time_diff = time_diff + 10 + extended_time.to_i
+        time_diff = time_diff + 2 + extended_time.to_i
+        p time_diff
+        job.delete
+        p "job has been deleted"
+        Delayed::Job.enqueue FavrTaskJob.new(favr_action_id),:priority => 0,:run_at => time_diff.minutes.from_now
+      end
+    end
+    p "outside extend favr task job"
+  end
+
+  def extend_favr_task_reminder_job(favr_action_id,extended_time) #timer2 extends
+    jobs= Delayed::Job.all
+    jobs.each do |job|
+      if job.name == "favraction-task-reminde r-#{favr_action_id}"
+        endtime = job.run_at
+        start_time = Time.parse(DateTime.now.to_s)
+        time_diff = (TimeDifference.between(start_time, endtime).in_minutes).ceil
+        time_diff = time_diff + extended_time.to_i
+        job.delete
+        p "favraction-task-reminder is deleted"
+        Delayed::Job.enqueue FavrTaskReminderJob.new(favr_action_id),:priority => 0,:run_at => time_diff.minutes.from_now
+      end
+    end
+  end
+
+  def add_favr_action_delay_job(topic_id)
+    topic = Topic.find(topic_id)
+    start_time = Time.parse(DateTime.now.to_s)
+    end_time = Time.parse(topic.valid_end_date.to_s)
+    time_diff = (TimeDifference.between(start_time, end_time).in_minutes).ceil
+    job =Delayed::Job.enqueue FavrActionJob.new(topic_id),:priority => 0,:run_at => time_diff.minutes.from_now
+  end
+
+  def add_favr_task_job(favr_action_id)
+    action = Favraction.find(favr_action_id)
+    topic = Topic.find(action.topic_id)
+    p topic
+    p topic.given_time
+    #endtime = topic.given_time.to_i + 10
+    endtime = topic.given_time.to_i + 2
+    p endtime
+    job =Delayed::Job.enqueue FavrTaskJob.new(favr_action_id),:priority => 0,:run_at => endtime.minutes.from_now
+  end
+
+  def add_favr_task_reminder_job(favr_action_id)
+    action = Favraction.find(favr_action_id)
+    topic = Topic.find(action.topic_id)
+    endtime = topic.given_time.to_i
+    p endtime
+    job =Delayed::Job.enqueue FavrTaskReminderJob.new(favr_action_id),:priority => 0,:run_at => endtime.minutes.from_now
+  end
 
 end

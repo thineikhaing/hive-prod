@@ -49,11 +49,22 @@ class Api::PostsController < ApplicationController
 
         result = nil unless result.present?
 
-        post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id], user_id: current_user.id, place_id: place_id, data: result) if params[:post_type] == Post::TEXT.to_s
+        post = Post.create(content: params[:post],
+                           post_type: params[:post_type],
+                           topic_id: params[:topic_id],
+                           user_id: current_user.id,
+                           place_id: place_id, data: result) if params[:post_type] == Post::TEXT.to_s
+
         if params[:post_type] == Post::IMAGE.to_s  or  params[:post_type] == Post::AUDIO.to_s
-          post = Post.create(content: params[:post], post_type: params[:post_type],  topic_id: params[:topic_id],
-                             user_id: current_user.id, img_url: params[:image_url],
-                             width: params[:width], height: params[:height], place_id: place_id, data: result)
+          post = Post.create(content: params[:post],
+                             post_type: params[:post_type],
+                             topic_id: params[:topic_id],
+                             user_id: current_user.id,
+                             img_url: params[:image_url],
+                             width: params[:width],
+                             height: params[:height],
+                             place_id: place_id,
+                             data: result)
           post.delay.post_image_upload_delayed_job(params[:image_url]) if params[:post_type] == Post::IMAGE.to_s
         end
 
@@ -84,10 +95,49 @@ class Api::PostsController < ApplicationController
       else
         render json: { error_msg: "Invalid topic id" } , status: 400
       end
+    elsif params[:auth_token]
+      currentuser = User.find_by_authentication_token(params[:auth_token])
+      if currentuser.present?
+
+        temp_id= params[:temp_id]
+
+        if check_banned_profanity(params[:post])
+          currentuser.profanity_counter += 1
+          currentuser.offence_date = Time.now
+          currentuser.save!
+        end
+        post = Post.new
+
+        post = Post.create(content: params[:post],
+                           post_type: params[:post_type],
+                           topic_id: params[:topic_id],
+                           user_id: currentuser.id,
+                           place_id: place_id, data: result) if params[:post_type] == Post::TEXT.to_s
+
+        if params[:post_type] == Post::IMAGE.to_s  or  params[:post_type] == Post::AUDIO.to_s
+          post = Post.create(content: params[:post],
+                             post_type: params[:post_type],
+                             topic_id: params[:topic_id],
+                             user_id: currentuser.id,
+                             img_url: params[:post],
+                             width: params[:width],
+                             height: params[:height],
+                             place_id: 0,
+                             data: nil)
+          post.delay.post_image_upload_delayed_job(params[:post]) if params[:post_type] == Post::IMAGE.to_s
+        end
+
+        render json: { post: post, temp_id: params[:temp_id], profanity_counter: currentuser.profanity_counter, offence_date: currentuser.offence_date }
+
+      else
+        render json: { error_msg: "Params user id and/ or  authentication token must be presented" } , status: 400
+      end
+
     else
       render json: { error_msg: "Params user id and/ or  authentication token must be presented" } , status: 400
     end
   end
+
 
   def retrieve_post
     if params[:app_key].present? && params[:topic_id].present?

@@ -144,7 +144,14 @@ module PushWoosh_Const
   CM_D_APP_ID = "B48C7-FE962"
   CM_S_APP_ID = "82255-61ADD"
   CM_P_APP_ID = "40C8F-B20ED"
-  CM_API_ACCESS = "y5dMhjeQ1pcAf3SNnMqy4LBexlqTR0d86p2o3c84NhEajv3Mxsffz8QuEVshTklJ6Qn9JpwVPJKjx0bmsCBn"
+
+  FV_D_APP_ID = "2CA0A-0004F"
+  FV_S_APP_ID = "B75D6-0ADFE"
+  FV_P_APP_ID = "D37E1-A4130"
+
+  API_ACCESS = "y5dMhjeQ1pcAf3SNnMqy4LBexlqTR0d86p2o3c84NhEajv3Mxsffz8QuEVshTklJ6Qn9JpwVPJKjx0bmsCBn"
+
+
 end
 
 

@@ -29,14 +29,14 @@ class Favraction < ActiveRecord::Base
     user_to_push.push(doer.id.to_s)
 
     if Rails.env.production?
-      appID = PushWoosh_Const::CM_P_APP_ID
+      appID = PushWoosh_Const::FV_P_APP_ID
     elsif Rails.env.staging?
-      appID = PushWoosh_Const::CM_S_APP_ID
+      appID = PushWoosh_Const::FV_S_APP_ID
     else
-      appID = PushWoosh_Const::CM_D_APP_ID
+      appID = PushWoosh_Const::FV_D_APP_ID
     end
 
-    @auth = {:application  => appID ,:auth => PushWoosh_Const::CM_API_ACCESS}
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
     user = User.find(doer.id)
 
@@ -134,14 +134,14 @@ class Favraction < ActiveRecord::Base
     users_to_sent.push ( self.doer_user_id.to_s )
 
     if Rails.env.production?
-      appID = PushWoosh_Const::CM_P_APP_ID
+      appID = PushWoosh_Const::FV_P_APP_ID
     elsif Rails.env.staging?
-      appID = PushWoosh_Const::CM_S_APP_ID
+      appID = PushWoosh_Const::FV_S_APP_ID
     else
-      appID = PushWoosh_Const::CM_D_APP_ID
+      appID = PushWoosh_Const::FV_D_APP_ID
     end
 
-    @auth = {:application  => appID ,:auth => PushWoosh_Const::CM_API_ACCESS}
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
     if action_topic.present?
 

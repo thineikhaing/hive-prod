@@ -36,6 +36,7 @@ class Createdata < ActiveRecord::Migration
       AppAdditionalField.create(app_id: app.id,table_name: "User", additional_column_name: "heartrate")
     end
 
+
     CSV.foreach("db/migrate/20140328083723_stations_seed.csv") do |row|
       Place.create(name: row[0], latitude: row[1], longitude: row[2], address: row[3], locality: row[4], country: row[5], img_url: row[6], user_id: admin.id, source: 0)
       puts "Created: #{row}"

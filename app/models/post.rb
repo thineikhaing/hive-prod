@@ -10,7 +10,7 @@ class Post < ActiveRecord::Base
   store_accessor :data
 
   attr_accessible :content, :post_type, :data, :created_at, :user_id, :topic_id, :place_id,:likes,
-                  :dislikes, :offensive, :img_url, :width, :height, :latitude, :longitude
+                  :dislikes, :offensive, :img_url, :width, :height, :latitude, :longitude ,:special_type
   enums %w(TEXT IMAGE AUDIO VIDEO)
   validates :content, presence: true
   validates :content, obscenity: { sanitize: true, replacement: "snork" }
@@ -446,7 +446,7 @@ class Post < ActiveRecord::Base
       appID = PushWoosh_Const::CM_D_APP_ID
     end
 
-    @auth = {:application  => appID ,:auth => PushWoosh_Const::CM_API_ACCESS}
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
     notification_options = {
         send_date: "now",

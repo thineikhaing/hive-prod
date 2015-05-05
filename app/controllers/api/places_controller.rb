@@ -334,6 +334,7 @@ class Api::PlacesController < ApplicationController
 
   data = [ ]
   def within_location
+    data = [ ]
     if params[:latitude].present? and params[:longitude].present? and params[:radius].present? and params[:keyword].present?
 
       factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)

@@ -216,6 +216,20 @@ class Api::UsersController < ApplicationController
       else
         render json: { error_msg: "There is no pusher token for the user" }, status: 400
       end
+    elsif params[:device_token].present?
+      user = User.find_by_authentication_token(params[:auth_token])
+      if user.present?
+
+        result = Hash.new
+        result[:device_id] = params[:device_token]
+        user.data = result
+        user.save!
+
+        render json: { status: true }
+      end
+
+
+
     else
       render json: { error_msg: "Param user id, authentication token, pusher token must be presented" }, status: 400
     end

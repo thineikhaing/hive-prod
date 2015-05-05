@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150504095452) do
+ActiveRecord::Schema.define(version: 20150505062624) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -150,22 +150,23 @@ ActiveRecord::Schema.define(version: 20150504095452) do
   end
 
   create_table "posts", force: true do |t|
-    t.string   "content",                null: false
+    t.string   "content",                  null: false
     t.string   "img_url"
-    t.integer  "width",      default: 0
-    t.integer  "height",     default: 0
-    t.integer  "post_type",  default: 0, null: false
+    t.integer  "width",        default: 0
+    t.integer  "height",       default: 0
+    t.integer  "post_type",    default: 0, null: false
     t.hstore   "data"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "dislikes",   default: 0
-    t.integer  "likes",      default: 0
-    t.integer  "offensive",  default: 0
-    t.integer  "place_id",   default: 0
+    t.integer  "dislikes",     default: 0
+    t.integer  "likes",        default: 0
+    t.integer  "offensive",    default: 0
+    t.integer  "place_id",     default: 0
     t.integer  "user_id"
     t.integer  "topic_id"
     t.float    "latitude"
     t.float    "longitude"
+    t.integer  "special_type", default: 0
   end
 
   create_table "suggesteddates", force: true do |t|
