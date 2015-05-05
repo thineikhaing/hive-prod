@@ -284,7 +284,7 @@ class Api::UsersController < ApplicationController
         render json: { :error => var }, status: 400 # User email doesn't exist
       end
 
-    elsif params[:device_id]
+    elsif params[:app_name] == 'Favr'
       user = User.find_by_device_id(params[:device_id])
 
       if user.present?
