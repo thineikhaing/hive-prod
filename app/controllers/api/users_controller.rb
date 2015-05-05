@@ -284,7 +284,12 @@ class Api::UsersController < ApplicationController
         render json: { :error => var }, status: 400 # User email doesn't exist
       end
 
-    elsif params[:app_name] == 'Favr'
+
+    else
+      render json: {error_msg: "Params email and password must be presented"} , status: 400
+    end
+
+    if params[:app_name] == 'Favr'
       user = User.find_by_device_id(params[:device_id])
 
       if user.present?
@@ -302,8 +307,6 @@ class Api::UsersController < ApplicationController
 
 
       render json: { :user => user, :success => 20 }, status: 200
-    else
-      render json: {error_msg: "Params email and password must be presented"} , status: 400
     end
   end
 
