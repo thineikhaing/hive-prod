@@ -149,6 +149,8 @@ class Api::TopicsController < ApplicationController
     params[:dislikes].present? ? dislikes = params[:dislikes].to_i : dislikes = 0
     params[:given_time].present? ? given_time = params[:given_time].to_i : given_time = 0  #in minutes
 
+
+
     if check_banned_profanity(params[:title])
       check_profanity = true
     end
@@ -209,6 +211,8 @@ class Api::TopicsController < ApplicationController
         end
       end
 
+
+
       if user.present?
         topic = Topic.create(title: title, topic_type: params[:topic_type], user_id: user.id, special_type: special_type, place_id: place.id, extra_info: extra_info, valid_start_date: valid_start_date, valid_end_date: valid_end_date, likes: likes, dislikes: dislikes, points: points,free_points: free_points,state: state,title_indexes: title_indexes,checker: checker,given_time: given_time)
 
@@ -231,6 +235,9 @@ class Api::TopicsController < ApplicationController
         end
       end
     end
+
+    hiveapplication = HiveApplication.find_by_app_name('Favr')
+    topic.hiveapplication_id = hiveapplication.id
 
     if topic.save
       if (topic.topic_type == Topic::FAVR) && user.present?
@@ -640,7 +647,7 @@ class Api::TopicsController < ApplicationController
           actions.push({action_id: favr_action_id,topic_id:topic.id,status: last_favr_action_status,doer_id:doer_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: honor_to_doer, honor_to_owner: honor_to_owner,user_id: favraction.user_id,created_at:favraction.created_at,updated_at:favraction.updated_at})
         end
       end
-      render json: { user_points:user.point, user_positive_honor: user.positive_honor, user_negative_honor: user.negative_honor, user_honored_count: user.honored_times , topics: topic_lists, actions: actions,my_requests: myrequests, my_tasks:mytasks}
+      render json: { user_points:user.points, user_positive_honor: user.positive_honor, user_negative_honor: user.negative_honor, user_honored_count: user.honored_times , topics: topic_lists, actions: actions,my_requests: myrequests, my_tasks:mytasks}
     end
   end
 

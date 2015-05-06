@@ -26,7 +26,7 @@ class Topic < ActiveRecord::Base
 
   #Favr Actions
   enums %w(CREATE START FINISH ACKNOWLEDGE REJECT REVOKE REOPEN EXTEND REMINDER_TIMEUP TASK_TIMEUP FAVR_TIMEUP )
-
+  enums %w(NO YES)
 
   attr_accessible :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :data, :created_at,
                   :image_url, :width, :height, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
@@ -364,7 +364,155 @@ class Topic < ActiveRecord::Base
     Pusher[channel_name].trigger_async("delete_topic", data)
   end
 
+  #def overall_broadcast
+  #  data = {
+  #      id: self.id,
+  #      title: self.title,
+  #      user_id: self.user_id,
+  #      topic_type: self.topic_type,
+  #      offensive: self.offensive,
+  #      likes: self.likes,
+  #      dislikes: self.dislikes,
+  #      extra_info: self.extra_info,
+  #      state: self.state,
+  #      points: self.points,
+  #      free_points:self.free_points,
+  #      title_indexes:self.title_indexes,
+  #      checker: self.checker,
+  #      given_time: self.given_time,
+  #      valid_start_date: self.valid_start_date,
+  #      valid_end_date: self.valid_end_date,
+  #      methods: [
+  #
+  #          username: self.username,
+  #
+  #          place_information: self.place_information,
+  #          tag_information: self.tag_information
+  #      ],
+  #  }
+  #
+  #    Pusher["favr_channel"].trigger_async("new_topic", data)
+  #  p "Favr Channer Trigger"
+  #end
+
+  # Check if flare exists
+
+  def type_flare
+    type = self.special_type.split(",")
+
+    if type.present?
+      if type.include?(FLARE.to_s)
+        return YES
+      else
+        return NO
+      end
+    else
+      return NO
+    end
+  end
+
+  # Check if beacon exists
+
+  def type_beacon
+    type = self.special_type.split(",")
+
+    if type.present?
+      if type.include?(BEACON.to_s)
+        return YES
+      else
+        return NO
+      end
+    else
+      return NO
+    end
+  end
+
+  # Check if sticky exists
+
+  def type_sticky
+    type = self.special_type.split(",")
+
+    if type.present?
+      if type.include?(STICKY.to_s)
+        return YES
+      else
+        return NO
+      end
+    else
+      return NO
+    end
+  end
+
+  def type_promo
+    type = self.special_type.split(",")
+
+    if type.present?
+      if type.include?(PROMO.to_s)
+        return YES
+      else
+        return NO
+      end
+    else
+      return NO
+    end
+  end
+
+  def type_coshoot
+    type = self.special_type.split(",")
+
+    if type.present?
+      if type.include?(COSHOOT.to_s)
+        return YES
+      else
+        return NO
+      end
+    else
+      return NO
+    end
+  end
+
+  def type_question
+    type = self.special_type.split(",")
+
+    if type.present?
+      if type.include?(QUESTION.to_s)
+        return YES
+      else
+        return NO
+      end
+    else
+      return NO
+    end
+  end
+
+  def type_errand
+    type = self.special_type.split(",")
+
+    if type.present?
+      if type.include?(ERRAND.to_s)
+        return YES
+      else
+        return NO
+      end
+    else
+      return NO
+    end
+  end
+
+  def last_post_at
+    posts.blank? ? self.created_at : posts.first.created_at
+  end
+
+
+
   def overall_broadcast
+
+     p "valid_start_date"
+     p valid_start_date
+
+     p "valid_end_date"
+     p valid_end_date
+
     data = {
         id: self.id,
         title: self.title,
@@ -373,7 +521,8 @@ class Topic < ActiveRecord::Base
         offensive: self.offensive,
         likes: self.likes,
         dislikes: self.dislikes,
-        extra_info: self.extra_info,
+        radius: nil,
+        extra_info: nil,
         state: self.state,
         points: self.points,
         free_points:self.free_points,
@@ -383,16 +532,25 @@ class Topic < ActiveRecord::Base
         valid_start_date: self.valid_start_date,
         valid_end_date: self.valid_end_date,
         methods: [
-
+            last_post_at: self.last_post_at,
+            url: nil,
             username: self.username,
-
+            flare: self.type_flare,
+            beacon: self.type_beacon,
+            sticky: self.type_sticky,
+            promo: self.type_promo,
+            coshoot:self.type_coshoot,
+            question:self.type_question,
+            errand:self.type_errand,
+            content: self.content,
             place_information: self.place_information,
             tag_information: self.tag_information
         ],
+        history_id: Historychange.find_by_type_id_and_type_action_and_type_name(self.id, "create", "topic").id
     }
 
       Pusher["favr_channel"].trigger_async("new_topic", data)
-    p "Favr Channer Trigger"
+
   end
 
 
