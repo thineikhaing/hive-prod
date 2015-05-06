@@ -16,26 +16,42 @@ class Createdata < ActiveRecord::Migration
 
     api_key = SecureRandom.hex
     HiveApplication.create(devuser_id: 1, app_name: "Hive",app_type: "social",description: "a way to connect nearby people (with each other, and with businesses) anonymously",api_key: api_key )
+
     api_key = SecureRandom.hex
     HiveApplication.create(devuser_id: 1, app_name: "MealBox",app_type: "food",description: "Mealbox",api_key: api_key )
+
     api_key = SecureRandom.hex
-    app = HiveApplication.create(devuser_id: 1, app_name: "Carmmunicate",app_type: "social",description: "Carmmunicate",api_key: api_key )
+    carmmic_app = HiveApplication.create(devuser_id: 1, app_name: "Carmmunicate",app_type: "social",description: "Carmmunicate",api_key: api_key )
+
     api_key = SecureRandom.hex
-    HiveApplication.create(devuser_id: 1, app_name: "Socal",app_type: "social",description: "Socal",api_key: api_key )
+    socal_app = HiveApplication.create(devuser_id: 1, app_name: "Socal",app_type: "social",description: "Socal",api_key: api_key )
+
     api_key = SecureRandom.hex
     HiveApplication.create(devuser_id: 1, app_name: "Favr",app_type: "social",description: "Favr",api_key: api_key )
 
-    if app.present?
-      AppAdditionalField.create(app_id: app.id,table_name: "User", additional_column_name: "color")
-      AppAdditionalField.create(app_id: app.id,table_name: "User", additional_column_name: "plate_number")
-      AppAdditionalField.create(app_id: app.id,table_name: "User", additional_column_name: "transport_mode")
-      AppAdditionalField.create(app_id: app.id,table_name: "User", additional_column_name: "speed")
-      AppAdditionalField.create(app_id: app.id,table_name: "User", additional_column_name: "activity")
-      AppAdditionalField.create(app_id: app.id,table_name: "User", additional_column_name: "direction")
-      AppAdditionalField.create(app_id: app.id,table_name: "User", additional_column_name: "device_id")
-      AppAdditionalField.create(app_id: app.id,table_name: "User", additional_column_name: "heartrate")
+    if carmmic_app.present?
+      AppAdditionalField.create(app_id: carmmic_app.id,table_name: "User", additional_column_name: "color")
+      AppAdditionalField.create(app_id: carmmic_app.id,table_name: "User", additional_column_name: "plate_number")
+      AppAdditionalField.create(app_id: carmmic_app.id,table_name: "User", additional_column_name: "transport_mode")
+      AppAdditionalField.create(app_id: carmmic_app.id,table_name: "User", additional_column_name: "speed")
+      AppAdditionalField.create(app_id: carmmic_app.id,table_name: "User", additional_column_name: "activity")
+      AppAdditionalField.create(app_id: carmmic_app.id,table_name: "User", additional_column_name: "direction")
+      AppAdditionalField.create(app_id: carmmic_app.id,table_name: "User", additional_column_name: "device_id")
+      AppAdditionalField.create(app_id: carmmic_app.id,table_name: "User", additional_column_name: "heartrate")
     end
 
+    if socal_app.present?
+
+      AppAdditionalField.create(app_id: socal_app.id,table_name: "Topic", additional_column_name: "content")
+      AppAdditionalField.create(app_id: socal_app.id,table_name: "Topic", additional_column_name: "place_name")
+      AppAdditionalField.create(app_id: socal_app.id,table_name: "Topic", additional_column_name: "address")
+      AppAdditionalField.create(app_id: socal_app.id,table_name: "Topic", additional_column_name: "latitude")
+      AppAdditionalField.create(app_id: socal_app.id,table_name: "Topic", additional_column_name: "longitude")
+      AppAdditionalField.create(app_id: socal_app.id,table_name: "Topic", additional_column_name: "confirm_state")
+      AppAdditionalField.create(app_id: socal_app.id,table_name: "Topic", additional_column_name: "confirmed_date")
+      AppAdditionalField.create(app_id: socal_app.id,table_name: "Topic", additional_column_name: "invitation_code")
+
+    end
 
     CSV.foreach("db/migrate/20140328083723_stations_seed.csv") do |row|
       Place.create(name: row[0], latitude: row[1], longitude: row[2], address: row[3], locality: row[4], country: row[5], img_url: row[6], user_id: admin.id, source: 0)

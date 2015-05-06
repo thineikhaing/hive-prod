@@ -110,7 +110,7 @@ class Api::DownloaddataController < ApplicationController
     end
 
     User.where(id: user_array).each do |temp_user|
-      users_data.push({ id: temp_user.id, username: temp_user.username, points: temp_user.point })
+      users_data.push({ id: temp_user.id, username: temp_user.username, points: temp_user.points })
     end
 
     render json: { topics: topic_array, users: users_data, places: places_data }

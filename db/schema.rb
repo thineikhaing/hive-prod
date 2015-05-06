@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150505062624) do
+ActiveRecord::Schema.define(version: 20150506062725) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -275,7 +275,7 @@ ActiveRecord::Schema.define(version: 20150505062624) do
     t.string   "authentication_token"
     t.string   "avatar_url"
     t.integer  "role"
-    t.integer  "point",                  default: 0
+    t.integer  "points",                 default: 0
     t.integer  "flareMode",              default: 0
     t.integer  "alert_count",            default: 3
     t.integer  "paid_alert_count",       default: 0

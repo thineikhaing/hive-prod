@@ -471,7 +471,7 @@ class Api::UsersController < ApplicationController
       checkLikedPostArray = ActionLog.where(type_name: "post", action_type: "liked", action_user_id: current_user.id)
 
       users.each do |u|
-        data = { user_id: u.id, username: u.username, point: u.point}
+        data = { user_id: u.id, username: u.username, points: u.points}
         usersArray.push(data)
       end
       usersArray.sort! { |a, b| a[:points] <=> b[:points] }
@@ -507,7 +507,7 @@ class Api::UsersController < ApplicationController
       data = {
           id: current_user.id,
           username: current_user.username,
-          point: current_user.point,
+          point: current_user.points,
           favourite_topics: favTopicArray,
           liked_posts: likedPostArray,
           liked_topics: likedTopicArray,
@@ -579,7 +579,7 @@ class Api::UsersController < ApplicationController
     data = {
         id: current_user.id,
         username: current_user.username,
-        points: current_user.point,
+        points: current_user.points,
         favourite_topics: favTopicArray,
         liked_posts: likedPostArray,
         liked_topics: likedTopicArray,
@@ -599,7 +599,7 @@ class Api::UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :point, :honor_rating, :created_at, :data, :device_id)
+    params.require(:user).permit(:username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :points, :honor_rating, :created_at, :data, :device_id)
   end
 
   def juice_sign_in

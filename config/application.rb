@@ -76,25 +76,25 @@ module Factual_Const
 end
 
 module Mealbox_key
-  Development_Key = "635d359ad1f1f4897f3be07b9aed439d"
+  Development_Key = "3cc83947e0d983b7ab487df4d7136904"
   Staging_Key= "7c64b6ba8eebebb73bcdf605b052562e"
   Production_Key = "d80eab337c8eeba960ecf65772e1f2af"
 end
 
 module Carmmunicate_key
-  Development_Key = "971940c5901bbdcf741a1bf66c5a3d04"
+  Development_Key = "3cb80528ec41b6ac172739a2729ae5be"
   Staging_Key= "63547bb73e27bc8e55c000e126c2c254"
   Production_Key = "05c4919a87614b59e5b6814b02ceff07"
 end
 
 module Favr_key
-  Development_Key = "d6d9f8516e270aa9fd83970de26aed8b"
+  Development_Key = "469f789de3555ad7b8e45bab410c370e"
   Staging_Key= "643e879e71eb4f624d49ecd3ef01122f"
   Production_Key = "582045053ce9f2310ee9ab0d2a7217d6"
 end
 
 module Socal_key
-  Development_Key = "98f1e96b8db2275c5b69164048be89b7"
+  Development_Key = "3bb30ce29cf7ed39a9167facb9ca7022"
   Staging_Key = "93dc338faf53138be3b10da1338461a0"
   Production_Key = "89433f46a2f596f3f1c8259e8f262c3e"
 end
