@@ -238,6 +238,9 @@ class Api::TopicsController < ApplicationController
 
     hiveapplication = HiveApplication.find_by_app_name('Favr')
     topic.hiveapplication_id = hiveapplication.id
+    topic.save
+
+    p "save hive app id"
 
     if topic.save
       if (topic.topic_type == Topic::FAVR) && user.present?
