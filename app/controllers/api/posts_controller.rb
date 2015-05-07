@@ -127,6 +127,9 @@ class Api::PostsController < ApplicationController
           post.delay.post_image_upload_delayed_job(params[:post]) if params[:post_type] == Post::IMAGE.to_s
         end
 
+        post.broadcast_to_topic(params[:topic_id])
+        p 'broadcast_to_topic'
+
         render json: { post: post, temp_id: params[:temp_id], profanity_counter: currentuser.profanity_counter, offence_date: currentuser.offence_date }
 
       else

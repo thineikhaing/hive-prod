@@ -51,6 +51,57 @@ class Post < ActiveRecord::Base
     Pusher[self.pub_sub_channel].trigger_async("broadcast", data)
   end
 
+  def broadcast_to_topic(topic_id)
+    data = {
+        id: self.id,
+        topic_id: self.topic_id,
+        content: self.content,
+        created_at: self.created_at,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        user_id: self.user_id,
+        offensive: self.offensive,
+        username: self.username,
+        latitude: self.latitude,
+        longitude: self.longitude,
+        post_type: self.post_type,
+        height: self.height,
+        width: self.width,
+        history_id: 0
+    }
+
+    p "post channel with respect to topic"
+    p self.pub_sub_channel
+
+    p sub_channel = "topics_" + topic_id
+    p  self.content
+    p "sub_channel"
+
+    Pusher[sub_channel].trigger_async("broadcast", data)
+  end
+
+  def broadcast_temp_id(temp_id)
+    data = {
+        id: self.id,
+        topic_id: self.topic_id,
+        content: self.content,
+        created_at: self.created_at,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        user_id: self.user_id,
+        offensive: self.offensive,
+        temp_id: temp_id,
+        username: self.username,
+        latitude: self.latitude,
+        longitude: self.longitude,
+        post_type: self.post_type,
+        height: self.height,
+        width: self.width,
+        special_type: self.special_type
+    }
+
+    Pusher[self.pub_sub_channel].trigger "broadcast", data
+  end
 
   def broadcast_other_app(temp_id)
       data = {

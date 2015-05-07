@@ -566,6 +566,8 @@ class Api::TopicsController < ApplicationController
   end
 
   def favr_topics_by_user
+
+    p 'favr_topics_by_user'
     if params[:auth_token].present?
       user = User.find_by_authentication_token(params[:auth_token])
       owner_current_record = []
@@ -654,6 +656,7 @@ class Api::TopicsController < ApplicationController
           actions.push({action_id: favr_action_id,topic_id:topic.id,status: last_favr_action_status,doer_id:doer_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: honor_to_doer, honor_to_owner: honor_to_owner,user_id: favraction.user_id,created_at:favraction.created_at,updated_at:favraction.updated_at})
         end
       end
+      p mytasks
       render json: { user_points:user.points, user_positive_honor: user.positive_honor, user_negative_honor: user.negative_honor, user_honored_count: user.honored_times , topics: topic_lists, actions: actions,my_requests: myrequests, my_tasks:mytasks}
     end
   end
