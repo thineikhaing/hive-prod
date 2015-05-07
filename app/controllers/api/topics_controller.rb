@@ -236,15 +236,10 @@ class Api::TopicsController < ApplicationController
       end
     end
 
-    hiveapplication = HiveApplication.find_by_app_name('Favr')
-    topic.hiveapplication_id = hiveapplication.id
-    topic.save
-
-    p "save hive app id"
 
     if topic.save
       if (topic.topic_type == Topic::FAVR) && user.present?
-        user.point -= points
+        user.points -= points
         user.save!
         add_favr_action_delay_job(topic.id)
 
@@ -301,8 +296,17 @@ class Api::TopicsController < ApplicationController
         #history.create_record("post", post.id, "create", topic.id)
         #history.create_record("topic", topic.id, "update", nil)
         #post.broadcast
+
+        hiveapplication = HiveApplication.find_by_app_name('Favr')
+        topic.hiveapplication_id = hiveapplication.id
+        topic.save
+        p "save hive app id"
+
         topic.reload
         topic.overall_broadcast
+
+
+
 
         if check_profanity
           current_user.profanity_counter += 1

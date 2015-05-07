@@ -513,6 +513,10 @@ class Topic < ActiveRecord::Base
      p "valid_end_date"
      p valid_end_date
 
+     hiveapplication = HiveApplication.find_by_app_name('Favr')
+     self.hiveapplication_id = hiveapplication.id
+     self.save
+
     data = {
         id: self.id,
         title: self.title,
