@@ -11,13 +11,15 @@ class Topic < ActiveRecord::Base
   has_many :votes
   has_many :invitees
 
+  has_many :historychanges
+
   delegate :latitude, :longitude, :address, :name, to: :place
 
   # Setup hstore
   store_accessor :data
   #enums for topic type
 
-  enums %w(NORMAL IMAGE AUDIO VIDEO FAVR)
+  enums %w(NORMAL IMAGE AUDIO VIDEO RPSGAME WEB POLL LUNCHEON FAVR CARMMUNICATE)
 
   enums %w(NONE FLARE BEACON STICKY PROMO COSHOOT QUESTION ERRAND)
 
@@ -299,6 +301,76 @@ class Topic < ActiveRecord::Base
     }
     channel_name = hiveapplication.api_key+ "_channel"
     Pusher[channel_name].trigger_async("update_topic", data)
+  end
+
+  def content(post_id=-1,action_id=-1)
+    testDataArray = [ ]
+    if action_id > -1
+      post_content = ""
+      post_created_at = ""
+      favr_action = Favraction.find(action_id)
+      if favr_action.present?
+        doer = User.find(favr_action.doer_user_id)
+        doer_name = doer.username
+        if post_id > -1
+          post = Post.find(post_id)
+          post_content= post.content
+          post_created_at = post.created_at
+        end
+        action = {action_id: favr_action.id,topic_id:favr_action.topic_id,
+                  status: favr_action.status,doer_id:favr_action.doer_user_id,
+                  doer_name: doer_name,post_id: post_id, post_content: post_content,
+                  post_created_at: post_created_at, honor_to_doer: favr_action.honor_to_doer,
+                  honor_to_owner: favr_action.honor_to_owner,
+                  user_id: favr_action.user_id,
+                  created_at:favr_action.created_at,
+                  updated_at:favr_action.updated_at}
+        {action: action}
+
+      end
+    end
+  end
+
+  def update_event_broadcast(postid=-1,action_id = -1)
+    p "update event boradcast"
+    data = {
+        id: self.id,
+        title: self.title,
+        user_id: self.user_id,
+        topic_type: self.topic_type,
+        offensive: self.offensive,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        radius: nil,
+        extra_info: self.extra_info,
+        state: self.state,
+        points: self.points,
+        free_points:self.free_points,
+        title_indexes:self.title_indexes,
+        checker:self.checker,
+        given_time: self.given_time,
+        valid_start_date: self.valid_start_date,
+        valid_end_date: self.valid_end_date,
+        methods: [
+            last_post_at: self.last_post_at,
+            url: nil,
+            username: self.username,
+            flare: self.type_flare,
+            beacon: self.type_beacon,
+            sticky: self.type_sticky,
+            promo: self.type_promo,
+            coshoot:self.type_coshoot,
+            question:self.type_question,
+            errand:self.type_errand,
+            content: self.content(postid,action_id),
+            place_information: self.place_information,
+            tag_information: self.tag_information
+        ],
+        history_id: Historychange.where(type_name: "topic", type_action: "update", type_id: self.id).last.id
+    }
+
+      Pusher["favr_channel"].trigger  "update_topic", data
+
   end
 
   def delete_event_broadcast_hive

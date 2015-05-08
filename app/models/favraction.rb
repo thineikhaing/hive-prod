@@ -1,3 +1,4 @@
+require 'obscenity/active_model'
 class Favraction < ActiveRecord::Base
   belongs_to :user
   belongs_to :topic
@@ -11,9 +12,29 @@ class Favraction < ActiveRecord::Base
   #enum for favr action status
   enums %w(DEFAULT DOER_STARTED DOER_FINISHED OWNER_ACKNOWLEDGED OWNER_REJECTED DOER_RESPONDED_ACK DOER_RESPONDED_REJ OWNER_REVOKED COMPLETION_REMINDER_SENT EXPIRED_AFTER_STARTED EXPIRED_AFTER_FINISHED EXPIRED)
 
-  def create_record(topic_id, doer_user_id, status, user_id)
-    Favraction.create(topic_id: topic_id, doer_user_id: doer_user_id, status: status, user_id: user_id)
-  end
+  attr_accessible :topic_id,:doer_user_id, :status, :user_id
+
+  #def create_record(topic_id, doer_user_id, status, user_id)
+  #  p topic_id
+  #  p doer_user_id
+  #  p status
+  #  p user_id
+  #
+  #  58
+  #  33
+  #  1
+  #  33
+  #
+  #  Favraction.create(topic_id: topic_id, doer_user_id: doer_user_id, status: status, user_id: user_id)
+  #
+  #  #fav = Favraction.new
+  #  #fav.topic_id = topic_id
+  #  #fav.doer_user_id = doer_user_id
+  #  #fav.status = status
+  #  #fav.user_id = user_id
+  #  #fav.save!
+  #
+  #end
 
   def as_json(options=nil)
     super(only: [:id, :topic_id, :content, :doer_user_id, :status, :user_id, :created_at, :updated_at, :post_id, :honor_to_owner, :honor_to_doer])

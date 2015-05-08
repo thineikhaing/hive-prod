@@ -38,7 +38,7 @@ gem 'time_difference'             , '~> 0.3.2' # TimeDifference is the missing R
 gem 'pg'                          , '~> 0.17.1' # Use postgresql as the database for Active Record
 gem 'coffee-rails'                , '~> 4.0.0' # Use CoffeeScript for .js.coffee assets and views
 gem 'jquery-rails'                , '~> 2.1.3' # Use jquery as the JavaScript library
-gem 'turbolinks'                  , '~> 2.2.2' # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
+gem 'turbolinks'                  , '~> 2.5.3' # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'jbuilder'                    , '~> 2.0.6' # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem "rmagick"                     , :require => 'RMagick' #gem to resize the image
 gem 'browser'                     , '~> 0.5.0' # Do some browser detection with Ruby.

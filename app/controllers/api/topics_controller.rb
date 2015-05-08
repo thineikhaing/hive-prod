@@ -255,7 +255,12 @@ class Api::TopicsController < ApplicationController
         if topic.topic_type == Topic::IMAGE
           post2 = Post.create(content: params[:img_url], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::IMAGE, height: params[:height], width: params[:width])
           post2.delay.image_upload_delayed_job(params[:img_url])
-          history.create_record("post", post2.id, "create", topic.id)
+          #history.create_record("post", post2.id, "create", topic.id)
+          history.type_name = 'post'
+          history.type_id = post2.id
+          history.type_action = 'create'
+          history.parent_id = topic.id
+          history.save
         end
 
         #if topic.topic_type == Topic::LUNCHEON
@@ -279,12 +284,21 @@ class Api::TopicsController < ApplicationController
 
         if topic.topic_type == Topic::FAVR
           post2 = Post.create(content: params[:extra_content], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::TEXT)
-          history.create_record("post", post2.id, "create", topic.id)
+          #history.create_record("post", post2.id, "create", topic.id)
+
+          history= Historychange.new
+
+          history.type_name = 'post'
+          history.type_id = post2.id
+          history.type_action = 'create'
+          history.parent_id = topic.id
+          history.save
+
         end
         topic.update_attributes(radius: params[:radius]) if params[:radius].present? and params[:beacon].present?
         topic.flare if params[:flare].present?
 
-       # history.create_record("topic" , topic.id , "create" , nil )
+       # HISTORY.create_record("topic" , topic.id , "create" , nil )
         #(type_name: type, type_id: type_id, type_action: type_action, parent_id: parent_id)
 
         history= Historychange.new
@@ -738,7 +752,7 @@ class Api::TopicsController < ApplicationController
           p "before post"
           post = Post.new
           p action_topic
-          post = post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,last_favr_action.id,post_special_type)
+          post = post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,last_favr_action.id,post_special_type)
           p post
         end
         doer_name = doer_user.username
@@ -767,6 +781,7 @@ class Api::TopicsController < ApplicationController
   # *********** for Socal ***********
 
   def start_favr(topic_id, user_id, temp_id, lat,lng)
+    p "start favr"
     user = User.find(user_id)
     action_topic = Topic.find(topic_id)
 
@@ -775,16 +790,34 @@ class Api::TopicsController < ApplicationController
       render json: {err_message: "owner of favr topic cannot be the doer"}
     else
       unless action_topic.nil?
-        if action_topic.state == Topic::OPENED && action_topic.topic_type == Topic::FAVR
+        p action_topic.state
+        if action_topic.state == Topic::OPENED
+          p "favr action"
+          #favr_action = favr_action.create_record(topic_id,user.id,Favraction::DOER_STARTED,user.id)
+          #  Favraction.create(topic_id: topic_id, doer_user_id: doer_user_id, status: status, user_id: user_id)
+          #
           favr_action = Favraction.new
-          favr_action = favr_action.create_record(topic_id,user.id,Favraction::DOER_STARTED,user.id)
+          favr_action.topic_id = topic_id
+          favr_action.doer_user_id = user.id
+          favr_action.status = Favraction::DOER_STARTED
+          favr_action.user_id = user_id
+          favr_action.save!
+
           if favr_action.present?
             action_topic.state = Topic::IN_PROGRESS
             action_topic.save!
             title = user.username + " has started favr request"
             create_user = User.find_by_username("FavrBot")
+
             post = Post.new
-            new_post = post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::DOER_STARTED)
+            p action_topic.id
+            p "action_topic"
+            p create_user.id
+            p "create user"
+            p favr_action.id
+            p "Favr action id"
+
+            new_post = post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::DOER_STARTED)
             favr_action.post_id = new_post.id
             favr_action.save!
             extend_favr_action_delay_job(action_topic.id)
@@ -799,7 +832,10 @@ class Api::TopicsController < ApplicationController
               post_content = post.content
               post_created_at = post.created_at
             end
-            action = {action_id: favr_action.id,topic_id:favr_action.topic_id,status: favr_action.status,doer_id:favr_action.doer_user_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: favr_action.honor_to_doer, honor_to_owner: favr_action.honor_to_owner,user_id: favr_action.user_id,created_at:favr_action.created_at,updated_at:favr_action.updated_at}
+            p "action"
+
+            p action = {action_id: favr_action.id,topic_id:favr_action.topic_id,status: favr_action.status,doer_id:favr_action.doer_user_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: favr_action.honor_to_doer, honor_to_owner: favr_action.honor_to_owner,user_id: favr_action.user_id,created_at:favr_action.created_at,updated_at:favr_action.updated_at}
+
             render json: {topic: action_topic , action: action}
           end
         else
@@ -816,7 +852,7 @@ class Api::TopicsController < ApplicationController
     if favr_action.present?
       action_topic = Topic.find(favr_action.topic_id)
       unless action_topic.nil?
-        if action_topic.state == Topic::IN_PROGRESS && action_topic.topic_type == Topic::FAVR
+        if action_topic.state == Topic::IN_PROGRESS
           if favr_action.present?
             favr_action.status = Favraction::DOER_FINISHED
             favr_action.user_id = user.id
@@ -826,7 +862,7 @@ class Api::TopicsController < ApplicationController
             title = user.username + " has finished favr request"
             create_user = User.find_by_username("FavrBot")
             post = Post.new
-            new_post = post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::DOER_FINISHED)
+            new_post = post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::DOER_FINISHED)
             favr_action.post_id = new_post.id
             favr_action.save!
             remove_favr_task_reminder_job(favr_action_id)
@@ -936,7 +972,7 @@ class Api::TopicsController < ApplicationController
     if favr_action.present?
       action_topic = Topic.find(favr_action.topic_id)
       unless action_topic.nil?
-        if action_topic.state == Topic::FINISHED && action_topic.topic_type == Topic::FAVR
+        if action_topic.state == Topic::FINISHED
           favr_action.status = Favraction::OWNER_ACKNOWLEDGED
           favr_action.user_id = user.id
           favr_action.honor_to_doer = honor
@@ -968,7 +1004,7 @@ class Api::TopicsController < ApplicationController
           title = user.username + " has acknowledged and rated the " + doer_user.username.to_s  + " * " + ranking  + " * "
           create_user = User.find_by_username("FavrBot")
           post = Post.new
-          new_post = post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_ACKNOWLEDGED)
+          new_post = post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_ACKNOWLEDGED)
 
           favr_action.post_id = new_post.id
           favr_action.save!
@@ -990,7 +1026,7 @@ class Api::TopicsController < ApplicationController
           render json: {topic: action_topic , action: action}
           #elsif (action_topic.state == Topic::TASK_EXPIRED || action_topic.state == Topic::EXPIRED) && action_topic.topic_type == Topic::FAVR
           #topic must be with expired_after_completed sts
-        elsif (action_topic.topic_type == Topic::FAVR)
+        else
           if (favr_action.status == Favraction::EXPIRED_AFTER_FINISHED)
             favr_action.status= Favraction::OWNER_ACKNOWLEDGED
             favr_action.user_id = user.id
@@ -1025,7 +1061,7 @@ class Api::TopicsController < ApplicationController
             title = user.username + " has acknowledged and rated the " + doer_user.username.to_s  + " * " + ranking + " * "
             create_user = User.find_by_username("FavrBot")
             post = Post.new
-            new_post = post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_ACKNOWLEDGED)
+            new_post = post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_ACKNOWLEDGED)
 
             favr_action.post_id = new_post.id
             favr_action.save!
@@ -1061,7 +1097,7 @@ class Api::TopicsController < ApplicationController
     if favr_action.present?
       action_topic = Topic.find(favr_action.topic_id)
       unless action_topic.nil?
-        if action_topic.state == Topic::FINISHED && action_topic.topic_type == Topic::FAVR
+        if action_topic.state == Topic::FINISHED
           doer_user = User.find_by_id(favr_action.doer_user_id)
           #update points
           total_points = action_topic.points + action_topic.free_points
@@ -1096,7 +1132,7 @@ class Api::TopicsController < ApplicationController
           create_user = User.find_by_username("FavrBot")
           post = Post.new
 
-          post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_REJECTED)
+          post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_REJECTED)
 
           action_topic.state = Topic::REJECTED
           action_topic.save!
@@ -1128,7 +1164,7 @@ class Api::TopicsController < ApplicationController
           action = {action_id: favr_action.id,topic_id:favr_action.topic_id,status: favr_action.status,doer_id:favr_action.doer_user_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: favr_action.honor_to_doer, honor_to_owner: favr_action.honor_to_owner,user_id: favr_action.user_id,created_at:favr_action.created_at,updated_at:favr_action.updated_at}
           render json: {topic: action_topic , action: action}
           #render json: {topic: action_topic, action_status: Favraction::OWNER_REJECTED, reason_post_id:new_post.id, reason_post_content: new_post.content}
-        elsif (action_topic.state == Topic::TASK_EXPIRED || action_topic.state == Topic::EXPIRED)  && action_topic.topic_type == Topic::FAVR
+        elsif (action_topic.state == Topic::TASK_EXPIRED || action_topic.state == Topic::EXPIRED)
 
           doer_user = User.find_by_id(favr_action.doer_user_id)
 
@@ -1154,7 +1190,7 @@ class Api::TopicsController < ApplicationController
           title = user.username + " has rejected and rated the " + doer_user.username.to_s  + " * " + ranking + " * "
           create_user = User.find_by_username("FavrBot")
           post = Post.new
-          post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_REJECTED)
+          post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_REJECTED)
 
           #action_topic.state = Topic::EXPIRED
           #action_topic.save!
@@ -1198,7 +1234,7 @@ class Api::TopicsController < ApplicationController
     user = User.find(user_id)
     action_topic = Topic.find(topic_id)
     unless action_topic.nil?
-      if action_topic.state == Topic::REJECTED && action_topic.topic_type == Topic::FAVR
+      if action_topic.state == Topic::REJECTED
         action_topic.state = Topic::OPENED
         time = action_topic.valid_end_date
 
@@ -1211,7 +1247,7 @@ class Api::TopicsController < ApplicationController
         create_user = User.find_by_username("FavrBot")
 
         post = Post.new
-        post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REOPENED)
+        post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REOPENED)
 
         if post.present?
           topic_points = action_topic.points
@@ -1236,7 +1272,7 @@ class Api::TopicsController < ApplicationController
 
         #action_topic.update_event_broadcast
         render json: {topic: action_topic}
-      elsif action_topic.state == Topic::TASK_EXPIRED && action_topic.topic_type == Topic::FAVR
+      elsif action_topic.state == Topic::TASK_EXPIRED
         action_record = Favraction.where(:topic_id => action_topic.id).order("id")
         if action_record.present?
           last_action_record = action_record.last
@@ -1254,7 +1290,7 @@ class Api::TopicsController < ApplicationController
               create_user = User.find_by_username("FavrBot")
 
               post = Post.new
-              post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REOPENED)
+              post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REOPENED)
 
               render json: {topic: action_topic}
             end
@@ -1302,7 +1338,7 @@ class Api::TopicsController < ApplicationController
         title = user.username + " has extended the time for the task "
         create_user = User.find_by_username("FavrBot")
         post = Post.new
-        post = post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id)
+        post = post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id)
         p post
         render json: {topic: action_topic}
       else
@@ -1348,7 +1384,7 @@ class Api::TopicsController < ApplicationController
           p "before post"
           post = Post.new
           p action_topic
-          post = post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,last_favr_action.id,post_special_type)
+          post = post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,last_favr_action.id,post_special_type)
           p post
         end
         doer_name = doer_user.username
@@ -1369,7 +1405,7 @@ class Api::TopicsController < ApplicationController
     user= User.find(user_id)
     action_topic = Topic.find(topic_id)
     if action_topic.present?
-      if action_topic.state == Topic::REJECTED && action_topic.topic_type == Topic::FAVR
+      if action_topic.state == Topic::REJECTED
         action_topic.state = Topic::REVOKED
         action_topic.save!
 
@@ -1393,11 +1429,11 @@ class Api::TopicsController < ApplicationController
         title = user.username + " has revoked the request"
         create_user = User.find_by_username("FavrBot")
         post = Post.new
-        post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REVOKED)
+        post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REVOKED)
 
         #action_topic.update_event_broadcast
         #render json: {topic: action_topic, action_status: Favraction::OWNER_REVOKED}
-      elsif action_topic.state == Topic::TASK_EXPIRED && action_topic.topic_type == Topic::FAVR
+      elsif action_topic.state == Topic::TASK_EXPIRED
         action_record = Favraction.where(:topic_id => action_topic.id).order("id")
         if action_record.present?
           last_action_record = action_record.first
@@ -1419,13 +1455,13 @@ class Api::TopicsController < ApplicationController
               title = user.username + " has revoked the request"
               create_user = User.find_by_username("FavrBot")
               post = Post.new
-              post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REVOKED)
+              post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REVOKED)
             end
             #action_topic.update_event_broadcast
             render json: {topic: action_topic, action_status: Favraction::OWNER_REVOKED}
           end
         end
-      elsif action_topic.state == Topic::OPENED && action_topic.topic_type == Topic::FAVR
+      elsif action_topic.state == Topic::OPENED
         #action_record = Favraction.where(:topic_id => action_topic.id).order("id desc")
         action_topic.state = Topic::REVOKED
         action_topic.save!
@@ -1444,7 +1480,7 @@ class Api::TopicsController < ApplicationController
         title = user.username + " has revoked the request"
         create_user = User.find_by_username("FavrBot")
         post = Post.new
-        post.create_record(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REVOKED)
+        post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REVOKED)
 
 
       else

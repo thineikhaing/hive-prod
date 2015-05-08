@@ -12,6 +12,11 @@ class Post < ActiveRecord::Base
   attr_accessible :content, :post_type, :data, :created_at, :user_id, :topic_id, :place_id,:likes,
                   :dislikes, :offensive, :img_url, :width, :height, :latitude, :longitude ,:special_type
   enums %w(TEXT IMAGE AUDIO VIDEO)
+
+  #enum for special type for favr
+  enums %w(DEFAULT DOER_STARTED DOER_FINISHED OWNER_ACKNOWLEDGED OWNER_REJECTED DOER_RESPONDED_ACK DOER_RESPONDED_REJ OWNER_REVOKED COMPLETION_REMINDER_SENT EXPIRED_AFTER_STARTED EXPIRED_AFTER_FINISHED EXPIRED OWNER_REOPENED)
+
+
   validates :content, presence: true
   validates :content, obscenity: { sanitize: true, replacement: "snork" }
 
@@ -21,6 +26,40 @@ class Post < ActiveRecord::Base
 
   def image_url
     self.img_url
+  end
+
+  def create_post(content, topic_id,user_id, post_type, latitude, longitude, temp_id,height=0, width=0, isfavrpost=false,action_id = -1,special_type=0)
+
+    post = Post.create(content: content, topic_id: topic_id, user_id: user_id, post_type:post_type, height: height, width: width, latitude: latitude, longitude: longitude,special_type: special_type)
+
+    if post_type == IMAGE.to_s
+      post.delay.image_upload_delayed_job(content)
+    end
+
+    history = Historychange.new
+
+    history.type_name = 'post'
+    history.type_id = post.id
+    history.type_action = 'create'
+    history.parent_id = post.topic_id
+    history.save
+
+    history.type_name = 'topic'
+    history.type_id =  post.topic.id
+    history.type_action = 'update'
+    history.parent_id = nil
+    history.save
+
+    topic = Topic.find(post.topic_id)
+    post.broadcast_temp_id(temp_id)
+    post.fav_topic_push_notification
+    if (isfavrpost)
+      topic.update_event_broadcast(post.id,action_id)
+    else
+      topic.update_event_broadcast(-1,action_id)
+    end
+
+    return post
   end
 
   # Topic main channel
@@ -167,7 +206,8 @@ class Post < ActiveRecord::Base
         dislikes: self.dislikes,
         offensive: self.offensive,
         created_at: created_at,
-        data: self.data
+        data: self.data,
+        special_type: self.special_type
     }
 
     channel_name = "hive_topic_" + self.topic_id.to_s+ "_channel"
@@ -191,7 +231,10 @@ class Post < ActiveRecord::Base
         dislikes: self.dislikes,
         offensive: self.offensive,
         created_at: created_at,
-        data: self.data
+        data: self.data,
+        special_type: self.special_type,
+        other_app: true
+
     }
 
     channel_name = "topic_" + self.topic_id.to_s+ "_channel"
@@ -556,5 +599,144 @@ class Post < ActiveRecord::Base
     uploader.store!
     p "delayed job ends!"
   end
+
+  def fav_topic_push_notification
+    usersArray = [ ]
+    blockUsersArray = [ ]
+    pushUsers = [ ]
+    topic = Topic.find(self.topic_id)
+
+    usersFavouritedTopic = ActionLog.where(type_name: "topic", action_type: "favourite", type_id: self.topic_id)
+    blocked_current_user = ActionLog.where(type_name: "user", action_type: "block", type_id: self.user_id)
+
+    usersFavouritedTopic.map { |u| usersArray.push(u.action_user_id) unless usersArray.include?(u.action_user_id) } if usersFavouritedTopic.present?
+    blocked_current_user.map { |u| blockUsersArray.push(u.action_user_id) unless blockUsersArray.include?(u.action_user_id) } if blocked_current_user.present?
+
+    if blocked_current_user.present? &&  usersFavouritedTopic.present?
+      users = User.all(:conditions => ["id not in (?) and id in (?)", blockUsersArray,usersArray])
+    elsif  blocked_current_user.count == 0 &&  usersFavouritedTopic.present?
+      users = User.all(:conditions => ["id in (?)", usersArray])
+    elsif blocked_current_user.present? && usersFavouritedTopic.count==0
+      users = User.all(:conditions => ["id not in (?)", blockUsersArray])
+    end
+
+
+    if Rails.env.production?
+      appID = PushWoosh_Const::FV_P_APP_ID
+    elsif Rails.env.staging?
+      appID = PushWoosh_Const::FV_S_APP_ID
+    else
+      appID = PushWoosh_Const::FV_D_APP_ID
+    end
+
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+
+
+    if users.present?
+      users.each do |u|
+        pushUsers.push(u.id.to_s)
+      end
+
+      users.each do |user|
+        if user.data.present?
+          hash_array = user.data
+          device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+          to_device_id.push(device_id)
+        end
+      end
+
+      if topic.place_id.present?
+        place = Place.find(topic.place_id)
+
+        #notification = {
+        #    aliases: pushUsers,
+        #    aps: { alert: "A topic you are subscribed to has been updated.", badge: "+1", sound: "default" },
+        #    topic_title: Topic.find(self.topic_id).title,
+        #    topic_id: self.topic_id,
+        #    content: self.content[0..14],
+        #    post_author: self.username,
+        #    place_name: place.name
+        #}
+        #Urbanairship.push(notification)
+
+        notification_options = {
+            send_date: "now",
+            badge: "1",
+            sound: "default",
+            content:{
+                fr:"A topic you are subscribed to has been updated.",
+                en:"A topic you are subscribed to has been updated."
+            },
+            data:{  topic_title: Topic.find(self.topic_id).title,
+                    topic_id: self.topic_id,
+                    content: self.content[0..14],
+                    post_author: self.username,
+                    place_name: place.name
+            },
+            devices: to_device_id
+        }
+
+        options = @auth.merge({:notifications  => [notification_options]})
+        options = {:request  => options}
+
+        full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+        url = URI.parse(full_path)
+        req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+        req.body = options.to_json
+        con = Net::HTTP.new(url.host, url.port)
+        con.use_ssl = true
+
+        r = con.start {|http| http.request(req)}
+
+        p "pushwoosh"
+
+      else
+        #notification = {
+        #    aliases: pushUsers,
+        #    aps: { alert: "A topic you are subscribed to has been updated.", badge: "+1", sound: "default" },
+        #    topic_title: Topic.find(self.topic_id).title,
+        #    topic_id: self.topic_id,
+        #    content: self.content[0..14],
+        #    post_author: self.username,
+        #    address: topic.address
+        #}
+        #
+        #Urbanairship.push(notification)
+
+        notification_options = {
+            send_date: "now",
+            badge: "1",
+            sound: "default",
+            content:{
+                fr:"A topic you are subscribed to has been updated.",
+                en:"A topic you are subscribed to has been updated."
+            },
+            data:{  topic_title: Topic.find(self.topic_id).title,
+                    topic_id: self.topic_id,
+                    content: self.content[0..14],
+                    post_author: self.username,
+                    address: topic.address
+            },
+            devices: to_device_id
+        }
+
+        options = @auth.merge({:notifications  => [notification_options]})
+        options = {:request  => options}
+
+        full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+        url = URI.parse(full_path)
+        req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+        req.body = options.to_json
+        con = Net::HTTP.new(url.host, url.port)
+        con.use_ssl = true
+
+        r = con.start {|http| http.request(req)}
+
+        p "pushwoosh"
+
+      end
+    end
+  end
+
   handle_asynchronously :post_image_upload_delayed_job
 end
