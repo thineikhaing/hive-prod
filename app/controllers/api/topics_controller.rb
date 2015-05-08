@@ -162,7 +162,11 @@ class Api::TopicsController < ApplicationController
     user = User.find_by_authentication_token (params[:auth_token]) if params[:auth_token].present?
     params[:points].present? ? points = params[:points].to_i : points = 0
     params[:free_points].present? ? free_points = params[:free_points].to_i : free_points = 0
-    (params[:topic_type].present? && params[:topic_type].to_i== Topic::FAVR)  ? state = Topic::OPENED : state = Topic::DEFAULT
+
+
+    state = Topic::OPENED
+
+
     (params[:checker].present?)  ? checker = params[:checker].to_i : checker = Topic::CHECKER_DEFAULT
     (params[:title_indexes].present?)  ? title_indexes = params[:title_indexes] : title_indexes = ""
     if params[:place_id]
