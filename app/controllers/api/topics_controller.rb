@@ -928,6 +928,7 @@ class Api::TopicsController < ApplicationController
 
       @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
+      p "Device id"
       p to_device_id
 
       notification_options = {
@@ -944,7 +945,7 @@ class Api::TopicsController < ApplicationController
           devices: to_device_id
       }
 
-      options = @auth.merge({:notifications  => [notification_options]})
+      p options = @auth.merge({:notifications  => [notification_options]})
       options = {:request  => options}
 
       full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
@@ -955,7 +956,6 @@ class Api::TopicsController < ApplicationController
       con.use_ssl = true
 
       p request = con.start {|http| http.request(req)}
-
       p "pushwoosh"
 
     end
@@ -1152,7 +1152,8 @@ class Api::TopicsController < ApplicationController
           post2 = Post.new
           reason_title = "reason to reject: " +reason
           temp_id = temp_id + "1"
-          new_post = post2.create_record(reason_title, action_topic.id, user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_REJECTED)
+
+          new_post = post2.create_post(reason_title, action_topic.id, user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::OWNER_REJECTED)
 
           favr_action.post_id = new_post.id
           favr_action.save!
