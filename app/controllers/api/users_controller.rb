@@ -227,9 +227,6 @@ class Api::UsersController < ApplicationController
 
         render json: { status: true }
       end
-
-
-
     else
       render json: { error_msg: "Param user id, authentication token, pusher token must be presented" }, status: 400
     end

@@ -84,7 +84,8 @@ class Post < ActiveRecord::Base
         post_type: self.post_type,
         height: self.height,
         width: self.width,
-        history_id: 0
+        history_id: 0 ,
+        special_type: self.special_type
     }
 
     Pusher[self.pub_sub_channel].trigger_async("broadcast", data)
@@ -106,7 +107,8 @@ class Post < ActiveRecord::Base
         post_type: self.post_type,
         height: self.height,
         width: self.width,
-        history_id: 0
+        history_id: 0,
+        special_type: self.special_type
     }
 
     p "post channel with respect to topic"
@@ -160,7 +162,8 @@ class Post < ActiveRecord::Base
           offensive: self.offensive,
           temp_id: temp_id,
           created_at: created_at,
-          data: self.data
+          data: self.data,
+          special_type: self.special_type
       }
     channel_name = "topic_" + self.topic_id.to_s+ "_channel"
     Pusher[channel_name].trigger_async("broadcast", data)
@@ -184,6 +187,7 @@ class Post < ActiveRecord::Base
         offensive: self.offensive,
         created_at: created_at,
         data: self.data,
+        special_type: self.special_type
     }
     channel_name = "hive_topic_" + self.topic_id.to_s+ "_channel"
     Pusher[channel_name].trigger_async("broadcast", data)
@@ -258,7 +262,8 @@ class Post < ActiveRecord::Base
         dislikes: self.dislikes,
         offensive: self.offensive,
         created_at: created_at,
-        data: self.data
+        data: self.data,
+        special_type: self.special_type
     }
 
     channel_name = "hive_topic_" + self.topic_id.to_s+ "_channel"
@@ -282,7 +287,8 @@ class Post < ActiveRecord::Base
         dislikes: self.dislikes,
         offensive: self.offensive,
         created_at: created_at,
-        data: self.data
+        data: self.data ,
+        special_type: self.special_type
     }
 
     channel_name = "topic_" + self.topic_id.to_s+ "_channel"

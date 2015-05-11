@@ -599,7 +599,7 @@ class Api::TopicsController < ApplicationController
 
       #OWNER FAVRS
 
-      owner_favrs = Topic.where(:user_id => user.id, :topic_type => Topic::FAVR)
+      owner_favrs = Topic.where(:user_id => user.id)
       if owner_favrs.present?
         owner_favrs.each do |topic|
           if topic.state == Topic::OPENED || topic.state == Topic::IN_PROGRESS || topic.state == Topic::FINISHED
@@ -834,7 +834,11 @@ class Api::TopicsController < ApplicationController
             end
             p "action"
 
-            p action = {action_id: favr_action.id,topic_id:favr_action.topic_id,status: favr_action.status,doer_id:favr_action.doer_user_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: favr_action.honor_to_doer, honor_to_owner: favr_action.honor_to_owner,user_id: favr_action.user_id,created_at:favr_action.created_at,updated_at:favr_action.updated_at}
+            p action = {action_id: favr_action.id,topic_id:favr_action.topic_id,status: favr_action.status,
+                        doer_id:favr_action.doer_user_id,doer_name: doer_name,post_id: post_id,
+                        post_content: post_content, post_created_at: post_created_at,
+                        honor_to_doer: favr_action.honor_to_doer, honor_to_owner: favr_action.honor_to_owner,
+                        user_id: favr_action.user_id,created_at:favr_action.created_at,updated_at:favr_action.updated_at}
 
             render json: {topic: action_topic , action: action}
           end
@@ -892,6 +896,7 @@ class Api::TopicsController < ApplicationController
   def notify_owner_to_acknowledge(topic_id)
     p "inside urban airship function"
     p topic_id
+
     action_topic = Topic.find(topic_id)
     p action_topic
     user = User.find_by_username("FavrBot")
@@ -901,8 +906,9 @@ class Api::TopicsController < ApplicationController
     user_to_push.push(action_topic.user_id.to_s)
     p user_to_push
 
-    users= User.find(action_topic.user_id)
+    user= User.find(action_topic.user_id)
 
+    to_device_id = []
     if user.data.present?
       hash_array = user.data
       device_id = hash_array["device_id"] if  hash_array["device_id"].present?
@@ -922,6 +928,7 @@ class Api::TopicsController < ApplicationController
 
       @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
+      p to_device_id
 
       notification_options = {
           send_date: "now",
@@ -947,7 +954,7 @@ class Api::TopicsController < ApplicationController
       con = Net::HTTP.new(url.host, url.port)
       con.use_ssl = true
 
-      r = con.start {|http| http.request(req)}
+      p request = con.start {|http| http.request(req)}
 
       p "pushwoosh"
 
@@ -1481,6 +1488,10 @@ class Api::TopicsController < ApplicationController
         create_user = User.find_by_username("FavrBot")
         post = Post.new
         post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REVOKED)
+
+        p "revoke open topic"
+
+        render json: {topic: action_topic, action_status: Favraction::OWNER_REVOKED}
 
 
       else
