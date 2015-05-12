@@ -44,9 +44,9 @@ class Topic < ActiveRecord::Base
 
   def as_json(options=nil)
     if options[:content].present?      #return topic json with content information
-      super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :content])
+      super(only: [:id, :state, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :content])
     else
-      super(only: [:id, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information])
+      super(only: [:id,:state, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information])
     end
   end
 
@@ -117,6 +117,7 @@ class Topic < ActiveRecord::Base
         title: self.title,
         user_id: self.user_id,
         topic_type: self.topic_type,
+        state: self.state,
         topic_sub_type: self.topic_sub_type,
         place_id: self.place_id,
         image_url: self.image_url,
@@ -149,6 +150,7 @@ class Topic < ActiveRecord::Base
         title: self.title,
         user_id: self.user_id,
         topic_type: self.topic_type,
+        state: self.state,
         topic_sub_type: self.topic_sub_type,
         place_id: self.place_id,
         image_url: self.image_url,
@@ -181,6 +183,7 @@ class Topic < ActiveRecord::Base
         title: self.title,
         user_id: self.user_id,
         topic_type: self.topic_type,
+        state: self.state,
         topic_sub_type: self.topic_sub_type,
         place_id: self.place_id,
         image_url: self.image_url,
@@ -213,6 +216,7 @@ class Topic < ActiveRecord::Base
         title: self.title,
         user_id: self.user_id,
         topic_type: self.topic_type,
+        state: self.state,
         topic_sub_type: self.topic_sub_type,
         place_id: self.place_id,
         image_url: self.image_url,
@@ -245,6 +249,7 @@ class Topic < ActiveRecord::Base
         title: self.title,
         user_id: self.user_id,
         topic_type: self.topic_type,
+        state: self.state,
         topic_sub_type: self.topic_sub_type,
         place_id: self.place_id,
         image_url: self.image_url,
@@ -277,6 +282,7 @@ class Topic < ActiveRecord::Base
         title: self.title,
         user_id: self.user_id,
         topic_type: self.topic_type,
+        state: self.state,
         topic_sub_type: self.topic_sub_type,
         place_id: self.place_id,
         image_url: self.image_url,
@@ -317,6 +323,9 @@ class Topic < ActiveRecord::Base
           post_content= post.content
           post_created_at = post.created_at
         end
+        p "update even content"
+        p  favr_action.status
+        p favr_action.id
         action = {action_id: favr_action.id,topic_id:favr_action.topic_id,
                   status: favr_action.status,doer_id:favr_action.doer_user_id,
                   doer_name: doer_name,post_id: post_id, post_content: post_content,
@@ -379,6 +388,7 @@ class Topic < ActiveRecord::Base
         title: self.title,
         user_id: self.user_id,
         topic_type: self.topic_type,
+        state: self.state,
         topic_sub_type: self.topic_sub_type,
         place_id: self.place_id,
         image_url: self.image_url,
@@ -411,6 +421,7 @@ class Topic < ActiveRecord::Base
         title: self.title,
         user_id: self.user_id,
         topic_type: self.topic_type,
+        state: self.state,
         topic_sub_type: self.topic_sub_type,
         place_id: self.place_id,
         image_url: self.image_url,
@@ -648,6 +659,7 @@ class Topic < ActiveRecord::Base
         title: self.title,
         user_id: self.user_id,
         topic_type: self.topic_type,
+        state: self.state,
         topic_sub_type: self.topic_sub_type,
         place_id: self.place_id,
         image_url: self.image_url,
@@ -931,6 +943,7 @@ class Topic < ActiveRecord::Base
              title: self.title,
              user_id: self.user_id,
              topic_type: self.topic_type,
+             state: self.state,
              topic_sub_type: self.topic_sub_type,
              place_id: self.place_id,
              image_url: self.image_url,

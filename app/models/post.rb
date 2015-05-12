@@ -53,11 +53,7 @@ class Post < ActiveRecord::Base
     topic = Topic.find(post.topic_id)
     post.broadcast_temp_id(temp_id)
     post.fav_topic_push_notification
-    if (isfavrpost)
-      topic.update_event_broadcast(post.id,action_id)
-    else
-      topic.update_event_broadcast(-1,action_id)
-    end
+    topic.update_event_broadcast(post.id,action_id)
 
     return post
   end
