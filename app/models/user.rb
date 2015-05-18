@@ -88,6 +88,15 @@ class User < ActiveRecord::Base
 
   end
 
+  def update_user_points
+    data = {
+        user_id: self.id,
+        points: self.points
+    }
+
+    Pusher["favr_channel"].trigger  "update_user_points", data
+  end
+
 
   def favourite_user(current_user, user_id, choice)
 

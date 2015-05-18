@@ -43,7 +43,7 @@ class Api::DemoController < ApplicationController
 
   def test4
     p User::BOT
-    render json: SecureRandom.urlsafe_base64
+    render json: {random_code: SecureRandom.urlsafe_base64}
   end
 
 end

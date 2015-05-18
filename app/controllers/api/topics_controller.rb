@@ -1416,16 +1416,19 @@ class Api::TopicsController < ApplicationController
       if action_topic.state == Topic::REJECTED
         action_topic.state = Topic::REVOKED
         action_topic.save!
-
-        total_points = action_topic.points + action_topic.free_points
-        half_point = (total_points/2.0).ceil
-        remaining_point = total_points- half_point
+        p "revoke and calculate user points"
+        p total_points = action_topic.points + action_topic.free_points
+        p half_point = (total_points/2.0).ceil
+        p remaining_point = total_points- half_point
         if(remaining_point >= action_topic.points)
           user.points += action_topic.points
         else
           user.points  += remaining_point
         end
         user.save!
+
+        p user.points
+
         #user.update_user_points
         data = {
             user_id: user.id,
@@ -1474,9 +1477,17 @@ class Api::TopicsController < ApplicationController
         action_topic.state = Topic::REVOKED
         action_topic.save!
 
-        user.points += action_topic.points
+        if action_topic.points == 0
+          user.points += action_topic.free_points
+        else
+          user.points += action_topic.points
+        end
+
         user.save!
         #user.update_user_points
+
+        p "********** user points **********"
+        p user.points
 
         data = {
             user_id: user.id,
