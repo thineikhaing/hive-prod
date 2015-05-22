@@ -1606,13 +1606,12 @@ class Api::TopicsController < ApplicationController
     start_time = Time.parse(DateTime.now.to_s)
     end_time = Time.parse(topic.valid_end_date.to_s)
     time_diff = (TimeDifference.between(start_time, end_time).in_minutes).ceil
-    time_diff = 1.minutes
 
     p "add favr action delay job"
     p "time difference"
-    p time_diff
+
     #time_diff.minutes.from_now
-    job =Delayed::Job.enqueue FavrActionJob.new(topic_id),:priority => 0,:run_at => time_diff.minutes.from_now.localtime
+    job =Delayed::Job.enqueue FavrActionJob.new(topic_id),:priority => 0,:run_at => time_diff
   end
 
   def add_favr_task_job(favr_action_id)
