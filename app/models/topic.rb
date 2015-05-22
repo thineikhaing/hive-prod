@@ -587,14 +587,7 @@ class Topic < ActiveRecord::Base
   end
 
 
-
   def overall_broadcast
-
-     p "valid_start_date"
-     p valid_start_date
-
-     p "valid_end_date"
-     p valid_end_date
 
      hiveapplication = HiveApplication.find_by_app_name('Favr')
      self.hiveapplication_id = hiveapplication.id
@@ -1270,6 +1263,191 @@ class Topic < ActiveRecord::Base
         confirmed_date: confirmed_event_date
     }
   end
+
+  # delay job to change the topic stas and actions
+  def delay_change_topic_status(topic_id)
+    p "delay job for topic ::: "+ topic_id.to_s
+    action_topic = Topic.find(topic_id)
+    if action_topic.present?
+      if (action_topic.state == OPENED)
+        p "state opened"
+        owner = User.find(action_topic.user_id)
+        p "owner old points : " + owner.points.to_s
+        owner.points += action_topic.points
+        owner.save!
+        #owner.update_user_points
+        data = {
+            user_id: owner.id,
+            points: owner.points
+        }
+        Pusher["favr_channel"].trigger  "update_user_points", data
+
+        p "owner new points : " + owner.points.to_s
+        action_topic.state = EXPIRED
+        action_topic.save!
+
+        temp_id= "favrbot3"
+        p temp_id
+
+        if action_topic.special_type== QUESTION.to_s
+          title = "This Question is already expired"
+        elsif action_topic.special_type== ERRAND.to_s
+          title = "This Errand is already expired"
+        end
+        p "title "+ title
+        create_user = User.find_by_username("FavrBot")
+        post = Post.new
+        post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, action_topic.latitude, action_topic.longitude,temp_id)
+        p "Post has been created "
+
+        p "send notification"
+        sent_expire_notificatoin(topic_id)
+
+      elsif (action_topic.state == TASK_EXPIRED)
+        p "TASK_EXPIRED"
+        owner = User.find(action_topic.user_id)
+        action_record = Favraction.where(:topic_id => action_topic.id).order("id")
+        if action_record.present?
+          last_action_record = action_record.first
+          if last_action_record.present?
+            if last_action_record.status == Favraction::EXPIRED_AFTER_STARTED
+              owner.points += action_topic.points
+              owner.save!
+              #owner.update_user_points
+              data = {
+                  user_id: owner.id,
+                  points: owner.points
+              }
+              Pusher["favr_channel"].trigger  "update_user_points", data
+            end
+          end
+        end
+        action_topic.state = EXPIRED
+        action_topic.save!
+
+
+        temp_id= "favrbot3"
+        if action_topic.special_type== QUESTION.to_s
+          title = "This Question is already expired"
+        elsif action_topic.special_type== ERRAND.to_s
+          title = "This Errand is already expired"
+        end
+        p "title "+ title
+        create_user = User.find_by_username("FavrBot")
+        post = Post.new
+        post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, action_topic.latitude, action_topic.longitude,temp_id)
+        p "Post has been created "
+
+        p "send notification"
+        sent_expire_notificatoin(topic_id)
+        #action_topic.update_event_broadcast
+      elsif (action_topic.state == REJECTED)
+        #elsif action_topic.state== REJECTED && favr_actions.status == Favraction::OWNER_REJECTED
+        owner = User.find(action_topic.user_id)
+        p "OWNER_REJECTED"
+        owner = User.find(action_topic.user_id)
+        p "owner old points : " + owner.points.to_s
+        total_points = action_topic.points + action_topic.free_points
+        half_point = (total_points/2.0).ceil
+        remaining_point = total_points- half_point
+
+        if(remaining_point >= action_topic.points)
+          owner.points += action_topic.points
+        else
+          owner.points  += remaining_point
+        end
+        owner.save!
+        #owner.update_user_points
+        data = {
+            user_id: owner.id,
+            points: owner.points
+        }
+        Pusher["favr_channel"].trigger  "update_user_points", data
+
+        p "owner new points : " + owner.points.to_s
+        action_topic.state = EXPIRED
+        action_topic.save!
+
+        temp_id= "favrbot3"
+        if action_topic.special_type== QUESTION.to_s
+          title = "This Question is already expired"
+        elsif action_topic.special_type== ERRAND.to_s
+          title = "This Errand is already expired"
+        end
+        p "title "+ title
+        create_user = User.find_by_username("FavrBot")
+        post = Post.new
+        post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, action_topic.latitude, action_topic.longitude,temp_id)
+        p "Post has been created "
+        p "send notification"
+        sent_expire_notificatoin(topic_id)
+        #action_topic.update_event_broadcast
+        #end
+      end
+    end
+    #end
+  end
+
+  def sent_expire_notificatoin(topic)
+    p "send expire notification"
+    action_topic = Topic.find(topic)
+    p action_topic
+    users_to_sent=[]
+    users_to_sent.push ( action_topic.user_id.to_s )
+
+    if Rails.env.production?
+      appID = PushWoosh_Const::FV_P_APP_ID
+    elsif Rails.env.staging?
+      appID = PushWoosh_Const::FV_S_APP_ID
+    else
+      appID = PushWoosh_Const::FV_D_APP_ID
+    end
+
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+
+    if action_topic.present?
+
+      to_device_id = []
+
+      users= User.where("id = ? ", action_topic.user_id)
+      users.each do |user|
+        if user.data.present?
+          hash_array = user.data
+          device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+          to_device_id.push(device_id)
+        end
+      end
+
+      notification_options = {
+          send_date: "now",
+          badge: "1",
+          sound: "default",
+          content:{
+              fr:"Your favr request is expired",
+              en:"Your favr request is expired"
+          },
+          devices: to_device_id
+      }
+
+      options = @auth.merge({:notifications  => [notification_options]})
+      options = {:request  => options}
+
+      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+      url = URI.parse(full_path)
+      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+      req.body = options.to_json
+      con = Net::HTTP.new(url.host, url.port)
+      con.use_ssl = true
+
+      r = con.start {|http| http.request(req)}
+
+      p "pushwoosh"
+
+
+    end
+
+  end
+
 
   handle_asynchronously :topic_image_upload_job
 end

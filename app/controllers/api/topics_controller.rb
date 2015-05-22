@@ -242,6 +242,7 @@ class Api::TopicsController < ApplicationController
 
 
     if topic.save
+
       if (topic.topic_type == Topic::FAVR) && user.present?
         user.points -= points
         user.save!
@@ -820,6 +821,7 @@ class Api::TopicsController < ApplicationController
             new_post = post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,favr_action.id,Post::DOER_STARTED)
             favr_action.post_id = new_post.id
             favr_action.save!
+
             extend_favr_action_delay_job(action_topic.id)
             add_favr_task_reminder_job(favr_action.id)
             add_favr_task_job(favr_action.id)
@@ -1604,7 +1606,13 @@ class Api::TopicsController < ApplicationController
     start_time = Time.parse(DateTime.now.to_s)
     end_time = Time.parse(topic.valid_end_date.to_s)
     time_diff = (TimeDifference.between(start_time, end_time).in_minutes).ceil
-    job =Delayed::Job.enqueue FavrActionJob.new(topic_id),:priority => 0,:run_at => time_diff.minutes.from_now
+    time_diff = 1.minutes
+
+    p "add favr action delay job"
+    p "time difference"
+    p time_diff
+    #time_diff.minutes.from_now
+    job =Delayed::Job.enqueue FavrActionJob.new(topic_id),:priority => 0,:run_at => time_diff.minutes.from_now.localtime
   end
 
   def add_favr_task_job(favr_action_id)
@@ -1614,6 +1622,9 @@ class Api::TopicsController < ApplicationController
     p topic.given_time
     #endtime = topic.given_time.to_i + 10
     endtime = topic.given_time.to_i + 2
+
+    p "add favr task job"
+    p "end time"
     p endtime
     job =Delayed::Job.enqueue FavrTaskJob.new(favr_action_id),:priority => 0,:run_at => endtime.minutes.from_now
   end
@@ -1622,6 +1633,9 @@ class Api::TopicsController < ApplicationController
     action = Favraction.find(favr_action_id)
     topic = Topic.find(action.topic_id)
     endtime = topic.given_time.to_i
+
+    p "add favr task reminder job"
+    p "end time"
     p endtime
     job =Delayed::Job.enqueue FavrTaskReminderJob.new(favr_action_id),:priority => 0,:run_at => endtime.minutes.from_now
   end

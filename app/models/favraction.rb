@@ -99,7 +99,7 @@ class Favraction < ActiveRecord::Base
       title = "Completion reminder has been sent to " + doer.username
       post = Post.new
       temp_id= "favrbot1"
-      post.create_record(title, self.topic_id, user.id, Post::TEXT.to_s, action_topic.latitude, action_topic.longitude,temp_id,0,0,true,self.id)
+      post.create_post(title, self.topic_id, user.id, Post::TEXT.to_s, action_topic.latitude, action_topic.longitude,temp_id,0,0,true,self.id)
     end
   end
 
@@ -118,7 +118,7 @@ class Favraction < ActiveRecord::Base
       title = "This task is already expired"
       temp_id= "favrbot2"
       post = Post.new
-      post.create_record(title, action_topic.id, user.id, Post::TEXT.to_s, action_topic.latitude, action_topic.longitude,temp_id,0,0,true,self.id)
+      post.create_post(title, action_topic.id, user.id, Post::TEXT.to_s, action_topic.latitude, action_topic.longitude,temp_id,0,0,true,self.id)
       sent_expire_notificatoin
     elsif action_topic.state == Topic::FINISHED
       action_topic.state = Topic::TASK_EXPIRED
@@ -141,7 +141,7 @@ class Favraction < ActiveRecord::Base
       temp_id= "favrbot2"
       post = Post.new
 
-      post.create_record(title, action_topic.id, user.id, Post::TEXT.to_s, action_topic.latitude, action_topic.longitude,temp_id,0,0,true,self.id)
+      post.create_post(title, action_topic.id, user.id, Post::TEXT.to_s, action_topic.latitude, action_topic.longitude,temp_id,0,0,true,self.id)
       sent_expire_notificatoin
     end
   end
