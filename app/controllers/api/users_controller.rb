@@ -296,7 +296,8 @@ class Api::UsersController < ApplicationController
 
       p " favr user :::"
       p user
-      render json: { :user => user, :success => 20 }, status: 200
+      avatar = Topic.get_avatar(user.username)
+      render json: { :user => user, :success => 20 , avatar: avatar}, status: 200
     else
       render json: {error_msg: "Params email and password must be presented"} , status: 400
     end

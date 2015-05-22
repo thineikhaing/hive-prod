@@ -920,7 +920,7 @@ class Topic < ActiveRecord::Base
       title = ""
     end
 
-    avatar = get_avatar(username)
+    avatar = self.get_avatar(username)
 
     notification_options = {
         send_date: "now",
@@ -982,7 +982,7 @@ class Topic < ActiveRecord::Base
   end
 
 
-  def get_avatar(username)
+  def self.get_avatar(username)
     avatar_url = nil
 
     #GET AVATAR URL
