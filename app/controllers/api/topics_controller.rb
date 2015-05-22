@@ -1611,7 +1611,7 @@ class Api::TopicsController < ApplicationController
     p "time difference"
 
     #time_diff.minutes.from_now
-    job =Delayed::Job.enqueue FavrActionJob.new(topic_id),:priority => 0,:run_at => time_diff
+    job =Delayed::Job.enqueue FavrActionJob.new(topic_id),:priority => 0,:run_at => time_diff.minutes.from_now
   end
 
   def add_favr_task_job(favr_action_id)
