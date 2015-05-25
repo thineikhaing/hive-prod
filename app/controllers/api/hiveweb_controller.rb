@@ -15,7 +15,7 @@ class Api::HivewebController < ApplicationController
           #getting avatar url
           @topic_avatar_url = Hash.new
           if topic.offensive < 3 and topic.special_type == 3
-            @topic_avatar_url[topic.id] = "assets/Avatars/Chat-Avatar-Admin.png"
+            @topic_avatar_url[topic.id] = "Chat-Avatar-Admin.png"
           else
             username = topic.user.username
             p "get avatar"
@@ -219,7 +219,7 @@ class Api::HivewebController < ApplicationController
       for topic in @topics_list
         #getting avatar url
         if topic.offensive < 3 and topic.special_type == 3
-          @topic_avatar_url[topic.id] = "assets/Avatars/Chat-Avatar-Admin.png"
+          @topic_avatar_url[topic.id] = "Chat-Avatar-Admin.png"
         else
           username = topic.user.username
           get_avatar(username)
@@ -348,35 +348,35 @@ class Api::HivewebController < ApplicationController
 
     #GET AVATAR URL
     #check for special case that cannot match the avatar
-    avatar_url = "assets/Avatars/Chat-Avatar-Puppy.png" if(username.index("Snorkie").present?)
-    avatar_url = "assets/Avatars/Chat-Avatar-Koala.png" if(username.index("Bear").present?)
-    avatar_url = "assets/Avatars/Chat-Avatar-Kitten.png" if(username.index("Cat").present?)
-    avatar_url = "assets/Avatars/Chat-Avatar-Kitten.png" if(username.index("Jaguar").present?)
-    avatar_url = "assets/Avatars/Chat-Avatar-Kitten.png" if(username.index("Lion").present?)
-    avatar_url = "assets/Avatars/Chat-Avatar-Admin.png" if(username.index("Raydius GameBot").present?)
+    avatar_url = "Chat-Avatar-Puppy.png" if(username.index("Snorkie").present?)
+    avatar_url = "Chat-Avatar-Koala.png" if(username.index("Bear").present?)
+    avatar_url = "Chat-Avatar-Kitten.png" if(username.index("Cat").present?)
+    avatar_url = "Chat-Avatar-Kitten.png" if(username.index("Jaguar").present?)
+    avatar_url = "Chat-Avatar-Kitten.png" if(username.index("Lion").present?)
+    avatar_url = "Chat-Avatar-Admin.png" if(username.index("Raydius GameBot").present?)
 
-    urls = ["assets/Avatars/Chat-Avatar-Chipmunk.png",
-            "assets/Avatars/Chat-Avatar-Puppy.png",
-            "assets/Avatars/Chat-Avatar-Panda.png",
-            "assets/Avatars/Chat-Avatar-Koala.png",
-            "assets/Avatars/Chat-Avatar-Husky.png",
-            "assets/Avatars/Chat-Avatar-Horse.png",
-            "assets/Avatars/Chat-Avatar-Llama.png",
-            "assets/Avatars/Chat-Avatar-Aardvark.png",
-            "assets/Avatars/Chat-Avatar-Alligator.png",
-            "assets/Avatars/Chat-Avatar-Beaver.png",
-            "assets/Avatars/Chat-Avatar-Bluebird.png",
-            "assets/Avatars/Chat-Avatar-Butterfly.png",
-            "assets/Avatars/Chat-Avatar-Eagle.png",
-            "assets/Avatars/Chat-Avatar-Elephant.png",
-            "assets/Avatars/Chat-Avatar-Giraffe.png",
-            "assets/Avatars/Chat-Avatar-Kangaroo.png",
-            "assets/Avatars/Chat-Avatar-Monkey.png",
-            "assets/Avatars/Chat-Avatar-Swan.png",
-            "assets/Avatars/Chat-Avatar-Whale.png",
-            "assets/Avatars/Chat-Avatar-Penguin.png",
-            "assets/Avatars/Chat-Avatar-Duck.png",
-            "assets/Avatars/Chat-Avatar-Admin.png",]
+    urls = ["Chat-Avatar-Chipmunk.png",
+            "Chat-Avatar-Puppy.png",
+            "Chat-Avatar-Panda.png",
+            "Chat-Avatar-Koala.png",
+            "Chat-Avatar-Husky.png",
+            "Chat-Avatar-Horse.png",
+            "Chat-Avatar-Llama.png",
+            "Chat-Avatar-Aardvark.png",
+            "Chat-Avatar-Alligator.png",
+            "Chat-Avatar-Beaver.png",
+            "Chat-Avatar-Bluebird.png",
+            "Chat-Avatar-Butterfly.png",
+            "Chat-Avatar-Eagle.png",
+            "Chat-Avatar-Elephant.png",
+            "Chat-Avatar-Giraffe.png",
+            "Chat-Avatar-Kangaroo.png",
+            "Chat-Avatar-Monkey.png",
+            "Chat-Avatar-Swan.png",
+            "Chat-Avatar-Whale.png",
+            "Chat-Avatar-Penguin.png",
+            "Chat-Avatar-Duck.png",
+            "Chat-Avatar-Admin.png",]
     urls.each do |url|
       if avatar_url.nil?
         url_one = [ ]
@@ -393,7 +393,7 @@ class Api::HivewebController < ApplicationController
 
     #if still blank put the default avatar
     if avatar_url.nil?
-      avatar_url = "assets/Avatars/Chat-Avatar.png"
+      avatar_url = "Chat-Avatar.png"
     end
     @avatar_url = avatar_url
   end
@@ -432,7 +432,7 @@ class Api::HivewebController < ApplicationController
       for topic in @topics_list
         #getting avatar url
         if topic.offensive < 3 and topic.special_type == 3
-          @topic_avatar_url[topic.id] = "assets/Avatars/Chat-Avatar-Admin.png"
+          @topic_avatar_url[topic.id] = "Chat-Avatar-Admin.png"
         else
           username = topic.user.username
           get_avatar(username)
@@ -668,7 +668,7 @@ class Api::HivewebController < ApplicationController
       for topic in @topics_list
         #getting avatar url
         if topic.offensive < 3 and topic.special_type == 3
-          @topic_avatar_url[topic.id] = "assets/Avatars/Chat-Avatar-Admin.png"
+          @topic_avatar_url[topic.id] = "Chat-Avatar-Admin.png"
         else
           username = topic.user.username
           get_avatar(username)
@@ -723,7 +723,7 @@ class Api::HivewebController < ApplicationController
       for topic in @topics_list
         #getting avatar url
         if topic.offensive < 3 and topic.special_type == 3
-          @topic_avatar_url[topic.id] = "assets/Avatars/Chat-Avatar-Admin.png"
+          @topic_avatar_url[topic.id] = "Chat-Avatar-Admin.png"
         else
           username = topic.user.username
           get_avatar(username)

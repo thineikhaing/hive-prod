@@ -12,10 +12,11 @@ class Api::UsersController < ApplicationController
 
   def get_user_avatar
     avatar = Topic.get_avatar(params[:username])
+
+
     render json: { avatar: avatar }
 
   end
-
 
   def create_anonymous_user
     if params[:device_id].present?

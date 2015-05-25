@@ -91,8 +91,6 @@ Rails.application.routes.draw do
     match "downloaddata/retrieve_posts_history"     => "downloaddata#retrieve_posts_history"    , via: [:get, :post]
     match "downloaddata/posts_retrieve_for_user"    => "downloaddata#posts_retrieve_for_user"   , via: [:get, :post]
 
-
-    match "users/get_user_avatar"                   => "users#get_user_avatar"                  , via: [:get, :post]
     match "users/create_anonymous_user"             => "users#create_anonymous_user"            , via: [:get, :post]
     match "users/sign_up"                           => "users#sign_up"                          , via: [:get, :post]
     match "users/sign_in"                           => "users#sign_in"                          , via: [:get, :post]
