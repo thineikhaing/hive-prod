@@ -335,7 +335,8 @@ class Api::TopicsController < ApplicationController
 
         check_profanity = false
 
-        render json: { topic: topic, profanity_counter: current_user.profanity_counter, offence_date: current_user.offence_date }
+        avatar = Topic.get_avatar(topic.user.username)
+        render json: { topic: topic,avatar: avatar, profanity_counter: current_user.profanity_counter, offence_date: current_user.offence_date }
       else
         topic.delete
 

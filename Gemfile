@@ -68,7 +68,7 @@ group :development do
 end
 
 group :development, :test do
-  gem 'rspec-rails'         , '~> 2.14.2' # RSpec for Rails
+  gem 'rspec-rails'       # RSpec for Rails
   #gem 'capybara'            , '~> 1.1.2' # Capybara is an integration testing tool for rack based web applications. It simulates how a user would interact with a website
   gem 'factory_girl_rails'  , '~> 4.4.1' # factory_girl_rails provides integration between factory_girl and rails 3 (currently just automatic factory definition loading)
   gem 'shoulda-matchers'    , '~> 2.6.0' # Making tests easy on the fingers and eyes

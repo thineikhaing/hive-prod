@@ -8,8 +8,13 @@ describe Place do
 
   context "after_initialize" do
 
+    api_key = SecureRandom.hex
+
     let (:user) {FactoryGirl.create(:devuser, email: "user1@example.com", username: "testuser",password:"password")}
-    let (:hiveapplication) {FactoryGirl.create(:hiveapplication, app_name: "test_app", app_type: "food",devuser_id:"#{user.id}",description: 'test description' )}
+    let (:hiveapplication) {FactoryGirl.create(:hiveapplication, app_name: "test_app",
+                                               app_type: "food",devuser_id:"#{user.id}",
+                                               description: 'test description' ,
+                                               api_key: api_key)}
 
     describe "get nearest topics within lat and long" do
       it "should get nearest topics within lat and long" do

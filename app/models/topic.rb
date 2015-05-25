@@ -593,6 +593,10 @@ class Topic < ActiveRecord::Base
      self.hiveapplication_id = hiveapplication.id
      self.save
 
+     p self.user.username
+
+     avatar = Topic.get_avatar(self.user.username)
+
     data = {
         id: self.id,
         title: self.title,
@@ -611,6 +615,7 @@ class Topic < ActiveRecord::Base
         given_time: self.given_time,
         valid_start_date: self.valid_start_date,
         valid_end_date: self.valid_end_date,
+        avatar:avatar,
         methods: [
             last_post_at: self.last_post_at,
             url: nil,

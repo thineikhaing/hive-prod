@@ -10,6 +10,13 @@ class Api::UsersController < ApplicationController
     !Rails.env.development?
   end
 
+  def get_user_avatar
+    avatar = Topic.get_avatar(params[:username])
+    render json: { avatar: avatar }
+
+  end
+
+
   def create_anonymous_user
     if params[:device_id].present?
       if User.find_by_device_id(params[:device_id]).present?
@@ -599,6 +606,8 @@ class Api::UsersController < ApplicationController
   def user_params
     params.require(:user).permit(:username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :points, :honor_rating, :created_at, :data, :device_id)
   end
+
+
 
   def juice_sign_in
     if params[:email].present? and params[:password].present?
