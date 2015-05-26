@@ -1334,10 +1334,10 @@ class Api::TopicsController < ApplicationController
           extend_favr_task_reminder_job(favr_action.id,extended_time.to_i)
         end
 
-        time = action_topic.valid_end_date
-        #t = time + ((extended_time.to_i+10)*60)
-        t = time + ((extended_time.to_i+2)*60)
-        action_topic.valid_end_date = t
+        #time = action_topic.valid_end_date
+        #t = time + ((extended_time.to_i+2)*60)
+
+        action_topic.valid_end_date = action_topic.valid_end_date +  ((extended_time.to_i+2)*60*10)
         action_topic.save!
 
         p "before extend favr task job"
@@ -1560,8 +1560,15 @@ class Api::TopicsController < ApplicationController
           #time_diff = time_diff + 10 +topic.given_time
           time_diff = time_diff + 2 +topic.given_time
         end
+
+        p "time diff extend favr action delay job"
+
+        p time_diff.minutes
         job.delete
-        Delayed::Job.enqueue FavrActionJob.new(topic_id),:priority => 0,:run_at => time_diff.minutes.from_now
+
+        t = Topic.find(topic_id)
+
+        Delayed::Job.enqueue FavrActionJob.new(topic_id),:priority => 0,:run_at => t.valid_end_date
       end
     end
   end
