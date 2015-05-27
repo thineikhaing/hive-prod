@@ -1,0 +1,34 @@
+%h1{style:'font-size:25px;margin-left:30px;'} Listing car_action_logs
+%br
+#car_actions
+  %table
+    %tr
+      %th Car Number
+      %th Speed
+      %th Direction
+      %th Latitude
+      %th Longitude
+      %th Activity
+      %th Created_at
+      -#%th
+      -#%th
+      -#%th
+
+    - @car_action_logs.each do |car_action_log|
+      %tr{style:'text-aligh:center'}
+        %td= car_action_log.user["data"]["plate_number"]
+        %td= car_action_log.speed
+        %td= car_action_log.direction
+        %td= car_action_log.latitude
+        %td= car_action_log.longitude
+        %td= car_action_log.activity
+        %td= car_action_log.created_at.strftime("%I:%M:%S")
+        -#%td= link_to 'Show', car_action_log
+        -#%td= link_to 'Edit', edit_car_action_log_path(car_action_log)
+        -#%td= link_to 'Destroy', car_action_log, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+.paginate{style:'float:right; margin-right:30px;font-size:16px;'}
+  =paginate @car_action_logs
+
+  -#= link_to 'New Car action log', new_car_action_log_path

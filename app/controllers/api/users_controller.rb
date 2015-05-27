@@ -155,6 +155,7 @@ class Api::UsersController < ApplicationController
 
       Userpreviouslocation.create(latitude: params[:latitude], longitude: params[:longitude], radius: radius, user_id: current_user.id) if params[:save] == "true"
 
+
       if params[:app_key].present?
         hive_application = HiveApplication.find_by_api_key(params[:app_key])
         if Rails.env.development?
@@ -185,6 +186,9 @@ class Api::UsersController < ApplicationController
       else
         time_allowance = Time.now - 10.minutes.ago
       end
+
+
+      create_car_action_logs(user.id, params[:latitude], params[:longitude], speed, direction, activity, heartrate)
 
       users = User.nearest(params[:latitude], params[:longitude], radius)
 
@@ -239,6 +243,25 @@ class Api::UsersController < ApplicationController
       render json: { error_msg: "Param user id, authentication token, pusher token must be presented" }, status: 400
     end
   end
+
+  def create_car_action_logs(user_id, lat, lng, speed, direction, activity, heartrate)
+    old_log = CarActionLog.last
+
+    if old_log.present?
+      p "time difference"
+      time_diff_hr = (Time.parse(DateTime.now.to_s) - Time.parse(old_log.created_at.to_s))/3600
+      p time_diff_min = (time_diff_hr * 3600) / 60
+      if (time_diff_min >= 0.5)
+        new_log = CarActionLog.create(user_id:  user_id,latitude: lat, longitude: lng, speed: speed, direction: direction,activity: activity, heartrate: heartrate)
+      end
+
+    else
+      new_log = CarActionLog.create(user_id:  user_id,latitude: lat, longitude: lng, speed: speed, direction: direction,activity: activity, heartrate: heartrate)
+    end
+
+  end
+
+
 
   def verify_user_account
     if params[:auth_token].present? and params[:push_token].present?

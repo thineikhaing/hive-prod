@@ -1,0 +1,27 @@
+%p#notice= notice
+
+%p
+  %b User:
+  = @car_action_log.user_id
+%p
+  %b Speed:
+  = @car_action_log.speed
+%p
+  %b Direction:
+  = @car_action_log.direction
+%p
+  %b Latitude:
+  = @car_action_log.latitude
+%p
+  %b Longitude:
+  = @car_action_log.longitude
+%p
+  %b Activity:
+  = @car_action_log.activity
+%p
+  %b Heartrate:
+  = @car_action_log.heartrate
+
+= link_to 'Edit', edit_car_action_log_path(@car_action_log)
+\|
+= link_to 'Back', car_action_logs_path

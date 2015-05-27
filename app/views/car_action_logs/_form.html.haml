@@ -1,0 +1,31 @@
+= form_for @car_action_log do |f|
+  - if @car_action_log.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@car_action_log.errors.count, "error")} prohibited this car_action_log from being saved:"
+      %ul
+        - @car_action_log.errors.full_messages.each do |msg|
+          %li= msg
+
+  .field
+    = f.label :user_id
+    = f.number_field :user_id
+  .field
+    = f.label :speed
+    = f.number_field :speed
+  .field
+    = f.label :direction
+    = f.number_field :direction
+  .field
+    = f.label :latitude
+    = f.text_field :latitude
+  .field
+    = f.label :longitude
+    = f.text_field :longitude
+  .field
+    = f.label :activity
+    = f.text_field :activity
+  .field
+    = f.label :heartrate
+    = f.text_field :heartrate
+  .actions
+    = f.submit 'Save'

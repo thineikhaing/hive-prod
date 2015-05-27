@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   root to: "hiveapplication#login_page"
 
   resources :hiveapplication
+  resources :car_action_logs
   post "hiveapplication/sign_in"              , path: "sign_in"
   get "hiveapplication/verify"                , path: "verify"
 

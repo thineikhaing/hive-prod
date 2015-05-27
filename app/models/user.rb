@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
   has_many :posts
   has_many :user_push_tokens
   has_many  :user_accounts
+  has_many :car_action_logs
 
   # Setup hstore
   store_accessor :data
