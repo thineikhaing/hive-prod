@@ -925,7 +925,7 @@ class Topic < ActiveRecord::Base
       title = ""
     end
 
-    avatar = self.get_avatar(username)
+    avatar = Topic.get_avatar(username)
 
     notification_options = {
         send_date: "now",

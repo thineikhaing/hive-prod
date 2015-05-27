@@ -55,11 +55,18 @@ class Api::TopicsController < ApplicationController
           params[:topic_sub_type].present? ? topic_sub_type = params[:topic_sub_type] :  topic_sub_type = 0
           params[:special_type].present? ? special_type = params[:special_type] : special_type = 0
           #check the profanity
+
           if params[:image_url].present?
-            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type:topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit], value: params[:value],place_id: place_id, data: result, image_url: params[:image_url], width: params[:width], height: params[:height], special_type: special_type,likes: likes, dislikes: dislikes)
+            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type],
+                                 topic_sub_type:topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit],
+                                 value: params[:value],place_id: place_id, data: result, image_url: params[:image_url],
+                                 width: params[:width], height: params[:height], special_type: special_type,likes: likes, dislikes: dislikes)
+
             topic.delay.topic_image_upload_job  if params[:topic_type]== Topic::IMAGE.to_s
           else
-            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type], topic_sub_type: topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit], value: params[:value], place_id: place_id, data: result, special_type: special_type,likes: likes, dislikes: dislikes)
+            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type],
+                                 topic_sub_type: topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit],
+                                 value: params[:value], place_id: place_id, data: result, special_type: special_type,likes: likes, dislikes: dislikes)
           end
 
           #create post if param post_content is passed
@@ -85,6 +92,7 @@ class Api::TopicsController < ApplicationController
           end
 
           if hiveapplication.api_key == carmmunicate_key  and topic.present?
+            p "notify to carmic user"
             if params[:users_to_push].present?
               #broadcast to selected user group
                 topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true)
