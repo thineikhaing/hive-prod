@@ -3,6 +3,7 @@
 #car_actions
   %table
     %tr
+      %th UserID
       %th Car Number
       %th Speed
       %th Direction
@@ -16,6 +17,7 @@
 
     - @car_action_logs.each do |car_action_log|
       %tr{style:'text-aligh:center'}
+        %td= car_action_log.user_id
         %td= car_action_log.user["data"]["plate_number"]
         %td= car_action_log.speed
         %td= car_action_log.direction
