@@ -10,9 +10,9 @@ scheduler.cron("00 09 * * mon") do
   CarActionLog.delete_all
 end
 
-scheduler.cron("5 0 * * *") do
-  CarActionLog.delete_all
-end
+#scheduler.cron("5 0 * * *") do
+#  CarActionLog.delete_all
+#end
 
 #scheduler.every '3s' do
 #  puts 'Hello... Rufus'
