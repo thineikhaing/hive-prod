@@ -35,52 +35,75 @@
       //  handler.fitMapToBounds();
       //};
 
+     /*
+      var map;
+      var path;
+      var marker;
 
-      //var map;
-      //var path;
-      //var marker;
-      //
-      //function initialize() {
-      //    var myLatlng = new google.maps.LatLng(1.317907, 103.843643);
-      //    var myOptions = {
-      //        zoom: 12,
-      //        center: myLatlng
-      //    }
-      //
-      //    map = new google.maps.Map(document.getElementById("map"), myOptions);
-      //
-      //    route = new google.maps.Polyline({
-      //        path: [
-      //        new google.maps.LatLng(1.316441,103.88298),
-      //        new google.maps.LatLng(1.316441, 103.88298)],
-      //        map: map
-      //    });
-      //
-      //    marker = new google.maps.Marker({
-      //        position: new google.maps.LatLng(1.316441,103.88298),
-      //        map: map
-      //    });
-      //
-      //    counter = 0;
-      //    interval = window.setInterval(function () {
-      //        counter++;
-      //        var pos = new google.maps.LatLng(1.316441,103.88298 + counter / 10000);
-      //        marker.setPosition(pos);
-      //        if (counter >= 1000) {
-      //            window.clearInterval(interval);
-      //        }
-      //    }, 5);
-      //}
-      //
-      //google.maps.event.addDomListener(window, 'load', initialize);
+      function initialize() {
+          var myLatlng = new google.maps.LatLng(1.317907, 103.843643);
+          var myOptions = {
+              zoom: 15,
+              center: myLatlng
+          }
 
+          map = new google.maps.Map(document.getElementById("map"), myOptions);
+
+          marker = new google.maps.Marker({
+              position: new google.maps.LatLng(1.317907,103.843643),
+              map: map
+          });
+
+          counter = 0;
+          interval = window.setInterval(function () {
+              counter++;
+              var pos = new google.maps.LatLng(1.317907,103.843643 + counter / 100000);
+              marker.setPosition(pos);
+              if (counter >= 1000) {
+                  window.clearInterval(interval);
+              }
+          }, 10);
+      }
+
+
+      google.maps.event.addDomListener(window, 'load', initialize);
+      */
 
       handler = Gmaps.build('Google');
 
-      handler.buildMap({ provider: {zoom: 15}, internal: {id: 'map'}}, function(){
+      handler.buildMap({ provider: {zoom: 13}, internal: {id: 'map'}}, function(){
       var markers = handler.addMarkers(#{raw @hash.to_json});
       handler.bounds.extendWith(markers);
       handler.fitMapToBounds();
-      handler.getMap().setZoom(15);
+      handler.getMap().setZoom(13);
       });
 
+      function getCoords(){
+
+        $.ajax({
+          type: 'GET',
+          url: "http://localhost:5000/api/downloaddata/retrieve_carmic_user",
+          success: function(data){
+              console.log("set marker// should replace")
+
+               var markers = handler.addMarkers(data.marker);
+                              handler.bounds.extendWith(markers);
+          }
+        });   /*
+
+        $.ajax({
+          success: function(html) {
+          console.log("call carmic")
+          console.log('#{raw @hash.to_json}');
+
+          var markers = handler.addMarkers(#{raw @hash.to_json});
+                handler.bounds.extendWith(markers);
+                handler.fitMapToBounds();
+
+          }
+        }); */
+
+      }
+
+
+      window.setInterval(getCoords, 5000);
