@@ -13,6 +13,8 @@ class Createdata < ActiveRecord::Migration
     User.create(email: "admin4@rs-v.com", password: "p@ssw0rd!", password_confirmation: "p@ssw0rd!", username: "Admin Piggy", role: 1)
     User.create(email: "admin5@rs-v.com", password: "p@ssw0rd!", password_confirmation: "p@ssw0rd!", username: "Admin Bear", role: 1)
     User.create(email: "admin6@rs-v.com", password: "p@ssw0rd!", password_confirmation: "p@ssw0rd!", username: "Admin Panda", role: 1)
+    User.create(email: "favrbot@raydiusapp.com", password: "p@ssw0rd!", password_confirmation: "p@ssw0rd!", username: "FavrBot", role: 1)
+    User.create(email: "info@juiceapp.com", password: "password!123", password_confirmation: "password!123", username: "JuiceAppBoard", role: 1)
 
     api_key = SecureRandom.hex
     HiveApplication.create(devuser_id: 1, app_name: "Hive",app_type: "social",description: "a way to connect nearby people (with each other, and with businesses) anonymously",api_key: api_key )
@@ -28,6 +30,10 @@ class Createdata < ActiveRecord::Migration
 
     api_key = SecureRandom.hex
     HiveApplication.create(devuser_id: 1, app_name: "Favr",app_type: "social",description: "Favr",api_key: api_key )
+
+    hive_app = HiveApplication.find_by_app_name('Favr')
+    AppAdditionalField.create(app_id: hive_app.id,table_name: "User", additional_column_name: "device_id")
+
 
     if carmmic_app.present?
       AppAdditionalField.create(app_id: carmmic_app.id,table_name: "User", additional_column_name: "color")
@@ -52,6 +58,8 @@ class Createdata < ActiveRecord::Migration
       AppAdditionalField.create(app_id: socal_app.id,table_name: "Topic", additional_column_name: "invitation_code")
 
     end
+
+
 
     CSV.foreach("db/migrate/20140328083723_stations_seed.csv") do |row|
       Place.create(name: row[0], latitude: row[1], longitude: row[2], address: row[3], locality: row[4], country: row[5], img_url: row[6], user_id: admin.id, source: 0)

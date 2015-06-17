@@ -236,6 +236,7 @@ GEM
       thor (~> 0.19.1)
     formatador (0.2.5)
     geocoder (1.2.8)
+    gmaps4rails (2.1.2)
     gon (5.0.4)
       actionpack (>= 2.3.0)
       json
@@ -497,6 +498,7 @@ DEPENDENCIES
   fog
   foreman
   geocoder (~> 1.2.0)
+  gmaps4rails
   gon (~> 5.0.4)
   guard-rspec
   haml-rails (~> 0.5.3)

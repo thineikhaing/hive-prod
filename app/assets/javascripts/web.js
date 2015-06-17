@@ -13,4 +13,9 @@
 //= require jquery_ujs
 //= require jquery/cookie
 //= require jquery.minicolors
+//= require markerclusterer
+//= require underscore
+//= require gmaps/google
+//= require carmic_map
 //= require_self
+

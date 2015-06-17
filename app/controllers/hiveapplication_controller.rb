@@ -260,7 +260,12 @@ class HiveapplicationController < ApplicationController
         # Generate random number for APPLICATION_KEY
         api_key = SecureRandom.hex
 
-        hive_application = HiveApplication.create(app_name: params[:dev_portal][:application_name], app_type: params[:dev_portal][:application_type], description: params[:dev_portal][:description], icon_url: params[:dev_portal][:application_icon] ,devuser_id: current_user.id, theme_color: params[:dev_portal][:theme_color], api_key: api_key )
+        hive_application = HiveApplication.create(app_name: params[:dev_portal][:application_name],
+                                                  app_type: params[:dev_portal][:application_type],
+                                                  description: params[:dev_portal][:description],
+                                                  icon_url: params[:dev_portal][:application_icon] ,
+                                                  devuser_id: current_user.id, theme_color: params[:dev_portal][:theme_color],
+                                                  api_key: api_key )
         flash[:notice] = ""
         hive_application.errors.full_messages.each do |message|
           # do stuff for each error
