@@ -71,23 +71,39 @@
 
       handler = Gmaps.build('Google');
 
-      handler.buildMap({ provider: {zoom: 13}, internal: {id: 'map'}}, function(){
-      var markers = handler.addMarkers(#{raw @hash.to_json});
-      handler.bounds.extendWith(markers);
-      handler.fitMapToBounds();
-      handler.getMap().setZoom(13);
-      });
+      handler.buildMap({ provider: {zoom: 16}, internal: {id: 'map'}}, function(){
+        var markers = handler.addMarkers(#{raw @hash.to_json});
+        handler.bounds.extendWith(markers);
+        var style = document.createElement('style');
+        style.markers = [];
+
+          _.each(markers, function(marker){
+            google.maps.event.trigger(marker.getServiceObject(), 'click');
+
+          });
+
+        handler.fitMapToBounds();
+        handler.getMap().setZoom(16);
+        });
 
       function getCoords(){
 
         $.ajax({
           type: 'GET',
-          url: "http://localhost:5000/api/downloaddata/retrieve_carmic_user",
+          url: "#{@url}",
           success: function(data){
-              console.log("set marker// should replace")
 
-               var markers = handler.addMarkers(data.marker);
-                              handler.bounds.extendWith(markers);
+           var markers = handler.addMarkers(data.marker);
+           handler.bounds.extendWith(markers);
+
+            _.each(markers, function(marker){
+              google.maps.event.trigger(marker.getServiceObject(), 'click');
+            });
+
+            Gmaps.map.replaceMarkers(markers);
+            console.log("replace marker")
+
+            handler.fitMapToBounds();
           }
         });   /*
 
@@ -106,4 +122,4 @@
       }
 
 
-      window.setInterval(getCoords, 5000);
+      //window.setInterval(getCoords, 5000);
