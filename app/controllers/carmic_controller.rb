@@ -1,13 +1,14 @@
 class CarmicController < ApplicationController
   def index
     @users =User.where("data -> 'color' != ''")
-    @hello = "hello there"
-    #@users = Place.all
 
     @hash = Gmaps4rails.build_markers(@users) do |user, marker|
+
+      content = '<p class="hook">'+user.data["plate_number"]+'</p>'
+
       marker.lat user.last_known_latitude
       marker.lng user.last_known_longitude
-      marker.infowindow user.data["plate_number"]
+      marker.infowindow content
 
       marker.picture({
                      #url: "https://chart.googleapis.com/chart?chst=d_map_spin&chld=0.8|0|"+user.data["color"]+"|3|",
@@ -29,10 +30,6 @@ class CarmicController < ApplicationController
       @url = "http://h1ve-production.herokuapp.com/api/downloaddata/retrieve_carmic_user"
     end
 
-
-    p @hash
-    gon.markers = @hash.to_json
-    p gon.count = @hash.count
 
   end
 

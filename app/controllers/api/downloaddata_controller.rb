@@ -356,7 +356,7 @@ class Api::DownloaddataController < ApplicationController
   end
 
   def retrieve_carmic_user
-    @users =User.where("data -> 'color' != ''")
+    @users =User.where("data -> 'color' != ''").limit(2)
     @hello = "hello there"
     #@users = Place.all
 

@@ -17,5 +17,6 @@
 //= require underscore
 //= require gmaps/google
 //= require carmic_map
+//= require carmic
 //= require_self
 
