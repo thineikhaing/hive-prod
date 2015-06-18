@@ -14,9 +14,9 @@ class CarmicController < ApplicationController
                      #url: "https://chart.googleapis.com/chart?chst=d_map_spin&chld=0.8|0|"+user.data["color"]+"|3|",
                      #url: "..//assets/CarMask.png",
                      #"https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|0|"+user.data["color"]+"|5|"
-                     #url: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|"+user.data["color"]+"|000000" ,
-                     url: "..//assets/red_car.png#red",
-                     width: 30,
+                     url: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|"+user.data["color"]+"|000000" ,
+                     #url: "..//assets/red_car.png#red",
+                     width: 33,
                      height: 80
                  })
 
@@ -31,6 +31,12 @@ class CarmicController < ApplicationController
     end
 
 
+  end
+
+  def gmaps4rails_marker_picture
+    {
+        "rich_marker" =>  "<div class='my-marker'>It works!<img height='30' width='30' src='http://farm4.static.flickr.com/3212/3012579547_097e27ced9_m.jpg'/></div>"
+    }
   end
 
 
