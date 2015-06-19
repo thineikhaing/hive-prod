@@ -3,12 +3,27 @@
 %script{src: "//google-maps-utility-library-v3.googlecode.com/svn/tags/infobox/1.1.9/src/infobox_packed.js", type: "text/javascript"}
 %script{src: "https://google-maps-utility-library-v3.googlecode.com/svn-history/r293/trunk/richmarker/src/richmarker.js", type: "text/javascript" }
 
+%div.top_bar
+  .logo_header
+    %span{style:'font-size: 4em !important;color: rgb(7,165,179)'}carmic
+    %br
+    %span{style:"font-size: 18px"}at the apiary
+  .redCar
+    = image_tag("RedH.png",alt: "CarMask" )
+
+%br
+
 %div.carmic_map
   #map
 
 :javascript
 
    var __markers;
+   $("#header").hide();
+   $(".container").addClass("removebg");
+   $("#main_background").addClass("removebg");
+   $myDiv = $('.container');
+   $myDiv.css('background-image', 'none');
    $(".custom_marker_content").parents('div').addClass("noshadow");
    var handler = Gmaps.build('Google', { builders: { Marker: InfoBoxBuilder} });
      handler.buildMap({ internal: {id: 'map'}}, function(){
