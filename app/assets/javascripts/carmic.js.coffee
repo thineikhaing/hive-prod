@@ -16,13 +16,24 @@ class @InfoBoxBuilder extends Gmaps.Google.Builders.Marker # inherit from base b
 
   infobox: (boxText)->
     content: boxText
-    pixelOffset: new google.maps.Size(-45, -120)
+    pixelOffset: new google.maps.Size(-45, -90)
     boxStyle:
       width: "70px"
       background: "rgb(2,166,180)"
       opacity: 0.75
       padding: "5px"
       infoBoxClearance: new google.maps.Size(1, 1)
+
+
+  create_marker: ->
+    options = _.extend @marker_options(), @rich_marker_options()
+    @serviceObject = new RichMarker options
+
+  rich_marker_options: ->
+    marker = document.createElement("div")
+    marker.setAttribute('class', 'custom_marker_content')
+    marker.innerHTML = this.args.custom_marker
+    { content: marker }
 
 
 handler = Gmaps.build 'Google', { builders: { Marker: InfoBoxBuilder} }

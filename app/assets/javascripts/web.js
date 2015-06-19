@@ -47,6 +47,7 @@
         });
 
         map.bounds.extendWith(__markers);
+
 //        map.fitMapToBounds();
     };
 
