@@ -356,7 +356,7 @@ class Api::DownloaddataController < ApplicationController
   end
 
   def retrieve_carmic_user
-    @users =User.where("data -> 'color' != ''").limit(2)
+    @users =User.where("data -> 'color' != ''")
     @hello = "hello there"
     #@users = Place.all
 
@@ -370,7 +370,8 @@ class Api::DownloaddataController < ApplicationController
                          #url: "..//assets/CarMask.png",
                          #"https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|0|"+user.data["color"]+"|5|"
                          #url: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|"+user.data["color"]+"|000000" ,
-                         url: "..//assets/red_car.png#red",
+                         url: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|"+user.data["color"]+"|000000" ,
+                         #url: "..//assets/red_car.png#red",
                          width: 30,
                          height: 80
                      })

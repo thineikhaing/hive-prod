@@ -14,10 +14,11 @@
 
 
 :javascript
-
+   var __markers;
    var handler = Gmaps.build('Google', { builders: { Marker: InfoBoxBuilder} });
      handler.buildMap({ internal: {id: 'map'}}, function(){
        var markers = handler.addMarkers(#{raw @hash.to_json});
+       __markers = markers
        _.each(markers, function(marker){
           google.maps.event.trigger(marker.getServiceObject(), 'click');
        });
@@ -28,14 +29,39 @@
        handler.getMap().setZoom(16);
      });
 
+      var counter = 0;
 
       function getCoords(){
+
 
         $.ajax({
           type: 'GET',
           url: "#{@url}",
           success: function(data){
           console.log(data.marker)
+
+          updateMarkers(handler,data.marker,__markers);
+
+          $(data.marker).each(function(i,e){
+            console.log(e)
+            var marker = e;
+            var lat = e["lat"];
+            var lng = e["lng"];
+
+
+
+            //var counter = 0;
+            //interval = window.setInterval(function() {
+            //  counter++;
+            //  // just pretend you were doing a real calculation of
+            //  // new position along the complex path
+            //  var pos = new google.maps.LatLng(lat,lng);
+            //  handler.addMarkers(e);
+            //  if (counter >= 1000) {
+            //    window.clearInterval(interval);
+            //  }
+            //}, 10);
+          })
 
           //Gmaps.map.replaceMarkers('');
 
@@ -70,4 +96,4 @@
       }
 
 
-      //window.setInterval(getCoords, 5000);
+      window.setInterval(getCoords, 5000);
