@@ -3,18 +3,39 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 .carmic_map{
-  width: 600px;
-  height: 600px;
+  width: 500px;
+  height: 500px;
   border-radius: 50% !important;
   margin-left: 50px;
   text-align: center;
+  margin-top: 20px;
   //margin: 0 auto;
 }
 #map{
-  width: 600px;
-  height: 600px;
+  width: 500px;
+  height: 500px;
   //border-radius: 250px !important;
-  border: 2px solid deepskyblue;
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 3px rgb(7,165,179),
+    0 0 0 4px #fff,
+    0 0 0 5px rgb(7,165,179),
+    0 0 0 6px #fff,
+    0 0 0 7px rgb(7,165,179),
+    0 0 0 8px #fff,
+    0 0 0 9px rgb(7,165,179),
+    0 0 0 10px #fff,
+    0 0 0 11px rgb(7,165,179),
+    0 0 0 12px #fff,
+    0 0 0 13px rgb(7,165,179),
+    0 0 0 14px #fff,
+    0 0 0 15px rgb(7,165,179),
+    0 0 0 16px #fff,
+    0 0 0 17px rgb(7,165,179),
+    0 0 0 18px #fff,
+    0 0 0 19px rgb(7,165,179),
+    0 0 0 25px rgb(7,165,179);
+  //border: 2px solid deepskyblue;
   position: relative;
   -moz-border-radius:50%;
   -webkit-mask-border-radius:50%;

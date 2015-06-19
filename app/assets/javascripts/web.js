@@ -33,6 +33,7 @@
         map.removeMarkers(old_marker);
 
         // Add each marker to the map according to received data
+
         __markers = _.map(markersData, function(markerJSON) {
             marker = map.addMarker(markerJSON);
             //map.getMap().setZoom(16); // Not sure this should be in this iterator!
@@ -45,6 +46,10 @@
 
             return marker;
         });
+
+//        _.each(__markers, function(marker){
+//            google.maps.event.trigger(marker.getServiceObject(), 'click');
+//        });
 
         map.bounds.extendWith(__markers);
 
