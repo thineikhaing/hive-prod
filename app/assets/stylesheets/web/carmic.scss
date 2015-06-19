@@ -6,6 +6,7 @@
   height: 40px;
   background: rgb(7,165,179);
   margin-top: 10px;
+  float: left;
 
 }
 
@@ -29,7 +30,49 @@
   margin-left: 100px;
   text-align: center;
   margin-top: 50px;
+
   //margin: 0 auto;
+}
+
+.green_cicle{
+  background:rgb(126,211,33);
+  border:2px solid rgb(176,228,115) ;
+  width:27px !important;
+  height:27px;
+  border-radius:50%;
+  margin-left:33% ;
+  margin-top: 5px;
+
+}
+.active_car{
+  margin-left: 37%;
+  color: #fff;
+  font-size: 18px;
+  position: relative;
+  margin-top: -22px;
+}
+
+
+.pink_cicle{
+  background:rgb(231,121,180);
+  border:2px solid rgb(224,213,228) ;
+  width:27px;
+  height:27px;
+  border-radius:50%;
+  margin-right: 40%;
+  margin-top:-27px;
+  float: right;
+
+}
+.incident_car{
+  margin-left: 70%;
+  color: #fff;
+  font-size: 18px;
+  position: relative;
+  float: right;
+  margin-right: 29%;
+  margin-top:-25px;
+  width: 100px;
 }
 #map{
   width: 500px;

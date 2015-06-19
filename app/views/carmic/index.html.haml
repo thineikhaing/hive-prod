@@ -3,7 +3,7 @@
 %script{src: "//google-maps-utility-library-v3.googlecode.com/svn/tags/infobox/1.1.9/src/infobox_packed.js", type: "text/javascript"}
 %script{src: "https://google-maps-utility-library-v3.googlecode.com/svn-history/r293/trunk/richmarker/src/richmarker.js", type: "text/javascript" }
 
-%div.top_bar
+.top_bar
   .logo_header
     %span{style:'font-size: 4em !important;color: rgb(7,165,179)'}carmic
     %br
@@ -11,8 +11,21 @@
   .redCar
     = image_tag("RedH.png",alt: "CarMask" )
 
-%br
+  .green_cicle
+  .active_car
+    =@users.count
+    active vehicles
 
+  .pink_cicle
+  .incident_car
+    0 incidents
+
+
+
+%br
+%br
+%br
+%br
 %div.carmic_map
   #map
 
