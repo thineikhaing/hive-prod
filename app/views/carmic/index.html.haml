@@ -9,6 +9,7 @@
 :javascript
 
    var __markers;
+   $(".custom_marker_content").parents('div').addClass("noshadow");
    var handler = Gmaps.build('Google', { builders: { Marker: InfoBoxBuilder} });
      handler.buildMap({ internal: {id: 'map'}}, function(){
         handler.getMap().setZoom(16);
@@ -22,8 +23,8 @@
 
        _.each(markers, function(marker){
           google.maps.event.trigger(marker.getServiceObject(), 'click');
-          var icon = marker.serviceObject.getIcon();
-          console.log(icon["url"])
+          //var icon = marker.serviceObject.getIcon();
+          //console.log(icon["url"])
 
        });
 
