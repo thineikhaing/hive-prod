@@ -8,11 +8,9 @@ class CarmicController < ApplicationController
 
       marker.lat user.last_known_latitude
       marker.lng user.last_known_longitude
-      marker.infowindow content
+      marker.infowindow user.data["plate_number"]
 
       marker.picture({
-                     #url: "..//assets/CarMask.png#"+user.data["color"],
-                     #url: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|"+user.data["color"]+"|000000" ,
                      url: "..//assets/red_car.png#red",
                      width: 33,
                      height: 80
@@ -32,14 +30,8 @@ class CarmicController < ApplicationController
       @url = "http://h1ve-production.herokuapp.com/api/downloaddata/retrieve_carmic_user"
     end
 
-
   end
 
-  def gmaps4rails_marker_picture
-    {
-        "rich_marker" =>  "<div class='my-marker'>It works!<img height='30' width='30' src='http://farm4.static.flickr.com/3212/3012579547_097e27ced9_m.jpg'/></div>"
-    }
-  end
 
 
 end

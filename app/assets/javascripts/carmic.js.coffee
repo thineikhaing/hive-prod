@@ -4,6 +4,7 @@
 
 class @InfoBoxBuilder extends Gmaps.Google.Builders.Marker # inherit from base builder
   # override method
+
   create_infowindow: ->
     return null unless _.isString @args.infowindow
 
@@ -23,7 +24,6 @@ class @InfoBoxBuilder extends Gmaps.Google.Builders.Marker # inherit from base b
       opacity: 0.75
       padding: "5px"
       infoBoxClearance: new google.maps.Size(1, 1)
-
 
   create_marker: ->
     options = _.extend @marker_options(), @rich_marker_options()

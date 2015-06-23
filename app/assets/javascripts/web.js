@@ -18,8 +18,10 @@
 //= require gmaps/google
 //= require carmic_map
 //= require carmic
-//= require SlidingMarker
+//= require richmarker
+//= require map-tools.min
+//= require google.maps.animatemarker
 //= require_self
 
-SlidingMarker.initializeGlobally();
+
 

@@ -30,9 +30,7 @@
 :javascript
    Carmic.init();
 
-   SlidingMarker.initializeGlobally();
-
-   var __markers;
+   var __markers,marker;
 
    var old_markers;
 
@@ -82,72 +80,125 @@
      var zoomControl = new CustomZoomControl(zoomControlDiv, map);
 
      handler.getMap().controls[google.maps.ControlPosition.RIGHT_CENTER].push(zoomControlDiv);
-     /*
-     function updateMarkers(map, markersData, old_marker)
+
+     function updateMarkers(map, new_markers, rm_marker,old_markers)
      {
          // Remove current markers
-         console.log("replace")
-         map.removeMarkers(old_marker);
+         console.log("REMOVE MARKERS :::::")
+        console.log(rm_marker)
+        map.removeMarkers(rm_marker);
+
+
+        //var oldPosition = new google.maps.LatLng(1.350772,103.848183)
+        //var myLatlng = new google.maps.LatLng(1.3402928,103.8452444)
+        //var marker = new google.maps.Marker({
+        //      position: myLatlng,
+        //      map: handler.getMap(),
+        //      title: 'Hello World!'
+        //  });
+        //
+        //marker.animation = new MarkerMoveAnimation(marker,
+        // {
+        //     name: name
+        //     ,from: oldPosition
+        //     ,to: myLatlng
+        //     ,duration: 1000
+        //     ,effect: 'linear'
+        //     ,onStep: function(e)
+        //     {
+        //         //e.marker.getServiceObject().leash.setPath([start, e.marker.getServiceObject().getPosition()]);
+        //     }
+        //     ,onComplete: function(e)
+        //     {
+        //         animating = false;
+        //     }
+        // })
+
+         var newMarkers= new_markers;
+         var oldMarkers= old_markers;
+
 
          // Add each marker to the map according to received data
 
-         __markers = _.map(markersData, function(markerJSON) {
-             marker = map.addMarker(markerJSON);
 
-             _.extend(marker, markerJSON);
+        for (var i = 0; i < newMarkers.length; i++) {
+            for (var j = 0; j < oldMarkers.length; j++) {
 
-             marker.infowindow = new google.maps.InfoWindow({
-                 content: marker.infowindow
-             });
+                if (newMarkers[i]["marker_id"] == oldMarkers[j]["marker_id"]) {
 
-             console.log("Replace Marker :::::");
-             //console.log(marker);
-             console.log(marker["lat"]);
-             console.log(marker["lng"]);
-             console.log(marker["marker_id"])
+                  var oldLat = oldMarkers[j]["lat"];
+                  var oldLng = oldMarkers[j]["lng"];
 
-             return marker;
+                  var newLat = newMarkers[i]["lat"];
+                  var newLng = newMarkers[i]["lng"];
 
-         });
-         map.bounds.extendWith(__markers);
-     };*/
+                  var oldPosition = new google.maps.LatLng(oldLat,oldLng);
+                  var newPosition = new google.maps.LatLng(newLat,newLng);
 
-      function updateMarkers(map, markersData, rm_marker,old_markers)
-      {
-          // Remove current markers
-          console.log("replace")  ;
-          console.log(old_markers);
-          console.log(markersData);
+                     marker = map.addMarker(newMarkers[i]);
 
-          // Add each marker to the map according to received data
+                     marker.animation = new MarkerMoveAnimation(marker,
+                     {
+                         name: name
+                         ,from: oldPosition
+                         ,to: newPosition
+                         ,duration: 1000
+                         ,effect: 'linear'
+                         ,onStep: function(e)
+                         {
+                             //e.marker.getServiceObject().leash.setPath([start, e.marker.getServiceObject().getPosition()]);
+                         }
+                         ,onComplete: function(e)
+                         {
+                             animating = false;
+                         }
+                     })
 
 
-          __markers = _.map(old_markers, function(markerJSON) {
-                       marker = markerJSON;
+                }
+            }
+        }
 
-                       _.extend(marker, markerJSON);
 
-                       marker.infowindow = new google.maps.InfoWindow({
-                           content: marker.infowindow
-                       });
+           // Remove current markers
 
-                       console.log("Replace Marker :::::");
-                       //console.log(marker);
-                       console.log(marker["lat"]);
-                       console.log(marker["lng"]);
-                       console.log(marker["marker_id"])
 
-                       var lat = marker["lat"];
-                       var lng = marker["lng"];
+           // Add each marker to the map according to received data
 
-                       return marker;
+           __markers = _.map(newMarkers, function(markerJSON) {
+               marker = map.addMarker(markerJSON);
+               //map.getMap().setZoom(16); // Not sure this should be in this iterator!
 
-                       var newLatLng = new google.maps.LatLng(lat, lng);
-                       marker.setPosition(newLatLng);
+               _.extend(marker, markerJSON);
 
-                   });
+               marker.infowindow = new google.maps.InfoWindow({
+                   content: marker.infowindow
+               });
 
-      };
+               return marker;
+           });
+
+           map.bounds.extendWith(__markers);
+
+         //map.bounds.extendWith(__markers);
+
+         //resetMarker(map,newMarkers,__markers)
+
+     };
+
+     function resetMarker(map, markersData, old_marker)
+           {
+               // Remove current markers
+               map.removeMarkers(old_marker);
+
+               // Add each marker to the map according to received data
+
+
+
+               map.bounds.extendWith(__markers);
+
+       //        map.fitMapToBounds();
+           };
 
      function getCoords(){
          $.ajax({
@@ -156,6 +207,8 @@
              success: function(data){
 
                  updateMarkers(handler,data.marker,__markers,old_markers);
+
+                 old_markers = data.marker
 
                  $(data.marker).each(function(i,e){
                      var marker = e;

@@ -365,12 +365,7 @@ class Api::DownloaddataController < ApplicationController
       marker.lng user.last_known_longitude
       marker.infowindow user.data["plate_number"]
 
-      marker.picture({   #url: "..//assets/CarMask.png#"+user.data["color"],
-                         #url: "https://chart.googleapis.com/chart?chst=d_map_spin&chld=0.8|0|"+user.data["color"]+"|3|",
-
-                         #"https://chart.googleapis.com/chart?chst=d_map_spin&chld=1|0|"+user.data["color"]+"|5|"
-                         #url: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|"+user.data["color"]+"|000000" ,
-                         #url: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=|"+user.data["color"]+"|000000" ,
+      marker.picture({
                          url: "..//assets/red_car.png#red",
                          width: 30,
                          height: 80
