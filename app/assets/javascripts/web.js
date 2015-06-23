@@ -18,7 +18,8 @@
 //= require gmaps/google
 //= require carmic_map
 //= require carmic
+//= require SlidingMarker
 //= require_self
 
-
+SlidingMarker.initializeGlobally();
 

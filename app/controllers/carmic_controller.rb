@@ -18,7 +18,8 @@ class CarmicController < ApplicationController
                      height: 80
                  })
 
-      marker.json({custom_marker: "<div style='background:#"+user.data["color"]+";width:33;height:80'><img src='#{"..//assets/CarMask.png"}'></div>"
+      marker.json({custom_marker: "<div class='marker_icon' style='background:#"+user.data["color"]+";width:33;height:80'><img src='#{"..//assets/CarMask.png"}'></div>",
+                   marker_id: user.id
                   })
 
     end

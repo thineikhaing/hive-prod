@@ -377,7 +377,8 @@ class Api::DownloaddataController < ApplicationController
                      })
 
       marker.json({
-                      custom_marker: "<div style='background: #"+user.data["color"]+"'><img src='#{"..//assets/CarMask.png"}'></div>"
+                      custom_marker: "<div class='marker_icon' style='background: #"+user.data["color"]+"'><img src='#{"..//assets/CarMask.png"}'></div>" ,
+                      marker_id: user.id
                   })
     end
     render json: { marker: @hash}

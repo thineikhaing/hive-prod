@@ -2,55 +2,39 @@ var Carmic = {
 
     init: function() {
 
-        handler = Gmaps.build('Google');
-        handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
-            markers = handler.addMarkers([
-                {
-                    "lat": 1.317907,
-                    "lng": 103.843643,
-                    "picture": {
-                        "url": "http://localhost:5000/assets/Avatars/Chat-Avatar.png",
-                        "width":  36,
-                        "height": 36
-                    },
-                    "infowindow": "hello!"
-                }
-            ]);
+        $("#header").hide();
+        $(".container").addClass("removebg");
+        $("#main_background").addClass("removebg");
 
- //           markers = handler.addMarkers(<%= @hash.to_json %>);
-            console.log("<%= @hello %>");
-            handler.addMarkers(<%= @hash.to_json %>);
-            handler.bounds.extendWith(markers);
-            handler.fitMapToBounds();
+        (function() {
 
 
-        });
+            function CustomZoomControl(controlDiv, map) {
+                //grap the zoom elements from the DOM and insert them in the map
+                var controlUIzoomIn= document.getElementById('cd-zoom-in'),
+                        controlUIzoomOut= document.getElementById('cd-zoom-out');
+                controlDiv.appendChild(controlUIzoomIn);
+                controlDiv.appendChild(controlUIzoomOut);
 
+                // Setup the click event listeners and zoom-in or out according to the clicked element
+                google.maps.event.addDomListener(controlUIzoomIn, 'click', function() {
+                    handler.getMap().setZoom(handler.getMap().getZoom()+1)
 
-        var directionsDisplay = new google.maps.DirectionsRenderer();
-        var directionsService = new google.maps.DirectionsService();
-
-        function calcRoute() {
-          var origin      = new google.maps.LatLng(1.370016, 103.849449);
-          var destination = new google.maps.LatLng(1.318089, 103.892982);
-          var request = {
-              origin:      origin,
-              destination: destination,
-              travelMode:  google.maps.TravelMode.DRIVING
-          };
-          directionsService.route(request, function(response, status) {
-            if (status == google.maps.DirectionsStatus.OK) {
-              directionsDisplay.setDirections(response);
+                });
+                google.maps.event.addDomListener(controlUIzoomOut, 'click', function() {
+                    handler.getMap().setZoom(handler.getMap().getZoom()-1)
+                });
             }
-          });
-        }
+            //insert the zoom div on the top left of the map
 
-        calcRoute(); // call this anywhere you want
+            // "Publish" our method on window. You should probably have your own namespace
 
-        var handler = Gmaps.build('Google');
-        handler.buildMap({ internal: {id: 'map'}}, function(){
-          directionsDisplay.setMap(handler.getMap());
-        });
+            window.CustomZoomControl = CustomZoomControl;
+
+        })();
+
+
+
 
 
     }

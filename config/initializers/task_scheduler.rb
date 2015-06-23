@@ -5,7 +5,7 @@ scheduler = Rufus::Scheduler.new
 #scheduler.every  :monday do # Use any day of the week or :weekend, :weekday
 #  CarActionLog.delete_all
 #end
-scheduler.cron("00 09 * * mon") do
+scheduler.in '7d' do
   # whatever...
   CarActionLog.delete_all
 end
