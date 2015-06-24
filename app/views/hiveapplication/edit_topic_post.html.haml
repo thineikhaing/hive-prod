@@ -17,6 +17,9 @@
         #list_of_topic_fields_container
           = render :partial => "all_topics"
   %tr
+    %td
+      &nbsp;
+  %tr
     %td{colspan:"2"}
       #additional_field_list_container_post
         #additional_field_list
@@ -33,7 +36,11 @@
               ="CREATED DATE"
         #list_of_post_fields_container
           = render :partial => "all_posts"
+  %tr
+    %td{colspan:"2"}
+      %br
+      %br
+      =link_to "back", hiveapplication_dev_portal_path , class:'button tiny warning'
 
-
-  :javascript
-    EditTopicPost.init();
+:javascript
+  EditTopicPost.init();

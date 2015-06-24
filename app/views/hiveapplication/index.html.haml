@@ -1,23 +1,30 @@
-#home_notice
-  = flash[:notice]
+-##home_notice
+-#  = flash[:notice]
 
-#sign_in_form
-  = form_for :dev_users, url: { controller: "hiveapplication", action: "sign_in" }, method: "post" do |f|
-    %fieldset
-      #email_label
-        = "USER ID"
-      = f.text_field :email, class: "sign_in_input"
-    &br
-    %fieldset
-      #password_label
-        = "PASSWORD"
-      = f.password_field :password , autocomplete: "off", class: "sign_in_input"
-    &br
-    -#=
-    %fieldset
-      #forgot_password
-        = link_to "FORGET PASSWORD", hiveapplication_forget_password_path
-      #sign_up
-        = link_to "SIGN UP", hiveapplication_sign_up_path
-      #log_in
-        = f.submit "OK", class: "submit_button"
+.row
+  .columns.large-4.large-centered.bg_login
+    .login
+      %h3 Login to Web App
+      = form_for :dev_users, url: { controller: "hiveapplication", action: "sign_in" }, method: "post" do |f|
+        %fieldset
+          %label UserID
+          = f.text_field :email, class: "sign_in_input"
+        %br
+        %fieldset
+          = f.label :password
+          = f.password_field :password , autocomplete: "off", class: "sign_in_input"
+        %br
+          = f.submit "Login" , class: 'button tiny warning'  , style:'float:right'
+        %br
+        .field{style:'float:right'}
+          = link_to "Forgot password?", hiveapplication_forget_password_path, style:'color: orange'
+          |
+          = link_to "Signup", hiveapplication_sign_up_path, style:'color: orange'
+        -#%br
+        -#%fieldset
+        -#  #forgot_password
+        -#    = link_to "FORGET PASSWORD", hiveapplication_forget_password_path
+        -#  #sign_up
+        -#    = link_to "SIGN UP", hiveapplication_sign_up_path
+        -#  #log_in
+        -#    = f.submit "OK", class: "submit_button"

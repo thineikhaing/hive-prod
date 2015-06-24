@@ -3,14 +3,12 @@
     %table{class: "tbl_create_app_container"}
       %tr
         %td{class: "td_btn_container"}
-          .btn_back_option_container
+          .btn_back_option_container.button.tiny.warning
             = "<< BACK TO BASIC OPTIONS"
         %td{class: "td_btn_container"}
-          .btn_save_additional_field_container
+          .btn_save_additional_field_container.button.tiny.warning{style:'float:right'}
             = "SAVE CHANGES"
-      %tr
-        %td
-          %br
+
       %tr
         %td{class: "td_warning_container", colspan:"2"}
           %table{class: "tbl_warning"}
@@ -40,14 +38,17 @@
                       #btn_new_field_label
                         = "NEW FIELD"
             #separator_line
-            %table{class: "app_list", width: "850px"}
+            %table{class: "app_list"}
               %tr
-                %th{width:"85%"}
+                %th
                   ="FIELD NAME"
-                %th{width:"15%"}
+                %th
                   ="TYPE"
             #list_of_topic_fields_container
               = render :partial => "all_additional_field_list_topic"
+      %tr
+        %td
+          &nbsp;
       %tr
         %td{colspan:"2"}
           #additional_field_list_container_post

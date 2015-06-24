@@ -19,6 +19,7 @@ class @InfoBoxBuilder extends Gmaps.Google.Builders.Marker # inherit from base b
     content: boxText
     pixelOffset: new google.maps.Size(-40, -80)
     boxStyle:
+      raydius: '10px'
       width: "70px"
       background: "rgb(2,166,180)"
       opacity: 0.75

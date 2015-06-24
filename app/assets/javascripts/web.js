@@ -19,7 +19,6 @@
 //= require carmic_map
 //= require carmic
 //= require richmarker
-//= require map-tools.min
 //= require google.maps.animatemarker
 //= require_self
 

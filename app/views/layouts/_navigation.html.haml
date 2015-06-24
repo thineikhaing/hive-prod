@@ -1,0 +1,14 @@
+-# navigation styled for Zurb Foundation 5
+-# the syntax for data-topbar may need to change for Zurb Foundation 5
+%nav.top-bar{"data-topbar" => true}
+  %ul.title-area
+    %li.name
+      =link_to(image_tag("Hive-Dev-Web-Logo.png", :alt => "Myanmar"))
+    %li.toggle-topbar.menu-icon
+      %a{:href => "#"}
+        Menu
+    %li
+      %a fsdf
+  .top-bar-section
+    %ul
+      = render 'layouts/navigation_links'

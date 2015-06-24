@@ -27,12 +27,11 @@
 }
 
 table.app_list {
-  width: 850px !important;
+  //width: 850px !important;
   th {
     background: #FF9B00;
     color: white;
     font-size: 20px;
-    height: 10px;
   }
 
   td {
@@ -42,11 +41,13 @@ table.app_list {
 
   tr {
     border-bottom: solid #FF9B00 1px;
+    height: 50px !important;
   }
 
   tr:hover {
     //cursor: pointer;
   }
+
 }
 
 table.field_list {
@@ -82,8 +83,8 @@ table.field_list {
   background: white;
   height: 1px;
   //width: 100%;
-  width: 848px;
-  border: solid #FF9B00 1px;
+  width: 840px;
+  border: solid #fff 1px;
 }
 
 #application_list_footer {

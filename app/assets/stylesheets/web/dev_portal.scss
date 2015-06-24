@@ -34,6 +34,8 @@
   font-family: Labrador-A-Medium;
   font-size: 22px;
 }
+
+
 #create_application_form {
   width:  100%;
   margin: 0 auto;
@@ -45,6 +47,7 @@
 table.tbl_create_app_container{
   width: 50%;
   margin: 0 auto;
+  height: 100%;
 }
 table.tbl_create_app{
   width: 100%;
@@ -67,40 +70,6 @@ table.tbl_create_app_container td.td_btn_container{
     float: right;
   }
 
-  .btn_adv_option_container,.btn_back_option_container{
-    float: left;
-    background: #FF9B00;
-    font-size: 16px;
-    color: white;
-    border: none;
-    cursor: pointer;
-    height: 30px;
-    width: 250px;
-    margin-left: 10px;
-    margin-top: 10px;
-    padding-top: 10px;
-    text-align: center;
-    font-family: Labrador-A-Medium;
-    font-size: 22px;
-
-  }
-  .btn_save_additional_field_container{
-    float: left;
-    background: #FF9B00;
-    font-size: 16px;
-    color: white;
-    border: none;
-    cursor: pointer;
-    height: 30px;
-    width: 150px;
-    margin-left: 10px;
-    margin-top: 10px;
-    padding-top: 10px;
-    text-align: center;
-    float: right;
-    font-family: Labrador-A-Medium;
-    font-size: 22px;
-  }
 }
 
 table.tbl_create_app_container td.td_warning_container{
@@ -180,7 +149,7 @@ textarea#dev_portal_description{
 select#dev_portal_application_type{
   background: #FF9B00;
   color: white;
-  height: 25px;
+  height: 35px;
   width: 200px;
   font-family: Labrador-A-Medium;
   font-size: 18px;
@@ -272,10 +241,11 @@ select#dev_portal_application_type{
 
 #list_of_topic_fields_container, #list_of_post_fields_container {
   height: 234px;
-  width: 848px;
+  //width: 848px;
   border: solid #FF9B00 1px;
   overflow: scroll;
   overflow-x: hidden;
+  margin-bottom: 30px;
 }
 
 input#txt_column_name{

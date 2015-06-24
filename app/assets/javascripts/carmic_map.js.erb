@@ -3,10 +3,12 @@ var Carmic = {
     init: function() {
 
 
-
+        $(".top-bar").hide();
         $("#header").hide();
         $(".container").addClass("removebg");
         $("#main_background").addClass("removebg");
+        document.body.style.backgroundImage='none';
+        document.body.style.backgroundColor='#fff';
 
         (function() {
 

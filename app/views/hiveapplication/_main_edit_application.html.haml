@@ -6,7 +6,7 @@
       %tr
         %td
           %table{class: "tbl_create_app"}
-            %tr
+            %tr{style:"background: #FF9B00"}
               %td{colspan:"2"}
                 #dev_portal_header
                   #text_container
@@ -52,7 +52,8 @@
                         #btn_upload_icon
                           .wrapper
                             = f.file_field :application_icon
-                          %button CHOOSE FILE
+                          .button.tiny.warning
+                            Choose File
                   %tr
                     %td
                       #text_container
@@ -62,10 +63,10 @@
                       -#= f.text_area  :color_display, cols: "10", rows: "3", disabled: true
       %tr
         %td{class: "td_btn_container"}
-          .btn_adv_option_container
+          .btn_adv_option_container.button.tiny.warning
             = "ADVANCED OPTIONS"
           .btn_edit_container
-            = f.submit "SAVE CHANGES", id:"btn_create_app"
+            = f.submit "SAVE CHANGES", class:"button tiny warning"
       %tr
         %td
           %br

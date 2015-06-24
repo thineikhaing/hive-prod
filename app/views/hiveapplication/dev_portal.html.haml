@@ -1,25 +1,58 @@
-#application_list_container
-  #application_list
-    = "MY APPS"
+-##application_list_container
+-#  #application_list
+-#    = "MY APPS"
+-#
+-#  #separator_line
+-#  %table{class: "app_list", width: "850px"}
+-#    %tr
+-#      %th{width:"35%"}
+-#        ="APP NAME"
+-#      %th{width:"5%"}
+-#        ="TYPE"
+-#      %th{width:"60%"}
+-#        = "API KEY"
+-#  #list_of_applications_container
+-#    = render :partial => "hiveapplication/all_application_list"
+-#
+-#  #application_list_footer
+-#    %a{:href => hiveapplication_add_application_path, :style => "color: #FFFFFF;text-decoration: none;"}
+-#      #app_icon_container
+-#        #add_app_icon
+-#          #add_app_label
+-#            -#= link_to "NEW APP", hiveapplication_add_application_path
+-#            = "NEW APP"
+-#
 
-  #separator_line
-  %table{class: "app_list", width: "850px"}
-    %tr
-      %th{width:"35%"}
-        ="APP NAME"
-      %th{width:"5%"}
-        ="TYPE"
-      %th{width:"60%"}
-        = "API KEY"
-  #list_of_applications_container
-    = render :partial => "hiveapplication/all_application_list"
 
-  #application_list_footer
-    %a{:href => hiveapplication_add_application_path, :style => "color: #FFFFFF;text-decoration: none;"}
-      #app_icon_container
-        #add_app_icon
-          #add_app_label
-            -#= link_to "NEW APP", hiveapplication_add_application_path
-            = "NEW APP"
+.row
+  .large-centered.large-12.columns
+    -if !@hive_applications.nil?
+      %table.tbl_applisting
+        %thead
+          %tr
+            %th{colspan: 5,style: 'text-align:center;border-bottom: 1px solid #fff;'}
+              %h4{style:"color:#fff"}MY APPS
+          %tr
+            %th ICON
+            %th NAME
+            %th TYPE
+            %th API KEY
+            %th Action
 
+        %tbody
+          - @hive_applications.each do |hive_application|
+            %tr
+              %td
+                %img{ src:hive_application.icon_url, class:"img_app_icon"}
+              %td= link_to hive_application.app_name.upcase , hiveapplication_edit_application_path(:app_id=> hive_application.id)
+              %td= hive_application.app_type
+              %td= hive_application.api_key
+              %td
+                %span= link_to 'Edit TOPIC/POST', hiveapplication_edit_topic_post_path(:app_id=> hive_application.id)  , :class => 'label warning'
 
+          %tr
+            %td{colspan: 5,style: 'text-align:center; font-size: 1.2em; background: orange;'}
+              =image_tag "new_app.png"
+              =link_to ' New APP', hiveapplication_add_application_path, style: ' color:#fff'
+
+    %br

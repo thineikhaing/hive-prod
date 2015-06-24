@@ -1,0 +1,11 @@
+#header_info{style:'margin-left: 200px'}
+  - if current_user.present?
+    %h3{style:'color: orange'}
+      = session[:no_of_apps].to_s + " CONNECTED APPS"
+
+.right
+  - if current_user.present?
+    Hello,
+    =current_user.username
+    %br
+    = link_to "Logout", hiveapplication_index_path  , class:'logout'
