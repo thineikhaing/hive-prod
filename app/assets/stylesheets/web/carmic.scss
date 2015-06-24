@@ -23,16 +23,7 @@
   margin-left: 130px;
   margin-top:-35px;
 }
-.carmic_map{
-  width: 500px;
-  height: 500px;
-  border-radius: 50% !important;
-  margin-left: 100px;
-  text-align: center;
-  margin-top: 50px;
 
-  //margin: 0 auto;
-}
 
 .green_cicle{
   background:rgb(126,211,33);
@@ -73,8 +64,37 @@
   margin-right: 29%;
   margin-top:-25px;
   width: 100px;
+
 }
-#map,.gm-style {
+#map_wrapper{
+  width: 450px;
+  height: 450px;
+  -moz-border-radius:50% !important;
+  -webkit-mask-border-radius:50% !important;
+  -webkit-border-radius:50% !important;
+  overflow: hidden;
+  position: absolute; /* this breaks the overflow:hidden in Chrome/Opera */
+  box-shadow:
+    0 0 0 1px rgb(7,165,179),
+    0 0 0 6px #fff,
+    0 0 0 18px rgb(7,165,179),
+    0 0 0 23px #fff,
+    0 0 0 24px rgb(7,165,179) ;
+  margin-left: 50px;
+  margin-top: 100px;
+}
+.carmic_map{
+  width: 450px;
+  height: 450px;
+  -moz-border-radius:50% !important;
+  -webkit-mask-border-radius:50% !important;
+  -webkit-border-radius:50% !important;
+  overflow: hidden;
+  position: absolute; /* this breaks the overflow:hidden in Chrome/Opera */
+  -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC); /* this fixes the overflow:hidden in Chrome/Opera */
+}
+
+#map {
   width: 450px;
   height: 450px;
   box-shadow:
@@ -83,12 +103,6 @@
     0 0 0 18px rgb(7,165,179),
     0 0 0 23px #fff,
     0 0 0 24px rgb(7,165,179) ;
-  -moz-border-radius:50% !important;
-  -webkit-mask-border-radius:50% !important;
-  -webkit-border-radius:50% !important;
-  position: relative;
-  z-index: 111 !important;
-
 }
 
 .hook, .marker_container{

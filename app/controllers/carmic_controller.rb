@@ -29,9 +29,6 @@ class CarmicController < ApplicationController
     else
       @url = "http://h1ve-production.herokuapp.com/api/downloaddata/retrieve_carmic_user"
     end
-
   end
-
-
 
 end
