@@ -55,6 +55,7 @@
         internal: {id: 'map'}
         }, function(){
 
+
        var markers = handler.addMarkers(#{raw @hash.to_json});
 
 
@@ -88,117 +89,62 @@
         console.log(rm_marker)
         map.removeMarkers(rm_marker);
 
-
-        //var oldPosition = new google.maps.LatLng(1.350772,103.848183)
-        //var myLatlng = new google.maps.LatLng(1.3402928,103.8452444)
-        //var marker = new google.maps.Marker({
-        //      position: myLatlng,
-        //      map: handler.getMap(),
-        //      title: 'Hello World!'
-        //  });
-        //
-        //marker.animation = new MarkerMoveAnimation(marker,
-        // {
-        //     name: name
-        //     ,from: oldPosition
-        //     ,to: myLatlng
-        //     ,duration: 1000
-        //     ,effect: 'linear'
-        //     ,onStep: function(e)
-        //     {
-        //         //e.marker.getServiceObject().leash.setPath([start, e.marker.getServiceObject().getPosition()]);
-        //     }
-        //     ,onComplete: function(e)
-        //     {
-        //         animating = false;
-        //     }
-        // })
-
          var newMarkers= new_markers;
          var oldMarkers= old_markers;
-
-
          // Add each marker to the map according to received data
 
 
-        for (var i = 0; i < newMarkers.length; i++) {
-            for (var j = 0; j < oldMarkers.length; j++) {
+       map.removeMarkers(rm_marker);
+       // Remove current markers
+       // Add each marker to the map according to received data
 
-                if (newMarkers[i]["marker_id"] == oldMarkers[j]["marker_id"]) {
+       __markers = _.map(newMarkers, function(markerJSON) {
 
-                  var oldLat = oldMarkers[j]["lat"];
-                  var oldLng = oldMarkers[j]["lng"];
+           marker = map.addMarker(markerJSON);
+           //map.getMap().setZoom(16); // Not sure this should be in this iterator!
+           console.log('markerJSON')
+           console.log(markerJSON["lat"])
+           console.log(markerJSON["marker_id"])
+           for (var i = 0; i < oldMarkers.length; i++) {
+           if (oldMarkers[i]["marker_id"] == markerJSON["marker_id"]) {
+               var oldLat = oldMarkers[i]["lat"];
+               var oldLng = oldMarkers[i]["lng"];
 
-                  var newLat = newMarkers[i]["lat"];
-                  var newLng = newMarkers[i]["lng"];
+              var oldPosition = new google.maps.LatLng(oldLat,oldLng);
 
-                  var oldPosition = new google.maps.LatLng(oldLat,oldLng);
-                  var newPosition = new google.maps.LatLng(newLat,newLng);
-
-                     marker = map.addMarker(newMarkers[i]);
-
-                     marker.animation = new MarkerMoveAnimation(marker,
+              marker.animation = new MarkerMoveAnimation(marker,
+                 {
+                     name: name
+                     ,from: oldPosition
+                     ,to: marker.getServiceObject().getPosition()
+                     ,duration: 1000
+                     ,effect: 'linear'
+                     ,onStep: function(e)
                      {
-                         name: name
-                         ,from: oldPosition
-                         ,to: newPosition
-                         ,duration: 1000
-                         ,effect: 'linear'
-                         ,onStep: function(e)
-                         {
-                             //e.marker.getServiceObject().leash.setPath([start, e.marker.getServiceObject().getPosition()]);
-                         }
-                         ,onComplete: function(e)
-                         {
-                             animating = false;
-                         }
-                     })
+                         //e.marker.getServiceObject().leash.setPath([start, e.marker.getServiceObject().getPosition()]);
+                     }
+                     ,onComplete: function(e)
+                     {
+                         animating = false;
+                     }
+                 })
+              }
 
+           }
+           _.extend(marker, markerJSON);
+             var myLatlng = new google.maps.LatLng(1.3402928,103.8452444)
 
-                }
-            }
-        }
-
-
-           // Remove current markers
-
-
-           // Add each marker to the map according to received data
-
-           __markers = _.map(newMarkers, function(markerJSON) {
-               marker = map.addMarker(markerJSON);
-               //map.getMap().setZoom(16); // Not sure this should be in this iterator!
-
-               _.extend(marker, markerJSON);
-
-               marker.infowindow = new google.maps.InfoWindow({
-                   content: marker.infowindow
-               });
-
-               return marker;
+           marker.infowindow = new google.maps.InfoWindow({
+               content: marker.infowindow
            });
 
-           map.bounds.extendWith(__markers);
+           return marker;
+       });
 
-         //map.bounds.extendWith(__markers);
+       map.bounds.extendWith(__markers);
 
-         //resetMarker(map,newMarkers,__markers)
 
      };
-
-     function resetMarker(map, markersData, old_marker)
-           {
-               // Remove current markers
-               map.removeMarkers(old_marker);
-
-               // Add each marker to the map according to received data
-
-
-
-               map.bounds.extendWith(__markers);
-
-       //        map.fitMapToBounds();
-           };
 
      function getCoords(){
          $.ajax({
@@ -219,43 +165,5 @@
              }
          });
      }
-
-
-  //var lineCoordinates = [
-  //      new google.maps.LatLng(1.3200528, 103.8438445),
-  //      new google.maps.LatLng(1.3042924, 103.8324935)
-  //    ];
-  //    // Define the symbol, using one of the predefined paths ('CIRCLE')
-  //    // supplied by the Google Maps JavaScript API.
-  //    var lineSymbol = {
-  //      path: google.maps.SymbolPath.CIRCLE,
-  //      scale: 8,
-  //    };
-  //
-  //    // Create the polyline and add the symbol to it via the 'icons' property.
-  //    line = new google.maps.Polyline({
-  //      path: lineCoordinates,
-  //      icons: [{
-  //        icon: lineSymbol,
-  //        offset: '100%'
-  //      }],
-  //      map: handler.getMap()
-  //    });
-  //
-  //    animateCircle();
-  //
-  //// Use the DOM setInterval() function to change the offset of the symbol
-  //  // at fixed intervals.
-  //  function animateCircle() {
-  //      var count = 0;
-  //      window.setInterval(function() {
-  //        count = (count + 1) % 200;
-  //
-  //        var icons = line.get('icons');
-  //        icons[0].offset = (count / 2) + '%';
-  //        line.set('icons', icons);
-  //    }, 20);
-  //  }
-
 
   window.setInterval(getCoords, 5000);
