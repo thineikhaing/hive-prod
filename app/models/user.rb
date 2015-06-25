@@ -170,8 +170,22 @@ class User < ActiveRecord::Base
 
   def self.update_latlng
 
-    @places = Place.all
-    @users = User.where("data -> 'color' != ''")
+    @places = Place.all.each
+    @users = User.where("data -> 'color' != ''").each
+
+    loop do
+      a1,a2=@users.next,@places.next
+      p 'user last know lat'
+      p a1.last_known_latitude
+      p 'place lat'
+      p a2.latitude
+
+      a1.last_known_latitude = a2.latitude
+      a1.last_known_longitude = a2.longitude
+      a1.save
+
+    end
+
 
     #@users.each do |user|
     #  p "upate"
@@ -189,18 +203,18 @@ class User < ActiveRecord::Base
     #  end
     #end
 
-    @users.zip(@places) do |user,place|
-      if !user.nil?
-
-        p "update lat and lng"
-        user.last_known_latitude = place.latitude
-        user.last_known_longitude = place.longitude
-        user.save
-      else
-        p "nothing change"
-      end
-
-    end
+    #@users.zip(@places) do |user,place|
+    #  if !user.nil?
+    #    if user.last_known_latitude != place.latitude
+    #      p "update lat and lng"
+    #      user.last_known_latitude = place.latitude
+    #      user.last_known_longitude = place.longitude
+    #      user.save
+    #    else
+    #      p "nothing change"
+    #    end
+    #  end
+    #end
 
   end
 
