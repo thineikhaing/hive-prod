@@ -184,8 +184,8 @@ class User < ActiveRecord::Base
       a1.last_known_longitude = a2.longitude
       a1.save
 
-      a1.last_known_latitude -= 0.01
-      a1.last_known_longitude -= 0.05
+      a1.last_known_latitude -= 0.003
+      a1.last_known_longitude -= 0.004
 
       a1.save
 
