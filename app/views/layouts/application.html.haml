@@ -23,11 +23,9 @@
     #main_background
       %header
         = render 'layouts/navigation'
-        %h3{style:'color: orange; margin-left:20px;'}
-          = session[:no_of_apps].to_s + " CONNECTED APPS"
+        -#%h3{style:'color: orange; margin-left:20px;'}
+        -#  = session[:no_of_apps].to_s + " CONNECTED APPS"
 
       %main{:role => "main"}
-        .row
-          .columns.large-12
-            = render 'layouts/messages'
-            = yield
+        = render 'layouts/messages'
+        = yield

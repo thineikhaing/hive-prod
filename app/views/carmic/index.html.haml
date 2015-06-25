@@ -1,28 +1,56 @@
-.top_bar1
-  .logo_header
-    %span{style:'font-size: 4em !important;color: rgb(7,165,179)'}carmic
-    %br
-    %span{style:"font-size: 18px"}at the apiary
-  .redCar
-    = image_tag("RedH.png",alt: "CarMask" )
+-#.top_bar1
+-#  .logo_header
+-#    %span{style:'font-size: 4em !important;color: rgb(7,165,179)'}carmic
+-#    %br
+-#    %span{style:"font-size: 18px"}at the apiary
+-#  .redCar
+-#    = image_tag("RedH.png",alt: "CarMask" )
+-#
+-#  .green_cicle
+-#  .active_car
+-#    =@users.count
+-#    active vehicles
+-#
+-#  .pink_cicle
+-#  .incident_car
+-#    0 incidents
 
-  .green_cicle
-  .active_car
-    =@users.count
-    active vehicles
 
-  .pink_cicle
-  .incident_car
-    0 incidents
+.row
+  .columns.large-2#dashbeta
+    carmic
+    %sub{style:'font-size:15px;line-height:0px;'}
+      DASH beta
 
+  .columns.large-9.right#lefttopbar
+    menu
 
-#map_wrapper
-  .carmic_map
-    #map
-#btn_zoom_out
-  ='-'
-#btn_zoom_in
-  ='+'
+.row
+  .columns.large-6
+    #map_wrapper
+      .carmic_map
+        #map
+    #btn_zoom_out
+      ='-'
+    #btn_zoom_in
+      ='+'
+  .columns.large-6#sub_left
+    .columns.large-4
+      %span.totalmsgCircle
+        =@topics.count
+      total message here
+    .columns.large-4
+      %span.greenCirlce
+        =@users.count
+      %span active vehicle
+    .columns.large-4
+      %span.redCirlce
+        =0
+      incidents
+.row
+  .columns.large-6.right.message_list
+    message list
+
 
 :javascript
    Carmic.init();

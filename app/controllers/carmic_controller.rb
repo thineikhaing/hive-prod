@@ -2,6 +2,8 @@ class CarmicController < ApplicationController
   def index
     @users =User.where("data -> 'color' != ''")
 
+    @topics= Topic.where(hiveapplication_id: 3)
+
     @hash = Gmaps4rails.build_markers(@users) do |user, marker|
 
       content = '<p class="hook">'+user.data["plate_number"]+'</p>'
