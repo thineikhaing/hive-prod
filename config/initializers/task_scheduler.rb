@@ -15,5 +15,5 @@ end
 #end
 
 #scheduler.every '3s' do
-#  puts 'Hello... Rufus'
+# User.update_latlng
 #end

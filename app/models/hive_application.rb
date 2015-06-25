@@ -56,7 +56,7 @@ class HiveApplication < ActiveRecord::Base
     if email.count("@") != 1 then
       return false
       # check the email using a simple regex.
-    elsif email =~ /^.*@.*(.com|.org|.net)$/ then
+    elsif email =~ /^.*@.*(.com|.org|.net|.io)$/ then
       return true
     else
       return false

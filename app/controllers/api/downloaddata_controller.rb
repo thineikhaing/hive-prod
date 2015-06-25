@@ -356,6 +356,8 @@ class Api::DownloaddataController < ApplicationController
   end
 
   def retrieve_carmic_user
+    User.update_latlng
+
     @users =User.where("data -> 'color' != ''")
     @hello = "hello there"
     #@users = Place.all

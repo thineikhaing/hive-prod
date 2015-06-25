@@ -25,7 +25,7 @@ class User < ActiveRecord::Base
   after_initialize :ensure_authentication_token
   after_initialize :ensure_username
 
-  #validates_uniqueness_of    :email, :case_sensitive => false, :allow_blank => true
+  validates_uniqueness_of    :email, :case_sensitive => false, :allow_blank => true
 
   enums %w(BOT ADMIN VENDOR NORMAL)
 
@@ -166,6 +166,21 @@ class User < ActiveRecord::Base
         end
       end
     end
+  end
+
+  def self.update_latlng
+    p "update lat and lng"
+    @places = Place.all
+    @users = User.all
+
+    @users.zip(@places) do |user,place|
+      if !user.nil?
+        user.last_known_latitude = place.latitude
+        user.last_known_longitude = place.longitude
+        user.save
+      end
+    end
+
   end
 
   private
