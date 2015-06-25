@@ -162,30 +162,23 @@
 }
 
 #custom_zoomcontrol{
- position: fixed !important;
- z-index: 10000005 !important;
+ //position: fixed !important;
+ //z-index: 10000005 !important;
   //margin-right:-35px;
 }
-
-#cd-zoom-in, #cd-zoom-out {
-  height: 35px;
-  width: 35px;
-  line-height: 35px;
-  cursor: pointer;
-  margin-left: 10px;
+div#btn_zoom_in,div#btn_zoom_out{
+  font-size: 35px;
   background-color: rgb(7,165,179);
-  background-repeat: no-repeat;
-  background-size: 32px 64px;
-  border-radius: 50%;
-  padding: 7px;
-  margin-top: 10px;
+  text-align: center;
+  height: 50px !important;
+  width: 50px !important;
+  line-height: 50px;
   color: #fff;
-  font-size: 2em;
-  text-align: center !important;
+  border-radius: 50%;
   border: 2px solid #fff;
-  position: relative !important;
-  z-index: 10000005 !important;
+  margin-top: 10px;
 }
+
 
 $radius: 250px;
 $thickness: 5px;
