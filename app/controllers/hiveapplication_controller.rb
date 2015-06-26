@@ -245,8 +245,9 @@ class HiveapplicationController < ApplicationController
 
         #add batch job to delete the user record if user does not verify
         HiveApplication.add_dev_user_activation_job(devuser.id)
-
-        redirect_to hiveapplication_index_path
+        flash[:notice] = "Sign up successfully, please verify your email!"
+        render "hiveapplication/index"
+        #redirect_to hiveapplication_index_path
       end
 
     end
