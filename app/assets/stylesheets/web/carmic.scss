@@ -65,43 +65,7 @@
   width: 100px;
 
 }
-#map_wrapper{
-  width: 450px;
-  height:450px;
-  -moz-border-radius:50% !important;
-  -webkit-mask-border-radius:50% !important;
-  -webkit-border-radius:50% !important;
-  overflow: hidden;
-  position: absolute; /* this breaks the overflow:hidden in Chrome/Opera */
-  box-shadow:
-    0 0 0 1px rgb(7,165,179),
-    0 0 0 6px #fff,
-    0 0 0 18px rgb(7,165,179),
-    0 0 0 23px #fff,
-    0 0 0 24px rgb(7,165,179) ;
-  margin-top: 50px;
-}
-.carmic_map{
-  width: 100%;
-  height: 100%;
-  -moz-border-radius:50% !important;
-  -webkit-mask-border-radius:50% !important;
-  -webkit-border-radius:50% !important;
-  overflow: hidden;
-  position: absolute; /* this breaks the overflow:hidden in Chrome/Opera */
-  -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC); /* this fixes the overflow:hidden in Chrome/Opera */
-}
 
-#map {
-  width: 100%;
-  height: 100%;
-  box-shadow:
-    0 0 0 1px rgb(7,165,179),
-    0 0 0 6px #fff,
-    0 0 0 18px rgb(7,165,179),
-    0 0 0 23px #fff,
-    0 0 0 24px rgb(7,165,179) ;
-}
 
 .hook, .marker_container{
   color: white !important;
@@ -304,11 +268,13 @@ $background-color: white;
   height: 40px;
   border-top-left-radius: 1.5em;
   border-bottom-left-radius: 1.5em;
-  line-height: 50px;
+  line-height: 40px;
   text-align: center;
   color: #fff;
   font-size: 2em ;
   font-family: Labrador-A-Light;
+  border-top: 3px solid #fff;
+  border-bottom: 2px solid #fff;
 }
 
 .message_list{
@@ -316,7 +282,7 @@ $background-color: white;
   height: 40px;
   border-top-left-radius: 1.5em;
   border-bottom-left-radius: 1.5em;
-  line-height: 50px;
+  line-height: 40px;
   text-align: center;
   color: #fff;
   font-size: 18px ;
@@ -374,4 +340,93 @@ $background-color: white;
 #sub_left{
   color: rgb(60,175,181);
   font-size: 18px ;
+  position: relative;
 }
+
+.circle {
+
+  box-shadow:
+    0 0 0 1px rgb(7,165,179),
+    0 0 0 6px #fff,
+    0 0 0 18px rgb(7,165,179),
+    0 0 0 23px #fff,
+    0 0 0 24px rgb(7,165,179) ;
+  -moz-border-radius:50% !important;
+  -webkit-mask-border-radius:50% !important;
+  -webkit-border-radius:50% !important;
+
+  //position: relative;
+  //display: inline-block;
+  //width: 100%;
+  //height: 0;
+  //padding: 50% 0;
+  //border-radius: 50%;
+  //
+  ///* Just making it pretty */
+  //-webkit-box-shadow: 0 4px 0 0 rgba(0, 0, 0, .1);
+  //box-shadow: 0 4px 0 0 rgba(0, 0, 0, .1);
+  //text-shadow: 0 4px 0 rgba(0, 0, 0, .1);
+  //background: #38a9e4;
+  //color: white;
+  //font-family: Helvetica, Arial Black, sans;
+  //font-size: 48px;
+  //text-align: center;
+}
+
+#map_wrapper{
+  width: 450px;
+  height:450px;
+  -moz-border-radius:50% !important;
+  -webkit-mask-border-radius:50% !important;
+  -webkit-border-radius:50% !important;
+  overflow: hidden;
+  position: absolute; /* this breaks the overflow:hidden in Chrome/Opera */
+  box-shadow:
+    0 0 0 1px rgb(7,165,179),
+    0 0 0 6px #fff,
+    0 0 0 18px rgb(7,165,179),
+    0 0 0 23px #fff,
+    0 0 0 24px rgb(7,165,179) ;
+  margin-top: 50px;
+}
+.carmic_map{
+  width: 100%;
+  height: 100%;
+  -moz-border-radius:50% !important;
+  -webkit-mask-border-radius:50% !important;
+  -webkit-border-radius:50% !important;
+  overflow: hidden;
+  position: absolute; /* this breaks the overflow:hidden in Chrome/Opera */
+  -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC); /* this fixes the overflow:hidden in Chrome/Opera */
+}
+
+#map {
+  margin-top:50px;
+  margin-bottom:50px;
+  width:100%;
+  height:auto;
+  padding: 50% 0;
+  -moz-border-radius:50% !important;
+  -webkit-mask-border-radius:50% !important;
+  -webkit-border-radius:50% !important;
+
+
+  -webkit-transform: translateZ(0);
+  -webkit-mask-image: -webkit-radial-gradient(circle, white, black);
+
+  box-shadow:
+    0 0 0 1px rgb(7,165,179),
+    0 0 0 6px #fff,
+    0 0 0 18px rgb(7,165,179),
+    0 0 0 23px #fff,
+    0 0 0 24px rgb(7,165,179) ;
+  overflow:hidden !important;
+
+}
+
+//#map > .gm-style > div, #map > .gm-style > div > div  {
+//  overflow:hidden !important;
+//  -moz-border-radius:50% !important;
+//  -webkit-mask-border-radius:50% !important;
+//  -webkit-border-radius:50% !important;
+//}
