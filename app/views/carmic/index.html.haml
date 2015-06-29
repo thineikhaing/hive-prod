@@ -26,22 +26,7 @@
     menu
 
 .row
-  .columns.large-6
-    .circle
-      #map
-
-
-    -##map_wrapper
-    -#  .carmic_map
-    -#    #map
-
-
-    #btn_zoom_out
-      ='-'
-    #btn_zoom_in
-      ='+'
-
-  .columns.large-6#sub_left
+  .columns.large-6#sub_left.right
     .columns.large-4
       %span.totalmsgCircle
         =@topics.count
@@ -55,8 +40,18 @@
         =0
       incidents
 .row
+  .columns.large-6
+    .circle
+      #map
+    #btn_zoom_out
+      ='-'
+    #btn_zoom_in
+      ='+'
   .columns.large-6.right.message_list
     message list
+
+
+
 
 
 :javascript
