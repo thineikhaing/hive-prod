@@ -271,7 +271,7 @@ $background-color: white;
   line-height: 40px;
   text-align: center;
   color: #fff;
-  font-size: 2em ;
+  font-size: 1.4em ;
   font-family: Labrador-A-Light;
   border-top: 3px solid #fff;
   border-bottom: 2px solid #fff;
@@ -344,7 +344,7 @@ $background-color: white;
 }
 
 .circle {
-
+  margin-top: 30px;
   box-shadow:
     0 0 0 1px rgb(7,165,179),
     0 0 0 6px #fff,
@@ -423,9 +423,29 @@ $background-color: white;
 
 }
 
-//#map > .gm-style > div, #map > .gm-style > div > div  {
-//  overflow:hidden !important;
-//  -moz-border-radius:50% !important;
-//  -webkit-mask-border-radius:50% !important;
-//  -webkit-border-radius:50% !important;
+//.tabs dd > a, .tabs .tab-title > a,
+//.tabs dd > a:hover, .tabs .tab-title > a:hover,
+//.tabs dd > a:focus, .tabs .tab-title > a:focus,
+//.tabs dd > a:active, .tabs .tab-title > a:active{
+//  background: none;
+//  border: none;
 //}
+//
+//.tabs >.active{
+//  border: none;
+//}
+
+.topic_tbl{
+  background: rgb(7,165,179);
+  height: 40px;
+  border-top-left-radius: 1.5em;
+  border-bottom-left-radius: 1.5em;
+  line-height: 40px;
+  text-align: center;
+  color: #fff;
+
+}
+
+.topic_tbl span{
+  color: #fff;
+}

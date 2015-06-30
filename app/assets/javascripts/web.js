@@ -20,6 +20,7 @@
 //= require carmic
 //= require richmarker
 //= require google.maps.animatemarker
+//= require getGeocodeAddress
 //= require_self
 
 

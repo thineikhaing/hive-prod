@@ -23,22 +23,26 @@
       DASH beta
 
   .columns.large-9.right#lefttopbar
-    menu
+    %span#country
+    >
+    %span#state
+    >
+    %span#address
 
-.row
-  .columns.large-6#sub_left.right
-    .columns.large-4
-      %span.totalmsgCircle
-        =@topics.count
-      total message here
-    .columns.large-4
-      %span.greenCirlce
-        =@users.count
-      %span active vehicle
-    .columns.large-4
-      %span.redCirlce
-        =0
-      incidents
+-#.row
+-#  .columns.large-6#sub_left.right
+-#    .columns.large-4
+-#      %span.totalmsgCircle
+-#        =@topics.count
+-#      total message here
+-#    .columns.large-4
+-#      %span.greenCirlce
+-#        =@users.count
+-#      %span active vehicle
+-#    .columns.large-4
+-#      %span.redCirlce
+-#        =0
+-#      incidents
 .row
   .columns.large-6
     .circle
@@ -47,8 +51,61 @@
       ='-'
     #btn_zoom_in
       ='+'
-  .columns.large-6.right.message_list
-    message list
+  .columns.large-6
+    %ul.tabs{"data-tab" => ""}
+      %li.tab-title.active
+        %a{:href => "#panel1"}
+          =@topics.count
+          Messages
+      %li.tab-title
+        %a{:href => "#panel2"}
+          =@users.count
+          Users
+      %li.tab-title
+        %a{:href => "#panel3"}
+          =0
+          Incidents
+    .tabs-content
+      #panel1.content.active
+        #display_topic
+          - if @topics_list.present?
+            %ul{:id => "nav"}
+              - @topics_list.each do |sTopic|
+                -string =   @topic_avatar_url[sTopic.id].to_s
+                -substring = "carmic"
+                -string.slice! substring
+
+                -title = sTopic.title.split(':')
+
+                -if (sTopic.offensive < 3)
+                  %li
+                    %a{href:"#", id:"topicid", topicID: "#{sTopic.id}" , name:"topic_lists"  }
+                      %table.topic_tbl{:width => "100%"}
+                        %tr
+                          %td
+                            %span
+                              >
+                              = title.first
+                          %td{:colspan => "2"}
+                            %span.title
+                              = title.last
+                          %td
+                            %span.created_at
+                              -if (sTopic.special_type == 3)
+                                .stickytag
+                                  = "Sticky"
+                              -else
+                                .normaltag
+                                  #{time_ago_in_words(sTopic.created_at)} ago
+                          %td
+                            %span.distance
+                              = @distance[sTopic.id] if @distance.present?
+      #panel2.content
+        %p This is the total user list.
+      #panel3.content
+        %p This is the total incidents list.
+
+
 
 
 
@@ -193,5 +250,60 @@
              }
          });
      }
+
+     google.maps.event.addListener(handler.getMap(), 'click', function( event ){
+       var lat = event.latLng.lat();
+       var long = event.latLng.lng();
+       var latlng   = new google.maps.LatLng(lat, long);
+       getLatLongDetail(latlng);
+
+        console.log("click event")
+        console.log(lat,long)
+        $.ajax({
+
+          data: {
+            cur_lat: lat,
+            cur_long: long
+          },
+          success: function(html) {
+            var htmlobject = $(html);
+
+            var output = htmlobject.find("#display_topic")[0];
+            var testing = new XMLSerializer().serializeToString(output);
+            $("#display_topic").replaceWith(testing);
+
+          }
+        });
+     });
+
+   google.maps.event.addListener(handler.getMap(), 'zoom_changed', function( event ){
+     //var lat = event.latLng.lat();
+     //var long = event.latLng.lng();
+      var lat = handler.getMap().getCenter().lat();
+      var long = handler.getMap().getCenter().lng();
+
+      var latlng   = new google.maps.LatLng(lat, long);
+      getLatLongDetail(latlng);
+
+      console.log("zoom event")
+      console.log(lat,long)
+      $.ajax({
+
+        data: {
+          cur_lat: lat,
+          cur_long: long
+        },
+        success: function(html) {
+          var htmlobject = $(html);
+
+          var output = htmlobject.find("#display_topic")[0];
+          var testing = new XMLSerializer().serializeToString(output);
+          $("#display_topic").replaceWith(testing);
+
+        }
+      });
+   });
+
+
 
   window.setInterval(getCoords, 4000);
