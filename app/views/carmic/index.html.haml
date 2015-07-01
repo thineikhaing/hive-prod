@@ -1,21 +1,3 @@
--#.top_bar1
--#  .logo_header
--#    %span{style:'font-size: 4em !important;color: rgb(7,165,179)'}carmic
--#    %br
--#    %span{style:"font-size: 18px"}at the apiary
--#  .redCar
--#    = image_tag("RedH.png",alt: "CarMask" )
--#
--#  .green_cicle
--#  .active_car
--#    =@users.count
--#    active vehicles
--#
--#  .pink_cicle
--#  .incident_car
--#    0 incidents
-
-
 .row
   .columns.large-2#dashbeta
     carmic
@@ -29,20 +11,6 @@
     >
     %span#address
 
--#.row
--#  .columns.large-6#sub_left.right
--#    .columns.large-4
--#      %span.totalmsgCircle
--#        =@topics.count
--#      total message here
--#    .columns.large-4
--#      %span.greenCirlce
--#        =@users.count
--#      %span active vehicle
--#    .columns.large-4
--#      %span.redCirlce
--#        =0
--#      incidents
 .row
   .columns.large-6
     .circle
@@ -54,17 +22,17 @@
   .columns.large-6
     %ul.tabs{"data-tab" => ""}
       %li.tab-title.active
-        %a{:href => "#panel1"}
+        %a{href: "#panel1", id: "car_tab"}
           =@topics.count
-          Messages
+          Topic
       %li.tab-title
-        %a{:href => "#panel2"}
+        %a{href: "#panel2", id: "user_tab"}
           =@users.count
-          Users
+          User
       %li.tab-title
-        %a{:href => "#panel3"}
+        %a{href: "#panel3", id: "incident_tab"}
           =0
-          Incidents
+          Incident
     .tabs-content
       #panel1.content.active
         #display_topic
@@ -85,7 +53,8 @@
                           %td
                             %span
                               >
-                              = title.first
+                              -car_no = title.first.split("to ")
+                              .car_no=car_no.last
                           %td{:colspan => "2"}
                             %span.title
                               = title.last
@@ -104,12 +73,6 @@
         %p This is the total user list.
       #panel3.content
         %p This is the total incidents list.
-
-
-
-
-
-
 
 :javascript
    Carmic.init();
