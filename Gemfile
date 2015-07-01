@@ -54,6 +54,7 @@ gem 'rack-timeout'
 
 gem 'kaminari'
 
+
 gem 'rufus-scheduler'  , '< 3.0.0'
 
 gem 'gmaps4rails'

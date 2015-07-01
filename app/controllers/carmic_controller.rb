@@ -24,6 +24,10 @@ class CarmicController < ApplicationController
 
     end
 
+    lat = 1.363892474708587
+    lng = 103.86268615722656
+    get_all_topics(lat, lng)
+
     if params[:cur_lat].present?
       @latitude = params[:cur_lat]
       @longitude = params[:cur_long]
@@ -51,7 +55,7 @@ class CarmicController < ApplicationController
       places.each do |p|
         places_id.push p.id
       end
-      @topics_list = Topic.where(:place_id => places_id).order("id")
+      @topics_list = Topic.where(:place_id => places_id).order("id").page(params[:page]).per(1)
       if not @topics_list.nil?
         for topic in @topics_list
           #getting avatar url

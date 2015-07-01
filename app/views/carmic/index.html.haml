@@ -40,8 +40,8 @@
     .tabs-content
       #panel1.content.active
         #display_topic
-          - if @topics_list.present?
-            %ul{:id => "nav"}
+          %ul{:id => "nav"}
+            - if @topics_list.present?
               - @topics_list.each do |sTopic|
                 -string =   @topic_avatar_url[sTopic.id].to_s
                 -substring = "carmic"
@@ -73,11 +73,28 @@
                           %td
                             %span.distance
                               = @distance[sTopic.id] if @distance.present?
+            %li
+              %a{href:"#" , id:"topicid"}
+                %table.topic_tbl{:width => "100%"}
+                  %tr
+                    %td
+                      %span 123
+                    %td{:colspan => "2"}
+                      %span.title
+                        test
+                    %td
+                      %span.created_at
+                        fsfs
+                    %td
+                      %span.distance
+                        fsdf
       #panel2.content
         %p This is the total user list.
       #panel3.content
         %p This is the total incidents list.
-
+.row
+  .columns.large-12
+    =paginate @topics_list
 :javascript
    Carmic.init();
 
