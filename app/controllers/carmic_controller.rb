@@ -55,7 +55,7 @@ class CarmicController < ApplicationController
       places.each do |p|
         places_id.push p.id
       end
-      @topics_list = Topic.where(:place_id => places_id).order("id").page(params[:page]).per(1)
+      @topics_list = Topic.where(:place_id => places_id).order("id").page(params[:page]).per(20)
       if not @topics_list.nil?
         for topic in @topics_list
           #getting avatar url
