@@ -10,6 +10,10 @@
     %span#state
     >
     %span#address
+.row
+  .columns.medium-5.right
+    %label Country
+    =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => '---  Select Country ---'})
 
 .row
   .columns.large-6
@@ -266,6 +270,25 @@
         }
       });
    });
+
+
+  $('#country_list').live('change', function() {
+    var map = handler.getMap();
+      var country = $('#country_list').val();
+      var geocoder = new google.maps.Geocoder();
+      geocoder.geocode( { 'address': country }, function(results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+              map.setCenter(results[0].geometry.location);
+              map.setZoom(8);
+          } else {
+              alert("Could not find location: " + location);
+          }
+      });
+  } );
+
+
+
+
 
 
 

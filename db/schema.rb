@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150527053659) do
+ActiveRecord::Schema.define(version: 20150701070213) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,6 +49,24 @@ ActiveRecord::Schema.define(version: 20150527053659) do
   create_table "checkinplaces", force: true do |t|
     t.integer  "place_id",   default: 0
     t.integer  "user_id",    default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "countries", force: true do |t|
+    t.string   "name"
+    t.string   "locale_name"
+    t.string   "cca2"
+    t.string   "ccn3"
+    t.string   "cca3"
+    t.string   "tld"
+    t.string   "currency"
+    t.integer  "calling_code"
+    t.string   "capital"
+    t.string   "alt_spellings"
+    t.float    "relevance"
+    t.string   "region"
+    t.string   "subregion"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
