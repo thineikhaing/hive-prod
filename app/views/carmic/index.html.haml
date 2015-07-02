@@ -6,16 +6,23 @@
   .columns.large-1
     &nbsp;
   .columns.large-7#lefttopbar
-    %span#country
-    >
-    %span#state
-    >
-    %span#address
+    .columns.large-4
+      %span#country
+    .columns.large-4
+      %span#state
+      %input{type:'text', id:'edit_city', style: 'display:none'}
+    .columns.large-4
+      %span#address
+      %input{type:'text', id:'edit_street', style: 'display:none'}
   .columns.large-2#select_country
+    %input{type:'button', value:'f', id: 'find', style:'display:none'}
+    %input{type:'button', value:'ok', id: 'ok_find' }
     =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => '---  Select Country ---'})
 .row
   .columns.large-4.right
     %input#autocomplete{:onkeypress => "geolocate(event)", :placeholder => "Seach By address", :type => "text"}
+
+
 .row
   .columns.large-6
     .circle
@@ -277,6 +284,7 @@
     var map = handler.getMap();
       var country = $('#country_list').val();
       var geocoder = new google.maps.Geocoder();
+
       geocoder.geocode( { 'address': country }, function(results, status) {
           if (status == google.maps.GeocoderStatus.OK) {
               map.setCenter(results[0].geometry.location);
@@ -344,7 +352,56 @@
 
    }
 
+  $("#state").click(function(){
+    $('#state').hide();
+    $('#address').hide();
+    $("#edit_street").show();
+    $("#edit_city").show();
 
+  })
+
+  $("#address").click(function(){
+    $('#address').hide();
+    $("#edit_street").show();
+  })
+
+  $("#ok_find").on("click",function(){
+    var street = $("#edit_street").val();
+    var city = $("#edit_city").val();
+    var country = $('#country').text();
+
+
+    $('#state').show();
+    $('#address').show();
+    $("#edit_street").hide();
+    $("#edit_city").hide();
+    var format_address;
+
+    if(street == ''){
+      format_address = city + ', ' + country;
+    }else{
+      var city_country = city + ', ' + country;
+      format_address = street + ', ' + city_country;
+    }
+
+    //alert(format_address)
+
+
+    var map = handler.getMap();
+    var geocoder = new google.maps.Geocoder();
+
+    geocoder.geocode( { 'address': format_address }, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+            map.setCenter(results[0].geometry.location);
+            map.setZoom(10);
+        } else {
+            alert("Could not find location: " + location);
+        }
+    });
+
+    $('#state').text(city);
+    $('#address').text(street);
+  })
    // [END region_geolocation]
 
 
