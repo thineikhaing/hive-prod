@@ -13,7 +13,9 @@
     %span#address
   .columns.large-2#select_country
     =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => '---  Select Country ---'})
-
+.row
+  .columns.large-4.right
+    %input#autocomplete{:onkeypress => "geolocate(event)", :placeholder => "Seach By address", :type => "text"}
 .row
   .columns.large-6
     .circle
@@ -27,15 +29,12 @@
       %li.tab-title.active
         %a{href: "#panel1", id: "car_tab"}
           =@topics.count
-          Topic
       %li.tab-title
         %a{href: "#panel2", id: "user_tab"}
           =@users.count
-          User
       %li.tab-title
         %a{href: "#panel3", id: "incident_tab"}
           =0
-          Incident
     .tabs-content
       #panel1.content.active
         #display_topic
@@ -281,7 +280,7 @@
       geocoder.geocode( { 'address': country }, function(results, status) {
           if (status == google.maps.GeocoderStatus.OK) {
               map.setCenter(results[0].geometry.location);
-              map.setZoom(8);
+              map.setZoom(10);
           } else {
               alert("Could not find location: " + location);
           }
@@ -290,7 +289,63 @@
 
   //$('#country_list').attr('size', 5);
 
+   // This example displays an address form, using the autocomplete feature
+               // of the Google Places API to help users fill in the information.
 
+   var placeSearch, autocomplete;
+   var componentForm = {
+     street_number: 'short_name',
+     route: 'long_name',
+     locality: 'long_name',
+     administrative_area_level_1: 'short_name',
+     country: 'long_name',
+     postal_code: 'short_name'
+   };
+
+
+     autocomplete = new google.maps.places.Autocomplete(
+         /** @type {HTMLInputElement} */(document.getElementById('autocomplete')),
+         { types: ['geocode'] });
+     // When the user selects an address from the dropdown,
+     // populate the address fields in the form.
+     google.maps.event.addListener(autocomplete, 'place_changed', function() {
+       fillInAddress();
+     });
+
+
+   // [START region_fillform]
+   function fillInAddress() {
+     // Get the place details from the autocomplete object.
+     var place = autocomplete.getPlace();
+
+   }
+   // [END region_fillform]
+
+   // [START region_geolocation]
+   // Bias the autocomplete object to the user's geographical location,
+   // as supplied by the browser's 'navigator.geolocation' object.
+   function geolocate(e) {
+   var code = e.keyCode || e.which;
+   console.log("code")
+   console.log(code)
+   if (code ==13){
+      var map = handler.getMap();
+            var country = $('#autocomplete').val();
+            var geocoder = new google.maps.Geocoder();
+            geocoder.geocode( { 'address': country }, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    map.setCenter(results[0].geometry.location);
+                    map.setZoom(10);
+                } else {
+                    alert("Could not find location: " + location);
+                }
+            });
+   }
+
+   }
+
+
+   // [END region_geolocation]
 
 
 
