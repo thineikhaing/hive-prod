@@ -24,9 +24,9 @@ class CarmicController < ApplicationController
 
     end
 
-    lat = 1.363892474708587
-    lng = 103.86268615722656
-    get_all_topics(lat, lng)
+    #lat = 1.363892474708587
+    #lng = 103.86268615722656
+    #get_all_topics(lat, lng)
 
     if params[:cur_lat].present?
       @latitude = params[:cur_lat]
