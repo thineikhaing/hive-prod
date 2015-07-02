@@ -3,16 +3,15 @@
     carmic
     %sub{style:'font-size:15px;line-height:0px;'}
       DASH beta
-
-  .columns.large-9.right#lefttopbar
+  .columns.large-1
+    &nbsp;
+  .columns.large-7#lefttopbar
     %span#country
     >
     %span#state
     >
     %span#address
-.row
-  .columns.medium-5.right
-    %label Country
+  .columns.large-2#select_country
     =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => '---  Select Country ---'})
 
 .row
@@ -73,21 +72,7 @@
                           %td
                             %span.distance
                               = @distance[sTopic.id] if @distance.present?
-            %li
-              %a{href:"#" , id:"topicid"}
-                %table.topic_tbl{:width => "100%"}
-                  %tr
-                    %td
-                      %span 123
-                    %td{:colspan => "2"}
-                      %span.title
-                        test
-                    %td
-                      %span.created_at
-                        fsfs
-                    %td
-                      %span.distance
-                        fsdf
+
       #panel2.content
         %p This is the total user list.
       #panel3.content
@@ -303,7 +288,7 @@
       });
   } );
 
-
+  //$('#country_list').attr('size', 5);
 
 
 
