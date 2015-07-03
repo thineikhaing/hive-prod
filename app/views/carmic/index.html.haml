@@ -411,7 +411,7 @@
                  var latlng   = new google.maps.LatLng(re_lat, re_lng);
                  getLatLongDetail(latlng);
 
-                 map.setZoom(10);
+                 setTimeout("map.setZoom(10)",1000);
              } else {
                  alert("Could not find location: " + location);
              }
@@ -433,7 +433,8 @@
                 var latlng   = new google.maps.LatLng(re_lat, re_lng);
                 getLatLongDetail(latlng);
 
-                map.setZoom(16);
+                //map.setZoom(16);
+                setTimeout("map.setZoom(16)",1000);
             } else {
                 alert("Could not find location: " + location);
             }
@@ -450,7 +451,7 @@
                var latlng   = new google.maps.LatLng(re_lat, re_lng);
                getLatLongDetail(latlng);
 
-               map.setZoom(16);
+               setTimeout("map.setZoom(16)",1000);
            } else {
                alert("Could not find location: " + location);
            }
@@ -490,6 +491,8 @@
        $("#rm_state").show();
        $("#remove_street").hide();
 
+       setTimeout("map.setZoom(8)",1000);
+
    })
 
    $("#rm_state").click(function(){
@@ -500,6 +503,7 @@
        $("#edit_city").hide();
        $("#rm_state").hide();
        $("#rm_country").show();
+       setTimeout("map.setZoom(4)",1000);
    })
 
    $("#rm_country").click(function(){
