@@ -45,7 +45,7 @@
       ='-'
     #btn_zoom_in
       ='+'
-  .columns.large-6
+  .columns.large-6#display_topic
     %ul.tabs{"data-tab" => ""}
       %li.tab-title
         %a{href: "#panel2", id: "car_tab"}
@@ -53,47 +53,47 @@
 
       %li.tab-title.active
         %a{href: "#panel1", id: "message_tab"}
-          %span=@topics.count
+          %span
+            =@topics_list.count rescue '0'
 
       %li.tab-title
         %a{href: "#panel3", id: "incident_tab"}
           %span=0
     .tabs-content
       #panel1.content.active
-        #display_topic
-          %ul{:id => "nav"}
-            - if @topics_list.present?
-              - @topics_list.each do |sTopic|
-                -string =   @topic_avatar_url[sTopic.id].to_s
-                -substring = "carmic"
-                -string.slice! substring
+        %ul{:id => "nav"}
+          - if @topics_list.present?
+            - @topics_list.each do |sTopic|
+              -string =   @topic_avatar_url[sTopic.id].to_s
+              -substring = "carmic"
+              -string.slice! substring
 
-                -title = sTopic.title.split(':')
+              -title = sTopic.title.split(':')
 
-                -if (sTopic.offensive < 3)
-                  %li
-                    %a{href:"#", id:"topicid", topicID: "#{sTopic.id}" , name:"topic_lists"  }
-                      %table.topic_tbl{:width => "100%"}
-                        %tr
-                          %td
-                            %span
-                              >
-                              -car_no = title.first.split("to ")
-                              .car_no=car_no.last
-                          %td{:colspan => "2"}
-                            %span.title
-                              = title.last
-                          %td
-                            %span.created_at
-                              -if (sTopic.special_type == 3)
-                                .stickytag
-                                  = "Sticky"
-                              -else
-                                .normaltag
-                                  #{time_ago_in_words(sTopic.created_at)} ago
-                          %td
-                            %span.distance
-                              = @distance[sTopic.id] if @distance.present?
+              -if (sTopic.offensive < 3)
+                %li
+                  %a{href:"#", id:"topicid", topicID: "#{sTopic.id}" , name:"topic_lists"  }
+                    %table.topic_tbl{:width => "100%"}
+                      %tr
+                        %td
+                          %span
+                            >
+                            -car_no = title.first.split("to ")
+                            .car_no=car_no.last
+                        %td{:colspan => "2"}
+                          %span.title
+                            = title.last
+                        %td
+                          %span.created_at
+                            -if (sTopic.special_type == 3)
+                              .stickytag
+                                = "Sticky"
+                            -else
+                              .normaltag
+                                #{time_ago_in_words(sTopic.created_at)} ago
+                        %td
+                          %span.distance
+                            = @distance[sTopic.id] if @distance.present?
 
       #panel2.content
         %p This is the total user list.
@@ -269,14 +269,14 @@
      //var lat = event.latLng.lat();
      //var long = event.latLng.lng();
 
-     //var lat = handler.getMap().getCenter().lat();
-     //var long = handler.getMap().getCenter().lng();
-     //
+     var lat = handler.getMap().getCenter().lat();
+     var long = handler.getMap().getCenter().lng();
+
      //var latlng   = new google.maps.LatLng(lat, long);
      //getLatLongDetail(latlng);
 
       console.log("zoom event")
-      console.log(lat,long)
+      //console.log(lat,long)
       $.ajax({
 
         data: {
