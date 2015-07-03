@@ -1,8 +1,8 @@
 class CarmicController < ApplicationController
   def index
     @users =User.where("data -> 'color' != ''")
-
-    @topics= Topic.where(hiveapplication_id: 3)
+    hiveapp = HiveApplication.find_by_app_name("Carmmunicate")
+    @topics= Topic.where(hiveapplication_id: hiveapp.id)
 
     @hash = Gmaps4rails.build_markers(@users) do |user, marker|
 
