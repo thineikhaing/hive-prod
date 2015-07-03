@@ -389,6 +389,9 @@
     var format_address;
     var auto_address = $('#autocomplete').val();
 
+    if (city == ''){
+       city = $("#state").text();
+    }
 
     var geocoder = new google.maps.Geocoder();
     var re_lat, re_lng;
@@ -415,7 +418,7 @@
          });
 
        }
-       if(country != '' && city != "" && street != "")
+       else if(country != '' && city != "" && street != "")
        {
          var city_country = city + ', ' + country;
          format_address = street + ', ' + city_country;
@@ -435,7 +438,6 @@
                 alert("Could not find location: " + location);
             }
           });
-
        }
     }else{
        geocoder.geocode( { 'address': auto_address }, function(results, status) {
