@@ -60,6 +60,7 @@ var Carmic = {
                                 lng = location.lng();
 
                                 console.log('City: '+ city + '\n' + 'State: '+ state + '\n' + 'Zip: '+ zip + '\n' + 'Formatted Address: '+ formattedAddress + '\n' + 'Lat: '+ lat + '\n' + 'Lng: '+ lng);
+
                                     $("#country").text(country)
                                     $("#state").text(city)
                                     $("#address").text(formattedAddress)
@@ -97,7 +98,28 @@ var Carmic = {
         })();
 
 
+        $("#state").click(function(){
+            $('#state').hide();
+            $('#address').hide();
+
+            $("#edit_street").val("");
+            $("#edit_city").val("");
+
+            $("#edit_street").show();
+            $("#edit_city").show();
+
+        })
+
+        $("#address").click(function(){
+            $('#address').hide();
+            $("#edit_street").val("");
+            $("#edit_street").show();
+        })
+
+
+
     }
+
 
 
 

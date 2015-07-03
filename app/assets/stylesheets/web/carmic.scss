@@ -472,30 +472,39 @@ $background-color: white;
 .tabs{
   text-align: center;
 }
-#car_tab,#user_tab,#incident_tab{
-  width: 70px;
-  height: 70px;
-  line-height: 70px;
-  border-radius: 45px;
-  text-align: center;
+#car_tab,#message_tab,#incident_tab{
+  width: 150px;
+  height: 100px;
+  line-height: 100px;
+  display: block;
+  //text-align: center !important;
   padding: 0px;
-  margin-right: 50px;
   color: #fff;
-  font-size: 1.2em;
+  font-size: 1.5em;
   border: 2px solid #fff;
   //box-shadow:
   //  0 0 0 2px #fff,
   //  0 0 0 4px rgba(255, 255, 255, 0.2),
   //  0 0 0 4px rgb(7,165,179);
+
+  span{
+    margin-left: -50px;
+  }
 }
 #car_tab{
-  background: rgb(70,224,181);
+  background: transparent;
+  background-image: url("CountCars.png");
+  background-repeat: no-repeat;
 }
-#user_tab{
-  background: rgb(252,137,10);
+#message_tab{
+  background: transparent;
+  background-image: url("CountMessages.png");
+  background-repeat: no-repeat;
 }
 #incident_tab{
-  background: rgb(194,0,22);
+  background: transparent;
+  background-image: url("CountIncidents.png");
+  background-repeat: no-repeat;
 }
 
 #panel1{
@@ -507,16 +516,18 @@ $background-color: white;
 
 #select_country{
   padding: 0px !important;
-  border: 1px solid rgb(6,149,165);
   height: 40px;
   overflow: hidden;
-  float: left;
+  float: right;
 }
 
 #country_list{
-  color: rgb(6,149,165);
+  background: rgb(6,149,165);
+  color: #fff;
   height: 40px;
-  width: 140px;
+  text-indent: 5px;
+  font-size: 16px ;
+  border: none;
   option{
     color: rgb(6,149,165);
     padding: 8px;
@@ -526,7 +537,7 @@ $background-color: white;
 
 #lefttopbar{
   background: rgb(7,165,179);
-  height: 40px;
+  height: 41px;
   border-top-left-radius: 1.5em;
   border-bottom-left-radius: 1.5em;
   line-height: 40px;
@@ -534,8 +545,9 @@ $background-color: white;
   color: #fff;
   font-size: 1.4em ;
   font-family: Labrador-A-Light;
-  border-top: 3px solid rgb(7,165,179);
-  border-bottom: 2px solid rgb(7,165,179);
+  //border-top: 3px solid rgb(7,165,179);
+  //border-bottom: 2px solid rgb(7,165,179);
+  padding-right: 0px;
 }
 
 #lefttopbar{
@@ -554,17 +566,16 @@ $background-color: white;
     font-size: 18px ;
     font-family: Labrador-A-Light;
     outline: 0;
+    margin-top: 3.4px;
   }
 
 }
 
+#autocomplete{
+  display: none;
+}
+
 #ok_find{
-  width: 21px;
-  background: #07a5b3;
-  color: #fff;
-  font-size: 0.8em;
-  padding: 0px;
-  height: 42px;
-  border: 1px solid #fff;
+  background: rgb(7,165,179);
 
 }

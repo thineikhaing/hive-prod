@@ -5,23 +5,37 @@
       DASH beta
   .columns.large-1
     &nbsp;
-  .columns.large-7#lefttopbar
+  .columns.large-9#lefttopbar
+
     .columns.large-4
+      %input#autocomplete{:onkeypress => "geolocate(event)", :placeholder => "Seach By address", :type => "text"}
+
+    .columns.large-2
       %span#country
-    .columns.large-4
+
+    .columns.large-1#remove_country
+      %span
+        >
+      =image_tag("cancel.png", id: 'rm_country', style: 'display:none')
+
+    .columns.large-2
       %span#state
       %input{type:'text', id:'edit_city', style: 'display:none'}
-    .columns.large-4
+    .columns.large-1#remove_state
+      %span
+        >
+      =image_tag("cancel.png", id: 'rm_state', style: 'display:none')
+
+    .columns.large-2
       %span#address
       %input{type:'text', id:'edit_street', style: 'display:none'}
-  .columns.large-2#select_country
-    %input{type:'button', value:'f', id: 'find', style:'display:none'}
-    %input{type:'button', value:'ok', id: 'ok_find' }
-    =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => '---  Select Country ---'})
-.row
-  .columns.large-4.right
-    %input#autocomplete{:onkeypress => "geolocate(event)", :placeholder => "Seach By address", :type => "text"}
+    .columns.large-1#remove_street
+      =image_tag("cancel.png", id: 'rm_street')
 
+    =image_tag("TickOK.png", :alt => "Myanmar", id: 'ok_find')
+
+    .columns.large-2#select_country
+      =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
 
 .row
   .columns.large-6
@@ -33,15 +47,17 @@
       ='+'
   .columns.large-6
     %ul.tabs{"data-tab" => ""}
-      %li.tab-title.active
-        %a{href: "#panel1", id: "car_tab"}
-          =@topics.count
       %li.tab-title
-        %a{href: "#panel2", id: "user_tab"}
-          =@users.count
+        %a{href: "#panel2", id: "car_tab"}
+          %span=@users.count
+
+      %li.tab-title.active
+        %a{href: "#panel1", id: "message_tab"}
+          %span=@topics.count
+
       %li.tab-title
         %a{href: "#panel3", id: "incident_tab"}
-          =0
+          %span=0
     .tabs-content
       #panel1.content.active
         #display_topic
@@ -83,9 +99,7 @@
         %p This is the total user list.
       #panel3.content
         %p This is the total incidents list.
--#.row
--#  .columns.large-12
--#    =paginate @topics_list
+
 :javascript
    Carmic.init();
 
@@ -98,7 +112,7 @@
      handler.buildMap({
         provider: {
           disableDefaultUI:true,
-          zoom: 16,
+          zoom: 18,
           streetViewControl: false,
           panControl: false,
           mapTypeControl: true,
@@ -226,39 +240,40 @@
          });
      }
 
-     google.maps.event.addListener(handler.getMap(), 'click', function( event ){
-       var lat = event.latLng.lat();
-       var long = event.latLng.lng();
-       var latlng   = new google.maps.LatLng(lat, long);
-       getLatLongDetail(latlng);
-
-        console.log("click event")
-        console.log(lat,long)
-        $.ajax({
-
-          data: {
-            cur_lat: lat,
-            cur_long: long
-          },
-          success: function(html) {
-            var htmlobject = $(html);
-
-            var output = htmlobject.find("#display_topic")[0];
-            var testing = new XMLSerializer().serializeToString(output);
-            $("#display_topic").replaceWith(testing);
-
-          }
-        });
-     });
+     //google.maps.event.addListener(handler.getMap(), 'click', function( event ){
+     //  var lat = event.latLng.lat();
+     //  var long = event.latLng.lng();
+     //  var latlng   = new google.maps.LatLng(lat, long);
+     //  getLatLongDetail(latlng);
+     //
+     //   console.log("click event")
+     //   console.log(lat,long)
+     //   $.ajax({
+     //
+     //     data: {
+     //       cur_lat: lat,
+     //       cur_long: long
+     //     },
+     //     success: function(html) {
+     //       var htmlobject = $(html);
+     //
+     //       var output = htmlobject.find("#display_topic")[0];
+     //       var testing = new XMLSerializer().serializeToString(output);
+     //       $("#display_topic").replaceWith(testing);
+     //
+     //     }
+     //   });
+     //});
 
    google.maps.event.addListener(handler.getMap(), 'zoom_changed', function( event ){
      //var lat = event.latLng.lat();
      //var long = event.latLng.lng();
-      var lat = handler.getMap().getCenter().lat();
-      var long = handler.getMap().getCenter().lng();
 
-      var latlng   = new google.maps.LatLng(lat, long);
-      getLatLongDetail(latlng);
+     //var lat = handler.getMap().getCenter().lat();
+     //var long = handler.getMap().getCenter().lng();
+     //
+     //var latlng   = new google.maps.LatLng(lat, long);
+     //getLatLongDetail(latlng);
 
       console.log("zoom event")
       console.log(lat,long)
@@ -288,7 +303,13 @@
       geocoder.geocode( { 'address': country }, function(results, status) {
           if (status == google.maps.GeocoderStatus.OK) {
               map.setCenter(results[0].geometry.location);
-              map.setZoom(10);
+              re_lat =results[0].geometry.location.lat();
+               re_lng =results[0].geometry.location.lng();
+
+               var latlng   = new google.maps.LatLng(re_lat, re_lng);
+               getLatLongDetail(latlng);
+
+              map.setZoom(15);
           } else {
               alert("Could not find location: " + location);
           }
@@ -343,7 +364,14 @@
             geocoder.geocode( { 'address': country }, function(results, status) {
                 if (status == google.maps.GeocoderStatus.OK) {
                     map.setCenter(results[0].geometry.location);
-                    map.setZoom(10);
+
+                    re_lat =results[0].geometry.location.lat();
+                     re_lng =results[0].geometry.location.lng();
+
+                     var latlng   = new google.maps.LatLng(re_lat, re_lng);
+                     getLatLongDetail(latlng);
+
+                    map.setZoom(16);
                 } else {
                     alert("Could not find location: " + location);
                 }
@@ -352,58 +380,132 @@
 
    }
 
-  $("#state").click(function(){
-    $('#state').hide();
-    $('#address').hide();
-    $("#edit_street").show();
-    $("#edit_city").show();
-
-  })
-
-  $("#address").click(function(){
-    $('#address').hide();
-    $("#edit_street").show();
-  })
+  var map = handler.getMap();
 
   $("#ok_find").on("click",function(){
     var street = $("#edit_street").val();
     var city = $("#edit_city").val();
     var country = $('#country').text();
+    var format_address;
+    var auto_address = $('#autocomplete').val();
 
 
+    var geocoder = new google.maps.Geocoder();
+    var re_lat, re_lng;
+
+    if (auto_address == ''){
+
+       if(street == ''){
+         format_address = city + ', ' + country;
+
+         geocoder.geocode( { 'address': format_address }, function(results, status) {
+             if (status == google.maps.GeocoderStatus.OK) {
+                 map.setCenter(results[0].geometry.location);
+
+                 re_lat =results[0].geometry.location.lat();
+                 re_lng =results[0].geometry.location.lng();
+
+                 var latlng   = new google.maps.LatLng(re_lat, re_lng);
+                 getLatLongDetail(latlng);
+
+                 map.setZoom(10);
+             } else {
+                 alert("Could not find location: " + location);
+             }
+         });
+
+       }
+       if(country != '' && city != "" && street != "")
+       {
+         var city_country = city + ', ' + country;
+         format_address = street + ', ' + city_country;
+
+         geocoder.geocode( { 'address': format_address }, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                map.setCenter(results[0].geometry.location);
+
+                re_lat =results[0].geometry.location.lat();
+                re_lng =results[0].geometry.location.lng();
+
+                var latlng   = new google.maps.LatLng(re_lat, re_lng);
+                getLatLongDetail(latlng);
+
+                map.setZoom(16);
+            } else {
+                alert("Could not find location: " + location);
+            }
+          });
+
+       }
+    }else{
+       geocoder.geocode( { 'address': auto_address }, function(results, status) {
+           if (status == google.maps.GeocoderStatus.OK) {
+               map.setCenter(results[0].geometry.location);
+
+               re_lat =results[0].geometry.location.lat();
+               re_lng =results[0].geometry.location.lng();
+
+               var latlng   = new google.maps.LatLng(re_lat, re_lng);
+               getLatLongDetail(latlng);
+
+               map.setZoom(16);
+           } else {
+               alert("Could not find location: " + location);
+           }
+       });
+    }
+
+     //alert(re_lat)
+     //alert(re_lng)
+    //alert(format_address)
+
+
+
+
+    $('#autocomplete').hide();
+    $('#country').show();
     $('#state').show();
     $('#address').show();
     $("#edit_street").hide();
     $("#edit_city").hide();
-    var format_address;
 
-    if(street == ''){
-      format_address = city + ', ' + country;
-    }else{
-      var city_country = city + ', ' + country;
-      format_address = street + ', ' + city_country;
-    }
-
-    //alert(format_address)
-
-
-    var map = handler.getMap();
-    var geocoder = new google.maps.Geocoder();
-
-    geocoder.geocode( { 'address': format_address }, function(results, status) {
-        if (status == google.maps.GeocoderStatus.OK) {
-            map.setCenter(results[0].geometry.location);
-            map.setZoom(10);
-        } else {
-            alert("Could not find location: " + location);
-        }
-    });
+    $("#rm_state").hide();
 
     $('#state').text(city);
     $('#address').text(street);
+    $("#remove_state  > span").text(">");
+    $("#remove_country  > span").text(">");
+    $("#remove_country  > span").text(">");
+    $("#remove_street").show();
   })
    // [END region_geolocation]
 
 
+   $("#remove_street").click(function(){
+       $("#remove_state  > span").text(" ");
+       $('#address').hide();
+       $("#edit_street").hide();
+       $("#rm_state").show();
+       $("#remove_street").hide();
+
+   })
+
+   $("#rm_state").click(function(){
+       $("#remove_country  > span").text(" ");
+       $('#state').hide();
+       $('#address').hide();
+       $("#edit_street").hide();
+       $("#edit_city").hide();
+       $("#rm_state").hide();
+       $("#rm_country").show();
+   })
+
+   $("#rm_country").click(function(){
+       $("#remove_country  > span").text(" ");
+       $("#country").hide();
+       $("#rm_country").hide();
+       $("#autocomplete").val("");
+       $("#autocomplete").show();
+   })
 
   window.setInterval(getCoords, 4000);
