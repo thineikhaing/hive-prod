@@ -8,7 +8,8 @@
   .columns.large-9#lefttopbar
 
     .columns.large-4
-      %input#autocomplete{:onkeypress => "geolocate(event)", :placeholder => "Seach By address", :type => "text"}
+      %input#autocomplete{:onkeypress => "geolocate(event)",
+      :placeholder => "Enter a location", :type => "text"}
 
     .columns.large-2
       %span#country
@@ -106,7 +107,7 @@
    var __markers,marker;
 
    var old_markers;
-
+   var zoomedIn = false;
    var handler = Gmaps.build('Google', { builders: { Marker: InfoBoxBuilder} });
 
      handler.buildMap({
@@ -411,7 +412,11 @@
                  var latlng   = new google.maps.LatLng(re_lat, re_lng);
                  getLatLongDetail(latlng);
 
-                 setTimeout("map.setZoom(10)",1000);
+                 //setTimeout("map.setZoom(10)",1000);
+                 //smoothZoom(map, 10, map.getZoom());
+
+                 smoothZoom(map, 10, map.getZoom(), true);
+                                 zoomedIn = true;
              } else {
                  alert("Could not find location: " + location);
              }
@@ -434,7 +439,11 @@
                 getLatLongDetail(latlng);
 
                 //map.setZoom(16);
-                setTimeout("map.setZoom(16)",1000);
+                //setTimeout("map.setZoom(16)",1000);
+
+                smoothZoom(map, 16, map.getZoom(), true);
+                zoomedIn = true;
+
             } else {
                 alert("Could not find location: " + location);
             }
@@ -451,7 +460,11 @@
                var latlng   = new google.maps.LatLng(re_lat, re_lng);
                getLatLongDetail(latlng);
 
-               setTimeout("map.setZoom(16)",1000);
+               //setTimeout("map.setZoom(16)",1000);
+
+               smoothZoom(map, 16, map.getZoom(), true);
+                               zoomedIn = true;
+
            } else {
                alert("Could not find location: " + location);
            }
@@ -491,7 +504,10 @@
        $("#rm_state").show();
        $("#remove_street").hide();
 
-       setTimeout("map.setZoom(8)",1000);
+       //setTimeout("map.setZoom(8)",1000);
+
+       smoothZoom(map, 5, map.getZoom(), false);
+       zoomedIn = false;
 
    })
 
@@ -503,7 +519,10 @@
        $("#edit_city").hide();
        $("#rm_state").hide();
        $("#rm_country").show();
-       setTimeout("map.setZoom(4)",1000);
+       //setTimeout("map.setZoom(4)",1000);
+
+       smoothZoom(map, 3, map.getZoom(), false);
+       zoomedIn = false;
    })
 
    $("#rm_country").click(function(){
@@ -513,5 +532,51 @@
        $("#autocomplete").val("");
        $("#autocomplete").show();
    })
+
+   function smoothZoom (map, level, cnt, mode) {
+   		//alert('Count: ' + cnt + 'and Max: ' + level);
+
+   		// If mode is zoom in
+   		if(mode == true) {
+
+   			if (cnt >= level) {
+   				return;
+   			}
+   			else {
+   				var z = google.maps.event.addListener(map, 'zoom_changed', function(event){
+   					google.maps.event.removeListener(z);
+   					smoothZoom(map, level, cnt + 1, true);
+   				});
+   				setTimeout(function(){map.setZoom(cnt)}, 80);
+   			}
+   		} else {
+   			if (cnt <= level) {
+   				return;
+   			}
+   			else {
+   				var z = google.maps.event.addListener(map, 'zoom_changed', function(event) {
+   					google.maps.event.removeListener(z);
+   					smoothZoom(map, level, cnt - 1, false);
+   				});
+   				setTimeout(function(){map.setZoom(cnt)}, 80);
+   			}
+   		}
+
+   		   window.smoothZoom = smoothZoom;
+   	}
+
+    function smoothZoomOut (map, level, cnt, mode) {
+        //alert('Count: ' + cnt + 'and Max: ' + level);
+
+        //alert(level)
+        //alert(cnt)
+        // If mode is zoom in
+        var z = google.maps.event.addListener(map, 'zoom_changed', function(event) {
+            google.maps.event.removeListener(z);
+            smoothZoomOut(map, level, cnt - 1, false);
+        });
+        setTimeout(function(){map.setZoom(cnt)}, 80);
+        window.smoothZoomOut = smoothZoomOut;
+    }
 
   window.setInterval(getCoords, 4000);

@@ -53,3 +53,4 @@ function getLatLongDetail(myLatlng) {
 
     window.getLatLongDetail = getLatLongDetail;
 }
+
