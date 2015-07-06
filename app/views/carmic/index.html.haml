@@ -70,7 +70,28 @@
       %input{type:'hidden', value:"#{@topics_list.count rescue '0'}", id:'hid_tcount'}
       %input{type:'hidden', value:"#{@users.count rescue '0'}", id:'hid_ucount'}
       #panel1.content
-        %p This is the total user list.
+        %table.responstable
+          %tr
+            %th CarNo
+            %th Activity
+            %th Speed
+            %th Direction
+
+          - if @users.present?
+            - @users.each do |user|
+              %tr
+                %td{width:"25%"}
+                  %span
+                    =user["data"]["plate_number"]
+                %td{width:"25%",style:'text-align:left'}
+                  %span
+                    =user["data"]["activity"]
+                %td{width:"25%"}
+                  %span
+                    =user["data"]["speed"]
+                %td{width:"25%"}
+                  %span
+                    =user["data"]["direction"]
 
       #panel2.content.active
 
