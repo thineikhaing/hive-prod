@@ -88,7 +88,10 @@
                     =user["data"]["activity"]
                 %td{width:"25%"}
                   %span
-                    =user["data"]["speed"]
+                    -if user["data"]["speed"].to_i > 0
+                      = user["data"]["speed"].to_i * 30
+                    -else
+                      =user["data"]["speed"].to_i
                 %td{width:"25%"}
                   %span
                     =user["data"]["direction"]
