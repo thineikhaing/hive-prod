@@ -53,22 +53,27 @@
       ='-'
     #btn_zoom_in
       ='+'
-  .columns.large-6#display_topic
+  .columns.large-6
     %ul.tabs{"data-tab" => ""}
       %li.tab-title
-        %a{href: "#panel2", id: "car_tab"}
-          %span=@users.count
+        %a{href: "#panel1", id: "car_tab"}
+          %span#user_count=@users.count rescue '0'
 
       %li.tab-title.active
-        %a{href: "#panel1", id: "message_tab"}
-          %span
-            =@topics_list.count rescue '0'
+        %a{href: "#panel2", id: "message_tab"}
+          %span#topic_count=@topics_list.count rescue '0'
 
       %li.tab-title
         %a{href: "#panel3", id: "incident_tab"}
           %span=0
-    .tabs-content
-      #panel1.content.active
+    .tabs-content#display_topic
+      %input{type:'hidden', value:"#{@topics_list.count rescue '0'}", id:'hid_tcount'}
+      %input{type:'hidden', value:"#{@users.count rescue '0'}", id:'hid_ucount'}
+      #panel1.content
+        %p This is the total user list.
+
+      #panel2.content.active
+
         %ul{:id => "nav"}
           - if @topics_list.present?
             - @topics_list.each do |sTopic|
@@ -102,11 +107,9 @@
                         %td
                           %span.distance
                             = @distance[sTopic.id] if @distance.present?
-
-      #panel2.content
-        %p This is the total user list.
       #panel3.content
         %p This is the total incidents list.
+
 
 :javascript
    Carmic.init();
@@ -298,8 +301,12 @@
           var testing = new XMLSerializer().serializeToString(output);
           $("#display_topic").replaceWith(testing);
 
+          $("#user_count").text($("#hid_ucount").val());
+          $("#topic_count").text($("#hid_tcount").val());
+
         }
       });
+
    });
 
 

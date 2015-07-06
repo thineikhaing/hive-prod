@@ -36,7 +36,7 @@ class CarmicController < ApplicationController
     end
 
     if Rails.env.development?
-      @url = "http://localhost:3000/api/downloaddata/retrieve_carmic_user"
+      @url = "http://localhost:5000/api/downloaddata/retrieve_carmic_user"
 
     elsif Rails.env.staging?
       @url = "http://h1ve-staging.herokuapp.com/api/downloaddata/retrieve_carmic_user"
