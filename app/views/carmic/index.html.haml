@@ -57,7 +57,7 @@
     %ul.tabs{"data-tab" => ""}
       %li.tab-title
         %a{href: "#panel1", id: "car_tab"}
-          %span#user_count=@users.count rescue '0'
+          %span#user_count=@activeUsersArray.count rescue '0'
 
       %li.tab-title.active
         %a{href: "#panel2", id: "message_tab"}
@@ -68,19 +68,23 @@
           %span=0
     .tabs-content#display_topic
       %input{type:'hidden', value:"#{@topics_list.count rescue '0'}", id:'hid_tcount'}
-      %input{type:'hidden', value:"#{@users.count rescue '0'}", id:'hid_ucount'}
+      %input{type:'hidden', value:"#{@activeUsersArray.count rescue '0'}", id:'hid_ucount'}
       #panel1.content
         %table.responstable
           %tr
+            %th id
             %th CarNo
             %th Activity
             %th Speed
             %th Direction
 
-          - if @users.present?
-            - @users.each do |user|
+          - if @activeUsersArray.present?
+            - @activeUsersArray.each do |user|
               %tr
-                %td{width:"25%"}
+                %td{width:"5%"}
+                  %span
+                    =user["id"]
+                %td{width:"20%"}
                   %span
                     =user["data"]["plate_number"]
                 %td{width:"25%",style:'text-align:left'}
@@ -275,30 +279,33 @@
          });
      }
 
-     //google.maps.event.addListener(handler.getMap(), 'click', function( event ){
-     //  var lat = event.latLng.lat();
-     //  var long = event.latLng.lng();
-     //  var latlng   = new google.maps.LatLng(lat, long);
-     //  getLatLongDetail(latlng);
-     //
-     //   console.log("click event")
-     //   console.log(lat,long)
-     //   $.ajax({
-     //
-     //     data: {
-     //       cur_lat: lat,
-     //       cur_long: long
-     //     },
-     //     success: function(html) {
-     //       var htmlobject = $(html);
-     //
-     //       var output = htmlobject.find("#display_topic")[0];
-     //       var testing = new XMLSerializer().serializeToString(output);
-     //       $("#display_topic").replaceWith(testing);
-     //
-     //     }
-     //   });
-     //});
+     google.maps.event.addListener(handler.getMap(), 'click', function( event ){
+       var lat = event.latLng.lat();
+       var long = event.latLng.lng();
+       var latlng   = new google.maps.LatLng(lat, long);
+       getLatLongDetail(latlng);
+
+        console.log("click event")
+        console.log(lat,long)
+        $.ajax({
+
+          data: {
+            cur_lat: lat,
+            cur_long: long
+          },
+          success: function(html) {
+            var htmlobject = $(html);
+
+            var output = htmlobject.find("#display_topic")[0];
+            var testing = new XMLSerializer().serializeToString(output);
+            $("#display_topic").replaceWith(testing);
+
+            $("#user_count").text($("#hid_ucount").val());
+            $("#topic_count").text($("#hid_tcount").val());
+
+          }
+        });
+     });
 
    google.maps.event.addListener(handler.getMap(), 'zoom_changed', function( event ){
      //var lat = event.latLng.lat();

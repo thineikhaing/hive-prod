@@ -35,6 +35,7 @@ class CarmicController < ApplicationController
       @longitude = params[:cur_long]
       @posts = nil
       get_all_topics(@latitude, @longitude)
+      get_nearest_user(@latitude, @longitude)
     end
 
     if Rails.env.development?
@@ -48,9 +49,35 @@ class CarmicController < ApplicationController
 
 
 
+
+  end
+
+  def get_nearest_user(lat, lng)
+    p "get all get_nearest_user"
+    @usersArray = []
+    @activeUsersArray = []
+
+    users = User.nearest(lat, lng, 7)
+    users =users.where("data -> 'color' != ''")
+
+    users.each do |u|
+      if u.check_in_time.present?
+        @usersArray.push(u)
+      end
+    end
+
+    p "nearest user"
+
+    @usersArray.each do |ua|
+        user = User.find(ua.id)
+        p "active user array"
+        p @activeUsersArray.count
+        @activeUsersArray.push(user)
+    end
   end
 
   def get_all_topics(lat,lng)
+    p "get all topics"
     places = Place.nearest(lat,lng,5)
     if places.present?
       places_id = []
