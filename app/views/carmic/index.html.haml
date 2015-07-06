@@ -72,7 +72,6 @@
       #panel1.content
         %table.responstable
           %tr
-            %th id
             %th CarNo
             %th Activity
             %th Speed
@@ -81,9 +80,6 @@
           - if @activeUsersArray.present?
             - @activeUsersArray.each do |user|
               %tr
-                %td{width:"5%"}
-                  %span
-                    =user["id"]
                 %td{width:"20%"}
                   %span
                     =user["data"]["plate_number"]
@@ -100,7 +96,7 @@
                   %span
                     =user["data"]["direction"]
 
-      #panel2.content.active
+      #panel2.content
 
         %ul{:id => "nav"}
           - if @topics_list.present?

@@ -57,7 +57,7 @@ class CarmicController < ApplicationController
     @usersArray = []
     @activeUsersArray = []
 
-    users = User.nearest(lat, lng, 7)
+    users = User.nearest(lat, lng, 6)
     users =users.where("data -> 'color' != ''")
 
     users.each do |u|
