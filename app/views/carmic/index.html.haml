@@ -5,7 +5,12 @@
       DASH beta
   .columns.large-1
     &nbsp;
-  .columns.large-9#lefttopbar
+  .columns.large-9{style:'line-height:30px;color:rgb(7,165,179)'}
+    %span
+      Log in | Sign Up
+    %span.right
+      Support
+  .columns.large-9#lefttopbar.right
 
     .columns.large-4
       %input#autocomplete{:onkeypress => "geolocate(event)",
@@ -315,6 +320,8 @@
               alert("Could not find location: " + location);
           }
       });
+
+
   } );
 
   //$('#country_list').attr('size', 5);
@@ -412,11 +419,8 @@
                  var latlng   = new google.maps.LatLng(re_lat, re_lng);
                  getLatLongDetail(latlng);
 
-                 //setTimeout("map.setZoom(10)",1000);
-                 //smoothZoom(map, 10, map.getZoom());
-
                  smoothZoom(map, 10, map.getZoom(), true);
-                                 zoomedIn = true;
+                 zoomedIn = true;
              } else {
                  alert("Could not find location: " + location);
              }
@@ -435,11 +439,8 @@
                 re_lat =results[0].geometry.location.lat();
                 re_lng =results[0].geometry.location.lng();
 
-                var latlng   = new google.maps.LatLng(re_lat, re_lng);
-                getLatLongDetail(latlng);
-
-                //map.setZoom(16);
-                //setTimeout("map.setZoom(16)",1000);
+                //var latlng   = new google.maps.LatLng(re_lat, re_lng);
+                //getLatLongDetail(latlng);
 
                 smoothZoom(map, 16, map.getZoom(), true);
                 zoomedIn = true;
@@ -457,13 +458,11 @@
                re_lat =results[0].geometry.location.lat();
                re_lng =results[0].geometry.location.lng();
 
-               var latlng   = new google.maps.LatLng(re_lat, re_lng);
-               getLatLongDetail(latlng);
-
-               //setTimeout("map.setZoom(16)",1000);
+               //var latlng   = new google.maps.LatLng(re_lat, re_lng);
+               //getLatLongDetail(latlng);
 
                smoothZoom(map, 16, map.getZoom(), true);
-                               zoomedIn = true;
+               zoomedIn = true;
 
            } else {
                alert("Could not find location: " + location);
@@ -562,21 +561,7 @@
    			}
    		}
 
-   		   window.smoothZoom = smoothZoom;
-   	}
-
-    function smoothZoomOut (map, level, cnt, mode) {
-        //alert('Count: ' + cnt + 'and Max: ' + level);
-
-        //alert(level)
-        //alert(cnt)
-        // If mode is zoom in
-        var z = google.maps.event.addListener(map, 'zoom_changed', function(event) {
-            google.maps.event.removeListener(z);
-            smoothZoomOut(map, level, cnt - 1, false);
-        });
-        setTimeout(function(){map.setZoom(cnt)}, 80);
-        window.smoothZoomOut = smoothZoomOut;
-    }
+   		window.smoothZoom = smoothZoom;
+   }
 
   window.setInterval(getCoords, 4000);

@@ -253,10 +253,10 @@ $background-color: white;
 
 #dashbeta{
   background: rgb(7,165,179);
-  height: 50px;
+  height: 68px;
   border-top-right-radius: 1.5em;
   border-bottom-right-radius: 1.5em;
-  line-height: 50px;
+  line-height: 68px;
   text-align: center;
   color: #fff;
   font-size: 2em ;
@@ -516,7 +516,7 @@ $background-color: white;
 
 #select_country{
   padding: 0px !important;
-  height: 40px;
+  height: 38px;
   overflow: hidden;
   float: right;
 }
@@ -524,7 +524,7 @@ $background-color: white;
 #country_list{
   background: rgb(6,149,165);
   color: #fff;
-  height: 40px;
+  height: 38px;
   text-indent: 5px;
   font-size: 16px ;
   border: none;
@@ -537,10 +537,10 @@ $background-color: white;
 
 #lefttopbar{
   background: rgb(7,165,179);
-  height: 41px;
+  height: 38px;
   border-top-left-radius: 1.5em;
   border-bottom-left-radius: 1.5em;
-  line-height: 40px;
+  line-height: 38px;
   text-align: center;
   color: #fff;
   font-size: 1.4em ;
@@ -548,6 +548,7 @@ $background-color: white;
   //border-top: 3px solid rgb(7,165,179);
   //border-bottom: 2px solid rgb(7,165,179);
   padding-right: 0px;
+  margin-bottom: 20px;
 }
 
 #lefttopbar{
