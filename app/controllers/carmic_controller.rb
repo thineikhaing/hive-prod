@@ -30,6 +30,7 @@ class CarmicController < ApplicationController
     #lng = 103.86268615722656
     #get_all_topics(lat, lng)
 
+
     if params[:cur_lat].present?
       @latitude = params[:cur_lat]
       @longitude = params[:cur_long]
@@ -57,7 +58,7 @@ class CarmicController < ApplicationController
     @usersArray = []
     @activeUsersArray = []
 
-    users = User.nearest(lat, lng, 6)
+    users = User.nearest(lat, lng, 4)
     users =users.where("data -> 'color' != ''")
 
     users.each do |u|
@@ -70,10 +71,11 @@ class CarmicController < ApplicationController
 
     @usersArray.each do |ua|
         user = User.find(ua.id)
-        p "active user array"
-        p @activeUsersArray.count
         @activeUsersArray.push(user)
     end
+
+    p "active user array"
+    p @activeUsersArray.count
   end
 
   def get_all_topics(lat,lng)

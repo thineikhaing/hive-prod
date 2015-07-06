@@ -6,6 +6,7 @@
   .columns.large-1
     &nbsp;
   .columns.large-9{style:'line-height:30px;color:rgb(7,165,179)'}
+    -##address
     %span
       %a Log in
       |
@@ -138,7 +139,7 @@
 :javascript
    Carmic.init();
 
-   var __markers,marker;
+   var __markers,marker,markers;
 
    var old_markers;
    var zoomedIn = false;
@@ -164,7 +165,7 @@
         }, function(){
 
 
-       var markers = handler.addMarkers(#{raw @hash.to_json});
+       markers = handler.addMarkers(#{raw @hash.to_json});
 
 
        __markers = markers
@@ -179,6 +180,11 @@
        handler.bounds.extendWith(markers);
 
        handler.fitMapToBounds();
+
+       // Fired when the map becomes idle after panning or zooming.
+       google.maps.event.addListener(map, 'idle', function() {
+           showVisibleMarkers();
+       });
 
      });
 
@@ -212,6 +218,7 @@
            console.log(markerJSON["lat"])
            console.log(markerJSON["marker_id"])
            for (var i = 0; i < oldMarkers.length; i++) {
+
            if (oldMarkers[i]["marker_id"] == markerJSON["marker_id"]) {
                var oldLat = oldMarkers[i]["lat"];
                var oldLng = oldMarkers[i]["lng"];
@@ -275,11 +282,37 @@
          });
      }
 
+     function showVisibleMarkers() {
+     var visibleMarker = [];
+      var bounds = handler.getMap().getBounds(),
+          count = 0;
+          console.log(bounds)
+          console.log("original")
+          console.log(__markers)
+      for (var i = 0; i < __markers.length; i++) {
+              var marker = __markers[i];
+
+              if(bounds.contains(marker.getServiceObject().getPosition())===true) {
+                  console.log("Visible marker")
+                  console.log(marker)
+                  console.log(marker["marker_id"])
+                  var m_id = marker["marker_id"]
+
+                  visibleMarker.push(m_id);
+
+                  count++;
+              }
+          }
+
+        $("#user_count").text(count);
+        console.log(visibleMarker)
+      }
+
      google.maps.event.addListener(handler.getMap(), 'click', function( event ){
        var lat = event.latLng.lat();
        var long = event.latLng.lng();
        var latlng   = new google.maps.LatLng(lat, long);
-       getLatLongDetail(latlng);
+       //getLatLongDetail(latlng);
 
         console.log("click event")
         console.log(lat,long)
@@ -296,7 +329,6 @@
             var testing = new XMLSerializer().serializeToString(output);
             $("#display_topic").replaceWith(testing);
 
-            $("#user_count").text($("#hid_ucount").val());
             $("#topic_count").text($("#hid_tcount").val());
 
           }
@@ -310,29 +342,23 @@
      var lat = handler.getMap().getCenter().lat();
      var long = handler.getMap().getCenter().lng();
 
-     //var latlng   = new google.maps.LatLng(lat, long);
-     //getLatLongDetail(latlng);
-
-      console.log("zoom event")
-      //console.log(lat,long)
       $.ajax({
 
-        data: {
-          cur_lat: lat,
-          cur_long: long
-        },
-        success: function(html) {
-          var htmlobject = $(html);
+       data: {
+         cur_lat: lat,
+         cur_long: long
+       },
+       success: function(html) {
+         var htmlobject = $(html);
 
-          var output = htmlobject.find("#display_topic")[0];
-          var testing = new XMLSerializer().serializeToString(output);
-          $("#display_topic").replaceWith(testing);
+         var output = htmlobject.find("#display_topic")[0];
+         var testing = new XMLSerializer().serializeToString(output);
+         $("#display_topic").replaceWith(testing);
 
-          $("#user_count").text($("#hid_ucount").val());
-          $("#topic_count").text($("#hid_tcount").val());
+         $("#topic_count").text($("#hid_tcount").val());
 
-        }
-      });
+       }
+     });
 
    });
 
@@ -505,13 +531,6 @@
            }
        });
     }
-
-     //alert(re_lat)
-     //alert(re_lng)
-    //alert(format_address)
-
-
-
 
     $('#autocomplete').hide();
     $('#country').show();
