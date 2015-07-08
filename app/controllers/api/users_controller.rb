@@ -625,6 +625,56 @@ class Api::UsersController < ApplicationController
     render json: { username: User.generate_new_username }
   end
 
+
+  def create_incident_history
+    host_id = params[:host_id]
+    peer_id = params[:peer_id]
+    host_data = params[:host_data]
+    peer_data = params[:peer_data]
+
+    defined_Fields = Hash.new
+
+    appField = AppAdditionalField.where( :table_name => "IncidentHistory")
+    appField.each do |field|
+      defined_Fields[field.additional_column_name] = nil
+    end
+
+    if host_data.present?
+      host_data = defined_Fields.deep_merge(host_data)
+      hostresult = Hash.new
+      defined_Fields.keys.each do |key|
+        hostresult.merge!(host_data.extract! (key))
+      end
+    else
+      hostresult = defined_Fields
+    end
+
+
+    if peer_data.present?
+      peer_data = defined_Fields.deep_merge(peer_data)
+      peerresult = Hash.new
+      defined_Fields.keys.each do |key|
+        peerresult.merge!(peer_data.extract! (key))
+      end
+    else
+      peerresult = defined_Fields
+    end
+
+    if !host_id.nil? && !peer_id.nil?
+
+    incident_hostory = IncidentHistory.create(host_id: host_id,
+                       peer_id: peer_id,
+                       host_data: hostresult,
+                       peer_data: peerresult)
+
+      render json: { status: "ok"}
+    else
+      render json: { status: "fail"}
+    end
+
+
+  end
+
   private
 
   def user_params

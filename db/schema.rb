@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150701070213) do
+ActiveRecord::Schema.define(version: 20150708064958) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -147,6 +147,15 @@ ActiveRecord::Schema.define(version: 20150701070213) do
     t.string   "icon_url"
     t.string   "theme_color", default: "#451734"
     t.integer  "devuser_id",                      null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "incident_histories", force: true do |t|
+    t.integer  "host_id"
+    t.integer  "peer_id"
+    t.hstore   "host_data"
+    t.hstore   "peer_data"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -13,6 +13,8 @@ class User < ActiveRecord::Base
   has_many  :user_accounts
   has_many :car_action_logs
 
+  belongs_to :incident_history
+
   # Setup hstore
   store_accessor :data
   include Authenticable

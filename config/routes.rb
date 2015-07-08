@@ -116,6 +116,7 @@ Rails.application.routes.draw do
     match "users/update_carmmunicate_user"          => "users#update_carmmunicate_user"         , via: [:get, :post]
     match "users/status"                            => "users#status"                           , via: [:get, :post]
     match "users/regenerate_username"               => "users#regenerate_username"              , via: [:get, :post]
+    match "users/create_incident_history"           => "users#create_incident_history"          , via: [:get, :post]
 
     match "topics/create"                           => "topics#create"                          , via: [:get, :post]
     match "topics/search"                           => "topics#search"                          , via: [:get, :post]
