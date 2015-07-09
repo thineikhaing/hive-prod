@@ -666,10 +666,32 @@ class Api::UsersController < ApplicationController
 
     if !host_id.nil? && !peer_id.nil?
 
-    incident_hostory = IncidentHistory.create(host_id: host_id,
-                       peer_id: peer_id,
-                       host_data: hostresult,
-                       peer_data: peerresult)
+      old_log = IncidentHistory.last
+
+      if old_log.present?
+        p "time difference"
+        time_diff_hr = (Time.parse(DateTime.now.to_s) - Time.parse(old_log.created_at.to_s))/3600
+
+        p time_diff_min = (time_diff_hr * 3600) / 60
+
+
+        if (time_diff_min >= 0.5 && old_log.peer_id == host_id &&  old_log.host_id == peer_id )  ||
+            (time_diff_min >= 0.5 && old_log.peer_id == peer_id &&  old_log.host_id == host_id )
+          incident_hostory = IncidentHistory.create(host_id: host_id,
+                                                    peer_id: peer_id,
+                                                    host_data: hostresult,
+                                                    peer_data: peerresult)
+        end
+
+      else
+
+        incident_hostory = IncidentHistory.create(host_id: host_id,
+                                                  peer_id: peer_id,
+                                                  host_data: hostresult,
+                                                  peer_data: peerresult)
+
+      end
+
 
       render json: { status: "ok"}
     else
