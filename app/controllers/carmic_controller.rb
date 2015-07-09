@@ -2,13 +2,10 @@ class CarmicController < ApplicationController
   def index
     @users =User.where("data -> 'color' != ''")
     @car_action_logs = CarActionLog.order("created_at desc")
-
     hiveapp = HiveApplication.find_by_app_name("Carmmunicate")
+
     @topics= Topic.where(hiveapplication_id: hiveapp.id)
-
     @hash = Gmaps4rails.build_markers(@users) do |user, marker|
-
-      content = '<p class="hook">'+user.data["plate_number"]+'</p>'
 
       marker.lat user.last_known_latitude
       marker.lng user.last_known_longitude
@@ -26,13 +23,10 @@ class CarmicController < ApplicationController
 
     end
 
-
     @latitude = params[:cur_lat]
     @longitude = params[:cur_long]
 
-
     if params[:user_ids]
-
       @activeUsersArray = []
       p "user array"
       p user_arr = params[:user_ids]
@@ -40,10 +34,6 @@ class CarmicController < ApplicationController
         user = User.find(id)
         @activeUsersArray.push(user)
       end
-
-      p "active users"
-      p @activeUsersArray.count
-
     end
 
     if params[:cur_lat].present?
@@ -52,17 +42,27 @@ class CarmicController < ApplicationController
       get_nearest_user(@latitude, @longitude)
     end
 
+    if  params[:id].present?
+      p "got topic id"
+      @post_lists = params[:id]
+      get_all_posts(@post_lists)
+
+    end
+
     if Rails.env.development?
       @url = "http://localhost:5000/api/downloaddata/retrieve_carmic_user"
+      @image_url = AWS_Link::AWS_Image_D_Link
+      @audio_url = AWS_Link::AWS_Audio_D_Link
 
     elsif Rails.env.staging?
       @url = "http://h1ve-staging.herokuapp.com/api/downloaddata/retrieve_carmic_user"
+      @image_url = AWS_Link::AWS_Image_S_Link
+      @audio_url = AWS_Link::AWS_Audio_S_Link
     else
       @url = "http://h1ve-production.herokuapp.com/api/downloaddata/retrieve_carmic_user"
+      @image_url = AWS_Link::AWS_Image_P_Link
+      @audio_url = AWS_Link::AWS_Audio_P_Link
     end
-
-
-
 
   end
 
@@ -109,6 +109,28 @@ class CarmicController < ApplicationController
         end
       end
     end
+  end
+
+  def get_all_posts(topicid)
+
+      p @topic_title = Topic.find(topicid).title
+
+      p @topic = Topic.where(id: topicid).first.reload
+      p @posts = @topic.posts.includes(:user).sort #limits max 20 posts???
+      @post_avatar_url = Hash.new
+
+      @posts.each do |post|
+        username = post.user.username
+        get_avatar(username)
+        p @post_avatar_url[post.id] = request.url.split('?').first + (@avatar_url)
+      end
+
+    @topicid = Integer(topicid)
+
+  end
+
+  def create_post
+
   end
 
   def get_avatar(username)

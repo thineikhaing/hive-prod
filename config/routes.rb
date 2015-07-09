@@ -40,7 +40,7 @@ Rails.application.routes.draw do
   match "hiveapplication/delete_post"          , path:"delete_post"              , via: [:get,:post]
   match "hiveapplication/edit_topic"           , path:"edit_topic"              , via: [:get,:post]
   match "hiveapplication/edit_post"            , path:"edit_post"               , via: [:get,:post]
-
+  match "carmic/create_post"          , path:"create_post"             , via: [:get,:post]
   #get "hiveapplication/sign_up", path: "sign_up"
   #post "hiveapplication/sign_up", path: "sign_up"
   resources :places

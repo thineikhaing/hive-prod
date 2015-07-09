@@ -1,0 +1,15 @@
+=form_for([@topic, Post.new], :url => {:action => 'create_post', :id=> @topic.id}, :html => {:id => 'post_form'}, :remote => true) do |f|
+  %table{:width =>"100%"}
+    - if current_user.present?
+      %tr
+        %td{:width => "90%"}
+          = f.text_field :content, placeholder: "join the conversation"
+        %td{:width => "10%"}
+          = submit_tag 'OK', :id => 'create_button',   :name => 'create_button'
+    - else
+      %tr
+        %td{:width => "90%"}
+          = f.text_field :content, placeholder: "Please sign in to post a message",disabled: "disabled"
+        %td{:width => "10%"}
+          = f.submit 'OK', :id => 'create_button', disabled: "disabled" ,:name => 'create_button'
+

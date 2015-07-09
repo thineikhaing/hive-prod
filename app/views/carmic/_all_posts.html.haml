@@ -1,0 +1,97 @@
+%table{:width => "100%;",:height => '100%', :border => "0px"}
+  %tr
+    %td
+      #posts
+        - if @posts.present?
+          - @posts.each do |post|
+            -post_avatar = @post_avatar_url[post.id].to_s
+            -substring = "carmic"
+            -post_avatar.slice! substring
+
+            %table{:width => "100%", :border => "0px"}
+              - if current_user.present? && current_user.id == post.user.id
+                -if post.post_type == 0
+                  %tr
+                    %td{:width => "15%"}
+                      .avatar.me
+                        %img.post_image{:height => "40px", :src => post_avatar, :width => "40px", :id => "img_post"}/
+                      .bubble.me
+                        %username.me
+                          = post.username
+                        %content
+                          %br
+                          =post.content
+                  %tr
+                    %td
+                      .post_time.me
+                        #{time_ago_in_words(post.created_at)} ago
+                        = @postdistance[post.id] rescue ''
+                -else
+                  %tr
+                    %td{:width => "85%"}
+                      %table
+                        %tr
+                          %td
+                            %table
+                              %tr
+                                %td
+                                  %username.me
+                                    = post.username
+                              %tr
+                                %td
+                                  -if post.post_type == 2
+                                    %embed.upload_audio_container.me{:src => @audio_url+ post.img_url,:autoplay => "false"}/
+                    %td{:width => "15%"}
+                      .avatar.me
+                        %img.post_image{:height => "40px", :src => post_avatar, :width => "40px", :id => "img_post"}/
+                    %td
+
+                  %tr
+                    %td{:colspan =>"2"}
+                      .post_time.me
+                        #{time_ago_in_words(post.created_at)} ago
+                        = @postdistance[post.id] rescue ''
+              - else
+                -if post.post_type == 0
+                  %tr
+                    %td{:width => "15%"}
+                      .avatar.you
+                        %img.post_image{:height => "40px", :src => post_avatar, :width => "40px"}/
+                      .bubble.you
+                        %username.you
+                          = post.username
+                        %content
+                          %br
+                          = post.content
+                  %tr
+                    %td
+                      .post_time.you
+                        #{time_ago_in_words(post.created_at)} ago
+                        = @postdistance[post.id] rescue ''
+                -else
+                  %tr
+                    %td{:width => "15%"}
+                      .avatar.you
+                        %img.post_image{:height => "40px", :src => post_avatar, :width => "40px", :id => "img_post"}/
+                    %td
+                      %table
+                        %tr
+                          %td
+                            %table
+                              %tr
+                                %td
+                                  %username.you
+                                    = post.username
+                              %tr
+                                %td
+                                  -if post.post_type == 2
+                                    %embed.upload_audio_container.you{:src => @audio_url + post.img_url,:autoplay => "false"}/
+                  %tr
+                    %td{:colspan =>"2"}
+                      .post_time.you
+                        #{time_ago_in_words(post.created_at)} ago
+                        = @postdistance[post.id] rescue ''
+  %tr
+    %td{style:"padding:0px;"}
+      #create_post
+        = render "carmic/create_post"

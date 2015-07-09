@@ -123,7 +123,7 @@
 
                 -if (sTopic.offensive < 3)
                   %li
-                    %a{href:"#", id:"topicid", topicID: "#{sTopic.id}" , name:"topic_lists"  }
+                    %a{href:"#", id:"topicid", topicID: "#{sTopic.id}" , name:"topic_lists"  ,onclick:"retrieve_posts(this);"}
                       %table.topic_tbl{:width => "100%"}
                         %tr
                           %td{width:"30%"}
@@ -140,15 +140,17 @@
                             %span.right
                               #{time_ago_in_words(sTopic.created_at)} ago
         %br
-        #post_content
-          1  fsfasfa
+        #posts_display
+          - if @post_lists.present?
+            = render :partial => "carmic/all_posts"
+
       #panel3.content
         %p This is the total incidents list.
 
 
 :javascript
    Carmic.init();
-
+   $("#map_content").show();
    var __markers,marker,markers;
 
    var old_markers;
@@ -423,11 +425,6 @@
 
   } );
 
-  //$('#country_list').attr('size', 5);
-
-   // This example displays an address form, using the autocomplete feature
-               // of the Google Places API to help users fill in the information.
-
    var placeSearch, autocomplete;
    var componentForm = {
      street_number: 'short_name',
@@ -555,10 +552,7 @@
                map.setCenter(results[0].geometry.location);
 
                re_lat =results[0].geometry.location.lat();
-               re_lng =results[0].geometry.location.lng();
-
-               //var latlng   = new google.maps.LatLng(re_lat, re_lng);
-               //getLatLongDetail(latlng);
+               re_lng =results[0].geometry.location.lng();;
 
                smoothZoom(map, 16, map.getZoom(), true);
                zoomedIn = true;

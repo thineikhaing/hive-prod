@@ -409,50 +409,19 @@ $background-color: white;
 
 }
 
-#post_content{
-  border-top-left-radius: 1.5em;
-  border-bottom-left-radius: 1.5em;
-  width: auto;
-  height: 460px;
-  box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
-  overflow-y : scroll;
-  border: 1px solid rgb(7,165,179);
-  border-right:1px solid transparent;
-  background: rgb(255, 255, 255); /* The Fallback */
-  background: rgba(255, 255, 255, 0.5);
-
-}
-
-
-
 .topic_tbl{
-  //background: #fff;
-  //height: 40px;
-  //border-top-left-radius: 1.6em;
-  //border-bottom-left-radius: 1.6em;
-  ////border: 2px solid rgb(7,165,179);
-  //line-height: 40px;
-  //text-align: center;
-  //color: rgb(7,165,179) !important;
-  //font-size: 1em;
-  //margin-top: 10px;
-  //border-bottom: 2px solid rgb(7,165,179) !important;
-  //border-top: 2px solid rgb(7,165,179) !important;
-  //box-sizing:border-box;
-  //-moz-box-sizing:border-box;
-  //-webkit-box-sizing:border-box;
-  //overflow: hidden;
   border-collapse:separate;
   border-spacing:0 5px;
 
 }
 
 .topic_row{
-    background: #fff;
-    border-top-left-radius: 1.6em;
-    border-bottom-left-radius: 1.6em;
-    border: 1px solid rgb(7,165,179);
-    border-right:1px solid transparent;
+  height: 50px;
+  background: #fff;
+  border-top-left-radius: 1.6em;
+  border-bottom-left-radius: 1.6em;
+  border: 1px solid rgb(7,165,179);
+  border-right:1px solid transparent;
 }
 
 .topic_tbl span{
@@ -467,7 +436,7 @@ $background-color: white;
   }
 
   td{
-    height: 40px;
+    height: 50px;
     background: rgb(7,165,179);
     color: #fff !important;
   }
@@ -482,6 +451,7 @@ $background-color: white;
     border-bottom-left-radius: 2em;
     border: 3px solid #fff;
     float: right;
+    line-height: 30px;
   }
 
 }
@@ -755,6 +725,196 @@ $header-border: $table-cell-border) {
 
 #main_content{
   height: 100%;
+}
+
+//Posts
+
+#posts_display{
+  border-top-left-radius: 1.5em;
+  border-bottom-left-radius: 1.5em;
+  width: auto;
+  box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  overflow    : none;
+  height: 405px;
+  width: 100%;
+  border: 1px solid rgb(7,165,179);
+  border-right:1px solid transparent;
+  background: rgb(255, 255, 255); /* The Fallback */
+  background: rgba(255, 255, 255, 0.7);
+  //display: none;
+
+}
+
+#create_post{
+  height: 60px;
+  width: 100%;
+  //border      : 0px solid #f5f5f5;
+  background-color:rgb(7,165,179);
+
+  color       : #6E4838;
+  border-radius: 2px;
+  border-bottom-left-radius: 1.5em;
+  input::-webkit-input-placeholder {
+    color:#90A3B5;
+  }
+  input::-moz-placeholder {}
+  input::-ms-input-placeholder {}
+  input[type=submit] {
+    width       : 50px;
+    height: 25px;
+    float : right;
+    margin:10px 10px 10px 25px;
+    background-color: #fff;
+    border-radius: 5px;
+    color: rgb(7,165,179);;
+    font-size: 16px;
+    border-color:rgb(7,165,179);
+  }
+}
+
+
+#post_form {
+  margin            : 0 10px 10px 10px;
+  overflow          : hidden;
+
+  form {
+    label { display   : none; }
+
+    input[type=text] {
+      float           : left;
+      width           : 395px;
+      margin-right    : 10px;
+    }
+
+    input[type=submit] {
+      margin          : 0px;
+      padding         : 0px;
+      float           : left;
+    }
+  }
+}
+
+
+#posts {
+  margin:0.8em;
+  //background: #F0F0F0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 300px;
+  position: relative;
+  border-left-color: white;
+  .post_time{
+    display       : block;
+    height        : 48px;
+    margin: 0px 10px;
+    color: #167F92;
+    font-family: RBNo31Medium;
+    font-size: 12px;
+  }
+
+  .avatar
+  {
+    display       : block;
+    height        : 48px;
+    width         : 48px;
+    margin-right  : 16px;
+    background-repeat   :no-repeat;
+    background-position : 50% 50%;
+    margin: 5px 0px ;
+    border: 2px solid rgb(7,165,179);
+    box-shadow: 1px 1px 1px rgb(7,165,179);
+    border-radius: 5px;
+    margin: 3px;
+
+  }
+
+
+  .chat {
+    width: 200px;
+  }
+
+  .bubble{
+    background-color: #F2F2F2;
+    border-radius: 5px;
+    box-shadow: 0 0 6px #B2B2B2;
+    display: inline-block;
+    padding: 10px 18px;
+    position: relative;
+    margin: 5px 20px;
+    max-width: 300px;
+    overflow: visible;
+  }
+
+  .bubble::before{
+    background-color: #F2F2F2;
+    content: "\00a0";
+    display: block;
+    max-width: 200px;
+    height: 16px;
+    position: absolute;
+
+    top: 11px;
+    transform:         rotate( 29deg ) skew( -35deg );
+    -moz-transform:    rotate( 29deg ) skew( -35deg );
+    -ms-transform:     rotate( 29deg ) skew( -35deg );
+    -o-transform:      rotate( 29deg ) skew( -35deg );
+    -webkit-transform: rotate( 29deg ) skew( -35deg );
+    width:  20px;
+  }
+
+  .me {
+    float: right;
+  }
+
+  .upload_audio_container{
+    width: auto;
+    height: 60px;
+  }
+
+  .me::before {
+    //box-shadow: -2px 2px 2px 0 rgba( 178, 178, 178, .4 );
+    box-shadow: 2px -2px 2px 0 rgba( 178, 178, 178, .4 );
+    right: -9px;
+  }
+
+  .you {
+    float: left;
+  }
+
+  .you::before {
+    //box-shadow: 2px -2px 2px 0 rgba( 178, 178, 178, .4 );
+    box-shadow: -2px 2px 2px 0 rgba( 178, 178, 178, .4 );
+    left: -9px;
+  }
+
+  username.you {
+    font-size: 12px;
+    color: #167F92;
+    font-family: RBNo31Medium;
+    float: left;
+    text-transform: uppercase;
+  }
+  username.me {
+    color: #167F92;
+    font-family: RBNo31Medium;
+    font-size: 12px;
+    float: right;
+    text-transform: uppercase;
+  }
+  content {
+    font-size: 16px;
+    color: #167F92;
+    font-weight: normal;
+  }
+  a,
+  a:visited {
+    font-size: 16px;
+    color: #167F92;
+    font-weight: normal;
+    &:hover {
+      text-decoration : underline;
+    }
+  }
 }
 
 // Include the mixin (with extra options as overrides)

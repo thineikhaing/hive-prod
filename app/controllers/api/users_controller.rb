@@ -629,8 +629,8 @@ class Api::UsersController < ApplicationController
   def create_incident_history
     host_id = params[:host_id]
     peer_id = params[:peer_id]
-    host_data = params[:host_data]
-    peer_data = params[:peer_data]
+    host_data = getHashValuefromString(params[:host_data]) if params[:host_data].present?
+    peer_data = getHashValuefromString(params[:peer_data]) if params[:peer_data].present?
 
     defined_Fields = Hash.new
 
@@ -638,7 +638,11 @@ class Api::UsersController < ApplicationController
     appField.each do |field|
       defined_Fields[field.additional_column_name] = nil
     end
-
+     p defined_Fields
+     p host_data
+      p host_data["heartrate"]
+      p host_data["activity"]
+      p host_data["activity"]
     if host_data.present?
       host_data = defined_Fields.deep_merge(host_data)
       hostresult = Hash.new
@@ -671,7 +675,6 @@ class Api::UsersController < ApplicationController
     else
       render json: { status: "fail"}
     end
-
 
   end
 

@@ -1,16 +1,14 @@
 var Carmic = {
 
     init: function() {
-
-
+//        this.topic_selection();
         $(".top-bar").hide();
         $("#header").hide();
+        $("#map_content").show();
         $(".container").addClass("removebg");
         $("#main_background").addClass("removebg");
         document.body.style.backgroundImage='none';
         document.body.style.backgroundColor='#fff';
-
-
 
         navigator.geolocation.getCurrentPosition(
             function(position) {
@@ -74,7 +72,6 @@ var Carmic = {
 
         );
 
-
         (function() {
 
 
@@ -117,10 +114,28 @@ var Carmic = {
             $("#edit_street").show();
         })
 
+        function retrieve_posts(obj){
+            var topic_id = obj.getAttribute("topicID");
+
+            $.ajax({
+                data: {
+                    id: topic_id
+                },
+                success: function(html) {
+                    var htmlobject = $(html);
+                    var output = htmlobject.find("#posts_display")[0];
+                    var testing = new XMLSerializer().serializeToString(output);
+                    $("#posts_display").replaceWith(testing);
 
 
+                }
+            });
+
+
+        }
+
+        window.retrieve_posts = retrieve_posts;
     }
-
 
 
 
