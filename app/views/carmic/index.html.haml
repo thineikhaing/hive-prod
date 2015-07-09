@@ -115,7 +115,7 @@
           %ul{:id => "nav"}
 
             - if @topics_list.present?
-              -@topics_list = @topics_list.last(5).reverse
+              -@topics_list = @topics_list.first(5)
               - @topics_list.each do |sTopic|
                 -string =   @topic_avatar_url[sTopic.id].to_s
                 -substring = "carmic"
