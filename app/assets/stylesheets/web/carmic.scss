@@ -409,25 +409,22 @@ $background-color: white;
 
 }
 
-//.tabs dd > a, .tabs .tab-title > a,
-//.tabs dd > a:hover, .tabs .tab-title > a:hover,
-//.tabs dd > a:focus, .tabs .tab-title > a:focus,
-//.tabs dd > a:active, .tabs .tab-title > a:active{
-//  background: none;
-//  border: none;
-//}
-//
-//.tabs >.active{
-//  border: none;
-//}
+#post_content{
+  border-top-left-radius: 1.5em;
+  border-bottom-left-radius: 1.5em;
+  width: auto;
+  height: 460px;
+  box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  overflow-y : scroll;
+  border: 1px solid rgb(7,165,179);
+  border-right:1px solid transparent;
+  background: rgb(255, 255, 255); /* The Fallback */
+  background: rgba(255, 255, 255, 0.5);
 
-#nav{
-  //padding:3px;
-  //border: 3px solid #fff !important;
-  //border-top-left-radius: 1.5em;
-  //border-bottom-left-radius: 1.5em;
-  //background: rgb(7,165,179);
 }
+
+
+
 .topic_tbl{
   //background: #fff;
   //height: 40px;
@@ -451,7 +448,6 @@ $background-color: white;
 }
 
 .topic_row{
-
     background: #fff;
     border-top-left-radius: 1.6em;
     border-bottom-left-radius: 1.6em;
@@ -564,10 +560,19 @@ $background-color: white;
 
 #panel1{
   width: auto;
-  height: 600px;
+  height: 460px;
   //box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
   overflow-y : scroll;
+
 }
+
+#nav{
+   width: auto;
+   height: 400px;
+   //box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+   overflow-y : scroll;
+
+ }
 
 #select_country{
   padding: 0px !important;

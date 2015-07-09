@@ -68,8 +68,6 @@
         %a{href: "#panel3", id: "incident_tab"}
           %span=0
     .tabs-content
-
-
       #panel1.content
         #active_users
           %table.responstable
@@ -141,6 +139,9 @@
                               = title.last
                             %span.right
                               #{time_ago_in_words(sTopic.created_at)} ago
+        %br
+        #post_content
+          1  fsfasfa
       #panel3.content
         %p This is the total incidents list.
 
