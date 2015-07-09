@@ -47,11 +47,9 @@ class CarmicController < ApplicationController
     end
 
     if params[:cur_lat].present?
-
       @posts = nil
       get_all_topics(@latitude, @longitude)
       get_nearest_user(@latitude, @longitude)
-
     end
 
     if Rails.env.development?
@@ -96,7 +94,7 @@ class CarmicController < ApplicationController
       places.each do |p|
         places_id.push p.id
       end
-      @topics_list = Topic.where(:place_id => places_id).order("id")
+      @topics_list = Topic.where(:place_id => places_id).order("id desc")
       if not @topics_list.nil?
         for topic in @topics_list
           #getting avatar url

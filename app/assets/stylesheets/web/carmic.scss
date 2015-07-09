@@ -429,23 +429,34 @@ $background-color: white;
   //background: rgb(7,165,179);
 }
 .topic_tbl{
-  background: #fff;
-  height: 40px;
-  border-top-left-radius: 1.6em;
-  border-bottom-left-radius: 1.6em;
-  //border: 2px solid rgb(7,165,179);
-  line-height: 40px;
-  text-align: center;
-  color: rgb(7,165,179) !important;
-  font-size: 1em;
-  margin-top: 10px;
-  border-bottom: 2px solid rgb(7,165,179) !important;
-  border-top: 2px solid rgb(7,165,179) !important;
-  box-sizing:border-box;
-  -moz-box-sizing:border-box;
-  -webkit-box-sizing:border-box;
-  overflow: hidden;
+  //background: #fff;
+  //height: 40px;
+  //border-top-left-radius: 1.6em;
+  //border-bottom-left-radius: 1.6em;
+  ////border: 2px solid rgb(7,165,179);
+  //line-height: 40px;
+  //text-align: center;
+  //color: rgb(7,165,179) !important;
+  //font-size: 1em;
+  //margin-top: 10px;
+  //border-bottom: 2px solid rgb(7,165,179) !important;
+  //border-top: 2px solid rgb(7,165,179) !important;
+  //box-sizing:border-box;
+  //-moz-box-sizing:border-box;
+  //-webkit-box-sizing:border-box;
+  //overflow: hidden;
+  border-collapse:separate;
+  border-spacing:0 5px;
 
+}
+
+.topic_row{
+
+    background: #fff;
+    border-top-left-radius: 1.6em;
+    border-bottom-left-radius: 1.6em;
+    border: 1px solid rgb(7,165,179);
+    border-right:1px solid transparent;
 }
 
 .topic_tbl span{
@@ -453,6 +464,31 @@ $background-color: white;
   font-size: 1em;
 }
 
+#time_filter{
+  margin-bottom: 20px;
+  tr{
+    background: rgb(7,165,179);
+  }
+
+  td{
+    height: 40px;
+    background: rgb(7,165,179);
+    color: #fff !important;
+  }
+
+  td:first-child{
+    border-top-left-radius: 2em;
+    border-bottom-left-radius: 2em;
+  }
+
+  td:last-child{
+    border-top-left-radius: 2em;
+    border-bottom-left-radius: 2em;
+    border: 3px solid #fff;
+    float: right;
+  }
+
+}
 .car_no{
   display: inline-block;
   font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
@@ -472,8 +508,9 @@ $background-color: white;
 .tabs{
   text-align: center;
 }
+
 #car_tab,#message_tab,#incident_tab{
-  width: 150px;
+  width: 185px;
   height: 100px;
   line-height: 100px;
   display: block;
@@ -482,14 +519,32 @@ $background-color: white;
   color: #fff;
   font-size: 1.5em;
   border: 2px solid #fff;
+  text-decoration: none;
+  border: none;
   //box-shadow:
   //  0 0 0 2px #fff,
   //  0 0 0 4px rgba(255, 255, 255, 0.2),
   //  0 0 0 4px rgb(7,165,179);
 
   span{
-    margin-left: -50px;
+    margin-left: -90px;
   }
+}
+
+#timelabel{
+  line-height: 1;
+  margin-bottom: auto;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 0.25rem 0.5rem 0.25rem;
+  font-size: 0.6875rem;
+  background-color: #FFFFFF;
+  color: #008CBA;
+  border-radius: 5px;
+  font-size: 15px;
+  margin-right: 10px;
 }
 #car_tab{
   background: transparent;
@@ -691,6 +746,10 @@ $header-border: $table-cell-border) {
       }
     }
   }
+}
+
+#main_content{
+  height: 100%;
 }
 
 // Include the mixin (with extra options as overrides)
