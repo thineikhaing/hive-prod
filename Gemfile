@@ -61,6 +61,10 @@ gem 'gmaps4rails'
 
 gem 'compass-rails', github: 'Compass/compass-rails'
 gem 'foundation-rails'
+
+gem 'jquery-ui-rails'
+
+
 group :development do
   gem 'rails_layout'
 end

@@ -48,8 +48,30 @@
 
     .columns.large-2#select_country
       =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
+
+.row
+  .columns.large-12
+    #draggable
+
+
 .row
   .columns.large-5
+    #clock_time
+      -#.clock_markers
+      -#  now
+      -#.clock_markers
+      -#  22
+      -#.clock_markers
+      -#  20
+      -#.clock_markers
+      -#  18
+      -#.clock_markers
+      -#  16
+      -#.clock_markers
+      -#  14
+      -#.clock_markers
+      -#  12
+
     .circle
       #map
     #btn_zoom_out
@@ -159,15 +181,22 @@
 
       #panel3.content
         %p This is the total incidents list.
+
+
 .row
   .columns.large-12
-    #draggable.ui-widget-content
-      %p Drag me to my target
-    .ui-widget-header.droppable{"data-id="1 hr""}
-    <div class="ui-widget-header droppable", data-id="2 hr">
-
+    .ui-widget-header.droppable{"data-id" =>"1 hr"}
+    .ui-widget-header.droppable{"data-id" =>"2 hr"}
 :javascript
    Carmic.init();
+   $( "#draggable" ).draggable();
+   $( ".droppable" ).droppable({
+       drop: function( event, ui ) {
+           $(this).addClass( "ui-state-highlight").find("p").html("Dropped!");
+           alert($( this ).data("id"))
+       }
+   });
+
    $("#map_content").show();
    var __markers,marker,markers;
 
