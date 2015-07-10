@@ -2,6 +2,7 @@ class CarmicController < ApplicationController
   def index
     @users =User.where("data -> 'color' != ''")
     @car_action_logs = CarActionLog.order("created_at desc")
+
     hiveapp = HiveApplication.find_by_app_name("Carmmunicate")
 
     @topics= Topic.where(hiveapplication_id: hiveapp.id)
@@ -95,6 +96,7 @@ class CarmicController < ApplicationController
         places_id.push p.id
       end
       @topics_list = Topic.where(:place_id => places_id).order("id desc")
+      @inc_list = IncidentHistory.first
       if not @topics_list.nil?
         for topic in @topics_list
           #getting avatar url

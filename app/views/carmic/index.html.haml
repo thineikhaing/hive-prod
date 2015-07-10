@@ -1,8 +1,9 @@
 .row
-  .columns.large-2#dashbeta
-    carmic
-    %sub{style:'font-size:15px;line-height:0px;'}
-      DASH beta
+  .columns.large-2
+    = image_tag("carmicbeta.png",alt: "CarMask" )
+    -#carmic
+    -#%sub{style:'font-size:15px;line-height:0px;'}
+    -#  DASH beta
   .columns.large-1
     &nbsp;
   .columns.large-9{style:'line-height:30px;color:rgb(7,165,179)'}
@@ -120,8 +121,12 @@
                 -string =   @topic_avatar_url[sTopic.id].to_s
                 -substring = "carmic"
                 -string.slice! substring
-
                 -title = sTopic.title.split(':')
+                -car_color = sTopic.user.data["color"]
+                -inc_car = title.first.split("to ")
+                -inc_car = inc_car.last
+                -inc_user = User.where("data -> 'plate_number' = ?",inc_car).take
+
 
                 -if (sTopic.offensive < 3)
                   %li
@@ -130,12 +135,18 @@
                         %tr
                           %td{width:"30%"}
                             %span
-                              .car_no
+                              .car_no{style:"background:#"+car_color+" !important"}
                                 =sTopic.user.data["plate_number"]
                             %span
                               >
-                              -car_no = title.first.split("to ")
-                              .car_no=car_no.last
+                              -if title.count > 1
+                                -inc_color = inc_user.data["color"]
+                                .car_no{style:"background:#"+inc_color+" !important"}
+                                  =inc_car
+                              -else
+                                .car_no
+                                  all
+
                           %td{:colspan => "2",width:"70%", class:'topic_row'}
                             %span.title
                               = title.last
@@ -148,7 +159,12 @@
 
       #panel3.content
         %p This is the total incidents list.
-
+.row
+  .columns.large-12
+    #draggable.ui-widget-content
+      %p Drag me to my target
+    .ui-widget-header.droppable{"data-id="1 hr""}
+    <div class="ui-widget-header droppable", data-id="2 hr">
 
 :javascript
    Carmic.init();

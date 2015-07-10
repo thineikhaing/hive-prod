@@ -665,39 +665,55 @@ class Api::UsersController < ApplicationController
       peerresult = defined_Fields
     end
 
-    if !host_id.nil? && !peer_id.nil?
-
       old_log = IncidentHistory.last
 
-      if old_log.present?
-        p "time difference"
-        time_diff_hr = (Time.parse(DateTime.now.to_s) - Time.parse(old_log.created_at.to_s))/3600
+      #if old_log.present?
+      #  p "time difference"
+      #
+      #  time_diff_hr = (Time.parse(DateTime.now.to_s) - Time.parse(old_log.created_at.to_s))/3600
+      #
+      #  p time_diff_min = (time_diff_hr * 3600) / 60
+      #
+      #    if (old_log.peer_id != host_id &&  old_log.host_id != peer_id )  &&
+      #        (old_log.peer_id != peer_id &&  old_log.host_id != host_id )
+      #      p "create history"
+      #      p time_diff_min = time_diff_min * 30
+      #      if (10 > 30)
+      #
+      #        p "create history in time diff"
+      #        incident_hostory = IncidentHistory.create(host_id: host_id,
+      #                                                  peer_id: peer_id,
+      #                                                  host_data: hostresult,
+      #                                                  peer_data: peerresult)
+      #
+      #      else
+      #
+      #        p "create history in time diff"
+      #        incident_hostory = IncidentHistory.create(host_id: host_id,
+      #                                                  peer_id: peer_id,
+      #                                                  host_data: hostresult,
+      #                                                  peer_data: peerresult)
+      #
+      #      end
+      #
+      #
+      #
+      #
+      #
+      #    end
+      #
+      #
+      #else
+      #  p "new"
+      #
+      #end
 
-        p time_diff_min = (time_diff_hr * 3600) / 60
-
-
-        if (time_diff_min >= 0.5 && old_log.peer_id == host_id &&  old_log.host_id == peer_id )  ||
-            (time_diff_min >= 0.5 && old_log.peer_id == peer_id &&  old_log.host_id == host_id )
-          incident_hostory = IncidentHistory.create(host_id: host_id,
-                                                    peer_id: peer_id,
-                                                    host_data: hostresult,
-                                                    peer_data: peerresult)
-        end
-
-      else
-
-        incident_hostory = IncidentHistory.create(host_id: host_id,
-                                                  peer_id: peer_id,
-                                                  host_data: hostresult,
-                                                  peer_data: peerresult)
-
-      end
-
+    incident_hostory = IncidentHistory.create(host_id: host_id,
+                                              peer_id: peer_id,
+                                              host_data: hostresult,
+                                              peer_data: peerresult)
 
       render json: { status: "ok"}
-    else
-      render json: { status: "fail"}
-    end
 
   end
 
