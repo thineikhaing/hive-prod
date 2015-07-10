@@ -187,8 +187,9 @@ class Api::UsersController < ApplicationController
         time_allowance = Time.now - 10.minutes.ago
       end
 
+      CarActionLog.create(user_id:  user_id,latitude: lat, longitude: lng, speed: speed, direction: direction,activity: activity, heartrate: heartrate)
 
-      create_car_action_logs(user.id, params[:latitude], params[:longitude], speed, direction, activity, heartrate)
+      #create_car_action_logs(user.id, params[:latitude], params[:longitude], speed, direction, activity, heartrate)
 
       users = User.nearest(params[:latitude], params[:longitude], radius)
 

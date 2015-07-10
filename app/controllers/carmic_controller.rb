@@ -133,6 +133,45 @@ class CarmicController < ApplicationController
 
   end
 
+  def singup
+    if params[:email] and params[:password]
+      p "sign up from hiveweb"
+      p email= params[:email]
+      p password = params[:password]
+
+      user = User.new
+      user.email = email
+      user.password = password
+      user.password_confirmation = params[:password]
+
+      p user
+      p "+++++++"
+      user.save
+      p "user is saved!"
+
+      @user = user
+      respond_to do |format|
+        format.js {render inline: "location.reload();" }
+      end
+
+    else
+
+      render json: { error_msg: "error" }, status: 400
+    end
+  end
+
+  def login
+    if params[:email].present? and params[:password].present?
+      user = User.find_by_email(params[:email])
+      if user.present?
+        respond_to do |format|
+          format.js {render inline: "location.reload();" }
+        end
+      end
+
+    end
+  end
+
   def get_avatar(username)
     avatar_url = nil
 

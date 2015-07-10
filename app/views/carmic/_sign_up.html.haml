@@ -1,0 +1,31 @@
+#myModal.reveal-modal{"data-reveal" => "", style: "width: 60%"}
+  .row
+    .columns
+      .row
+        .small-15.large-centered.columns
+          %h2 Sign Up
+      = form_for :home, data:{ abide: " " }, url: { controller: "carmic", action: "singup", method: "singup"} , :remote => true do |f|
+        .row
+          .small-15.large-centered.columns
+            =hidden_field_tag :hiveweb
+            %label
+              Email
+              %input{:required => "", :type => "email", :name => "email"}/
+              %small.error Email address is required
+        .row
+          .small-15.large-centered.columns
+            %label
+              Password
+              %input#password{:required => "", :type => "password", :name => "password"}/
+              %small.error Password is required
+        .row
+          .small-15.large-centered.columns
+            %label
+              Confirm Password
+              %input{:required => "", :type => "password"}/
+              %small.error Password mismatched.
+        %br
+        .row
+          .small-15.large-centered.columns
+            =submit_tag 'Sign Up' , :class => 'tiny radius button'
+      %a.close-reveal-modal ×

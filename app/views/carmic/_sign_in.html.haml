@@ -1,0 +1,16 @@
+#signin_model.reveal-modal{"data-reveal" => "", style: "width: 60%"}
+  .small-15.large-centered.columns
+    %h2 Login
+  = form_for :home, data:{ abide: " " }, url: { controller: "carmic", action: "login" }, method: "post" do |f|
+    .columns.large-12
+      =text_field_tag 'name', nil, placeholder: 'username'
+      %small.error Name is required and must be a string.
+    .columns.large-12
+      =password_field_tag 'password', nil, placeholder: 'password'
+    .columns.large-12
+      %br
+
+    .columns.large-12
+      =submit_tag "login", class: "button tiny radius"
+  %br
+  %a.close-reveal-modal ×

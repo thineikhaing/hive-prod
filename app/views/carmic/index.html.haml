@@ -8,9 +8,11 @@
   .columns.large-9{style:'line-height:30px;color:rgb(7,165,179)'}
     -##address
     %span
-      %a Log in
+      %a{"data-reveal" => "", "data-reveal-id" => "signin_model", :href => "#", id: "signup" }Log in
+      = render :partial => "carmic/sign_in"
       |
-      %a Sign Up
+      %a{"data-reveal" => "", "data-reveal-id" => "myModal", :href => "#", id: "signup" }Sign Up
+      = render :partial => "carmic/sign_up"
     %span.right
       %a Support
   .columns.large-9#lefttopbar.right
