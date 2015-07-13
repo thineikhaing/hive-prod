@@ -406,9 +406,13 @@
             $("#display_topic").replaceWith(testing);
 
             $("#topic_count").text($("#hid_tcount").val());
+             var rotate = 'rotate(' +0 + 'deg)';
+              $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
 
           }
         });
+
+
      });
 
    google.maps.event.addListener(handler.getMap(), 'zoom_changed', function( event ){
@@ -433,8 +437,14 @@
 
          $("#topic_count").text($("#hid_tcount").val());
 
+         var rotate = 'rotate(' +0 + 'deg)';
+          $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
+
+
        }
      });
+
+
 
    });
 
@@ -456,9 +466,13 @@
          $("#display_topic").replaceWith(testing);
 
          $("#topic_count").text($("#hid_tcount").val());
+          var rotate = 'rotate(' +0 + 'deg)';
+              $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
 
        }
      });
+
+
    }
 
 
