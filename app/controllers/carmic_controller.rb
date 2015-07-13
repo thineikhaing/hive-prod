@@ -27,6 +27,8 @@ class CarmicController < ApplicationController
     @latitude = params[:cur_lat]
     @longitude = params[:cur_long]
 
+    @filter_by_time = false
+
     if params[:user_ids]
       @activeUsersArray = []
       p "user array"
@@ -39,6 +41,7 @@ class CarmicController < ApplicationController
 
     if params[:cur_lat].present?
       @posts = nil
+      @filter_by_time =  false
       get_all_topics(@latitude, @longitude)
       get_nearest_user(@latitude, @longitude)
     end
@@ -48,6 +51,30 @@ class CarmicController < ApplicationController
       @post_lists = params[:id]
       get_all_posts(@post_lists)
 
+    end
+
+    if params[:time_filter].present?
+
+      @filter_by_time = true
+      p "time filter"
+      p backtime = params[:time_filter].to_i
+      @topic_by_time = @topics.where(created_at: (backtime.hours.ago..Time.now))
+
+      if not @topic_by_time.nil?
+        for topic in @topic_by_time
+          #getting avatar url
+          @topic_by_time_avatar_url = Hash.new
+          if topic.offensive < 3 and topic.special_type == 3
+            @topic_by_time_avatar_url[topic.id] = "/assets/Avatars/Chat-Avatar-Admin.png"
+          else
+            username = topic.user.username
+            get_avatar(username)
+            @topic_by_time_avatar_url[topic.id] = request.url.split('?').first + @avatar_url
+          end
+        end
+      end
+
+      p @topic_by_time.count
     end
 
     if Rails.env.development?

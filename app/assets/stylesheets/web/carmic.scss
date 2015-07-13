@@ -336,11 +336,11 @@ $background-color: white;
 
 .circle {
   box-shadow:
-    0 0 0 1px rgb(7,165,179),
+    0 0 0 2px #fff,
+    0 0 0 3px rgb(7,165,179),
     0 0 0 6px #fff,
-    0 0 0 18px rgb(7,165,179),
-    0 0 0 23px #fff,
-    0 0 0 24px rgb(7,165,179) ;
+    0 0 0 14px rgb(7,165,179);
+
   -moz-border-radius:50% !important;
   -webkit-mask-border-radius:50% !important;
   -webkit-border-radius:50% !important;
@@ -466,7 +466,7 @@ $background-color: white;
 }
 
 #car_tab,#message_tab,#incident_tab{
-  width: 185px;
+  width: 160px;
   height: 100px;
   line-height: 100px;
   display: block;
@@ -483,12 +483,12 @@ $background-color: white;
   //  0 0 0 4px rgb(7,165,179);
 
   span{
-    margin-left: -90px;
+    margin-left: -60px;
   }
 }
 
 #timelabel{
-  line-height: 1;
+ line-height: 1;
   margin-bottom: auto;
   position: relative;
   text-align: center;
@@ -918,7 +918,7 @@ $header-border: $table-cell-border) {
 
 // General styles
 
-
+/*
 
 #draggable {
   width: 40px; height: 40px; padding: 0.5em; float: left;
@@ -930,10 +930,64 @@ $header-border: $table-cell-border) {
   margin: 0 auto;
   text-align: center;
   margin-left: 170px;
-}
+} */
+
 .droppable {
   width: 50px;
   height: 50px;
   padding: 0.5em;
   float: left;
-  margin: 10px; }
+  margin: 10px;
+}
+#spiner_container{
+  //background:rgba(255, 255, 255, 0.5);
+  width:450px; height:450px;
+  position:relative; border: 1px solid rgb(6,149,165);
+  border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50% ;
+  //background: #fff url("TimeClock.png") no-repeat center;
+  background-image: url('TimeClock.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: rgba(255, 255, 255, 0.5);;
+  }
+#dynamic-container{
+  width:400px; height:400px;
+  background-color: transparent;
+  position:relative;
+  margin-left: 25px; margin-top:25px;
+  border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50%}
+
+#innerCircle{
+  width: 340px; height: 340px; position: absolute;
+  left: 30px; top:30px; background-color: transparent;
+  border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50%;
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 3px rgb(7,165,179),
+    0 0 0 6px #fff,
+    0 0 0 14px rgb(7,165,179);
+}
+
+#marker{
+  width: 18px; height:29px;
+  //border:2px solid rgb(6,149,165);
+  position:absolute; left:195px; cursor: crosshair;
+  -moz-transform:rotate(0deg);
+  -moz-transform-origin:5px 200px;
+
+  transform:rotate(0deg);
+  transform-origin:5px 200px;
+
+  -ms-transform:rotate(0deg);
+  -ms-transform-origin:5px 200px;
+
+  -webkit-transform:rotate(0deg);
+  -webkit-transform-origin:5px 200px;
+  z-index:17;
+
+  //background: transparent url("TimePin.png") no-repeat center;
+  background-image: url("TimePin.png");
+  background-repeat: none;
+  background-color: transparent;
+  overflow: hidden;
+}

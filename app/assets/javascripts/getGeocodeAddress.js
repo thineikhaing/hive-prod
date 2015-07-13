@@ -41,9 +41,9 @@ function getLatLongDetail(myLatlng) {
                     lat = location.lat();
                     lng = location.lng();
 
-                    console.log('Country: '+ country + '\n' +'City: '+ city + '\n' + 'State: '+ state + '\n' + 'Zip: '+ zip + '\n' + 'Formatted Address: '+ formattedAddress + '\n' + 'Lat: '+ lat + '\n' + 'Lng: '+ lng);
+                    //console.log('Country: '+ country + '\n' +'City: '+ city + '\n' + 'State: '+ state + '\n' + 'Zip: '+ zip + '\n' + 'Formatted Address: '+ formattedAddress + '\n' + 'Lat: '+ lat + '\n' + 'Lng: '+ lng);
                     var select_country = $('#country_list').val();
-                    console.log(select_country)
+                    //console.log(select_country)
                     if (select_country != ""){
                         $("#country").text(select_country)
                     }else{

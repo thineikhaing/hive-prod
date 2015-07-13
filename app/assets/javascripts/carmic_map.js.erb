@@ -10,14 +10,189 @@ var Carmic = {
         document.body.style.backgroundImage='none';
         document.body.style.backgroundColor='#fff';
 
+        $(document).ready(function () {
+            $("body").mouseup(function (e) {
+                e.stopPropagation();
+                $('body').unbind('mousemove')
+                console.log("marker mouse up")
+                var degree = $("#rotate").text()
+                updateTopicByTimeframe(degree)
+            });
+
+        });
+
+
+        $('#marker').on('mousedown', function(){
+            $('body').on('mousemove', function(event){
+                event.stopPropagation();
+                rotateAnnotationCropper($('#innerCircle').parent(), event.pageX,event.pageY, $('#marker'));
+            });
+
+        });
+
+        function rotateAnnotationCropper(offsetSelector, xCoordinate, yCoordinate, cropper){
+            //alert(offsetSelector.left);
+
+            var x = xCoordinate - offsetSelector.offset().left - offsetSelector.width()/2;
+            var y = -1*(yCoordinate - (offsetSelector.offset().top+20) - offsetSelector.height()/2);
+            var theta = Math.atan2(y,x)*(180/Math.PI);
+
+
+            var cssDegs = convertThetaToCssDegs(theta);
+            var rotate = 'rotate(' +cssDegs + 'deg)';
+            cropper.css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
+            $("#rotate").html(cssDegs);
+
+            $("body").mouseup(function (e) {
+                e.stopPropagation();
+                $('body').unbind('mousemove')
+            });
+
+
+        }
+
+        function convertThetaToCssDegs(theta){
+            var cssDegs = 90 - theta;
+            return cssDegs;
+        }
+
+        function updateTopicByTimeframe(x){
+            console.log("tet")
+            console.log(x)
+            var backTime = 0;
+
+            if (x < 0 && x >= -15 ){
+                backTime = 1;
+                console.log("1 hr back")
+            }
+
+            else if (x < -16 && x >= -30 ){
+                backTime = 2;
+                 console.log("2 hr back")
+            }
+
+            else if (x <= -31 && x >= -45 ){
+                backTime = 3;
+                console.log("3 hr back")
+            }
+
+            else if(x <= -46 && x >= -60 ){
+                backTime = 4;
+                console.log("4 hr back")
+            }
+
+            else if (x <= -61 && x >= -75 ){
+                backTime = 5;
+                console.log("5 hr back")
+            }
+
+            else if(x <= -76 && x >= -90 ){
+                backTime = 6;
+                console.log("6 hr back")
+            }
+
+            else if (x > 255 && x < 270) {
+                backTime = 7;
+                console.log("7 hr back")
+            }
+
+            else if (x > 240 && x < 256){
+                backTime = 8;
+                console.log("8 hr back")
+            }
+
+            else if (x > 225 && x < 241 ){
+                backTime = 9;
+                console.log("9 hr back")
+            }
+
+            else if (x > 210 && x < 226 ){
+                backTime = 10;
+                console.log("10 hr back")
+            }
+
+            else if (x > 195 && x < 211 ){
+                backTime = 11;
+                console.log("11 hr back")
+            }
+
+            else if (x > 180 && x < 196 ){
+                backTime = 12;
+                console.log("12 hr back")
+            }
+
+            else if (x > 165 && x < 180 ){
+                backTime = 13;
+                console.log("13 hr back")
+            }
+
+            else if (x > 150 && x < 165 ){
+                backTime = 14;
+                console.log("14 hr back")
+            }
+
+            else if (x > 135 && x < 150 ){
+                backTime = 15;
+                console.log("15 hr back")
+            }
+
+            else if (x > 120 && x < 135 ){
+                backTime = 16;
+                console.log("16 hr back")
+            }
+
+            else if (x > 105 && x < 120 ){
+                backTime = 17;
+                console.log("17 hr back")
+            }
+
+            else if (x > 90 && x < 105 ){
+                backTime = 18;
+                console.log("18 hr back")
+            }
+
+            else if (x > 75 && x < 90 ){
+                backTime = 19;
+                console.log("19 hr back")
+            }
+
+            else if (x > 60 && x < 75 ){
+                backTime = 20;
+                console.log("20 hr back")
+            }
+
+            else if (x > 45 && x < 60 ){
+                backTime = 21;
+                console.log("21 hr back")
+            }
+
+            else if (x > 30 && x < 45 ){
+                backTime = 22;
+                console.log("22 hr back")
+            }
+
+            else if (x > 15 && x < 30 ){
+                backTime = 23;
+                console.log("23 hr back")
+            }
+
+            else if (x > 0 && x < 15 ){
+                backTime = 24;
+                console.log("24 hr back")
+            }
+
+
+            topic_filter_by_time(backTime)
+            $("#back_time").text("back around "+backTime+ "hr")
+        }
         navigator.geolocation.getCurrentPosition(
             function(position) {
                 var latlng   = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-                console.log(latlng)
+                //console.log(latlng)
                 latitude = position.coords.latitude;
                 longitude = position.coords.longitude;
                 var geocoder = new google.maps.Geocoder();
-                console.log(latitude, longitude);
+                //console.log(latitude, longitude);
                 geocoder.geocode({'latLng': latlng},
                     function (results, status) {
                         if (status == google.maps.GeocoderStatus.OK) {

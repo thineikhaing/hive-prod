@@ -49,36 +49,24 @@
     .columns.large-2#select_country
       =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
 
+    -#  #map
+    -##btn_zoom_out
+    -#  ='-'
+    -##btn_zoom_in
+    -#  ='+'
 .row
-  .columns.large-12
-    #draggable
+  .columns.large-6
+    -##rotate
+    #spiner_container
+      #dynamic-container
+        #marker
+        #innerCircle
+          .circle
+            #map
 
-
-.row
-  .columns.large-5
-    #clock_time
-      -#.clock_markers
-      -#  now
-      -#.clock_markers
-      -#  22
-      -#.clock_markers
-      -#  20
-      -#.clock_markers
-      -#  18
-      -#.clock_markers
-      -#  16
-      -#.clock_markers
-      -#  14
-      -#.clock_markers
-      -#  12
-
-    .circle
-      #map
-    #btn_zoom_out
-      ='-'
-    #btn_zoom_in
-      ='+'
-  .columns.large-7{style:'padding-right:0px;'}
+    #back_time
+      time
+  .columns.large-6{style:'padding-right:0px;'}
 
     %ul.tabs{"data-tab" => ""}
       %li.tab-title
@@ -126,14 +114,25 @@
         #display_topic
           %table#time_filter{:width => "100%"}
             %tr
-              %td time machine
+              %td
+                %a{href:'#'}
+                  =image_tag("clock0.png", id: 'rm_street', style:'border: 1px solid #fff')
+                time machine
               %td topics from the past 24 hrs
               %td
-                %span#timelabel
-                  now
+                %input{type:"button", onclick:"showcurrenttopic()", id:"timelabel", value: "now"}
+
                 %span
                   5 most recent
-          %input{type:'hidden', value:"#{@topics_list.count rescue '0'}", id:'hid_tcount'}
+          -if @filter_by_time == true
+            %input{type:'hidden', value:"#{@topic_by_time.count rescue '0'}", id:'hid_tcount'}
+            -@topics_list = @topic_by_time
+            -@topic_avatar_url = @topic_by_time_avatar_url
+          -else
+            %input{type:'hidden', value:"#{@topics_list.count rescue '0'}", id:'hid_tcount'}
+            -@topics_list = @topics_list
+            -@topic_avatar_url = @topic_avatar_url
+
           %input{type:'hidden', value:"#{@activeUsersArray.count rescue '0'}", id:'hid_ucount'}
           %ul{:id => "nav"}
 
@@ -155,7 +154,7 @@
                     %a{href:"#", id:"topicid", topicID: "#{sTopic.id}" , name:"topic_lists"  ,onclick:"retrieve_posts(this);"}
                       %table.topic_tbl{:width => "100%"}
                         %tr
-                          %td{width:"30%"}
+                          %td{width:"35%"}
                             %span
                               .car_no{style:"background:#"+car_color+" !important"}
                                 =sTopic.user.data["plate_number"]
@@ -169,7 +168,7 @@
                                 .car_no
                                   all
 
-                          %td{:colspan => "2",width:"70%", class:'topic_row'}
+                          %td{:colspan => "2",width:"65%", class:'topic_row'}
                             %span.title
                               = title.last
                             %span.right
@@ -183,10 +182,11 @@
         %p This is the total incidents list.
 
 
-.row
-  .columns.large-12
-    .ui-widget-header.droppable{"data-id" =>"1 hr"}
-    .ui-widget-header.droppable{"data-id" =>"2 hr"}
+
+-#.row
+-#  .columns.large-12
+-#    .ui-widget-header.droppable{"data-id" =>"1 hr"}
+-#    .ui-widget-header.droppable{"data-id" =>"2 hr"}
 :javascript
    Carmic.init();
    $( "#draggable" ).draggable();
@@ -251,15 +251,14 @@
 
      var zoomControlDiv = document.createElement('div');
      zoomControlDiv.id = 'custom_zoomcontrol';
-     var zoomControl = new CustomZoomControl(zoomControlDiv, map);
+     //var zoomControl = new CustomZoomControl(zoomControlDiv, map);
 
      handler.getMap().controls[google.maps.ControlPosition.RIGHT_CENTER].push(zoomControlDiv);
 
      function updateMarkers(map, new_markers, rm_marker,old_markers)
      {
          // Remove current markers
-         console.log("REMOVE MARKERS :::::")
-        console.log(rm_marker)
+
         map.removeMarkers(rm_marker);
 
          var newMarkers= new_markers;
@@ -275,9 +274,6 @@
 
            marker = map.addMarker(markerJSON);
            //map.getMap().setZoom(16); // Not sure this should be in this iterator!
-           console.log('markerJSON')
-           console.log(markerJSON["lat"])
-           console.log(markerJSON["marker_id"])
            for (var i = 0; i < oldMarkers.length; i++) {
 
            if (oldMarkers[i]["marker_id"] == markerJSON["marker_id"]) {
@@ -347,16 +343,12 @@
       visibleMarker = [];
       var bounds = handler.getMap().getBounds(),
       count = 0;
-      console.log(bounds)
-      console.log("original")
-      console.log(__markers)
+
       for (var i = 0; i < __markers.length; i++) {
           var marker = __markers[i];
 
           if(bounds.contains(marker.getServiceObject().getPosition())===true) {
-              console.log("Visible marker")
-              console.log(marker)
-              console.log(marker["marker_id"])
+
               var m_id = marker["marker_id"]
 
               if(typeof m_id === 'undefined'){
@@ -369,8 +361,6 @@
           }
       }
       $("#user_count").text(count);
-
-      console.log(visibleMarker)
       if(visibleMarker.length > 0){
          $.ajax({
 
@@ -400,8 +390,6 @@
        var latlng   = new google.maps.LatLng(lat, long);
        //getLatLongDetail(latlng);
 
-        console.log("click event")
-        console.log(lat,long)
         $.ajax({
 
           data: {
@@ -447,6 +435,52 @@
      });
 
    });
+
+   function showcurrenttopic(){
+      var lat = handler.getMap().getCenter().lat();
+     var long = handler.getMap().getCenter().lng();
+
+      $.ajax({
+
+       data: {
+         cur_lat: lat,
+         cur_long: long
+       },
+       success: function(html) {
+         var htmlobject = $(html);
+
+         var output = htmlobject.find("#display_topic")[0];
+         var testing = new XMLSerializer().serializeToString(output);
+         $("#display_topic").replaceWith(testing);
+
+         $("#topic_count").text($("#hid_tcount").val());
+
+       }
+     });
+   }
+
+
+
+   function topic_filter_by_time(backTime){
+      if(backTime !=  0){
+        $.ajax({
+
+           data: {
+             time_filter: backTime
+           },
+           success: function(html) {
+             var htmlobject = $(html);
+
+             var output = htmlobject.find("#display_topic")[0];
+             var testing = new XMLSerializer().serializeToString(output);
+             $("#display_topic").replaceWith(testing);
+             $("#topic_count").text($("#hid_tcount").val());
+           }
+         });
+      }
+   }
+
+   window.topic_filter_by_time = topic_filter_by_time;
 
 
   $('#country_list').live('change', function() {
@@ -499,15 +533,9 @@
      var place = autocomplete.getPlace();
 
    }
-   // [END region_fillform]
 
-   // [START region_geolocation]
-   // Bias the autocomplete object to the user's geographical location,
-   // as supplied by the browser's 'navigator.geolocation' object.
    function geolocate(e) {
    var code = e.keyCode || e.which;
-   console.log("code")
-   console.log(code)
    if (code ==13){
       var map = handler.getMap();
             var country = $('#autocomplete').val();

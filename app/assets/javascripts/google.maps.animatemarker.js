@@ -28,12 +28,12 @@ function MarkerMoveAnimation(marker, options)
 	//public methods
 	this.stop = function()
 	{		
-		console.log("animation is stopped.");
+		//console.log("animation is stopped.");
 		clearInterval(interval);
 
 		if(options.onComplete && typeof options.onComplete === "function") {
             options.onComplete(this);
-            console.log("complete animate")
+            //console.log("complete animate")
         }
 
 		
@@ -57,11 +57,11 @@ function MarkerMoveAnimation(marker, options)
 	
 	this.start = function()
 	{
-		console.log('start');
+//		console.log('start');
 		
 		if(this._check())
 		{
-			console.log('check is OK');
+//			console.log('check is OK');
 			beginTime = new Date;
 			//console.log("starting animation of "+this.marker.getIcon().url+" from "+options.from.toString()+" to "+options.to.toString());
 			this._updatePositionDiff();
@@ -133,7 +133,7 @@ function MarkerMoveAnimation(marker, options)
 	
 	this._check = function()
 	{
-		console.log('check');		
+//		console.log('check');
 		try
 		{
 			if(!this.marker || !this.marker.getServiceObject().getPosition)
@@ -148,15 +148,15 @@ function MarkerMoveAnimation(marker, options)
 			switch(error)
 			{
 				case "NoValidMarkerObject":
-				console.log("Please provide a valid Marker object to perform a Marker Move Animation on");
+				//console.log("Please provide a valid Marker object to perform a Marker Move Animation on");
 				break;
 				
 				case "NoValidFromToLatLngObjects":
-				console.log("Please provide a valid LatLng object for both the from and to option parameters to perform a Marker Move Animation");
+				//console.log("Please provide a valid LatLng object for both the from and to option parameters to perform a Marker Move Animation");
 				break;
 				
 				default:
-				console.log("Unknown Error: "+error);
+				//console.log("Unknown Error: "+error);
 				break;
 			}
 			
