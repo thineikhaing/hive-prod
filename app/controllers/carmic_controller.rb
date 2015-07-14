@@ -58,7 +58,7 @@ class CarmicController < ApplicationController
       @filter_by_time = true
       p "time filter"
       p backtime = params[:time_filter].to_i
-      @topic_by_time = @topics.where(created_at: (backtime.hours.ago..Time.now))
+      @topic_by_time = @topics.where(created_at: (backtime.hours.ago..Time.now)).order("id desc")
 
       if not @topic_by_time.nil?
         for topic in @topic_by_time
