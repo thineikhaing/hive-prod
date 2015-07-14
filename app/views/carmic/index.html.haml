@@ -66,7 +66,7 @@
     #rotate{style:'display:none'}
       rotate
 
-    #back_time
+    #back_time{style:'display:none'}
       time
   .columns.large-6{style:'padding-right:0px;'}
 
@@ -114,6 +114,7 @@
 
       #panel2.content.active
         #display_topic
+
           %table#time_filter{:width => "100%"}
             %tr
               %td
@@ -122,8 +123,8 @@
                 time machine
               %td topics from the past 24 hrs
               %td
-                %input{type:"button", onclick:"showcurrenttopic()", id:"timelabel", value: "now"}
-
+                %a#timelabel{onclick: "showcurrenttopic()"}
+                  now
                 %span
                   5 most recent
           -if @filter_by_time == true
@@ -446,7 +447,13 @@
    });
 
    function showTimeSpinner(){
-
+       //$('#left_ani').animate({
+       //     right: '-=350px'
+       //   }, 500);
+       //
+       //$('#right_ani').animate({
+       //  left: '-=350px'
+       //}, 500);
 
        //$("#spiner_container").removeClass("rm_bg_spin")
        //$("#spiner_container").addClass("add_bg_spin")
@@ -454,9 +461,10 @@
               $("#marker").show();
               $('#spiner_container').removeClass('rm_bg_spin').addClass('add_bg_spin');
               $('.circle').addClass("circle_shadow");
-            }, 600);
+            }, 800);
 
         $("#rotate").html(0);
+        $("#posts_display").hide();
      }
 
    function showcurrenttopic(){
@@ -465,7 +473,7 @@
         $("#marker").hide();
         $('#spiner_container').removeClass('add_bg_spin').addClass('rm_bg_spin');
         $('.circle').removeClass("circle_shadow");
-      }, 600);
+      }, 800);
        $("#rotate").html(0);
 
       var lat = handler.getMap().getCenter().lat();
@@ -487,7 +495,7 @@
          $("#topic_count").text($("#hid_tcount").val());
           var rotate = 'rotate(' +0 + 'deg)';
               $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
-
+          $("#posts_display").hide();
        }
      });
 
