@@ -188,6 +188,7 @@ var Carmic = {
         navigator.geolocation.getCurrentPosition(
             function(position) {
                 var latlng   = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
                 //console.log(latlng)
                 latitude = position.coords.latitude;
                 longitude = position.coords.longitude;
@@ -301,7 +302,7 @@ var Carmic = {
                     var output = htmlobject.find("#posts_display")[0];
                     var testing = new XMLSerializer().serializeToString(output);
                     $("#posts_display").replaceWith(testing);
-
+                    $("#posts_display").show();
 
                 }
             });

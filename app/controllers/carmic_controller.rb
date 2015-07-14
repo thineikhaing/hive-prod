@@ -123,6 +123,9 @@ class CarmicController < ApplicationController
         places_id.push p.id
       end
       @topics_list = Topic.where(:place_id => places_id).order("id desc")
+      p "topic count"
+      @total_topic_count = @topics_list = Topic.where(:place_id => places_id).order("id desc")
+      p @total_topic_count.count
       @inc_list = IncidentHistory.first
       if not @topics_list.nil?
         for topic in @topics_list

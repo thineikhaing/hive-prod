@@ -112,12 +112,12 @@
                       %span
                         =user["data"]["direction"]
 
-      #panel2.content
+      #panel2.content.active
         #display_topic
           %table#time_filter{:width => "100%"}
             %tr
               %td
-                %a{href:'#'}
+                %a{href:'#', onclick: "showTimeSpinner()"}
                   =image_tag("clock0.png", id: 'rm_street', style:'border: 1px solid #fff')
                 time machine
               %td topics from the past 24 hrs
@@ -137,9 +137,8 @@
 
           %input{type:'hidden', value:"#{@activeUsersArray.count rescue '0'}", id:'hid_ucount'}
           %ul{:id => "nav"}
-
             - if @topics_list.present?
-              -@topics_list = @topics_list.first(5)
+              -#-@topics_list = @topics_list.first(5)
               - @topics_list.each do |sTopic|
                 -string =   @topic_avatar_url[sTopic.id].to_s
                 -substring = "carmic"
@@ -175,6 +174,9 @@
                               = title.last
                             %span.right
                               #{time_ago_in_words(sTopic.created_at)} ago
+          -#-if @topics_list.present?
+          -#  .paginate{style:'float:right; margin-right:30px;font-size:16px;'}
+          -#    =paginate @topics_list
         %br
         #posts_display
           - if @post_lists.present?
@@ -183,12 +185,6 @@
       #panel3.content
         %p This is the total incidents list.
 
-
-
--#.row
--#  .columns.large-12
--#    .ui-widget-header.droppable{"data-id" =>"1 hr"}
--#    .ui-widget-header.droppable{"data-id" =>"2 hr"}
 :javascript
    Carmic.init();
    $( "#draggable" ).draggable();
@@ -376,6 +372,7 @@
              var testing = new XMLSerializer().serializeToString(output);
              $("#active_users").replaceWith(testing);
              $("#tbl_activeusers").show();
+             $("#posts_display").hide();
            }
          });
         }
@@ -401,14 +398,14 @@
           success: function(html) {
             var htmlobject = $(html);
 
-            var output = htmlobject.find("#display_topic")[0];
-            var testing = new XMLSerializer().serializeToString(output);
-            $("#display_topic").replaceWith(testing);
-
-            $("#topic_count").text($("#hid_tcount").val());
-             var rotate = 'rotate(' +0 + 'deg)';
-              $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
-
+            //var output = htmlobject.find("#display_topic")[0];
+            //var testing = new XMLSerializer().serializeToString(output);
+            //$("#display_topic").replaceWith(testing);
+            //
+            //$("#topic_count").text($("#hid_tcount").val());
+            // var rotate = 'rotate(' +0 + 'deg)';
+            //  $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
+            //  $("#posts_display").hide();
           }
         });
 
@@ -438,8 +435,8 @@
          $("#topic_count").text($("#hid_tcount").val());
 
          var rotate = 'rotate(' +0 + 'deg)';
-          $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
-
+         $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
+         $("#posts_display").hide();
 
        }
      });
@@ -448,7 +445,29 @@
 
    });
 
+   function showTimeSpinner(){
+
+
+       //$("#spiner_container").removeClass("rm_bg_spin")
+       //$("#spiner_container").addClass("add_bg_spin")
+        setTimeout(function () {
+              $("#marker").show();
+              $('#spiner_container').removeClass('rm_bg_spin').addClass('add_bg_spin');
+              $('.circle').addClass("circle_shadow");
+            }, 600);
+
+        $("#rotate").html(0);
+     }
+
    function showcurrenttopic(){
+
+      setTimeout(function () {
+        $("#marker").hide();
+        $('#spiner_container').removeClass('add_bg_spin').addClass('rm_bg_spin');
+        $('.circle').removeClass("circle_shadow");
+      }, 600);
+       $("#rotate").html(0);
+
       var lat = handler.getMap().getCenter().lat();
      var long = handler.getMap().getCenter().lng();
 
@@ -497,6 +516,8 @@
    }
 
    window.topic_filter_by_time = topic_filter_by_time;
+
+
 
 
   $('#country_list').live('change', function() {
@@ -740,5 +761,6 @@
 
    		window.smoothZoom = smoothZoom;
    }
+
 
   window.setInterval(getCoords, 4000);

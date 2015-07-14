@@ -334,41 +334,7 @@ $background-color: white;
 
 }
 
-.circle {
-  box-shadow:
-    0 0 0 2px #fff,
-    0 0 0 3px rgb(7,165,179),
-    0 0 0 6px #fff,
-    0 0 0 14px rgb(7,165,179);
 
-  -moz-border-radius:50% !important;
-  -webkit-mask-border-radius:50% !important;
-  -webkit-border-radius:50% !important;
-
-
-}
-
-#map {
-  margin-bottom:50px;
-  width:100%;
-  height:auto;
-  padding: 50% 0;
-  -moz-border-radius:50% !important;
-  -webkit-mask-border-radius:50% !important;
-  -webkit-border-radius:50% !important;
-
-  -webkit-transform: translateZ(0);
-  -webkit-mask-image: -webkit-radial-gradient(circle, white, black);
-
-  box-shadow:
-    0 0 0 1px rgb(7,165,179),
-    0 0 0 6px #fff,
-    0 0 0 18px rgb(7,165,179),
-    0 0 0 23px #fff,
-    0 0 0 24px rgb(7,165,179) ;
-  overflow:hidden !important;
-
-}
 
 #map_wrapper{
   width: 450px;
@@ -528,7 +494,7 @@ $background-color: white;
 
 #nav{
    width: auto;
-   height: 350px;
+   height: 297px;
    //box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
    overflow-y : scroll;
 
@@ -731,7 +697,7 @@ $header-border: $table-cell-border) {
   border-right:1px solid transparent;
   background: rgb(255, 255, 255); /* The Fallback */
   background: rgba(255, 255, 255, 0.7);
-  //display: none;
+  display: none;
 
 }
 
@@ -942,14 +908,53 @@ $header-border: $table-cell-border) {
 #spiner_container{
   //background:rgba(255, 255, 255, 0.5);
   width:450px; height:450px;
-  position:relative; border: 1px solid rgb(6,149,165);
+  position:relative;
   border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50% ;
   //background: #fff url("TimeClock.png") no-repeat center;
-  background-image: url('TimeClock.png');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-color: rgba(255, 255, 255, 0.5);;
+  //background-image: url('TimeClock.png');
+  //background-repeat: no-repeat;
+  //background-position: center;
+  //background-color: rgba(255, 255, 255, 0.5);;
   }
+
+.circle {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 3px rgb(7,165,179),
+    0 0 0 6px #fff,
+    0 0 0 14px rgb(7,165,179),
+    0 0 0 19px #fff,
+    0 0 0 20px rgb(7,165,179);
+
+  -moz-border-radius:50% !important;
+  -webkit-mask-border-radius:50% !important;
+  -webkit-border-radius:50% !important;
+
+
+}
+
+#map {
+  margin-bottom:50px;
+  width:100%;
+  height:auto;
+  padding: 50% 0;
+  -moz-border-radius:50% !important;
+  -webkit-mask-border-radius:50% !important;
+  -webkit-border-radius:50% !important;
+
+  -webkit-transform: translateZ(0);
+  -webkit-mask-image: -webkit-radial-gradient(circle, white, black);
+
+  box-shadow:
+    0 0 0 1px rgb(7,165,179),
+    0 0 0 6px #fff,
+    0 0 0 18px rgb(7,165,179),
+    0 0 0 23px #fff,
+    0 0 0 24px rgb(7,165,179) ;
+  overflow:hidden !important;
+
+}
+
 #dynamic-container{
   width:400px; height:400px;
   background-color: transparent;
@@ -961,11 +966,6 @@ $header-border: $table-cell-border) {
   width: 340px; height: 340px; position: absolute;
   left: 30px; top:30px; background-color: transparent;
   border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50%;
-  box-shadow:
-    0 0 0 2px #fff,
-    0 0 0 3px rgb(7,165,179),
-    0 0 0 6px #fff,
-    0 0 0 14px rgb(7,165,179);
 }
 
 #marker{
@@ -990,4 +990,26 @@ $header-border: $table-cell-border) {
   background-repeat: none;
   background-color: transparent;
   overflow: hidden;
+  display: none;
+}
+
+.rm_bg_spin{
+  border: none !important;
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+.add_bg_spin{
+  border: 1px solid rgb(6,149,165);
+  background-image: url('TimeClock.png') !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.circle_shadow{
+  box-shadow:
+    0 0 0 1px rgb(7,165,179),
+    0 0 0 6px #fff,
+    0 0 0 18px rgb(7,165,179) !important;
 }
