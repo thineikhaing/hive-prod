@@ -152,7 +152,7 @@
                       POSSIBLE COLLISION
                     %span.right
                       #{time_ago_in_words(inc.created_at)} ago
-          %hr
+            %hr
           -if @filter_by_time == true
             %input{type:'hidden', value:"#{@topic_by_time.count rescue '0'}", id:'hid_tcount'}
             -@topics_list = @topic_by_time
