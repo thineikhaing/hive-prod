@@ -80,7 +80,7 @@
 
       %li.tab-title
         %a{href: "#panel3", id: "incident_tab"}
-          %span=0
+          %span#inc_count=@incidents.count rescue '0'
     .tabs-content
       #panel1.content
         #active_users
@@ -115,7 +115,7 @@
         .row#time_filter
           .columns.large-4#one
             %a{href:'#', onclick: "showTimeSpinner()"}
-              =image_tag("clock0.png", id: 'rm_street', style:'border: 1px solid #fff')
+              =image_tag("timemachine.png", id: 'rm_street')
             time machine
           .columns.large-4
             topics from the past 24 hrs
@@ -210,7 +210,32 @@
             = render :partial => "carmic/all_posts"
 
       #panel3.content
-        %p This is the total incidents list.
+        -if @incidents.present?
+          -@incidents.each do |inc|
+            -host = User.find(inc.host_id)
+            -peer = User.find(inc.peer_id)
+            -host_color = host.data["color"]
+            -host_num = host.data["plate_number"]
+            -peer_color = peer.data["color"]
+            -peer_num = peer.data["plate_number"]
+            %table.topic_tbl{:width => "100%"}
+              %tr
+                %td{width:"35%"}
+                  %span
+                    .car_no{style:"background:#"+host_color+" !important"}
+                      =host_num
+                  %span{style:'color:red !important'}
+                    +
+                  %span
+                  .car_no{style:"background:#"+peer_color+" !important"}
+                    =peer_num
+
+
+                %td{:colspan => "2",width:"65%", class:'topic_row'}
+                  %span.title{style:'color:red !important'}
+                    POSSIBLE COLLISION
+                  %span.right
+                    #{time_ago_in_words(inc.created_at)} ago
 
 :javascript
    Carmic.init();
