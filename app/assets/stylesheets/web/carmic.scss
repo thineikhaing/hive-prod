@@ -386,30 +386,25 @@ $background-color: white;
 }
 
 #time_filter{
+
   margin-bottom: 20px;
-  tr{
-    background: rgb(7,165,179);
-  }
+  background: rgb(7,165,179);
+  color:#fff;
+  height: 42px;
+  line-height: 42px;
+  border-top-left-radius: 2em;
+  border-bottom-left-radius: 2em;
 
-  td{
-    height: 42px;
-    background: rgb(7,165,179);
-    color: #fff !important;
-  }
+}
 
-  td:first-child{
-    border-top-left-radius: 2em;
-    border-bottom-left-radius: 2em;
-  }
-
-  td:last-child{
-    border-top-left-radius: 2em;
-    border-bottom-left-radius: 2em;
-    border: 3px solid #fff;
-    float: right;
-    line-height: 20px;
-  }
-
+.swap_focus{
+  border-top-left-radius: 2em;
+  border-bottom-left-radius: 2em;
+  box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -webkit-box-sizing:border-box;
+  border:5px solid #fff;
+  background:rgb(7,165,179);
 }
 .car_no{
   display: inline-block;
@@ -1013,3 +1008,14 @@ $header-border: $table-cell-border) {
     0 0 0 6px #fff,
     0 0 0 18px rgb(7,165,179) !important;
 }
+
+#one {
+  position:relative;
+}
+
+#two {
+  position:relative;
+}
+
+.square {text-align:center; line-height:50px; color:white; font-weight:bold;}
+.clear {clear:both;}

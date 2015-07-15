@@ -21,6 +21,7 @@
 //= require richmarker
 //= require google.maps.animatemarker
 //= require getGeocodeAddress
+//= require jquery-swapsies
 //= require_self
 
 
