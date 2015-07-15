@@ -44,7 +44,7 @@
     .columns.large-1#remove_street
       =image_tag("cancel.png", id: 'rm_street')
 
-    =image_tag("TickOK.png", :alt => "Myanmar", id: 'ok_find')
+    =image_tag("Search.png", :alt => "Myanmar", id: 'ok_find')
 
     .columns.large-2#select_country
       =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
@@ -451,7 +451,7 @@
       var one = $("#one").offset().left
       $("#one").swap({
                   target: "two",
-                  opacity: "0.8",
+                  opacity: "1",
                   speed: 1000,
                   callback: function() { // Optional. Callback function once the swap is complete
                   if (one <= 993 ){
@@ -482,7 +482,7 @@
 
       $("#two").swap({
                   target: "one",
-                  opacity: "0.5",
+                  opacity: "1",
                   speed: 1000,
                   callback: function() { // Optional. Callback function once the swap is complete
                     if (two > 993 ){
