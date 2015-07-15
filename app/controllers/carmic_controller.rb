@@ -2,6 +2,7 @@ class CarmicController < ApplicationController
   def index
     @users =User.where("data -> 'color' != ''")
     @car_action_logs = CarActionLog.order("created_at desc")
+    @incidents = IncidentHistory.all
 
     hiveapp = HiveApplication.find_by_app_name("Carmmunicate")
 

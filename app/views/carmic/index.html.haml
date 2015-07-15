@@ -126,7 +126,33 @@
         .clear
 
         #display_topic
+          -if @incidents.present?
+            -@incidents.each do |inc|
+              -host = User.find(inc.host_id)
+              -peer = User.find(inc.peer_id)
+              -host_color = host.data["color"]
+              -host_num = host.data["plate_number"]
+              -peer_color = peer.data["color"]
+              -peer_num = peer.data["plate_number"]
+              %table.topic_tbl{:width => "100%"}
+                %tr
+                  %td{width:"35%"}
+                    %span
+                      .car_no{style:"background:#"+host_color+" !important"}
+                        =host_num
+                    %span{style:'color:red !important'}
+                      +
+                    %span
+                    .car_no{style:"background:#"+peer_color+" !important"}
+                      =peer_num
 
+
+                  %td{:colspan => "2",width:"65%", class:'topic_row'}
+                    %span.title{style:'color:red !important'}
+                      POSSIBLE COLLISION
+                    %span.right
+                      #{time_ago_in_words(inc.created_at)} ago
+          %hr
           -if @filter_by_time == true
             %input{type:'hidden', value:"#{@topic_by_time.count rescue '0'}", id:'hid_tcount'}
             -@topics_list = @topic_by_time

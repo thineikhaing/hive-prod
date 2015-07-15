@@ -666,53 +666,50 @@ class Api::UsersController < ApplicationController
     end
 
       old_log = IncidentHistory.last
+      if old_log.present?
+        old_host = old_log.host_id
+        old_peer = old_log.peer_id
 
-      #if old_log.present?
-      #  p "time difference"
-      #
-      #  time_diff_hr = (Time.parse(DateTime.now.to_s) - Time.parse(old_log.created_at.to_s))/3600
-      #
-      #  p time_diff_min = (time_diff_hr * 3600) / 60
-      #
-      #    if (old_log.peer_id != host_id &&  old_log.host_id != peer_id )  &&
-      #        (old_log.peer_id != peer_id &&  old_log.host_id != host_id )
-      #      p "create history"
-      #      p time_diff_min = time_diff_min * 30
-      #      if (10 > 30)
-      #
-      #        p "create history in time diff"
-      #        incident_hostory = IncidentHistory.create(host_id: host_id,
-      #                                                  peer_id: peer_id,
-      #                                                  host_data: hostresult,
-      #                                                  peer_data: peerresult)
-      #
-      #      else
-      #
-      #        p "create history in time diff"
-      #        incident_hostory = IncidentHistory.create(host_id: host_id,
-      #                                                  peer_id: peer_id,
-      #                                                  host_data: hostresult,
-      #                                                  peer_data: peerresult)
-      #
-      #      end
-      #
-      #
-      #
-      #
-      #
-      #    end
-      #
-      #
-      #else
-      #  p "new"
-      #
-      #end
+        p "old host id"
+        p old_host
+        p "old peer id"
+        p old_peer
 
-    incident_hostory = IncidentHistory.create(host_id: host_id,
-                                              peer_id: peer_id,
-                                              host_data: hostresult,
-                                              peer_data: peerresult)
+        p "new host & peer"
+        p host_id
+        p peer_id
 
+        time_diff_hr = (Time.parse(DateTime.now.to_s) - Time.parse(old_log.created_at.to_s))/3600
+        p time_diff_min = (time_diff_hr * 3600) / 60
+
+        if (time_diff_min < 30)
+          p "time is less than 30"
+
+          if (old_host.to_i != peer_id.to_i && old_host.to_s != host_id.to_i)
+            p "not equal record within 30s"
+            incident_hostory = IncidentHistory.create(host_id: host_id,
+                                                      peer_id: peer_id,
+                                                      host_data: hostresult,
+                                                      peer_data: peerresult)
+          end
+
+        else
+          p "very new record"
+          incident_hostory = IncidentHistory.create(host_id: host_id,
+                                                    peer_id: peer_id,
+                                                    host_data: hostresult,
+                                                    peer_data: peerresult)
+
+        end
+
+
+      else
+        "first record"
+        incident_hostory = IncidentHistory.create(host_id: host_id,
+                                                  peer_id: peer_id,
+                                                  host_data: hostresult,
+                                                  peer_data: peerresult)
+      end
       render json: { status: "ok"}
 
   end
