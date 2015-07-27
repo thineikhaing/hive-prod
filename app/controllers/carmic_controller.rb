@@ -194,15 +194,28 @@ class CarmicController < ApplicationController
   end
 
   def login
+    p "login"
+    p params[:email]
+    p params[:password]
+
     if params[:email].present? and params[:password].present?
       user = User.find_by_email(params[:email])
       if user.present?
+        session[:carmic_user] = user.username
+        session[:carmic_user_id] = user.id
         respond_to do |format|
           format.js {render inline: "location.reload();" }
         end
       end
 
     end
+  end
+
+  def logout
+    p "logout"
+    p session[:carmic_user] = nil
+    p session[:carmic_user_id] = nil
+    redirect_to carmic_path
   end
 
   def get_avatar(username)

@@ -1010,11 +1010,17 @@ $header-border: $table-cell-border) {
 }
 
 #one {
+  border-top-left-radius: 2em;
+  border-bottom-left-radius: 2em;
   position:relative;
+  background: rgb(7,165,179);
 }
 
 #two {
+  border-top-left-radius: 2em;
+  border-bottom-left-radius: 2em;
   position:relative;
+  background: rgb(7,165,179);
 }
 
 .square {text-align:center; line-height:50px; color:white; font-weight:bold;}

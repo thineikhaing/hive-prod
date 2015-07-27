@@ -721,7 +721,6 @@ class Api::UsersController < ApplicationController
   end
 
 
-
   def juice_sign_in
     if params[:email].present? and params[:password].present?
       email = params[:email]
