@@ -58,11 +58,7 @@
     .columns.large-2#select_country
       =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
 
-    -#  #map
-    -##btn_zoom_out
-    -#  ='-'
-    -##btn_zoom_in
-    -#  ='+'
+
 .row
   .columns.large-6
     -##rotate
@@ -92,15 +88,20 @@
           %span#inc_count=@incidents.count rescue '0'
     .tabs-content
       #panel1.content
+        %table.responstable{style:'margin-bottom:0px'}
+          %thead
+            %tr
+              %th CarNo
+              %th Activity
+              %th Speed
+              %th Direction
         #active_users
-          %table.responstable
-            %thead
-              %tr
-                %th CarNo
-                %th Activity
-                %th Speed
-                %th Direction
-            %tbody#tbl_activeusers{style:'display:none'}
+          %table.responstable{style:'margin-top:0px'}
+            %tbody#tbl_activeusers
+              - if @activeUsersArray.present?
+                -@activeUsersArray = @activeUsersArray
+              -else
+                -@activeUsersArray = @users
               - if @activeUsersArray.present?
                 - @activeUsersArray.each do |user|
                   %tr{"data-id"=>"#{user["id"]}"}
@@ -439,7 +440,7 @@
         }
 
       else{
-         $("#tbl_activeusers").hide();
+         //$("#tbl_activeusers").hide();
       }
       }
 
