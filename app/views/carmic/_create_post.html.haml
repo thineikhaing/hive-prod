@@ -1,6 +1,6 @@
 =form_for([@topic, Post.new], :url => {:action => 'create_post', :id=> @topic.id}, :html => {:id => 'post_form'}, :remote => true) do |f|
   %table{:width =>"100%"}
-    - if current_user.present?
+    - if session[:carmic_user].present?
       %tr
         %td{:width => "90%"}
           = f.text_field :content, placeholder: "join the conversation"

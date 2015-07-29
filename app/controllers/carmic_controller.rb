@@ -163,10 +163,6 @@ class CarmicController < ApplicationController
 
   end
 
-  def create_post
-
-  end
-
   def singup
     if params[:email] and params[:password]
       p "sign up from hiveweb"
@@ -272,6 +268,43 @@ class CarmicController < ApplicationController
       avatar_url = "assets/Avatars/Chat-Avatar.png"
     end
     @avatar_url = avatar_url
+  end
+
+  def create_post
+
+    user = User.find(session[:carmic_user_id])
+    if user.present?
+      @post = user.posts.build({ topic_id: params[:id] }.merge (params[:post]))
+    end
+
+    #@post.content = Rinku.auto_link(filter_profanity(@post.content))
+    if @post.content.length > 255 #check for max length of content
+      flash.now[:notice] =  'The max length message is 255'
+    elsif @post.content.length == 0  #check content is blank?
+      flash.now[:notice] = 'Please enter the message'
+    else
+      if @post.save
+        #history = Historychange.new
+        #history.create_record("post", @post.id, "create", @post.topic_id)
+        #history.create_record("topic", @post.topic.id, "update", @post.topic.place_id)
+        if cookies[:currentlat].present? and cookies[:currentlng].present?
+          @post.latitude = cookies[:currentlat].to_f
+          @post.longitude = cookies[:currentlng].to_f
+          #factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+          #factual_result = factual.table("global").geo("$circle" => {"$center" => [@post.latitude, @post.longitude], "$meters" => 1000}).first
+          #@post.address = factual_result["address"]
+        end
+        @post.save!
+        @post.broadcast
+      else
+        flash.now[:notice] = 'Error in creating message'
+      end
+    end
+
+    respond_to do |format|
+      get_all_posts (params[:id])
+      format.js
+    end
   end
 
 end

@@ -6,7 +6,11 @@
           - @posts.each do |post|
             -post_avatar = @post_avatar_url[post.id].to_s
             -substring = "carmic"
-            -post_avatar.slice! substring
+            -substring1 = "create_post"
+            -if post_avatar.include? "create_post"
+              -post_avatar.slice! substring1
+            -else
+              -post_avatar.slice! substring
 
             %table{:width => "100%", :border => "0px"}
               - if current_user.present? && current_user.id == post.user.id

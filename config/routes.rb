@@ -45,6 +45,8 @@ Rails.application.routes.draw do
   match "carmic/login"                        , path:"login"                  , via: [:get,:post]
   get "carmic/logout"                , path: "logout"
 
+  match "carmic/create_post"        , path:  "create_post"     , via: [:get,:post]
+
   #get "hiveapplication/sign_up", path: "sign_up"
   #post "hiveapplication/sign_up", path: "sign_up"
   resources :places
