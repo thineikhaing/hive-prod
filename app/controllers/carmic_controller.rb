@@ -2,7 +2,7 @@ class CarmicController < ApplicationController
   def index
     @users =User.where("data -> 'color' != ''")
     @car_action_logs = CarActionLog.order("created_at desc")
-    @incidents = IncidentHistory.all
+    @incidents = IncidentHistory.all.order("id desc")
 
     hiveapp = HiveApplication.find_by_app_name("Carmmunicate")
 
@@ -60,6 +60,7 @@ class CarmicController < ApplicationController
       p "time filter"
       p backtime = params[:time_filter].to_i
       @topic_by_time = @topics.where(created_at: (backtime.hours.ago..Time.now)).order("id desc")
+      p @incidents = IncidentHistory.where(created_at: (backtime.hours.ago..Time.now)).order("id desc")
 
       if not @topic_by_time.nil?
         for topic in @topic_by_time
