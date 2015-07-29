@@ -535,7 +535,7 @@
             }, 400);
 
         $("#rotate").html(0);
-        $("#posts_display").hide();
+        //$("#posts_display").hide();
      }
 
    function showcurrenttopic(){
@@ -858,5 +858,11 @@
    		window.smoothZoom = smoothZoom;
    }
 
+   var form = document.getElementById("post_form");
+   alert(form)
+     form.onsubmit = function() {
+       alert("submit")
+       return false;
+     }
 
   window.setInterval(getCoords, 4000);

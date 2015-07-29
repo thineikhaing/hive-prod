@@ -2,6 +2,12 @@
 alert("<%= flash.now[:notice] %>");
 $('#post_content').attr('value','');
 <% else %>
-$("#posts_display").show();
 $("#posts_display").replaceWith("<div id='posts_display' "+ "<%= escape_javascript(render(:partial => 'all_posts')) %>"+ "</div>");
+$("#posts_display").show();
+
+var objDiv =  $("#posts");;
+if (objDiv[0])
+{
+    objDiv.scrollTop(objDiv[0].scrollHeight);
+}
 <% end %>

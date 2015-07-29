@@ -13,7 +13,7 @@
               -post_avatar.slice! substring
 
             %table{:width => "100%", :border => "0px"}
-              - if current_user.present? && current_user.id == post.user.id
+              - if session[:carmic_user].present? && session[:carmic_user_id] == post.user.id
                 -if post.post_type == 0
                   %tr
                     %td{:width => "15%"}
