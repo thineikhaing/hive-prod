@@ -25,67 +25,54 @@
 
     %span.right
       %a Support
-  -#.columns.large-9#lefttopbar
-  -#  %input#autocomplete{:onkeypress => "geolocate(event)", :placeholder => "Enter a location", :type => "text"}
-  -#  %span#country
-  -#  %span#remove_country
-  -#    %span >
-  -#    =image_tag("cancel.png", id: 'rm_country', style: 'display:none')
-  -#
-  -#  %span#state
-  -#  %input{type:'text', id:'edit_city', style: 'display:none'}
-  -#  %span#remove_state
-  -#    %span >
-  -#    =image_tag("cancel.png", id: 'rm_state', style: 'display:none')
-  -#
-  -#  %span#address
-  -#  %input{type:'text', id:'edit_street', style: 'display:none'}
-  -#
-  -#  %span#remove_street
-  -#    =image_tag("cancel.png", id: 'rm_street')
-  -#
-  -#  %span
-  -#    =image_tag("Search.png", :alt => "Myanmar", id: 'ok_find')
-  -#  #select_country
-  -#    =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
   .columns.large-9#lefttopbar.right
 
-    %span
+    .columns.large-4
       %input#autocomplete{:onkeypress => "geolocate(event)",
       :placeholder => "Enter a location", :type => "text"}
 
-    %span
+    .columns.large-2
       %span#country
 
-    %span#remove_country
+    .columns.large-1#remove_country
       %span
         >
       =image_tag("cancel.png", id: 'rm_country', style: 'display:none')
 
-    %span
+    .columns.large-2
       %span#state
       %input{type:'text', id:'edit_city', style: 'display:none'}
-
-    %span#remove_state
+    .columns.large-1#remove_state
       %span
         >
       =image_tag("cancel.png", id: 'rm_state', style: 'display:none')
 
-    %span
+    .columns.large-2
       %span#address
       %input{type:'text', id:'edit_street', style: 'display:none'}
-
-    %span#remove_street
+    .columns.large-1#remove_street
       =image_tag("cancel.png", id: 'rm_street')
 
     =image_tag("Search.png", :alt => "Myanmar", id: 'ok_find')
 
-    %span#select_country
+    .columns.large-2#select_country
       =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
 
--# *********************** end of header ***********************
+
 .row
-  .columns.large-12{style:'padding-right:0px;display:none'}
+  .columns.large-6
+    -##rotate
+    #spiner_container
+      #dynamic-container
+        #marker
+        #innerCircle
+          .circle
+            #map
+    #rotate{style:'display:none'}
+      rotate
+    #back_time{style:'display:none'}
+      time
+  .columns.large-6{style:'padding-right:0px;'}
 
     %ul.tabs{"data-tab" => ""}
       %li.tab-title
@@ -99,22 +86,6 @@
       %li.tab-title
         %a{href: "#panel3", id: "incident_tab"}
           %span#inc_count=@current_incidents.count rescue '0'
-.row
-  .columns.large-12
-    #spiner_container
-      #dynamic-container
-        #marker
-        #innerCircle
-          .circle
-            #map
-    #rotate{style:'display:none'}
-      rotate
-    #back_time{style:'display:none'}
-      time
-
-
-.row
-  .columns.large-12
     .tabs-content
       #panel1.content
         %table.responstable{style:'margin-bottom:0px'}
@@ -152,21 +123,15 @@
 
       #panel2.content.active
         .row#time_filter
-          .columns.large-6
-            %a#timelabel
-              now
-          .columns.large-6.right{style:'text-align:right'}
-            =Time.now.strftime("%I:%M %P")
-        -#.row#time_filter
-        -#  .columns.large-4#one
-        -#    %a{href:'#', onclick: "showTimeSpinner()"}
-        -#      =image_tag("timemachine.png", id: 'rm_street')
-        -#    time machine
-        -#  .columns.large-4
-        -#    topics from the past 24 hrs
-        -#  .columns.large-4#two.swap_focus
-        -#    %a#timelabel{onclick: "showcurrenttopic()"}now
-        -#    %span 5 most recent
+          .columns.large-4#one
+            %a{href:'#', onclick: "showTimeSpinner()"}
+              =image_tag("timemachine.png", id: 'rm_street')
+            time machine
+          .columns.large-4
+            topics from the past 24 hrs
+          .columns.large-4#two.swap_focus
+            %a#timelabel{onclick: "showcurrenttopic()"}now
+            %span 5 most recent
 
         .clear
 
@@ -181,7 +146,7 @@
               -peer_num = peer.data["plate_number"]
               %table.topic_tbl{:width => "100%"}
                 %tr
-                  %td{width:"20%"}
+                  %td{width:"35%"}
                     %span
                       .car_no{style:"background:#"+host_color+" !important"}
                         =host_num
@@ -192,7 +157,7 @@
                       =peer_num
 
 
-                  %td{:colspan => "2",width:"80%", class:'topic_row'}
+                  %td{:colspan => "2",width:"65%", class:'topic_row'}
                     %span.title{style:'color:red !important'}
                       POSSIBLE COLLISION
                     %span.right
@@ -227,7 +192,7 @@
                     %a{href:"#", id:"topicid", topicID: "#{sTopic.id}" , name:"topic_lists"  ,onclick:"retrieve_posts(this);"}
                       %table.topic_tbl{:width => "100%"}
                         %tr
-                          %td{width:"20%"}
+                          %td{width:"35%"}
                             %span
                               .car_no{style:"background:#"+car_color+" !important"}
                                 =sTopic.user.data["plate_number"]
@@ -241,7 +206,7 @@
                                 .car_no
                                   all
 
-                          %td{:colspan => "2",width:"80%", class:'topic_row'}
+                          %td{:colspan => "2",width:"65%", class:'topic_row'}
                             %span.title
                               = title.last
                             %span.right
@@ -255,6 +220,7 @@
             = render :partial => "carmic/all_posts"
 
       #panel3.content
+
         #current_incident_wrapper
           -if @current_incidents.present?
             %input{type:'hidden', value:"#{@current_incidents.count rescue '0'}", id:'hid_current_inc'}
@@ -267,7 +233,7 @@
               -peer_num = peer.data["plate_number"]
               %table.topic_tbl{:width => "100%"}
                 %tr
-                  %td{width:"20%"}
+                  %td{width:"35%"}
                     %span
                       .car_no{style:"background:#"+host_color+" !important"}
                         =host_num
@@ -278,7 +244,7 @@
                       =peer_num
 
 
-                  %td{:colspan => "2",width:"80%", class:'topic_row'}
+                  %td{:colspan => "2",width:"65%", class:'topic_row'}
                     %span.title{style:'color:red !important'}
                       POSSIBLE COLLISION
                     %span.right

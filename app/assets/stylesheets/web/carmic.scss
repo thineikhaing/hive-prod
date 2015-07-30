@@ -375,9 +375,10 @@ $background-color: white;
   height: 42px;
   background: #fff;
   border-top-left-radius: 1.6em;
+  border-top-right-radius: 1.6em;
   border-bottom-left-radius: 1.6em;
+  border-bottom-right-radius: 1.6em;
   border: 1px solid rgb(7,165,179);
-  border-right:1px solid transparent;
 }
 
 .topic_tbl span{
@@ -392,8 +393,10 @@ $background-color: white;
   color:#fff;
   height: 42px;
   line-height: 42px;
-  border-top-left-radius: 2em;
-  border-bottom-left-radius: 2em;
+  border-top-left-radius: 1.6em;
+  border-top-right-radius: 1.6em;
+  border-bottom-left-radius: 1.6em;
+  border-bottom-right-radius: 1.6em;
 
 }
 
@@ -530,6 +533,7 @@ $background-color: white;
   //border-bottom: 2px solid rgb(7,165,179);
   padding-right: 0px;
   margin-bottom: 20px;
+  float: left;
 }
 
 #lefttopbar{
@@ -542,6 +546,7 @@ $background-color: white;
     border-style: solid;
     border-width: 1px;
     color: rgb(6,149,165);
+    width: 150px;
     height: 34px;
     margin: 0px;
     padding: 0 10px;
@@ -549,6 +554,7 @@ $background-color: white;
     font-family: Labrador-A-Light;
     outline: 0;
     margin-top: 3.4px;
+    float: left;
   }
 
 }
@@ -905,6 +911,8 @@ $header-border: $table-cell-border) {
   width:450px; height:450px;
   position:relative;
   border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50% ;
+  text-align: center;
+  margin: 0 auto;
   //background: #fff url("TimeClock.png") no-repeat center;
   //background-image: url('TimeClock.png');
   //background-repeat: no-repeat;
