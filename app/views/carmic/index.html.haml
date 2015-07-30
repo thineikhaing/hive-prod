@@ -152,11 +152,11 @@
 
       #panel2.content.active
         .row#time_filter
-          .columns.large-6
+          .columns.large-12
             %a#timelabel
               now
-          .columns.large-6.right{style:'text-align:right'}
-            =Time.now.strftime("%I:%M %P")
+            %span.right{style:'text-align:right'}
+              =Time.now.strftime("%I:%M %P")
         -#.row#time_filter
         -#  .columns.large-4#one
         -#    %a{href:'#', onclick: "showTimeSpinner()"}
