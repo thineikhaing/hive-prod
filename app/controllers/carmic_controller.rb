@@ -3,6 +3,7 @@ class CarmicController < ApplicationController
     @users =User.where("data -> 'color' != ''")
     @car_action_logs = CarActionLog.order("created_at desc")
     @incidents = IncidentHistory.all.order("id desc")
+    @current_incidents = IncidentHistory.where(created_at: (1.hours.ago..Time.now)).order("id desc")
 
     hiveapp = HiveApplication.find_by_app_name("Carmmunicate")
 
@@ -76,6 +77,12 @@ class CarmicController < ApplicationController
       end
 
       p @topic_by_time.count
+    end
+
+    if params[:current_incident]
+      p "show the current incident"
+      @current_incidents = IncidentHistory.where(created_at: (1.hours.ago..Time.now)).order("id desc")
+
     end
 
     if Rails.env.development?

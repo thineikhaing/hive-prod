@@ -85,7 +85,7 @@
 
       %li.tab-title
         %a{href: "#panel3", id: "incident_tab"}
-          %span#inc_count=@incidents.count rescue '0'
+          %span#inc_count=@current_incidents.count rescue '0'
     .tabs-content
       #panel1.content
         %table.responstable{style:'margin-bottom:0px'}
@@ -220,32 +220,37 @@
             = render :partial => "carmic/all_posts"
 
       #panel3.content
-        -if @incidents.present?
-          -@incidents.each do |inc|
-            -host = User.find(inc.host_id)
-            -peer = User.find(inc.peer_id)
-            -host_color = host.data["color"]
-            -host_num = host.data["plate_number"]
-            -peer_color = peer.data["color"]
-            -peer_num = peer.data["plate_number"]
-            %table.topic_tbl{:width => "100%"}
-              %tr
-                %td{width:"35%"}
-                  %span
-                    .car_no{style:"background:#"+host_color+" !important"}
-                      =host_num
-                  %span{style:'color:red !important'}
-                    +
-                  %span
-                  .car_no{style:"background:#"+peer_color+" !important"}
-                    =peer_num
+
+        #current_incident_wrapper
+          -if @current_incidents.present?
+            %input{type:'hidden', value:"#{@current_incidents.count rescue '0'}", id:'hid_current_inc'}
+            -@current_incidents.each do |inc|
+              -host = User.find(inc.host_id)
+              -peer = User.find(inc.peer_id)
+              -host_color = host.data["color"]
+              -host_num = host.data["plate_number"]
+              -peer_color = peer.data["color"]
+              -peer_num = peer.data["plate_number"]
+              %table.topic_tbl{:width => "100%"}
+                %tr
+                  %td{width:"35%"}
+                    %span
+                      .car_no{style:"background:#"+host_color+" !important"}
+                        =host_num
+                    %span{style:'color:red !important'}
+                      +
+                    %span
+                    .car_no{style:"background:#"+peer_color+" !important"}
+                      =peer_num
 
 
-                %td{:colspan => "2",width:"65%", class:'topic_row'}
-                  %span.title{style:'color:red !important'}
-                    POSSIBLE COLLISION
-                  %span.right
-                    #{time_ago_in_words(inc.created_at)} ago
+                  %td{:colspan => "2",width:"65%", class:'topic_row'}
+                    %span.title{style:'color:red !important'}
+                      POSSIBLE COLLISION
+                    %span.right
+                      #{time_ago_in_words(inc.created_at)} ago
+          -else
+            %span There is no current Incident.
 
 :javascript
    Carmic.init();
@@ -378,6 +383,22 @@
 
 
      };
+
+     $("#incident_tab").on("click", function(){
+       $.ajax({
+          data: {
+            current_incident: true
+          },
+          success: function(html) {
+            var htmlobject = $(html);
+            var output = htmlobject.find("#current_incident_wrapper")[0];
+            var current_inc = new XMLSerializer().serializeToString(output);
+            $("#current_incident_wrapper").replaceWith(current_inc);
+            inc_count = $("#hid_current_inc").val();
+            $("#inc_count").text(inc_count)
+          }
+        });
+     })
 
      function getCoords(){
          $.ajax({
@@ -857,12 +878,5 @@
 
    		window.smoothZoom = smoothZoom;
    }
-
-   var form = document.getElementById("post_form");
-   alert(form)
-     form.onsubmit = function() {
-       alert("submit")
-       return false;
-     }
 
   window.setInterval(getCoords, 4000);
