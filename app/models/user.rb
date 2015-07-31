@@ -258,6 +258,9 @@ class User < ActiveRecord::Base
         #self.save!
       end
     end
+
+    p name
+    p "ensure usernamegit "
   end
 
 

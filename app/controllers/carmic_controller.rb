@@ -182,7 +182,7 @@ class CarmicController < ApplicationController
 
       p user
       p "+++++++"
-      user.save
+      user.save!
       p "user is saved!"
 
       @user = user
