@@ -260,7 +260,7 @@ class User < ActiveRecord::Base
     end
 
     p name
-    p "ensure usernamegit "
+
   end
 
 
