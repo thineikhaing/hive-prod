@@ -102,11 +102,46 @@
 .row
   .columns.large-12
     #spiner_container
-      #dynamic-container
-        #marker
-        #innerCircle
-          .circle
-            #map
+      .map_left_control
+        %div
+          =image_tag("carmic/MapLeftTop.png", id: 'control4')
+        %div
+          =image_tag("carmic/MapLeftMid.png", id: 'control5', style:'display: block;')
+        %div
+          =image_tag("carmic/MapLeftBtm.png", id: 'control6')
+      #right_wrapper
+        .map_container
+
+          #marker
+          #map
+        .map_right_control
+          %a
+            %div#map_zoomIn
+              +
+            -#=image_tag("carmic/MapRightTop.png", id: 'control1')
+          %div.time_control
+            %a{href:'#', onclick: "showTimeSpinner()"}
+              =image_tag("timemachine.png", id: 'rm_street')
+            %span
+              time
+              %br
+              machine
+            -#%a
+            -#  =image_tag("carmic/MapRightMid.png", style:'display: block;float: right !important;')
+          %a
+            %div#map_zoomOut
+              ="-"
+            -#=image_tag("carmic/MapRightBtm.png", id: 'control3')
+
+
+    -##dynamic-container
+    -#  #marker
+    -#  #innerCircle
+    -#    .circle
+    -#      #map
+
+
+
     #rotate{style:'display:none'}
       rotate
     #back_time{style:'display:none'}
@@ -564,21 +599,21 @@
 
    function showTimeSpinner(){
 
-      var one = $("#one").offset().left
-      $("#one").swap({
-                  target: "two",
-                  opacity: "1",
-                  speed: 1000,
-                  callback: function() { // Optional. Callback function once the swap is complete
-                  if (one <= 993 ){
-                          $("#one").addClass("swap_focus")
-                          $("#two").removeClass("swap_focus")
-                        }else{
-                          $("#one").removeClass("swap_focus")
-                          $("#two").addClass("swap_focus")
-                        }
-                  }
-      });
+      //var one = $("#one").offset().left
+      //$("#one").swap({
+      //            target: "two",
+      //            opacity: "1",
+      //            speed: 1000,
+      //            callback: function() { // Optional. Callback function once the swap is complete
+      //            if (one <= 993 ){
+      //                    $("#one").addClass("swap_focus")
+      //                    $("#two").removeClass("swap_focus")
+      //                  }else{
+      //                    $("#one").removeClass("swap_focus")
+      //                    $("#two").addClass("swap_focus")
+      //                  }
+      //            }
+      //});
 
 
 
@@ -912,5 +947,13 @@
 
    		window.smoothZoom = smoothZoom;
    }
+   $("#map_zoomIn").click(function(){
+       handler.getMap().setZoom(handler.getMap().getZoom()+1)
+   })
+
+   $("#map_zoomOut").click(function(){
+       handler.getMap().setZoom(handler.getMap().getZoom()-1)
+   })
+
 
   window.setInterval(getCoords, 4000);

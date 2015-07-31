@@ -126,9 +126,7 @@
 }
 
 #custom_zoomcontrol{
- //position: fixed !important;
- //z-index: 10000005 !important;
-  //margin-right:-35px;
+ position: absolute !important;
 }
 div#btn_zoom_in,div#btn_zoom_out{
   font-size: 35px;
@@ -141,6 +139,7 @@ div#btn_zoom_in,div#btn_zoom_out{
   border-radius: 50%;
   border: 2px solid #fff;
   margin-top: 10px;
+
 }
 
 
@@ -899,6 +898,10 @@ $header-border: $table-cell-border) {
   margin-left: 170px;
 } */
 
+
+
+
+
 .droppable {
   width: 50px;
   height: 50px;
@@ -906,35 +909,24 @@ $header-border: $table-cell-border) {
   float: left;
   margin: 10px;
 }
-#spiner_container{
-  //background:rgba(255, 255, 255, 0.5);
-  width:450px; height:450px;
-  position:relative;
-  border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50% ;
-  text-align: center;
-  margin: 0 auto;
-  //background: #fff url("TimeClock.png") no-repeat center;
-  //background-image: url('TimeClock.png');
-  //background-repeat: no-repeat;
-  //background-position: center;
-  //background-color: rgba(255, 255, 255, 0.5);;
-  }
+//
+//
+//.circle {
+//  box-shadow:
+//    0 0 0 2px #fff,
+//    0 0 0 3px rgb(7,165,179),
+//    0 0 0 6px #fff,
+//    0 0 0 14px rgb(7,165,179),
+//    0 0 0 19px #fff,
+//    0 0 0 20px rgb(7,165,179);
+//
+//  -moz-border-radius:50% !important;
+//  -webkit-mask-border-radius:50% !important;
+//  -webkit-border-radius:50% !important;
+//
+//
+//}
 
-.circle {
-  box-shadow:
-    0 0 0 2px #fff,
-    0 0 0 3px rgb(7,165,179),
-    0 0 0 6px #fff,
-    0 0 0 14px rgb(7,165,179),
-    0 0 0 19px #fff,
-    0 0 0 20px rgb(7,165,179);
-
-  -moz-border-radius:50% !important;
-  -webkit-mask-border-radius:50% !important;
-  -webkit-border-radius:50% !important;
-
-
-}
 
 #map {
   margin-bottom:50px;
@@ -958,6 +950,21 @@ $header-border: $table-cell-border) {
 
 }
 
+#spiner_container{
+  //background:rgba(255, 255, 255, 0.5);
+  height: 400px;
+  width: 100%;
+  position:relative;
+  text-align: center;
+  margin: 0 auto;
+  margin-top:30px;
+  margin-bottom:30px;
+  float: left;
+  div{
+    //float: left!important;
+  }
+}
+
 #dynamic-container{
   width:400px; height:400px;
   background-color: transparent;
@@ -966,7 +973,7 @@ $header-border: $table-cell-border) {
   border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50%}
 
 #innerCircle{
-  width: 340px; height: 340px; position: absolute;
+  width: 340px; height: 340px; position: relative;
   left: 30px; top:30px; background-color: transparent;
   border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50%;
 }
@@ -1033,3 +1040,84 @@ $header-border: $table-cell-border) {
 
 .square {text-align:center; line-height:50px; color:white; font-weight:bold;}
 .clear {clear:both;}
+
+.time_control{
+  background: rgb(7,165,179);
+  border-radius: 5px;
+  padding: 30px;
+  padding-left: 100px;
+  //text-align: right;
+  //margin:0 auto;
+  //line-height: 120px;
+  color: #fff;
+
+
+}
+.map_container{
+  width:400px;
+  height:400px;
+  margin-top: -14px;
+  -moz-border-radius:50% !important;
+  -webkit-mask-border-radius:50% !important;
+  -webkit-border-radius:50% !important;
+  border: 2px solid rgb(7,165,179);
+  box-shadow:
+    0 0 0 1px rgb(7,165,179),
+    0 0 0 6px #fff,
+    0 0 0 16px rgb(7,165,179),
+    0 0 0 23px #fff,
+    0 0 0 24px rgb(7,165,179) ;
+  overflow:hidden !important;
+  position: relative;
+  float: left;
+}
+
+.map_left_control{
+  //display:table-cell; vertical-align:bottom;
+  width:230px;
+  height: 365px;
+  div{
+    overflow:auto;
+    margin: 2px;
+
+  }
+}
+
+.map_right_control{
+  width:230px;
+  height: 365px;
+  float: left;
+  margin-left: -77px;
+
+  div{
+    overflow:auto;
+    margin:2px;
+    width: 230px;
+    height: 120px;
+  }
+}
+
+
+
+#right_wrapper{
+  position: relative;
+  top:-370px;
+  left:158px;
+}
+
+#map_zoomIn{
+  background-image: url('carmic/MapRightTop.png') !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  color: #fff;
+  font-size: 4em !important;
+  padding-top: 30px;
+}
+#map_zoomOut{
+  background-image: url('carmic/MapRightBtm.png') !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  color: #fff;
+  font-size: 4em !important;
+  padding-top: 30px;
+}
