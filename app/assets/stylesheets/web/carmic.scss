@@ -1,8 +1,8 @@
 // Place all the styles related to the carmic controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
-
-body {  min-width:1000px !important;  }
+//
+body {  min-width:500px !important;  }
 
 .top_bar1{
   width: 100%;
@@ -133,18 +133,7 @@ body {  min-width:1000px !important;  }
   //z-index: 10000005 !important;
   //margin-right:-35px;
 }
-div#btn_zoom_in,div#btn_zoom_out{
-  font-size: 35px;
-  background-color: rgb(7,165,179);
-  text-align: center;
-  height: 50px !important;
-  width: 50px !important;
-  line-height: 50px;
-  color: #fff;
-  border-radius: 50%;
-  border: 2px solid #fff;
-  margin-top: 10px;
-}
+
 
 
 $radius: 250px;
@@ -1096,6 +1085,7 @@ $header-border: $table-cell-border) {
   a{
     span{
       color: #fff;
+      font-size: 1.2em;
     }
   }
 }
@@ -1103,4 +1093,29 @@ $header-border: $table-cell-border) {
 .centerMap{
   position: relative;
   left: 240px;
+  height: 600px;
+}
+
+
+.mapzoomcontrol{
+  width:400px;
+  position:relative;
+  margin: 0 auto;
+  height: 160px;
+  display: none;
+}
+div#btn_zoom_in,div#btn_zoom_out{
+  font-size: 35px;
+  background-color: rgb(7,165,179);
+  text-align: center;
+  height: 60px !important;
+  width: 60px !important;
+  line-height: 60px;
+  color: #fff;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  margin: 0 auto;
+  display: none;
+  margin:20px;
+
 }

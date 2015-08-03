@@ -95,7 +95,7 @@
 -# *********************** end of header ***********************
 
 .row
-  .columns.large-12
+  .columns.large-12{style:'margin-top:20px;'}
     .map_left_control
       %div
         =image_tag("carmic/MapLeftTop.png", id: 'control4')
@@ -110,6 +110,7 @@
         #innerCircle
           .circle
             #map
+
     .map_right_control
       %a
         %div#map_zoomIn
@@ -129,6 +130,14 @@
       rotate
     #back_time{style:'display:none'}
       time
+
+    .mapzoomcontrol
+      #btn_zoom_in
+        +
+      #btn_zoom_out
+        ="-"
+
+
 .row
   .columns.large-12{style:'padding-right:0px;'}
 
@@ -166,16 +175,16 @@
                     %td{width:"20%"}
                       %span
                         =user["data"]["plate_number"]
-                    %td{width:"25%",style:'text-align:left'}
+                    %td{width:"20%",style:'text-align:left'}
                       %span
                         =user["data"]["activity"]
-                    %td{width:"25%"}
+                    %td{width:"20%"}
                       %span
                         -if user["data"]["speed"].to_i > 0
                           = user["data"]["speed"].to_i * 30
                         -else
                           =user["data"]["speed"].to_i
-                    %td{width:"25%"}
+                    %td{width:"20%"}
                       %span
                         =user["data"]["direction"]
 
@@ -184,7 +193,7 @@
           .columns.large-12
             %a#timelabel{onclick: "showcurrenttopic()"}now
 
-            %span.right{style:'text-align:right'}
+            %span{style:'text-align:right'}
               #txt=Time.now.strftime("%I:%M %P")
           -#.columns.large-4#one
           -#  %a{href:'#', onclick: "showTimeSpinner()"}
@@ -209,7 +218,7 @@
               -peer_num = peer.data["plate_number"]
               %table.topic_tbl{:width => "100%"}
                 %tr
-                  %td{width:"35%"}
+                  %td{width:"20%"}
                     %span
                       .car_no{style:"background:#"+host_color+" !important"}
                         =host_num
@@ -220,7 +229,7 @@
                         =peer_num
 
 
-                  %td{:colspan => "2",width:"65%", class:'topic_row'}
+                  %td{:colspan => "2",width:"80%", class:'topic_row'}
                     %span.title{style:'color:red !important'}
                       POSSIBLE COLLISION
                     %span.right
@@ -255,7 +264,7 @@
                     %a{href:"#", id:"topicid", topicID: "#{sTopic.id}" , name:"topic_lists"  ,onclick:"retrieve_posts(this);"}
                       %table.topic_tbl{:width => "100%"}
                         %tr
-                          %td{width:"35%"}
+                          %td{width:"20%"}
                             %span
                               .car_no{style:"background:#"+car_color+" !important"}
                                 =sTopic.user.data["plate_number"]
@@ -269,7 +278,7 @@
                                 .car_no
                                   all
 
-                          %td{:colspan => "2",width:"65%", class:'topic_row'}
+                          %td{:colspan => "2",width:"80%", class:'topic_row'}
                             %span.title
                               = title.last
                             %span.right
@@ -296,7 +305,7 @@
               -peer_num = peer.data["plate_number"]
               %table.topic_tbl{:width => "100%"}
                 %tr
-                  %td{width:"35%"}
+                  %td{width:"20%"}
                     %span
                       .car_no{style:"background:#"+host_color+" !important"}
                         =host_num
@@ -307,7 +316,7 @@
                       =peer_num
 
 
-                  %td{:colspan => "2",width:"65%", class:'topic_row'}
+                  %td{:colspan => "2",width:"80%", class:'topic_row'}
                     %span.title{style:'color:red !important'}
                       POSSIBLE COLLISION
                     %span.right
@@ -870,6 +879,15 @@
     $("#map_zoomOut").click(function(){
         handler.getMap().setZoom(handler.getMap().getZoom()-1)
     })
+
+    $("#btn_zoom_in").click(function(){
+         handler.getMap().setZoom(handler.getMap().getZoom()+1)
+     })
+
+     $("#btn_zoom_out").click(function(){
+          handler.getMap().setZoom(handler.getMap().getZoom()-1)
+      })
+
    $(".time_control").click(function(){
 
         setTimeout(function () {
@@ -884,67 +902,80 @@
 
    function showTimeSpinner(){
 
-
-
-
      setTimeout(function () {
            $("#marker").show();
            $('#spiner_container').removeClass('rm_bg_spin').addClass('add_bg_spin');
            $('.circle').addClass("circle_shadow");
-           $('#spiner_container').addClass("centerMap")
+           //$('#spiner_container').addClass("centerMap")
 
          }, 400);
 
      $('.map_left_control').hide(1000)
      $('.map_right_control').hide(1000)
      $('.add_bg_spin').show(2000)
+     $('.mapzoomcontrol').show()
+     $("#btn_zoom_in").show(2000)
+     $("#btn_zoom_out").show(2000)
+
 
        $("#rotate").html(0);
        //$("#posts_display").hide();
     }
 
-      function showcurrenttopic(){
+    function showcurrenttopic(){
 
 
+       setTimeout(function () {
+         $("#marker").hide();
+         $('#spiner_container').removeClass('add_bg_spin').addClass('rm_bg_spin');
+         $('.circle').removeClass("circle_shadow");
+         //$('#spiner_container').removeClass("centerMap")
 
+       }, 400);
+        $("#rotate").html(0);
 
-         setTimeout(function () {
-           $("#marker").hide();
-           $('#spiner_container').removeClass('add_bg_spin').addClass('rm_bg_spin');
-           $('.circle').removeClass("circle_shadow");
-           $('#spiner_container').removeClass("centerMap")
+      var lat = handler.getMap().getCenter().lat();
+      var long = handler.getMap().getCenter().lng();
 
-         }, 400);
-          $("#rotate").html(0);
+       $.ajax({
 
-        var lat = handler.getMap().getCenter().lat();
-        var long = handler.getMap().getCenter().lng();
+        data: {
+          cur_lat: lat,
+          cur_long: long
+        },
+        success: function(html) {
+          var htmlobject = $(html);
 
-         $.ajax({
+          var output = htmlobject.find("#display_topic")[0];
+          var testing = new XMLSerializer().serializeToString(output);
+          $("#display_topic").replaceWith(testing);
 
-          data: {
-            cur_lat: lat,
-            cur_long: long
-          },
-          success: function(html) {
-            var htmlobject = $(html);
+          $("#topic_count").text($("#hid_tcount").val());
+           var rotate = 'rotate(' +0 + 'deg)';
+               $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
+           //$("#posts_display").hide();
+        }
+      });
 
-            var output = htmlobject.find("#display_topic")[0];
-            var testing = new XMLSerializer().serializeToString(output);
-            $("#display_topic").replaceWith(testing);
-
-            $("#topic_count").text($("#hid_tcount").val());
-             var rotate = 'rotate(' +0 + 'deg)';
-                 $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
-             //$("#posts_display").hide();
-          }
-        });
-
-        $('#spiner_container').removeClass("centerMap")
-        $('.map_left_control').show(1000)
-         $('.map_right_control').show(1000)
+      $('#spiner_container').removeClass("centerMap")
+      $('.map_left_control').show(1000)
+       $('.map_right_control').show(1000)
+         $('.mapzoomcontrol').hide(2000)
+         $("#btn_zoom_in").hide(2000)
+          $("#btn_zoom_out").hide(2000)
 
       }
+
+   var windowsize = $(window).width();
+
+   $(window).resize(function() {
+     windowsize = $(window).width();
+     if (windowsize < 1000) {
+       //if the window is greater than 440px wide then turn on jScrollPane..
+         showTimeSpinner();
+
+     }else{showcurrenttopic();}
+   });
 
 
   window.setInterval(getCoords, 4000);
