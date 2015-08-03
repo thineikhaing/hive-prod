@@ -259,8 +259,6 @@ class User < ActiveRecord::Base
       end
     end
 
-    p name
-
   end
 
 

@@ -892,9 +892,12 @@
            $('#spiner_container').removeClass('rm_bg_spin').addClass('add_bg_spin');
            $('.circle').addClass("circle_shadow");
            $('#spiner_container').addClass("centerMap")
-            $('.map_left_control').hide()
-            $('.map_right_control').hide()
+
          }, 400);
+
+     $('.map_left_control').hide(1000)
+     $('.map_right_control').hide(1000)
+     $('.add_bg_spin').show(2000)
 
        $("#rotate").html(0);
        //$("#posts_display").hide();
@@ -910,8 +913,7 @@
            $('#spiner_container').removeClass('add_bg_spin').addClass('rm_bg_spin');
            $('.circle').removeClass("circle_shadow");
            $('#spiner_container').removeClass("centerMap")
-           $('.map_left_control').show()
-           $('.map_right_control').show()
+
          }, 400);
           $("#rotate").html(0);
 
@@ -939,8 +941,8 @@
         });
 
         $('#spiner_container').removeClass("centerMap")
-        $('.map_left_control').show()
-        $('.map_right_control').show()
+        $('.map_left_control').show(1000)
+         $('.map_right_control').show(1000)
 
       }
 
