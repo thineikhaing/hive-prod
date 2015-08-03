@@ -185,7 +185,7 @@
             %a#timelabel{onclick: "showcurrenttopic()"}now
 
             %span.right{style:'text-align:right'}
-              =Time.now.strftime("%I:%M %P")
+              #txt=Time.now.strftime("%I:%M %P")
           -#.columns.large-4#one
           -#  %a{href:'#', onclick: "showTimeSpinner()"}
           -#    =image_tag("timemachine.png", id: 'rm_street')
