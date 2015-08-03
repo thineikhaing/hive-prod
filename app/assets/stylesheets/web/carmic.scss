@@ -1079,14 +1079,21 @@ $header-border: $table-cell-border) {
 .time_control{
   background: rgb(7,165,179);
   border-radius: 10px;
-  padding: 30px;
-  padding-left: 170px;
+  padding-top: 35px;
+  padding-left: 165px;
+  //text-align: right;
   position: relative;
   left:-2px;
   //text-align: right;
   //margin:0 auto;
   //line-height: 120px;
   color: #fff;
+  overflow-x: hidden !important;
+  a{
+    span{
+      color: #fff;
+    }
+  }
 }
 
 .centerMap{
