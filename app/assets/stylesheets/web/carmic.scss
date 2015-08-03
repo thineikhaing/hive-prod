@@ -114,8 +114,8 @@
 }
 
 .marker_icon{
- width: 35px;
- height: 35px;
+  width: 35px;
+  height: 35px;
   text-align: center;
   border-radius: 50%;
   box-shadow:
@@ -126,7 +126,9 @@
 }
 
 #custom_zoomcontrol{
- position: absolute !important;
+  //position: fixed !important;
+  //z-index: 10000005 !important;
+  //margin-right:-35px;
 }
 div#btn_zoom_in,div#btn_zoom_out{
   font-size: 35px;
@@ -139,7 +141,6 @@ div#btn_zoom_in,div#btn_zoom_out{
   border-radius: 50%;
   border: 2px solid #fff;
   margin-top: 10px;
-
 }
 
 
@@ -374,15 +375,14 @@ $background-color: white;
   height: 42px;
   background: #fff;
   border-top-left-radius: 1.6em;
-  border-top-right-radius: 1.6em;
   border-bottom-left-radius: 1.6em;
-  border-bottom-right-radius: 1.6em;
   border: 1px solid rgb(7,165,179);
+  border-right:1px solid transparent;
 }
 
 .topic_tbl span{
-  color: rgb(7,165,179) !important;
-  font-size: 1em;
+  //color: rgb(7,165,179) !important;
+  font-size: 1.2em;
 }
 
 #time_filter{
@@ -392,10 +392,8 @@ $background-color: white;
   color:#fff;
   height: 42px;
   line-height: 42px;
-  border-top-left-radius: 1.6em;
-  border-top-right-radius: 1.6em;
-  border-bottom-left-radius: 1.6em;
-  border-bottom-right-radius: 1.6em;
+  border-top-left-radius: 2em;
+  border-bottom-left-radius: 2em;
 
 }
 
@@ -451,7 +449,7 @@ $background-color: white;
 }
 
 #timelabel{
- line-height: 1;
+  line-height: 1;
   margin-bottom: auto;
   position: relative;
   text-align: center;
@@ -490,12 +488,12 @@ $background-color: white;
 }
 
 #nav{
-   width: auto;
-   height: 297px;
-   //box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
-   overflow-y : scroll;
+  width: auto;
+  height: 297px;
+  //box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+  overflow-y : scroll;
 
- }
+}
 
 #select_country{
   padding: 0px !important;
@@ -532,7 +530,6 @@ $background-color: white;
   //border-bottom: 2px solid rgb(7,165,179);
   padding-right: 0px;
   margin-bottom: 20px;
-  float: left;
 }
 
 #lefttopbar{
@@ -545,7 +542,6 @@ $background-color: white;
     border-style: solid;
     border-width: 1px;
     color: rgb(6,149,165);
-    width: 150px;
     height: 34px;
     margin: 0px;
     padding: 0 10px;
@@ -553,7 +549,6 @@ $background-color: white;
     font-family: Labrador-A-Light;
     outline: 0;
     margin-top: 3.4px;
-    float: left;
   }
 
 }
@@ -898,10 +893,6 @@ $header-border: $table-cell-border) {
   margin-left: 170px;
 } */
 
-
-
-
-
 .droppable {
   width: 50px;
   height: 50px;
@@ -909,24 +900,31 @@ $header-border: $table-cell-border) {
   float: left;
   margin: 10px;
 }
-//
-//
-//.circle {
-//  box-shadow:
-//    0 0 0 2px #fff,
-//    0 0 0 3px rgb(7,165,179),
-//    0 0 0 6px #fff,
-//    0 0 0 14px rgb(7,165,179),
-//    0 0 0 19px #fff,
-//    0 0 0 20px rgb(7,165,179);
-//
-//  -moz-border-radius:50% !important;
-//  -webkit-mask-border-radius:50% !important;
-//  -webkit-border-radius:50% !important;
-//
-//
-//}
+#spiner_container{
+  width:450px; height:450px;
+  position:relative;
+  border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50% ;
+  vertical-align: top;
+  display: inline-block;
+  margin: 0 auto;
+  z-index: 999;
+}
 
+.circle {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 3px rgb(7,165,179),
+    0 0 0 6px #fff,
+    0 0 0 14px rgb(7,165,179),
+    0 0 0 19px #fff,
+    0 0 0 20px rgb(7,165,179);
+
+  -moz-border-radius:50% !important;
+  -webkit-mask-border-radius:50% !important;
+  -webkit-border-radius:50% !important;
+
+
+}
 
 #map {
   margin-bottom:50px;
@@ -950,21 +948,6 @@ $header-border: $table-cell-border) {
 
 }
 
-#spiner_container{
-  //background:rgba(255, 255, 255, 0.5);
-  height: 400px;
-  width: 100%;
-  position:relative;
-  text-align: center;
-  margin: 0 auto;
-  margin-top:30px;
-  margin-bottom:30px;
-  float: left;
-  div{
-    //float: left!important;
-  }
-}
-
 #dynamic-container{
   width:400px; height:400px;
   background-color: transparent;
@@ -973,7 +956,7 @@ $header-border: $table-cell-border) {
   border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50%}
 
 #innerCircle{
-  width: 340px; height: 340px; position: relative;
+  width: 340px; height: 340px; position: absolute;
   left: 30px; top:30px; background-color: transparent;
   border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50%;
 }
@@ -1030,7 +1013,7 @@ $header-border: $table-cell-border) {
   position:relative;
   background: rgb(7,165,179);
 }
-     assw
+
 #two {
   border-top-left-radius: 2em;
   border-bottom-left-radius: 2em;
@@ -1041,69 +1024,38 @@ $header-border: $table-cell-border) {
 .square {text-align:center; line-height:50px; color:white; font-weight:bold;}
 .clear {clear:both;}
 
-.time_control{
-  background: rgb(7,165,179);
-  border-radius: 5px;
-  padding: 30px;
-  padding-left: 100px;
-  //text-align: right;
-  //margin:0 auto;
-  //line-height: 120px;
-  color: #fff;
-
-
-}
-.map_container{
-  width:400px;
-  height:400px;
-  margin-top: -14px;
-  -moz-border-radius:50% !important;
-  -webkit-mask-border-radius:50% !important;
-  -webkit-border-radius:50% !important;
-  border: 2px solid rgb(7,165,179);
-  box-shadow:
-    0 0 0 1px rgb(7,165,179),
-    0 0 0 6px #fff,
-    0 0 0 16px rgb(7,165,179),
-    0 0 0 23px #fff,
-    0 0 0 24px rgb(7,165,179) ;
-  overflow:hidden !important;
-  position: relative;
-  float: left;
-}
-
 .map_left_control{
-  //display:table-cell; vertical-align:bottom;
-  width:230px;
-  height: 365px;
+  width: 230px;
+  height: 366px;
+  vertical-align: top;
+  display: inline-block;
+  position: relative;
+  left: 180px;
+  top: 45px;
+
   div{
     overflow:auto;
     margin: 2px;
 
   }
 }
-
 .map_right_control{
   width:230px;
   height: 365px;
-  float: left;
-  margin-left: -77px;
+  vertical-align: top;
+  display: inline-block;
+  position: relative;
+  left: -180px;
+  top: 45px;
 
   div{
     overflow:auto;
     margin:2px;
     width: 230px;
-    height: 120px;
+    height: 118px;
   }
 }
 
-
-
-#right_wrapper{
-  position: relative;
-  top:-370px;
-  left:158px;
-}
 
 #map_zoomIn{
   background-image: url('carmic/MapRightTop.png') !important;
@@ -1112,6 +1064,7 @@ $header-border: $table-cell-border) {
   color: #fff;
   font-size: 4em !important;
   padding-top: 30px;
+  padding-left: 120px;
 }
 #map_zoomOut{
   background-image: url('carmic/MapRightBtm.png') !important;
@@ -1120,4 +1073,23 @@ $header-border: $table-cell-border) {
   color: #fff;
   font-size: 4em !important;
   padding-top: 30px;
+  padding-left: 120px;
+}
+
+.time_control{
+  background: rgb(7,165,179);
+  border-radius: 10px;
+  padding: 30px;
+  padding-left: 170px;
+  position: relative;
+  left:-2px;
+  //text-align: right;
+  //margin:0 auto;
+  //line-height: 120px;
+  color: #fff;
+}
+
+.centerMap{
+  position: relative;
+  left: 240px;
 }

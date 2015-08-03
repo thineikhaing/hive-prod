@@ -25,28 +25,37 @@
 
     %span.right
       %a Support
-  -#.columns.large-9#lefttopbar
-  -#  %input#autocomplete{:onkeypress => "geolocate(event)", :placeholder => "Enter a location", :type => "text"}
-  -#  %span#country
-  -#  %span#remove_country
-  -#    %span >
+  -#.columns.large-9#lefttopbar.right
+  -#
+  -#  .columns.large-4
+  -#    %input#autocomplete{:onkeypress => "geolocate(event)",
+  -#    :placeholder => "Enter a location", :type => "text"}
+  -#
+  -#  .columns.large-2
+  -#    %span#country
+  -#
+  -#  .columns.large-1#remove_country
+  -#    %span
+  -#      >
   -#    =image_tag("cancel.png", id: 'rm_country', style: 'display:none')
   -#
-  -#  %span#state
-  -#  %input{type:'text', id:'edit_city', style: 'display:none'}
-  -#  %span#remove_state
-  -#    %span >
+  -#  .columns.large-2
+  -#    %span#state
+  -#    %input{type:'text', id:'edit_city', style: 'display:none'}
+  -#  .columns.large-1#remove_state
+  -#    %span
+  -#      >
   -#    =image_tag("cancel.png", id: 'rm_state', style: 'display:none')
   -#
-  -#  %span#address
-  -#  %input{type:'text', id:'edit_street', style: 'display:none'}
-  -#
-  -#  %span#remove_street
+  -#  .columns.large-2
+  -#    %span#address
+  -#    %input{type:'text', id:'edit_street', style: 'display:none'}
+  -#  .columns.large-1#remove_street
   -#    =image_tag("cancel.png", id: 'rm_street')
   -#
-  -#  %span
-  -#    =image_tag("Search.png", :alt => "Myanmar", id: 'ok_find')
-  -#  #select_country
+  -#  =image_tag("Search.png", :alt => "Myanmar", id: 'ok_find')
+  -#
+  -#  .columns.large-2#select_country
   -#    =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
   .columns.large-9#lefttopbar.right
 
@@ -84,8 +93,43 @@
       =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
 
 -# *********************** end of header ***********************
+
 .row
-  .columns.large-12{style:'padding-right:0px;display:none'}
+  .columns.large-12
+    .map_left_control
+      %div
+        =image_tag("carmic/MapLeftTop.png", id: 'control4')
+      %div
+        =image_tag("carmic/MapLeftMid.png", id: 'control5', style:'display: block;')
+      %div
+        =image_tag("carmic/MapLeftBtm.png", id: 'control6')
+    #spiner_container
+
+      #dynamic-container
+        #marker
+        #innerCircle
+          .circle
+            #map
+    .map_right_control
+      %a
+        %div#map_zoomIn
+          +
+      %div.time_control
+        %a{href:'#', onclick: "showTimeSpinner()"}
+          =image_tag("timemachine.png", id: 'rm_street')
+        %span
+          time
+          %br
+          machine
+      %a
+        %div#map_zoomOut
+          ="-"
+    #rotate{style:'display:none'}
+      rotate
+    #back_time{style:'display:none'}
+      time
+.row
+  .columns.large-12{style:'padding-right:0px;'}
 
     %ul.tabs{"data-tab" => ""}
       %li.tab-title
@@ -99,57 +143,6 @@
       %li.tab-title
         %a{href: "#panel3", id: "incident_tab"}
           %span#inc_count=@current_incidents.count rescue '0'
-.row
-  .columns.large-12
-    #spiner_container
-      .map_left_control
-        %div
-          =image_tag("carmic/MapLeftTop.png", id: 'control4')
-        %div
-          =image_tag("carmic/MapLeftMid.png", id: 'control5', style:'display: block;')
-        %div
-          =image_tag("carmic/MapLeftBtm.png", id: 'control6')
-      #right_wrapper
-        .map_container
-
-          #marker
-          #map
-        .map_right_control
-          %a
-            %div#map_zoomIn
-              +
-            -#=image_tag("carmic/MapRightTop.png", id: 'control1')
-          %div.time_control
-            %a{href:'#', onclick: "showTimeSpinner()"}
-              =image_tag("timemachine.png", id: 'rm_street')
-            %span
-              time
-              %br
-              machine
-            -#%a
-            -#  =image_tag("carmic/MapRightMid.png", style:'display: block;float: right !important;')
-          %a
-            %div#map_zoomOut
-              ="-"
-            -#=image_tag("carmic/MapRightBtm.png", id: 'control3')
-
-
-    -##dynamic-container
-    -#  #marker
-    -#  #innerCircle
-    -#    .circle
-    -#      #map
-
-
-
-    #rotate{style:'display:none'}
-      rotate
-    #back_time{style:'display:none'}
-      time
-
-
-.row
-  .columns.large-12
     .tabs-content
       #panel1.content
         %table.responstable{style:'margin-bottom:0px'}
@@ -188,20 +181,19 @@
       #panel2.content.active
         .row#time_filter
           .columns.large-12
-            %a#timelabel
-              now
+            %a#timelabel{onclick: "showcurrenttopic()"}now
+
             %span.right{style:'text-align:right'}
               =Time.now.strftime("%I:%M %P")
-        -#.row#time_filter
-        -#  .columns.large-4#one
-        -#    %a{href:'#', onclick: "showTimeSpinner()"}
-        -#      =image_tag("timemachine.png", id: 'rm_street')
-        -#    time machine
-        -#  .columns.large-4
-        -#    topics from the past 24 hrs
-        -#  .columns.large-4#two.swap_focus
-        -#    %a#timelabel{onclick: "showcurrenttopic()"}now
-        -#    %span 5 most recent
+          -#.columns.large-4#one
+          -#  %a{href:'#', onclick: "showTimeSpinner()"}
+          -#    =image_tag("timemachine.png", id: 'rm_street')
+          -#  time machine
+          -#.columns.large-4
+          -#  topics from the past 24 hrs
+          -#.columns.large-4#two.swap_focus
+          -#  %a#timelabel{onclick: "showcurrenttopic()"}now
+          -#  %span 5 most recent
 
         .clear
 
@@ -216,18 +208,18 @@
               -peer_num = peer.data["plate_number"]
               %table.topic_tbl{:width => "100%"}
                 %tr
-                  %td{width:"20%"}
+                  %td{width:"35%"}
                     %span
                       .car_no{style:"background:#"+host_color+" !important"}
                         =host_num
                     %span{style:'color:red !important'}
                       +
                     %span
-                    .car_no{style:"background:#"+peer_color+" !important"}
-                      =peer_num
+                      .car_no{style:"background:#"+peer_color+" !important"}
+                        =peer_num
 
 
-                  %td{:colspan => "2",width:"80%", class:'topic_row'}
+                  %td{:colspan => "2",width:"65%", class:'topic_row'}
                     %span.title{style:'color:red !important'}
                       POSSIBLE COLLISION
                     %span.right
@@ -262,7 +254,7 @@
                     %a{href:"#", id:"topicid", topicID: "#{sTopic.id}" , name:"topic_lists"  ,onclick:"retrieve_posts(this);"}
                       %table.topic_tbl{:width => "100%"}
                         %tr
-                          %td{width:"20%"}
+                          %td{width:"35%"}
                             %span
                               .car_no{style:"background:#"+car_color+" !important"}
                                 =sTopic.user.data["plate_number"]
@@ -276,7 +268,7 @@
                                 .car_no
                                   all
 
-                          %td{:colspan => "2",width:"80%", class:'topic_row'}
+                          %td{:colspan => "2",width:"65%", class:'topic_row'}
                             %span.title
                               = title.last
                             %span.right
@@ -290,6 +282,7 @@
             = render :partial => "carmic/all_posts"
 
       #panel3.content
+
         #current_incident_wrapper
           -if @current_incidents.present?
             %input{type:'hidden', value:"#{@current_incidents.count rescue '0'}", id:'hid_current_inc'}
@@ -302,7 +295,7 @@
               -peer_num = peer.data["plate_number"]
               %table.topic_tbl{:width => "100%"}
                 %tr
-                  %td{width:"20%"}
+                  %td{width:"35%"}
                     %span
                       .car_no{style:"background:#"+host_color+" !important"}
                         =host_num
@@ -313,7 +306,7 @@
                       =peer_num
 
 
-                  %td{:colspan => "2",width:"80%", class:'topic_row'}
+                  %td{:colspan => "2",width:"65%", class:'topic_row'}
                     %span.title{style:'color:red !important'}
                       POSSIBLE COLLISION
                     %span.right
@@ -597,88 +590,9 @@
 
    });
 
-   function showTimeSpinner(){
-
-      //var one = $("#one").offset().left
-      //$("#one").swap({
-      //            target: "two",
-      //            opacity: "1",
-      //            speed: 1000,
-      //            callback: function() { // Optional. Callback function once the swap is complete
-      //            if (one <= 993 ){
-      //                    $("#one").addClass("swap_focus")
-      //                    $("#two").removeClass("swap_focus")
-      //                  }else{
-      //                    $("#one").removeClass("swap_focus")
-      //                    $("#two").addClass("swap_focus")
-      //                  }
-      //            }
-      //});
 
 
 
-
-        setTimeout(function () {
-              $("#marker").show();
-              $('#spiner_container').removeClass('rm_bg_spin').addClass('add_bg_spin');
-              $('.circle').addClass("circle_shadow");
-            }, 400);
-
-        $("#rotate").html(0);
-        //$("#posts_display").hide();
-     }
-
-   function showcurrenttopic(){
-      var two = $("#two").offset().left
-
-      $("#two").swap({
-                  target: "one",
-                  opacity: "1",
-                  speed: 1000,
-                  callback: function() { // Optional. Callback function once the swap is complete
-                    if (two > 993 ){
-                            $("#one").addClass("swap_focus")
-                            $("#two").removeClass("swap_focus")
-                          }else{
-                            $("#one").removeClass("swap_focus")
-                            $("#two").addClass("swap_focus")
-                          }
-                  }
-      });
-
-
-      setTimeout(function () {
-        $("#marker").hide();
-        $('#spiner_container').removeClass('add_bg_spin').addClass('rm_bg_spin');
-        $('.circle').removeClass("circle_shadow");
-      }, 400);
-       $("#rotate").html(0);
-
-      var lat = handler.getMap().getCenter().lat();
-     var long = handler.getMap().getCenter().lng();
-
-      $.ajax({
-
-       data: {
-         cur_lat: lat,
-         cur_long: long
-       },
-       success: function(html) {
-         var htmlobject = $(html);
-
-         var output = htmlobject.find("#display_topic")[0];
-         var testing = new XMLSerializer().serializeToString(output);
-         $("#display_topic").replaceWith(testing);
-
-         $("#topic_count").text($("#hid_tcount").val());
-          var rotate = 'rotate(' +0 + 'deg)';
-              $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
-          //$("#posts_display").hide();
-       }
-     });
-
-
-   }
 
 
 
@@ -947,13 +861,87 @@
 
    		window.smoothZoom = smoothZoom;
    }
+
    $("#map_zoomIn").click(function(){
-       handler.getMap().setZoom(handler.getMap().getZoom()+1)
+        handler.getMap().setZoom(handler.getMap().getZoom()+1)
+    })
+
+    $("#map_zoomOut").click(function(){
+        handler.getMap().setZoom(handler.getMap().getZoom()-1)
+    })
+   $(".time_control").click(function(){
+
+        setTimeout(function () {
+              $("#marker").show();
+              $('#spiner_container').removeClass('rm_bg_spin').addClass('add_bg_spin');
+              $('.circle').addClass("circle_shadow");
+            }, 400);
+
+        $("#rotate").html(0);
+        //$("#posts_display").hide();
    })
 
-   $("#map_zoomOut").click(function(){
-       handler.getMap().setZoom(handler.getMap().getZoom()-1)
-   })
+   function showTimeSpinner(){
+
+
+
+
+     setTimeout(function () {
+           $("#marker").show();
+           $('#spiner_container').removeClass('rm_bg_spin').addClass('add_bg_spin');
+           $('.circle').addClass("circle_shadow");
+           $('#spiner_container').addClass("centerMap")
+            $('.map_left_control').hide()
+            $('.map_right_control').hide()
+         }, 400);
+
+       $("#rotate").html(0);
+       //$("#posts_display").hide();
+    }
+
+      function showcurrenttopic(){
+
+
+
+
+         setTimeout(function () {
+           $("#marker").hide();
+           $('#spiner_container').removeClass('add_bg_spin').addClass('rm_bg_spin');
+           $('.circle').removeClass("circle_shadow");
+           $('#spiner_container').removeClass("centerMap")
+           $('.map_left_control').show()
+           $('.map_right_control').show()
+         }, 400);
+          $("#rotate").html(0);
+
+        var lat = handler.getMap().getCenter().lat();
+        var long = handler.getMap().getCenter().lng();
+
+         $.ajax({
+
+          data: {
+            cur_lat: lat,
+            cur_long: long
+          },
+          success: function(html) {
+            var htmlobject = $(html);
+
+            var output = htmlobject.find("#display_topic")[0];
+            var testing = new XMLSerializer().serializeToString(output);
+            $("#display_topic").replaceWith(testing);
+
+            $("#topic_count").text($("#hid_tcount").val());
+             var rotate = 'rotate(' +0 + 'deg)';
+                 $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
+             //$("#posts_display").hide();
+          }
+        });
+
+        $('#spiner_container').removeClass("centerMap")
+        $('.map_left_control').show()
+        $('.map_right_control').show()
+
+      }
 
 
   window.setInterval(getCoords, 4000);
