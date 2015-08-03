@@ -381,8 +381,8 @@ $background-color: white;
 }
 
 .topic_tbl span{
-  color: rgb(7,165,179) !important;
-  font-size: 1em;
+  //color: rgb(7,165,179) !important;
+  font-size: 1.2em;
 }
 
 #time_filter{
@@ -901,15 +901,13 @@ $header-border: $table-cell-border) {
   margin: 10px;
 }
 #spiner_container{
-  //background:rgba(255, 255, 255, 0.5);
   width:450px; height:450px;
   position:relative;
   border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50% ;
-  //background: #fff url("TimeClock.png") no-repeat center;
-  //background-image: url('TimeClock.png');
-  //background-repeat: no-repeat;
-  //background-position: center;
-  //background-color: rgba(255, 255, 255, 0.5);;
+  vertical-align: top;
+  display: inline-block;
+  margin: 0 auto;
+  z-index: 999;
   }
 
 .circle {
@@ -1025,3 +1023,73 @@ $header-border: $table-cell-border) {
 
 .square {text-align:center; line-height:50px; color:white; font-weight:bold;}
 .clear {clear:both;}
+
+.map_left_control{
+  width: 230px;
+  height: 366px;
+  vertical-align: top;
+  display: inline-block;
+  position: relative;
+  left: 180px;
+  top: 45px;
+
+  div{
+    overflow:auto;
+    margin: 2px;
+
+  }
+}
+.map_right_control{
+  width:230px;
+  height: 365px;
+  vertical-align: top;
+  display: inline-block;
+  position: relative;
+  left: -180px;
+  top: 45px;
+
+  div{
+    overflow:auto;
+    margin:2px;
+    width: 230px;
+    height: 118px;
+  }
+}
+
+
+#map_zoomIn{
+  background-image: url('carmic/MapRightTop.png') !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  color: #fff;
+  font-size: 4em !important;
+  padding-top: 30px;
+  padding-left: 120px;
+}
+#map_zoomOut{
+  background-image: url('carmic/MapRightBtm.png') !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  color: #fff;
+  font-size: 4em !important;
+  padding-top: 30px;
+  padding-left: 120px;
+}
+
+.time_control{
+  background: rgb(7,165,179);
+  border-radius: 10px;
+  padding: 30px;
+  padding-left: 170px;
+  position: relative;
+  left:-2px;
+  //text-align: right;
+  //margin:0 auto;
+  //line-height: 120px;
+  color: #fff;
+}
+
+.centerMap{
+  position: relative;
+  left: 240px;
+  }
