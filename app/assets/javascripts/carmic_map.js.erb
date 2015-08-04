@@ -324,7 +324,6 @@ var Carmic = {
 
         function retrieve_posts(obj){
             var topic_id = obj.getAttribute("topicID");
-
             $.ajax({
                 data: {
                     id: topic_id
@@ -336,6 +335,11 @@ var Carmic = {
                     $("#posts_display").replaceWith(testing);
                     $("#posts_display").show();
 
+                    var objDiv =  $("body");
+                    if (objDiv[0])
+                    {
+                        objDiv.scrollTop(objDiv[0].scrollHeight);
+                    }
                 }
             });
 

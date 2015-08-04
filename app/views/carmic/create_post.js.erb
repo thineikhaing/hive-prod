@@ -5,7 +5,7 @@ $('#post_content').attr('value','');
 $("#posts_display").replaceWith("<div id='posts_display' "+ "<%= escape_javascript(render(:partial => 'all_posts')) %>"+ "</div>");
 $("#posts_display").show();
 
-var objDiv =  $("#posts");;
+var objDiv =  $("#posts");
 if (objDiv[0])
 {
     objDiv.scrollTop(objDiv[0].scrollHeight);
