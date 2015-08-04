@@ -15,5 +15,25 @@
     .columns.large-12
       %br
 
-    .columns.large-12.right
+    .columns.large-12.right{style: 'text-align:right'}
+      %a{"data-reveal" => "", "data-reveal-id" => "forget_pwd", :href => "#", id: "forget_pwd" ,style:'margin: 30px;line-height: 40px;'} forgot
+      =submit_tag "submit", class: "button tiny radius form_btn"
+
+#forget_pwd.reveal-modal{"data-reveal" => ""}
+  %a.close-reveal-modal X
+  %br
+  %br
+  = form_for :home, data:{ abide: " " }, url: { controller: "carmic", action: "camic_reset_pwd", method: "camic_reset_pwd"} , :remote => true do |f|
+    .columns.large-12
+      %h4 Reset Password
+    .columns.large-12
+      %br
+    .columns.large-12
+      %span username
+      =text_field_tag 'email', nil, placeholder: 'username'
+      %small.error Name is required and must be a string.
+    .columns.large-12
+      %br
+
+    .columns.large-12.right{style: 'text-align:right'}
       =submit_tag "submit", class: "button tiny radius form_btn"

@@ -86,7 +86,8 @@ class CarmicController < ApplicationController
     end
 
     if Rails.env.development?
-      @url = "http://localhost:5000/api/downloaddata/retrieve_carmic_user"
+      p 'call call call'
+      p @url = "http://localhost:5000/api/downloaddata/retrieve_carmic_user"
       @image_url = AWS_Link::AWS_Image_D_Link
       @audio_url = AWS_Link::AWS_Audio_D_Link
 
@@ -219,6 +220,27 @@ class CarmicController < ApplicationController
     p session[:carmic_user] = nil
     p session[:carmic_user_id] = nil
     redirect_to carmic_path
+  end
+
+  def camic_reset_pwd
+    params[:email]
+    if params[:email].present?
+      user = User.find_by_email(params[:email])
+      if user.present?
+        user.send_password_reset
+        respond_to do |format|
+          format.js {render inline: "location.reload();" }
+        end
+        flash[:notice] = "Email sent with password reset instructions."
+      else
+        respond_to do |format|
+          format.js {render inline: "location.reload();" }
+        end
+        flash[:notice] = "Email address does not exist."
+      end
+    end
+
+    p "reset password"
   end
 
   def get_avatar(username)

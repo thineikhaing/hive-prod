@@ -5,7 +5,9 @@ var Carmic = {
         startTime()
         $(".top-bar").hide();
         $("#header").hide();
-        $("#map_content").show();
+
+       $("body").addClass("full_bg");
+        $("body").addClass("blur-bgimage");
         $(".container").addClass("removebg");
         $("#main_background").addClass("removebg");
         document.body.style.backgroundImage='none';

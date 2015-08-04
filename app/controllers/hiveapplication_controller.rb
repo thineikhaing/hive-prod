@@ -463,22 +463,45 @@ class HiveapplicationController < ApplicationController
   def reset_password
     # Show user information if they forgotten password (email link)
     if params[:token].present?
-      @devuser = Devuser.find_by_reset_password_token!(params[:token])
+      @devuser = Devuser.find_by_reset_password_token!(params[:token]) rescue nil
+      if @devuser.nil?
+        @devuser = User.find_by_reset_password_token!(params[:token])
+      end
     end
   end
 
   def update_password
     # Updates PASSWORD
-    @devuser = Devuser.find_by_reset_password_token!(params[:token])
-
-    # Check if the activation code is within 2 hours
-    if @devuser.reset_password_sent_at < 2.hours.ago
-      redirect_to hiveapplication_forget_password_path, :alert => "Password reset has expired."
-    elsif @devuser.update_attributes(params[:devuser])
-      redirect_to hiveapplication_index_path, :notice => "Password has been reset!"
-    else
-      render :reset_password #err in saving password, show on reset_password page
+    @devuser = Devuser.find_by_reset_password_token!(params[:token]) rescue nil
+    if @devuser.nil?
+      @user = User.find_by_reset_password_token!(params[:token])
     end
+
+    if @devuser.nil?
+
+      # Check if the activation code is within 2 hours
+      if @user.reset_password_sent_at < 2.hours.ago
+        redirect_to carmic_path, :alert => "Password reset has expired."
+      elsif @user.update_attributes(params[:user])
+        redirect_to carmic_path, :notice => "Password has been reset!"
+      else
+        render :reset_password #err in saving password, show on reset_password page
+      end
+
+    else
+
+      # Check if the activation code is within 2 hours
+      if @devuser.reset_password_sent_at < 2.hours.ago
+        redirect_to hiveapplication_forget_password_path, :alert => "Password reset has expired."
+      elsif @devuser.update_attributes(params[:devuser])
+        redirect_to hiveapplication_index_path, :notice => "Password has been reset!"
+      else
+        render :reset_password #err in saving password, show on reset_password page
+      end
+
+    end
+
+
   end
 
   def forget_password

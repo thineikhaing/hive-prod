@@ -43,6 +43,7 @@ Rails.application.routes.draw do
   match "carmic/create_post"                   , path:"create_post"             , via: [:get,:post]
   match "carmic/singup"                       , path:"singup"                    , via: [:get,:post]
   match "carmic/login"                        , path:"login"                  , via: [:get,:post]
+  match "carmic/camic_reset_pwd"               , path:"camic_reset_pwd"                  , via: [:get,:post]
   get "carmic/logout"                , path: "logout"
 
   match "carmic/create_post"        , path:  "create_post"     , via: [:get,:post]

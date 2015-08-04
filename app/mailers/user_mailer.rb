@@ -21,6 +21,15 @@ class UserMailer < ActionMailer::Base
     mail :to => user.email, :subject => "Password Reset"
   end
 
+  def carmic_password_reset(user)
+    if Rails.env.development? || Rails.env.testing?
+      @reset_pwd_url = "http://localhost:5000/reset_password?token=" + user.reset_password_token
+    elsif Rails.env.staging? || Rails.env.production?
+      @reset_pwd_url = "http://h1ve-staging.herokuapp.com/reset_password?token=" + user.reset_password_token
+    end
+    mail :to => user.email, :subject => "Password Reset"
+  end
+
   def report_offensive_topic(user, topic)
     @user = user
     @topic = topic

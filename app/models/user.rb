@@ -31,6 +31,20 @@ class User < ActiveRecord::Base
 
   enums %w(BOT ADMIN VENDOR NORMAL)
 
+  def send_password_reset
+    generate_token(:reset_password_token)
+    self.reset_password_sent_at = Time.zone.now
+    p self.reset_password_token =  SecureRandom.urlsafe_base64
+    save!
+    UserMailer.carmic_password_reset(self).deliver
+  end
+
+  def generate_token(column)
+    begin
+      self[column] = SecureRandom.urlsafe_base64
+    end while User.exists?(column => self[column])
+  end
+
   def self.search_data(search)
     where("lower(username) like ?", "%#{search.downcase}%")
   end
