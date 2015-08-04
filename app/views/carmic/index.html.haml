@@ -1,11 +1,8 @@
 .row
-  .columns.large-2
+  .columns.large-3
     = image_tag("carmicbeta.png",alt: "CarMask" )
-    -#carmic
-    -#%sub{style:'font-size:15px;line-height:0px;'}
-    -#  DASH beta
-  .columns.large-1
-    &nbsp;
+
+
   .columns.large-9{style:'line-height:30px;color:rgb(7,165,179)'}
     -##address
     -if session[:carmic_user].present?
@@ -17,7 +14,7 @@
       =link_to "logout" ,carmic_logout_path
     -else
       %span
-        %a{"data-reveal" => "", "data-reveal-id" => "signin_model", :href => "#", id: "signup" }Log in
+        %a{"data-reveal" => "", "data-reveal-id" => "signin_model", :href => "#", id: "login" }Log in
         = render :partial => "carmic/sign_in"
         |
         %a{"data-reveal" => "", "data-reveal-id" => "myModal", :href => "#", id: "signup" }Sign Up

@@ -293,6 +293,33 @@ var Carmic = {
             $("#edit_street").show();
         })
 
+        $("#SignUp").click(function(){
+            var xcoord  = $(this).offset().left;
+            var ycoord  = $(this).offset().top;
+            $(".modal")
+                    .dialog({
+                        modal     : true,
+                        position  : [xcoord, ycoord],
+                        minHeight : 100,
+                        closeText : "close",
+                        draggable : false,
+                        resizable : false
+                    }).dialog("widget").find(".ui-dialog-titlebar").hide();
+            return false;
+        })
+
+        $("#login").click(function (e) {
+            $('#signin_model').foundation('reveal', 'open');
+        });
+
+        $("#signup").click(function (e) {
+            $('#myModal').foundation('reveal', 'open');
+        });
+
+        $(".ui-widget-overlay").live("click", function() {
+            $(".modal").dialog("close");
+        })
+
         function retrieve_posts(obj){
             var topic_id = obj.getAttribute("topicID");
 
@@ -340,6 +367,8 @@ var Carmic = {
 
         window.retrieve_posts = retrieve_posts;
     }
+
+
 
 
 

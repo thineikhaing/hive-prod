@@ -2,6 +2,8 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 //
+
+
 body {  min-width:560px !important;  }
 
 .top_bar1{
@@ -128,120 +130,10 @@ body {  min-width:560px !important;  }
 
 }
 
-#custom_zoomcontrol{
-  //position: fixed !important;
-  //z-index: 10000005 !important;
-  //margin-right:-35px;
-}
-
-
-
 $radius: 250px;
 $thickness: 5px;
 $border-color: rgb(7,165,179);
 $background-color: white;
-//
-//.wrapper {
-//  position: relative;
-//  width: 500px;
-//  height: 500px;
-//  overflow: hidden;
-//  margin: 50px;
-//
-//
-//  & > i {
-//    display: block;
-//    position: absolute;
-//
-//    &.top {
-//      top: 0;
-//      border-top: $thickness solid $border-color;
-//      //border-top: 10px solid #fff;
-//      &:after {
-//        top: -$radius/2 - $thickness;
-//        border-top: $radius/2 solid $background-color;
-//      }
-//    }
-//    &.right {
-//      right: 0;
-//      border-right: $thickness solid $border-color;
-//      &:after {
-//        right: -$radius/2 - $thickness;
-//        border-right: $radius/2 solid $background-color;
-//      }
-//    }
-//    &.bottom {
-//      bottom: 0;
-//      border-bottom: $thickness solid $border-color;
-//      &:after {
-//        bottom: -$radius/2 - $thickness;
-//        border-bottom: $radius/2 solid $background-color;
-//      }
-//    }
-//    &.left {
-//      left: 0;
-//      border-left: $thickness solid $border-color;
-//      &:after {
-//        left: -$radius/2 - $thickness;
-//        border-left: $radius/2 solid $background-color;
-//      }
-//    }
-//
-//    &.top:not(.right):not(.left),
-//    &.bottom:not(.right):not(.left) {
-//      height: $thickness;
-//      left: $radius+$thickness;
-//      right: $radius+$thickness;
-//    }
-//
-//    &.left:not(.top):not(.bottom),
-//    &.right:not(.top):not(.bottom) {
-//      width: $thickness;
-//      top: $radius+$thickness;
-//      bottom: $radius+$thickness;
-//    }
-//
-//    &.top.right,
-//    &.top.left,
-//    &.bottom.right,
-//    &.bottom.left {
-//      width: $radius;
-//      height: $radius;
-//
-//      &:after {
-//        content:"";
-//        position: absolute;
-//        width: 1.5*$radius;
-//        height: 1.5*$radius;
-//      }
-//    }
-//
-//    &.top.right {
-//      border-top-right-radius: $radius;
-//      &:after { border-top-right-radius: 1.5*$radius; }
-//    }
-//    &.top.left {
-//      border-top-left-radius: $radius;
-//      &:after { border-top-left-radius: 1.5*$radius; }
-//    }
-//    &.bottom.right {
-//      border-bottom-right-radius: $radius;
-//      &:after { border-bottom-right-radius: 1.5*$radius; }
-//    }
-//    &.bottom.left {
-//      border-bottom-left-radius: $radius;
-//      &:after { border-bottom-left-radius: 1.5*$radius; }
-//    }
-//  }
-//}
-//
-//#map {
-//  width: inherit;
-//  height: inherit;
-//  .gmnoprint {
-//    display: none;
-//  }
-//}
 
 #dashbeta{
   background: rgb(7,165,179);
@@ -1117,5 +1009,40 @@ div#btn_zoom_in,div#btn_zoom_out{
   margin: 0 auto;
   display: none;
   margin:20px;
+
+}
+
+#signin_model,#myModal{
+  width : 400px;
+  span{
+    color: #fff;
+    font-size: 1.2em;
+  }
+
+  input[type=email], input[type=text],
+  input[type=password] input[type="email"],
+  input[type="text"], input[type="password"] {
+    border: none !important;
+    outline: none !important;
+    border-radius: 20px !important;
+    height: 40px !important;
+  }
+
+  a{
+    color: #fff !important;
+  }
+
+}
+
+.reveal-modal-bg{
+  background:rgba(0, 0, 0, 0) !important; ;
+}
+
+.reveal-modal{
+  background: rgb(7,165,179);
+  min-height: 300px !important;
+  border-radius: 15px !important;
+  border: 1px solid #fff !important;
+  top: 30px;
 
 }

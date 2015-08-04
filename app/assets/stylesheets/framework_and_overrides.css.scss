@@ -50,8 +50,7 @@ nav.top-bar {
 // to make views framework-neutral
 main {
   @include twelve-columns;
-  margin-top:10px;
-  //background-color: #eee;
+
   }
 section {
   @extend .row;
