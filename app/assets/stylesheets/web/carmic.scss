@@ -1016,7 +1016,7 @@ div#btn_zoom_in,div#btn_zoom_out{
   width : 400px;
   span{
     color: #fff;
-    font-size: 1.2em;
+    font-size: 1em;
   }
 
   input[type=email], input[type=text],
@@ -1025,7 +1025,7 @@ div#btn_zoom_in,div#btn_zoom_out{
     border: none !important;
     outline: none !important;
     border-radius: 20px !important;
-    height: 40px !important;
+    height: 36px !important;
   }
 
   a{
@@ -1045,4 +1045,11 @@ div#btn_zoom_in,div#btn_zoom_out{
   border: 1px solid #fff !important;
   top: 30px;
 
+}
+
+.form_btn{
+  background-color: rgb(7,165,179);
+  border: 1px solid;
+  border-radius: 20px !important;
+  float: right;
 }
