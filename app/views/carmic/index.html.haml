@@ -134,10 +134,7 @@
       #btn_zoom_out
         ="-"
 
-
-.row
   .columns.large-12{style:'padding-right:0px;'}
-
     %ul.tabs{"data-tab" => ""}
       %li.tab-title
         %a{href: "#panel1", id: "car_tab"}
@@ -203,90 +200,90 @@
           -#  %span 5 most recent
 
         .clear
-
-        #display_topic
-          -if @incidents.present?
-            -@incidents.each do |inc|
-              -host = User.find(inc.host_id)
-              -peer = User.find(inc.peer_id)
-              -host_color = host.data["color"]
-              -host_num = host.data["plate_number"]
-              -peer_color = peer.data["color"]
-              -peer_num = peer.data["plate_number"]
-              %table.topic_tbl{:width => "100%"}
-                %tr
-                  %td{width:"20%"}
-                    %span
-                      .car_no{style:"background:#"+host_color+" !important"}
-                        =host_num
-                    %span{style:'color:red !important'}
-                      +
-                    %span
-                      .car_no{style:"background:#"+peer_color+" !important"}
-                        =peer_num
-
-
-                  %td{:colspan => "2",width:"80%", class:'topic_row'}
-                    %span.title{style:'color:red !important'}
-                      POSSIBLE COLLISION
-                    %span.right
-                      #{time_ago_in_words(inc.created_at)} ago
-            %hr
-          -if @filter_by_time == true
-            %input{type:'hidden', value:"#{@topic_by_time.count rescue '0'}", id:'hid_tcount'}
-            -@topics_list = @topic_by_time
-            -@topic_avatar_url = @topic_by_time_avatar_url
-          -else
-            %input{type:'hidden', value:"#{@topics_list.count rescue '0'}", id:'hid_tcount'}
-            -@topics_list = @topics_list
-            -@topic_avatar_url = @topic_avatar_url
-
-          %input{type:'hidden', value:"#{@activeUsersArray.count rescue '0'}", id:'hid_ucount'}
-          %ul{:id => "nav"}
-            - if @topics_list.present?
-              -#-@topics_list = @topics_list.first(5)
-              - @topics_list.each do |sTopic|
-                -string =   @topic_avatar_url[sTopic.id].to_s
-                -substring = "carmic"
-                -string.slice! substring
-                -title = sTopic.title.split(':')
-                -car_color = sTopic.user.data["color"]
-                -inc_car = title.first.split("to ")
-                -inc_car = inc_car.last
-                -inc_user = User.where("data -> 'plate_number' = ?",inc_car).take
+        #display_topic_post
+          #display_topic
+            -if @incidents.present?
+              -@incidents.each do |inc|
+                -host = User.find(inc.host_id)
+                -peer = User.find(inc.peer_id)
+                -host_color = host.data["color"]
+                -host_num = host.data["plate_number"]
+                -peer_color = peer.data["color"]
+                -peer_num = peer.data["plate_number"]
+                %table.topic_tbl{:width => "100%"}
+                  %tr
+                    %td{width:"20%"}
+                      %span
+                        .car_no{style:"background:#"+host_color+" !important"}
+                          =host_num
+                      %span{style:'color:red !important'}
+                        +
+                      %span
+                        .car_no{style:"background:#"+peer_color+" !important"}
+                          =peer_num
 
 
-                -if (sTopic.offensive < 3)
-                  %li
-                    %a{href:"#", id:"topicid", topicID: "#{sTopic.id}" , name:"topic_lists"  ,onclick:"retrieve_posts(this);"}
-                      %table.topic_tbl{:width => "100%"}
-                        %tr
-                          %td{width:"20%"}
-                            %span
-                              .car_no{style:"background:#"+car_color+" !important"}
-                                =sTopic.user.data["plate_number"]
-                            %span
-                              >
-                              -if title.count > 1
-                                -inc_color = inc_user.data["color"]
-                                .car_no{style:"background:#"+inc_color+" !important"}
-                                  =inc_car
-                              -else
-                                .car_no
-                                  all
+                    %td{:colspan => "2",width:"80%", class:'topic_row'}
+                      %span.title{style:'color:red !important'}
+                        POSSIBLE COLLISION
+                      %span.right
+                        #{time_ago_in_words(inc.created_at)} ago
+              %hr
+            -if @filter_by_time == true
+              %input{type:'hidden', value:"#{@topic_by_time.count rescue '0'}", id:'hid_tcount'}
+              -@topics_list = @topic_by_time
+              -@topic_avatar_url = @topic_by_time_avatar_url
+            -else
+              %input{type:'hidden', value:"#{@topics_list.count rescue '0'}", id:'hid_tcount'}
+              -@topics_list = @topics_list
+              -@topic_avatar_url = @topic_avatar_url
 
-                          %td{:colspan => "2",width:"80%", class:'topic_row'}
-                            %span.title
-                              = title.last
-                            %span.right
-                              #{time_ago_in_words(sTopic.created_at)} ago
-          -#-if @topics_list.present?
-          -#  .paginate{style:'float:right; margin-right:30px;font-size:16px;'}
-          -#    =paginate @topics_list
-        %br
-        #posts_display
-          - if @post_lists.present?
-            = render :partial => "carmic/all_posts"
+            %input{type:'hidden', value:"#{@activeUsersArray.count rescue '0'}", id:'hid_ucount'}
+            %ul{:id => "nav"}
+              - if @topics_list.present?
+                -#-@topics_list = @topics_list.first(5)
+                - @topics_list.each do |sTopic|
+                  -string =   @topic_avatar_url[sTopic.id].to_s
+                  -substring = "carmic"
+                  -string.slice! substring
+                  -title = sTopic.title.split(':')
+                  -car_color = sTopic.user.data["color"]
+                  -inc_car = title.first.split("to ")
+                  -inc_car = inc_car.last
+                  -inc_user = User.where("data -> 'plate_number' = ?",inc_car).take
+
+
+                  -if (sTopic.offensive < 3)
+                    %li
+                      %a{href:"#", id:"topicid", topicID: "#{sTopic.id}" , name:"topic_lists"  ,onclick:"retrieve_posts(this);"}
+                        %table.topic_tbl{:width => "100%"}
+                          %tr
+                            %td{width:"20%"}
+                              %span
+                                .car_no{style:"background:#"+car_color+" !important"}
+                                  =sTopic.user.data["plate_number"]
+                              %span
+                                >
+                                -if title.count > 1
+                                  -inc_color = inc_user.data["color"]
+                                  .car_no{style:"background:#"+inc_color+" !important"}
+                                    =inc_car
+                                -else
+                                  .car_no
+                                    all
+
+                            %td{:colspan => "2",width:"80%", class:'topic_row'}
+                              %span.title
+                                = title.last
+                              %span.right
+                                #{time_ago_in_words(sTopic.created_at)} ago
+            -#-if @topics_list.present?
+            -#  .paginate{style:'float:right; margin-right:30px;font-size:16px;'}
+            -#    =paginate @topics_list
+          %br
+          #posts_display
+            - if @post_lists.present?
+              = render :partial => "carmic/all_posts"
 
       #panel3.content
 
