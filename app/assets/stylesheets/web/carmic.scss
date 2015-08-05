@@ -823,12 +823,6 @@ $header-border: $table-cell-border) {
   -webkit-transform: translateZ(0);
   -webkit-mask-image: -webkit-radial-gradient(circle, white, black);
 
-  box-shadow:
-    0 0 0 1px rgb(7,165,179),
-    0 0 0 6px #fff,
-    0 0 0 18px rgb(7,165,179),
-    0 0 0 23px #fff,
-    0 0 0 24px rgb(7,165,179) ;
   overflow:hidden !important;
 
 }
@@ -838,12 +832,22 @@ $header-border: $table-cell-border) {
   background-color: transparent;
   position:relative;
   margin-left: 25px; margin-top:25px;
-  border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50%}
+  border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50%     ;
+  overflow:hidden !important;
+
+}
 
 #innerCircle{
   width: 340px; height: 340px; position: absolute;
   left: 30px; top:30px; background-color: transparent;
   border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50%;
+  box-shadow:
+    0 0 0 1px rgb(7,165,179),
+    0 0 0 6px #fff,
+    0 0 0 18px rgb(7,165,179),
+    0 0 0 23px #fff,
+    0 0 0 24px rgb(7,165,179) ;
+  overflow:hidden !important;
 }
 
 #marker{
