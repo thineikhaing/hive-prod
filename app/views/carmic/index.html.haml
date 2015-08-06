@@ -1,6 +1,6 @@
 .row
   .columns.large-3
-    = image_tag("carmicbeta.png",alt: "CarMask" )
+    = image_tag("carmicbeta.png",alt: "CarMask",id:"carmic_logo")
 
   .columns.large-9{style:'line-height:30px;color:rgb(7,165,179)'}
     -##address
@@ -119,7 +119,7 @@
 
 -# *********************** end of header ***********************
 
-.row
+.row.maincontent_wrapper{style:''}
   .columns.large-12{style:'margin-top:20px;'}
     .map_left_control
       %div
@@ -174,7 +174,7 @@
         ="-"
 
   .columns.large-12{style:'padding-right:0px;'}
-    %ul.tabs{"data-tab" => ""}
+    %ul.tabs{"data-tab" => "",style:'display:none'}
       %li.tab-title
         %a{href: "#panel1", id: "car_tab"}
           %span#user_count=@activeUsersArray.count rescue '0'
@@ -366,6 +366,7 @@
            alert($( this ).data("id"))
        }
    });
+
 
    $("#map_content").show();
    var __markers,marker,markers;
@@ -1001,9 +1002,20 @@
      if (windowsize < 1000) {
        //if the window is greater than 440px wide then turn on jScrollPane..
          showTimeSpinner();
-
-     }else{showcurrenttopic();}
+         $("#carmic_logo").hide();
+     }else{
+      showcurrenttopic();
+      $("#carmic_logo").show();
+      }
    });
 
 
   window.setInterval(getCoords, 60000);
+   if (windowsize < 1000) {
+     //if the window is greater than 440px wide then turn on jScrollPane..
+       showTimeSpinner();
+       $("#carmic_logo").hide();
+   }else{
+    showcurrenttopic();
+    $("#carmic_logo").show();
+    }

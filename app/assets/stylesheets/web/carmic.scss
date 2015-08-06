@@ -5,6 +5,13 @@
 
 
 body {  min-width:560px !important;  }
+.maincontent_wrapper{
+  border:1px solid none; height:1000px;overflow-y:auto;padding-left:10px;padding-right:10px;
+  border-radius: 3px;
+  padding-bottom: 10px;
+  box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+
+}
 
 #carmic_top_nav {
   top: 0px;
@@ -1039,6 +1046,7 @@ $header-border: $table-cell-border) {
   margin: 0 auto;
   height: 160px;
   display: none;
+  margin:0 auto;
 }
 div#btn_zoom_in,div#btn_zoom_out{
   font-size: 35px;
@@ -1053,6 +1061,7 @@ div#btn_zoom_in,div#btn_zoom_out{
   margin: 0 auto;
   display: none;
   margin:20px;
+  float: left;
 
 }
 
@@ -1160,9 +1169,6 @@ div#btn_zoom_in,div#btn_zoom_out{
 }
 
 #display_topic_post{
-  width: auto;
-  height: 600px;
-  //box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
-  overflow-y : scroll;
+
 
 }
