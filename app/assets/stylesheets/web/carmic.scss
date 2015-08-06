@@ -6,7 +6,7 @@
 
 body {  min-width:560px !important;  }
 .maincontent_wrapper{
-  border:1px solid none; height:1000px;overflow-y:auto;padding-left:10px;padding-right:10px;
+  border:1px solid none; height:1000px;overflow-y:auto;overflow-x:hidden;padding-left:10px;padding-right:10px;
   border-radius: 3px;
   padding-bottom: 10px;
   box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
