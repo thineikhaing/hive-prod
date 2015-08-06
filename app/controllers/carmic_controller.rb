@@ -172,24 +172,76 @@ class CarmicController < ApplicationController
 
   def singup
     if params[:email] and params[:password]
-      p "sign up from hiveweb"
-      p email= params[:email]
-      p password = params[:password]
 
-      user = User.new
-      user.email = email
-      user.password = password
-      user.password_confirmation = params[:password]
+      if params[:email].present?
+        email = User.find_by_email(params[:email])
+        if email.present?
+          @err_msg = "EMAIL ALREADY EXISTS"
+          @flag = false
+        elsif HiveApplication.is_a_valid_email(params[:email]) == false
+          @err_msg = "PLEASE ENTER A VALID EMAIL ADDRESS"
+          @flag = false
+        else
+          @email = params[:email]
+          @flag = true
+        end
 
-      p user
-      p "+++++++"
-      user.save!
-      p "user is saved!"
-
-      @user = user
-      respond_to do |format|
-        format.js {render inline: "location.reload();" }
       end
+
+
+      if params[:password].present?
+        if HiveApplication.is_a_valid_password(params[:password])  == false
+          @err_msg = "PASSWORDS MUST BE AT LEAST A CHARACTERS LONG AND INCLUDE A NUMBER"
+          @flag = false
+        else
+          @password = params[:password]
+          @flag = true
+        end
+      end
+
+      if params[:confirm_password].present?
+
+        if params[:password]!= params[:confirm_password]
+          @err_msg = "PASSWORDS DO NOT MATCH"
+          @flag = false
+        else
+          @confirm_password = params[:confirm_password]
+          @flag = true
+        end
+
+      end
+      p "+++++"
+      p @err_msg
+      p @flag
+      p "+++++"
+      if @err_msg.present?
+        respond_to do |format|
+          format.js {render inline: "location.reload();" }
+        end
+        flash[:error] = @err_msg
+      else
+
+        p "sign up from hiveweb"
+        p email= params[:email]
+        p password = params[:password]
+
+        user = User.new
+        user.email = email
+        user.password = password
+        user.password_confirmation = params[:password]
+
+        p user
+        p "+++++++"
+        user.save!
+        p "user is saved!"
+
+        @user = user
+        respond_to do |format|
+          format.js {render inline: "location.reload();" }
+        end
+        flash[:error] = "Sigup New User successfully!"
+      end
+
 
     else
 
@@ -203,13 +255,19 @@ class CarmicController < ApplicationController
     p params[:password]
 
     if params[:email].present? and params[:password].present?
-      user = User.find_by_email(params[:email])
+      user = User.find_by_email(params[:email]).valid_password?(params[:password])
       if user.present?
+        user = User.find_by_email(params[:email])
         session[:carmic_user] = user.username
         session[:carmic_user_id] = user.id
         respond_to do |format|
           format.js {render inline: "location.reload();" }
         end
+      else
+        respond_to do |format|
+          format.js {render inline: "location.reload();" }
+        end
+        flash[:error] = "Username and Password mismatch!"
       end
 
     end
