@@ -6,10 +6,110 @@
 
 body {  min-width:560px !important;  }
 
+#carmic_top_nav {
+  top: 0px;
+  width:710px;
+  margin:0 auto;
+  list-style:none;
+
+}
+
+#carmic_top_nav li {
+  float:left;
+
+  input[type="text"] {
+    width:110px !important;
+    background: white none repeat scroll 0 0;
+    border-image: none;
+    border-color: none;
+    box-shadow: none;
+    border-radius: 2px;
+    border-style: solid;
+    border-width: 1px;
+    color: #000;
+    height: 34px;
+    margin: 0px;
+    padding: 0 10px;
+    font-family: Labrador-A-Medium;
+    font-size: 1.2em !important;
+    outline: 0;
+    margin-top: 3.5px;
+
+  }
+}
+
+
+#carmic_top_nav span {
+  display:block;
+  text-align:left;
+  height: 40px;
+  line-height: 40px;
+  color: #fff;
+  width:120px; /* fixed width */
+  display:inline-block;
+  white-space: nowrap;
+  overflow:hidden !important;
+  text-overflow: ellipsis;
+  font-family: Labrador-A-Medium;
+  font-size: 1.2em !important;
+}
+
+
+#select_country{
+  //padding: 0px !important;
+  //height: 38px;
+  #ok_find{
+      margin-top: 5px;
+  }
+  overflow: hidden;
+  float:right !important;
+}
+
+#country_list{
+  background: none;
+  color: #fff;
+  height: 38px;
+  text-indent: 5px;
+  font-family: Labrador-A-Medium;
+  font-size: 1.2em !important;
+  border: none;
+  width:180px !important;
+  option{
+    color: rgb(6,149,165);
+    display:block;
+    text-align:center;
+    height: 40px;
+    line-height: 40px;
+    width:150px; /* fixed width */
+    display:inline-block;
+    white-space: nowrap;
+    overflow:hidden !important;
+    text-overflow: ellipsis;
+    font-size: 1.5em !important;
+  }
+}
+
+#lefttopbar{
+  background: rgb(7,165,179);
+  height: 38px;
+  border-top-left-radius: 1.5em;
+  border-bottom-left-radius: 1.5em;
+  line-height: 38px;
+  text-align: center;
+  color: #fff;
+  font-size: 1.4em ;
+  font-family: Labrador-A-Light;
+  padding-right: 0px;
+  margin-bottom: 20px;
+  min-height: 40px !important;
+
+}
+
+
 .top_bar1{
   width: 100%;
   height: 40px;
-  background: rgb(7,165,179);
+  background: rgb(6,149,165);
   margin-top: 40px;
   float: left;
 }
@@ -374,77 +474,18 @@ $background-color: white;
 
 #nav{
   width: auto;
-  //height: 297px;
-  ////box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
-  //overflow-y : scroll;
 
 }
 
-#select_country{
-  padding: 0px !important;
-  height: 38px;
-  overflow: hidden;
-  float: right;
-}
 
-#country_list{
-  background: rgb(6,149,165);
-  color: #fff;
-  height: 38px;
-  text-indent: 5px;
-  font-size: 16px ;
-  border: none;
-  option{
-    color: rgb(6,149,165);
-    padding: 8px;
-    height: 50px;
-  }
-}
-
-#lefttopbar{
-  background: rgb(7,165,179);
-  height: 38px;
-  border-top-left-radius: 1.5em;
-  border-bottom-left-radius: 1.5em;
-  line-height: 38px;
-  text-align: center;
-  color: #fff;
-  font-size: 1.4em ;
-  font-family: Labrador-A-Light;
-  //border-top: 3px solid rgb(7,165,179);
-  //border-bottom: 2px solid rgb(7,165,179);
-  padding-right: 0px;
-  margin-bottom: 20px;
-}
-
-#lefttopbar{
-  input[type="text"] {
-    background: white none repeat scroll 0 0;
-    border-image: none;
-    border-color: none;
-    box-shadow: none;
-    border-radius: 2px;
-    border-style: solid;
-    border-width: 1px;
-    color: rgb(6,149,165);
-    height: 34px;
-    margin: 0px;
-    padding: 0 10px;
-    font-size: 18px ;
-    font-family: Labrador-A-Light;
-    outline: 0;
-    margin-top: 3.4px;
-  }
-
-}
 
 #autocomplete{
   display: none;
 }
 
 #ok_find{
-  background: rgb(7,165,179);
-
+  position: relative;
+  float: left;
 }
 
 .tbl_cars{
@@ -920,8 +961,8 @@ $header-border: $table-cell-border) {
   vertical-align: top;
   display: inline-block;
   position: relative;
-  left: 180px;
-  top: 45px;
+  left: 143px;
+  top: 70px;
 
   div{
     overflow:auto;
@@ -932,38 +973,36 @@ $header-border: $table-cell-border) {
 .map_right_control{
   width:230px;
   height: 365px;
-  vertical-align: top;
+  vertical-aligasswordn: top;
   display: inline-block;
   position: relative;
-  left: -180px;
-  top: 45px;
+  left: -110px;
+  top: 70px;
 
   div{
     overflow:auto;
     margin:2px;
-    width: 230px;
-    height: 118px;
   }
 }
 
 
 #map_zoomIn{
-  background-image: url('carmic/MapRightTop.png') !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  color: #fff;
-  font-size: 4em !important;
-  padding-top: 30px;
-  padding-left: 120px;
+  //background-image: url('carmic/MapRightTop.png') !important;
+  //background-repeat: no-repeat !important;
+  //background-position: center !important;
+  //color: #fff;
+  //font-size: 4em !important;
+  //padding-top: 30px;
+  //padding-left: 120px;
 }
 #map_zoomOut{
-  background-image: url('carmic/MapRightBtm.png') !important;
-  background-repeat: no-repeat !important;
-  background-position: center !important;
-  color: #fff;
-  font-size: 4em !important;
-  padding-top: 30px;
-  padding-left: 120px;
+  //background-image: url('carmic/MapRightBtm.png') !important;
+  //background-repeat: no-repeat !important;
+  //background-position: center !important;
+  //color: #fff;
+  //font-size: 4em !important;
+  //padding-top: 30px;
+  //padding-left: 120px;
 }
 
 .time_control{

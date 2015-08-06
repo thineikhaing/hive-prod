@@ -2,7 +2,6 @@
   .columns.large-3
     = image_tag("carmicbeta.png",alt: "CarMask" )
 
-
   .columns.large-9{style:'line-height:30px;color:rgb(7,165,179)'}
     -##address
     -if session[:carmic_user].present?
@@ -22,72 +21,101 @@
 
     %span.right
       %a Support
+  .columns.large-9#lefttopbar.right
+    %ul#carmic_top_nav
+      %li
+        %input#autocomplete{:onkeypress => "geolocate(event)",
+              :placeholder => "Enter a location", :type => "text"}
+      %li
+        %span#country Country
+
+      %li#remove_country
+        =image_tag("cancel.png", id: 'rm_country', style: 'display:none')
+        %span{style:'width: 15px;'} >
+
+      %li
+        %span#state State
+        %input{type:'text', id:'edit_city', style: 'display:none'}
+
+      %li#remove_state
+        =image_tag("cancel.png", id: 'rm_state', style: 'display:none')
+        %span{style:'width: 15px;'} >
+      %li
+        %span#address Address
+        %input{type:'text', id:'edit_street', style: 'display:none'}
+
+      %li#remove_street
+        =image_tag("cancel.png", id: 'rm_street')
+      -#%li
+      -#  =image_tag("Search.png", :alt => "Myanmar", id: 'ok_find')
+
+      #select_country
+        =image_tag("Search.png", :alt => "Myanmar", id: 'ok_find')
+        =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
+
+    -#.columns.large-4
+    -#  %input#autocomplete{:onkeypress => "geolocate(event)",
+    -#  :placeholder => "Enter a location", :type => "text"}
+    -#
+    -#.columns.large-2
+    -#  %span#country
+    -#
+    -#.columns.large-1#remove_country
+    -#  =image_tag("cancel.png", id: 'rm_country', style: 'display:none')
+    -#  >
+    -#.columns.large-2
+    -#  %span#state
+    -#  %input{type:'text', id:'edit_city', style: 'display:none'}
+    -#.columns.large-1#remove_state
+    -#  =image_tag("cancel.png", id: 'rm_state', style: 'display:none')
+    -#  >
+    -#.columns.large-2
+    -#  %span#address
+    -#  %input{type:'text', id:'edit_street', style: 'display:none'}
+    -#.columns.large-1#remove_street
+    -#  =image_tag("cancel.png", id: 'rm_street')
+    -#
+    -#=image_tag("Search.png", :alt => "Myanmar", id: 'ok_find')
+    -#
+    -#.columns.large-2#select_country
+    -#  =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
+
+-# *********** version1 header ***********
+
   -#.columns.large-9#lefttopbar.right
   -#
-  -#  .columns.large-4
+  -#  %span
   -#    %input#autocomplete{:onkeypress => "geolocate(event)",
   -#    :placeholder => "Enter a location", :type => "text"}
   -#
-  -#  .columns.large-2
+  -#  %span
   -#    %span#country
   -#
-  -#  .columns.large-1#remove_country
+  -#  %span#remove_country
   -#    %span
   -#      >
   -#    =image_tag("cancel.png", id: 'rm_country', style: 'display:none')
   -#
-  -#  .columns.large-2
+  -#  %span
   -#    %span#state
   -#    %input{type:'text', id:'edit_city', style: 'display:none'}
-  -#  .columns.large-1#remove_state
+  -#
+  -#  %span#remove_state
   -#    %span
   -#      >
   -#    =image_tag("cancel.png", id: 'rm_state', style: 'display:none')
   -#
-  -#  .columns.large-2
+  -#  %span
   -#    %span#address
   -#    %input{type:'text', id:'edit_street', style: 'display:none'}
-  -#  .columns.large-1#remove_street
+  -#
+  -#  %span#remove_street
   -#    =image_tag("cancel.png", id: 'rm_street')
   -#
   -#  =image_tag("Search.png", :alt => "Myanmar", id: 'ok_find')
   -#
-  -#  .columns.large-2#select_country
+  -#  %span#select_country
   -#    =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
-  .columns.large-9#lefttopbar.right
-
-    %span
-      %input#autocomplete{:onkeypress => "geolocate(event)",
-      :placeholder => "Enter a location", :type => "text"}
-
-    %span
-      %span#country
-
-    %span#remove_country
-      %span
-        >
-      =image_tag("cancel.png", id: 'rm_country', style: 'display:none')
-
-    %span
-      %span#state
-      %input{type:'text', id:'edit_city', style: 'display:none'}
-
-    %span#remove_state
-      %span
-        >
-      =image_tag("cancel.png", id: 'rm_state', style: 'display:none')
-
-    %span
-      %span#address
-      %input{type:'text', id:'edit_street', style: 'display:none'}
-
-    %span#remove_street
-      =image_tag("cancel.png", id: 'rm_street')
-
-    =image_tag("Search.png", :alt => "Myanmar", id: 'ok_find')
-
-    %span#select_country
-      =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
 
 -# *********************** end of header ***********************
 
@@ -95,11 +123,12 @@
   .columns.large-12{style:'margin-top:20px;'}
     .map_left_control
       %div
-        =image_tag("carmic/MapLeftTop.png", id: 'control4')
+        =image_tag("CarmicAssets/MapLeftTop.png", id: 'control4')
       %div
-        =image_tag("carmic/MapLeftMid.png", id: 'control5', style:'display: block;')
+        %a{href:'#', onclick: "showTimeSpinner()"}
+          =image_tag("CarmicAssets/MapLeftMid.png", id: 'control5', style:'display: block;')
       %div
-        =image_tag("carmic/MapLeftBtm.png", id: 'control6')
+        =image_tag("CarmicAssets/MapLeftBtm.png", id: 'control6')
     #spiner_container
 
       #dynamic-container
@@ -109,20 +138,30 @@
             #map
 
     .map_right_control
-      %a
-        %div#map_zoomIn
-          +
-      %div.time_control
-        %a{href:'#', onclick: "showTimeSpinner()"}
-          =image_tag("timemachine.png", id: 'rm_street')
-          %br
-          %span
-            time
-            %br
-            machine
-      %a
-        %div#map_zoomOut
-          ="-"
+      %div
+        %a
+          =image_tag("carmic/MapRightTop.png", id: 'map_zoomIn')
+      %div
+        =image_tag("CarmicAssets/MapRightMid.png", id: 'control5', style:'display: block;')
+      %div
+        %a
+          =image_tag("CarmicAssets/MapRightBtm.png", id: 'map_zoomOut')
+      -#%a
+      -#  %div#map_zoomIn
+      -#    +
+      -#%div.time_control
+      -#  %a{href:'#', onclick: "showTimeSpinner()"}
+      -#    =image_tag("timemachine.png", id: 'rm_street')
+      -#    %br
+      -#    %span
+      -#      time
+      -#      %br
+      -#      machine
+      -#%a
+      -#  %div#map_zoomOut
+      -#    ="-"
+
+
     #rotate{style:'display:none'}
       rotate
     #back_time{style:'display:none'}
