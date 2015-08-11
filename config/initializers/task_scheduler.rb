@@ -5,15 +5,21 @@ scheduler = Rufus::Scheduler.new
 #scheduler.every  :monday do # Use any day of the week or :weekend, :weekday
 #  CarActionLog.delete_all
 #end
-scheduler.in '7d' do
-  # whatever...
-  CarActionLog.delete_all
-end
-
-#scheduler.cron("5 0 * * *") do
+#scheduler.in '7d' do
 #  CarActionLog.delete_all
 #end
 
+
+scheduler.cron("0 21 * * mon") do
+  CarActionLog.delete_all
+end
+
 #scheduler.every '3s' do
-# User.update_latlng
+#  puts 'Hello... Rufus'
+#  CarActionLog.delete_all
 #end
+#
+#scheduler.every '2s' do
+#  puts 'check blood pressure'
+#end
+#
