@@ -61,8 +61,10 @@ Hive::Application.configure do
       :authentication       => :plain,
       :user_name            => "info@raydiusapp.com",
       :password             => "raydiusadm1n",
-      :enable_starttls_auto => false
+      :enable_starttls_auto => true
   }
+
+
 end
 
 # For factual

@@ -32,7 +32,7 @@ class User < ActiveRecord::Base
   enums %w(BOT ADMIN VENDOR NORMAL)
 
   def send_password_reset
-    generate_token(:reset_password_token)
+    p generate_token(:reset_password_token)
     self.reset_password_sent_at = Time.zone.now
     p self.reset_password_token =  SecureRandom.urlsafe_base64
     save!

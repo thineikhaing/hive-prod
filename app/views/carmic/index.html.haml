@@ -30,7 +30,7 @@
         %span#country Country
 
       %li#remove_country
-        =image_tag("cancel.png", id: 'rm_country', style: 'display:none')
+        =image_tag("cancel.png", id: 'rm_country', style: 'display:none;margin-top: -30px;')
         %span{style:'width: 15px;'} >
 
       %li
@@ -38,14 +38,14 @@
         %input{type:'text', id:'edit_city', style: 'display:none'}
 
       %li#remove_state
-        =image_tag("cancel.png", id: 'rm_state', style: 'display:none')
+        =image_tag("cancel.png", id: 'rm_state', style: 'display:none;margin-top: -30px;')
         %span{style:'width: 15px;'} >
       %li
         %span#address Address
         %input{type:'text', id:'edit_street', style: 'display:none'}
 
       %li#remove_street
-        =image_tag("cancel.png", id: 'rm_street')
+        =image_tag("cancel.png", id: 'rm_street', style: 'margin-top: 15px;margin-left: 10px;')
       -#%li
       -#  =image_tag("Search.png", :alt => "Myanmar", id: 'ok_find')
 

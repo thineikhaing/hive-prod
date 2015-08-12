@@ -10,4 +10,5 @@ module Clockwork
   end
 
   every(1.day, 'Queueing Regenerate Auth_Token job', :at => '00:00') { Delayed::Job.enqueue RegenerateAuthTokenJob.new }
+
 end
