@@ -340,6 +340,7 @@
 
      handler.getMap().controls[google.maps.ControlPosition.RIGHT_CENTER].push(zoomControlDiv);
 
+
      function updateMarkers(map, new_markers, rm_marker,old_markers)
      {
          // Remove current markers
@@ -403,6 +404,8 @@
 
 
      };
+
+
 
      $("#incident_tab").on("click", function(){
        $.ajax({
@@ -913,7 +916,7 @@
 
    $(window).resize(function() {
      windowsize = $(window).width();
-     if (windowsize < 800) {
+     if (windowsize < 1100) {
        //if the window is greater than 440px wide then turn on jScrollPane..
          showTimeSpinner();
          $("#carmic_logo").hide();
@@ -926,7 +929,7 @@
 
   window.setInterval(getCoords, 60000);
 
-   if (windowsize < 800) {
+   if (windowsize < 1100) {
      //if the window is greater than 440px wide then turn on jScrollPane..
        showTimeSpinner();
        $("#carmic_logo").hide();
@@ -934,3 +937,5 @@
         showcurrenttopic();
         $("#carmic_logo").show();
    }
+
+
