@@ -4,9 +4,20 @@
 //
 
 
-body {  min-width:560px !important;  }
+//body {  min-width:600px; }
+
+/* Smartphones ----------- */
+@media only screen and (max-width: 760px) {
+
+}
+
 .maincontent_wrapper{
-  border:1px solid none; height:1000px;overflow-y:auto;overflow-x:hidden;padding-left:10px;padding-right:10px;
+  border:1px solid none;
+  height:1000px;overflow-y:auto;
+  width: 100%;
+  overflow-x:hidden;
+  padding-left:10px;
+  padding-right:10px;
   border-radius: 3px;
   padding-bottom: 10px;
   box-shadow: 0 0 200px rgba(255, 255, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -70,6 +81,7 @@ body {  min-width:560px !important;  }
   }
   overflow: hidden;
   float:right !important;
+  margin-right: 50px;
 }
 
 #country_list{
@@ -1044,7 +1056,7 @@ $header-border: $table-cell-border) {
   width:400px;
   position:relative;
   margin: 0 auto;
-  height: 160px;
+  height: 80px;
   display: none;
   margin:0 auto;
 }

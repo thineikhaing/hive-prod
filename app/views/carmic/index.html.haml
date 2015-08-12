@@ -53,71 +53,7 @@
         =image_tag("Search.png", :alt => "Myanmar", id: 'ok_find')
         =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
 
-    -#.columns.large-4
-    -#  %input#autocomplete{:onkeypress => "geolocate(event)",
-    -#  :placeholder => "Enter a location", :type => "text"}
-    -#
-    -#.columns.large-2
-    -#  %span#country
-    -#
-    -#.columns.large-1#remove_country
-    -#  =image_tag("cancel.png", id: 'rm_country', style: 'display:none')
-    -#  >
-    -#.columns.large-2
-    -#  %span#state
-    -#  %input{type:'text', id:'edit_city', style: 'display:none'}
-    -#.columns.large-1#remove_state
-    -#  =image_tag("cancel.png", id: 'rm_state', style: 'display:none')
-    -#  >
-    -#.columns.large-2
-    -#  %span#address
-    -#  %input{type:'text', id:'edit_street', style: 'display:none'}
-    -#.columns.large-1#remove_street
-    -#  =image_tag("cancel.png", id: 'rm_street')
-    -#
-    -#=image_tag("Search.png", :alt => "Myanmar", id: 'ok_find')
-    -#
-    -#.columns.large-2#select_country
-    -#  =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
 
--# *********** version1 header ***********
-
-  -#.columns.large-9#lefttopbar.right
-  -#
-  -#  %span
-  -#    %input#autocomplete{:onkeypress => "geolocate(event)",
-  -#    :placeholder => "Enter a location", :type => "text"}
-  -#
-  -#  %span
-  -#    %span#country
-  -#
-  -#  %span#remove_country
-  -#    %span
-  -#      >
-  -#    =image_tag("cancel.png", id: 'rm_country', style: 'display:none')
-  -#
-  -#  %span
-  -#    %span#state
-  -#    %input{type:'text', id:'edit_city', style: 'display:none'}
-  -#
-  -#  %span#remove_state
-  -#    %span
-  -#      >
-  -#    =image_tag("cancel.png", id: 'rm_state', style: 'display:none')
-  -#
-  -#  %span
-  -#    %span#address
-  -#    %input{type:'text', id:'edit_street', style: 'display:none'}
-  -#
-  -#  %span#remove_street
-  -#    =image_tag("cancel.png", id: 'rm_street')
-  -#
-  -#  =image_tag("Search.png", :alt => "Myanmar", id: 'ok_find')
-  -#
-  -#  %span#select_country
-  -#    =select_tag("country_list", options_from_collection_for_select(Country.all, "name", "name", params[:country]), {:prompt => 'Select Country'})
-
--# *********************** end of header ***********************
 
 .row.maincontent_wrapper{style:''}
   .columns.large-12{style:'margin-top:20px;'}
@@ -126,7 +62,7 @@
         =image_tag("CarmicAssets/MapLeftTop.png", id: 'control4')
       %div
         %a{href:'#', onclick: "showTimeSpinner()"}
-          =image_tag("CarmicAssets/MapLeftMid.png", id: 'control5', style:'display: block;')
+          =image_tag("CarmicAssets/MapLeftMid.png", id: 'control5', style:'display: block;margin-left:-3px !important;')
       %div
         =image_tag("CarmicAssets/MapLeftBtm.png", id: 'control6')
     #spiner_container
@@ -142,26 +78,14 @@
         %a
           =image_tag("CarmicAssets/MapRightTop.png", id: 'map_zoomIn')
       %div
-        =image_tag("CarmicAssets/MapRightMid.png", id: 'control5', style:'display: block;')
+        =image_tag("CarmicAssets/MapRightMid.png", id: 'control5', style:'display: block;margin-left:3px !important;')
       %div
         %a
           =image_tag("CarmicAssets/MapRightBtm.png", id: 'map_zoomOut')
-      -#%a
-      -#  %div#map_zoomIn
-      -#    +
-      -#%div.time_control
-      -#  %a{href:'#', onclick: "showTimeSpinner()"}
-      -#    =image_tag("timemachine.png", id: 'rm_street')
-      -#    %br
-      -#    %span
-      -#      time
-      -#      %br
-      -#      machine
-      -#%a
-      -#  %div#map_zoomOut
-      -#    ="-"
 
 
+    #touch{style:'display:none'}
+      notouch
     #rotate{style:'display:none'}
       rotate
     #back_time{style:'display:none'}
@@ -226,17 +150,7 @@
           .columns.large-12
             %a#timelabel{onclick: "showcurrenttopic()"}now
 
-            %span{style:'text-align:right'}
-              #txt=Time.now.strftime("%I:%M %P")
-          -#.columns.large-4#one
-          -#  %a{href:'#', onclick: "showTimeSpinner()"}
-          -#    =image_tag("timemachine.png", id: 'rm_street')
-          -#  time machine
-          -#.columns.large-4
-          -#  topics from the past 24 hrs
-          -#.columns.large-4#two.swap_focus
-          -#  %a#timelabel{onclick: "showcurrenttopic()"}now
-          -#  %span 5 most recent
+            %span#txt=Time.now.strftime("%I:%M %P")
 
         .clear
         #display_topic_post
@@ -999,7 +913,7 @@
 
    $(window).resize(function() {
      windowsize = $(window).width();
-     if (windowsize < 1000) {
+     if (windowsize < 800) {
        //if the window is greater than 440px wide then turn on jScrollPane..
          showTimeSpinner();
          $("#carmic_logo").hide();
@@ -1011,7 +925,7 @@
 
 
   window.setInterval(getCoords, 60000);
-   if (windowsize < 1000) {
+   if (windowsize < 800) {
      //if the window is greater than 440px wide then turn on jScrollPane..
        showTimeSpinner();
        $("#carmic_logo").hide();

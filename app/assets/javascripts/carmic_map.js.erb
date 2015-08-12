@@ -13,6 +13,8 @@ var Carmic = {
         document.body.style.backgroundImage='none';
         document.body.style.backgroundColor='#fff';
 
+
+
         $(document).ready(function () {
             $("body").mouseup(function (e) {
                 e.stopPropagation();
@@ -27,6 +29,15 @@ var Carmic = {
 
         $('#marker').on('mousedown', function(){
             $('body').on('mousemove', function(event){
+                event.stopPropagation();
+                rotateAnnotationCropper($('#innerCircle').parent(), event.pageX,event.pageY, $('#marker'));
+            });
+
+        });
+
+        $('#marker').on('touch', function(){
+            $("#touch").html("touch .....")
+            $('body').on('touch', function(event){
                 event.stopPropagation();
                 rotateAnnotationCropper($('#innerCircle').parent(), event.pageX,event.pageY, $('#marker'));
             });
