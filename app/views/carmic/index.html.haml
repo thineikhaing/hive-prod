@@ -104,7 +104,7 @@
 
 
 
-  .columns.large-12{style:'padding-right:0px;'}
+  .columns.large-10.large-centered{style:'padding-right:0px;'}
     %ul.tabs{"data-tab" => "",style:'display:none'}
       %li.tab-title
         %a{href: "#panel1", id: "car_tab"}
@@ -156,8 +156,8 @@
         .row#time_filter
           .columns.large-12
             %a#timelabel{onclick: "showcurrenttopic()"}now
-
-            %span#txt=Time.now.strftime("%I:%M %P")
+            %span to one hour ago
+            %span.right#txt=Time.now.strftime("%I:%M %P")
 
         .clear
         #display_topic_post
@@ -172,7 +172,7 @@
                 -peer_num = peer.data["plate_number"]
                 %table.topic_tbl{:width => "100%"}
                   %tr
-                    %td{width:"20%"}
+                    %td{width:"30%"}
                       %span
                         .car_no{style:"background:#"+host_color+" !important"}
                           =host_num
@@ -183,7 +183,7 @@
                           =peer_num
 
 
-                    %td{:colspan => "2",width:"80%", class:'topic_row'}
+                    %td{:colspan => "2",width:"70%", class:'topic_row'}
                       %span.title{style:'color:red !important'}
                         POSSIBLE COLLISION
                       %span.right
@@ -218,7 +218,7 @@
                       %a{href:"#", id:"topicid", topicID: "#{sTopic.id}" , name:"topic_lists"  ,onclick:"retrieve_posts(this);"}
                         %table.topic_tbl{:width => "100%"}
                           %tr
-                            %td{width:"20%"}
+                            %td{width:"30%"}
                               %span
                                 .car_no{style:"background:#"+car_color+" !important"}
                                   =sTopic.user.data["plate_number"]
@@ -232,7 +232,7 @@
                                   .car_no
                                     all
 
-                            %td{:colspan => "2",width:"80%", class:'topic_row'}
+                            %td{:colspan => "2",width:"70%", class:'topic_row'}
                               %span.title
                                 = title.last
                               %span.right
@@ -259,7 +259,7 @@
               -peer_num = peer.data["plate_number"]
               %table.topic_tbl{:width => "100%"}
                 %tr
-                  %td{width:"20%"}
+                  %td{width:"30%"}
                     %span
                       .car_no{style:"background:#"+host_color+" !important"}
                         =host_num
@@ -270,7 +270,7 @@
                       =peer_num
 
 
-                  %td{:colspan => "2",width:"80%", class:'topic_row'}
+                  %td{:colspan => "2",width:"70%", class:'topic_row'}
                     %span.title{style:'color:red !important'}
                       POSSIBLE COLLISION
                     %span.right

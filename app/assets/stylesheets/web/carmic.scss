@@ -386,6 +386,17 @@ $background-color: white;
   border: 1px solid rgb(7,165,179);
 }
 
+.topic_row span:first-child {
+  display:block;
+  text-align:left;
+  width:300px; /* fixed width */
+  display:inline-block;
+  white-space: nowrap;
+  overflow:hidden !important;
+  text-overflow: ellipsis;
+  font-family: Labrador-A-Medium;
+}
+
 .topic_tbl span{
   //color: rgb(7,165,179) !important;
   font-size: 1.2em;
@@ -400,6 +411,9 @@ $background-color: white;
   line-height: 42px;
   border-top-left-radius: 2em;
   border-bottom-left-radius: 2em;
+  border-top-right-radius: 2em;
+  border-bottom-right-radius: 2em;
+  margin-right: 5px;
 
 }
 
@@ -1145,7 +1159,7 @@ div#btn_zoom_in,div#btn_zoom_out{
 }
 
 .blur-bgimage {
-  overflow: hidden;
+  overflow-x: auto;
 }
 .blur-bgimage:before {
   content: "";
