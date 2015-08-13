@@ -103,15 +103,14 @@
           time
     .row
       .columns.large-10.large-centered{style:'padding-right:0px;'}
-        .columns.large-12#time_filter
-          #right_banner
-            %a#timelabel{onclick: "showcurrenttopic()"}now
-            %span to one hour ago
+        #middle_bar
+          %a#timelabel{onclick: "showcurrenttopic()"}now
+          %span to one hour ago
+          %span.right#txt=Time.now.strftime("%I:%M %P")
 
           #topic_count
-            =@topics_list.count rescue '0'
-          #left_banner
-            %span.right#txt=Time.now.strftime("%I:%M %P")
+            =@topics_list.count+@incidents.count rescue '0'
+
 
         .clear
         #display_topic_post
@@ -153,6 +152,7 @@
               -@topic_avatar_url = @topic_avatar_url
 
             %input{type:'hidden', value:"#{@activeUsersArray.count rescue '0'}", id:'hid_ucount'}
+            %input{type:'hidden', value:"#{@incidents.count rescue '0'}", id:'hid_inc_count'}
             %ul{:id => "nav"}
               - if @topics_list.present?
                 -#-@topics_list = @topics_list.first(5)
@@ -645,8 +645,10 @@
          var output = htmlobject.find("#display_topic")[0];
          var testing = new XMLSerializer().serializeToString(output);
          $("#display_topic").replaceWith(testing);
-
-         $("#topic_count").text($("#hid_tcount").val());
+         inc_count = parseInt($("#hid_inc_count").val());
+                       t_count = parseInt($("#hid_tcount").val());
+                       total = inc_count + t_count
+                       $("#topic_count").text(total);
 
          var rotate = 'rotate(' +0 + 'deg)';
          $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
@@ -673,7 +675,10 @@
              var output = htmlobject.find("#display_topic")[0];
              var testing = new XMLSerializer().serializeToString(output);
              $("#display_topic").replaceWith(testing);
-             $("#topic_count").text($("#hid_tcount").val());
+             inc_count = parseInt($("#hid_inc_count").val());
+                           t_count = parseInt($("#hid_tcount").val());
+                           total = inc_count + t_count
+                           $("#topic_count").text(total);
            }
          });
       }
@@ -1007,7 +1012,11 @@
           var testing = new XMLSerializer().serializeToString(output);
           $("#display_topic").replaceWith(testing);
 
-          $("#topic_count").text($("#hid_tcount").val());
+          inc_count = parseInt($("#hid_inc_count").val());
+          t_count = parseInt($("#hid_tcount").val());
+          total = inc_count + t_count
+          $("#topic_count").text(total);
+
            var rotate = 'rotate(' +0 + 'deg)';
                $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
            $("#posts_display").hide();
