@@ -4,12 +4,12 @@
 //
 
 
-body {  min-width:760px; }
+//body {  min-width:760px; }
 
 /* Smartphones ----------- */
-//@media only screen and (max-width: 760px) {
-//  body {  min-width:800px; }
-//}
+@media only screen and (max-width: 760px) {
+  body {  min-width:730px; }
+}
 
 .maincontent_wrapper{
   border:1px solid none;
@@ -379,8 +379,11 @@ $background-color: white;
   background: #fff;
   border-top-left-radius: 1.6em;
   border-bottom-left-radius: 1.6em;
+
+  border-top-right-radius: 1.6em;
+  border-bottom-right-radius: 1.6em;
+
   border: 1px solid rgb(7,165,179);
-  border-right:1px solid transparent;
 }
 
 .topic_tbl span{
@@ -849,10 +852,17 @@ $header-border: $table-cell-border) {
   width:450px; height:450px;
   position:relative;
   border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50% ;
-  vertical-align: top;
-  display: inline-block;
+  //vertical-align: top;
+  //display: inline-block;
   margin: 0 auto;
   z-index: 999;
+  display: block;
+}
+
+.centerMap{
+  position: relative;
+  //left: 240px;
+  //height: 600px;
 }
 
 .circle {
@@ -977,11 +987,11 @@ $header-border: $table-cell-border) {
 .map_left_control{
   width: 230px;
   height: 366px;
-  vertical-align: top;
   display: inline-block;
   position: relative;
-  left: 143px;
-  top: 70px;
+  float: right;
+  margin-right: -175px;
+  margin-top: 80px;
 
   div{
     overflow:auto;
@@ -995,34 +1005,14 @@ $header-border: $table-cell-border) {
   vertical-aligasswordn: top;
   display: inline-block;
   position: relative;
-  left: -110px;
-  top: 70px;
-
+  margin-left: -150px;
+  margin-top: 80px;
   div{
     overflow:auto;
     margin:2px;
   }
 }
 
-
-#map_zoomIn{
-  //background-image: url('carmic/MapRightTop.png') !important;
-  //background-repeat: no-repeat !important;
-  //background-position: center !important;
-  //color: #fff;
-  //font-size: 4em !important;
-  //padding-top: 30px;
-  //padding-left: 120px;
-}
-#map_zoomOut{
-  //background-image: url('carmic/MapRightBtm.png') !important;
-  //background-repeat: no-repeat !important;
-  //background-position: center !important;
-  //color: #fff;
-  //font-size: 4em !important;
-  //padding-top: 30px;
-  //padding-left: 120px;
-}
 
 .time_control{
   background: rgb(7,165,179);
@@ -1045,11 +1035,7 @@ $header-border: $table-cell-border) {
   }
 }
 
-.centerMap{
-  position: relative;
-  left: 240px;
-  height: 600px;
-}
+
 
 
 .mapzoomcontrol{

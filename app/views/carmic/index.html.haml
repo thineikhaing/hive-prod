@@ -56,7 +56,9 @@
 
 
 .row.maincontent_wrapper{style:''}
-  .columns.large-12{style:'margin-top:20px;'}
+  .columns.large-3
+    %div
+      &nbsp
     .map_left_control
       %div
         =image_tag("CarmicAssets/MapLeftTop.png", id: 'control4')
@@ -65,14 +67,23 @@
           =image_tag("CarmicAssets/MapLeftMid.png", id: 'control5', style:'display: block;margin-left:-2px !important;')
       %div
         =image_tag("CarmicAssets/MapLeftBtm.png", id: 'control6')
-    #spiner_container
+  .columns.large-6{style:'margin-top:20px;'}
 
+    #spiner_container
       #dynamic-container
         #marker
         #innerCircle
           .circle
             #map
 
+    .mapzoomcontrol
+      #btn_zoom_in
+        +
+      #btn_zoom_out
+        ="-"
+  .columns.large-3
+    %div
+      &nbsp
     .map_right_control
       %div
         %a
@@ -91,11 +102,7 @@
     #back_time{style:'display:none'}
       time
 
-    .mapzoomcontrol
-      #btn_zoom_in
-        +
-      #btn_zoom_out
-        ="-"
+
 
   .columns.large-12{style:'padding-right:0px;'}
     %ul.tabs{"data-tab" => "",style:'display:none'}
@@ -858,10 +865,10 @@
 
      $('.map_left_control').hide(1000)
      $('.map_right_control').hide(1000)
-     $('.add_bg_spin').show(2000)
-     $('.mapzoomcontrol').show()
-     $("#btn_zoom_in").show(2000)
-     $("#btn_zoom_out").show(2000)
+     $('.add_bg_spin').show(500)
+     $('.mapzoomcontrol').show(500)
+     $("#btn_zoom_in").show(500)
+     $("#btn_zoom_out").show(500)
 
 
        $("#rotate").html(0);
@@ -869,8 +876,11 @@
     }
 
     function showcurrenttopic(){
+       windowsize = $(window).width();
+       if (windowsize < 1050 || windowsize < 400 ) {
 
-
+       }
+       else{
        setTimeout(function () {
          $("#marker").hide();
          $('#spiner_container').removeClass('add_bg_spin').addClass('rm_bg_spin');
@@ -901,22 +911,24 @@
                $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
            $("#posts_display").hide();
         }
+
       });
 
-      $('#spiner_container').removeClass("centerMap")
-      $('.map_left_control').show(1000)
-       $('.map_right_control').show(1000)
-         $('.mapzoomcontrol').hide(2000)
-         $("#btn_zoom_in").hide(2000)
-          $("#btn_zoom_out").hide(2000)
+        $('#spiner_container').removeClass("centerMap")
+        $('.map_left_control').show(500)
+        $('.map_right_control').show(500)
+        $('.mapzoomcontrol').hide(500)
+        $("#btn_zoom_in").hide(500)
+        $("#btn_zoom_out").hide(500)
 
+        }
       }
 
-   var windowsize = $(window).width();
+
 
    $(window).resize(function() {
      windowsize = $(window).width();
-     if (windowsize < 1100) {
+     if (windowsize < 1050) {
        //if the window is greater than 440px wide then turn on jScrollPane..
          showTimeSpinner();
          $("#carmic_logo").hide();
@@ -928,8 +940,8 @@
 
 
   window.setInterval(getCoords, 60000);
-
-   if (windowsize < 1100) {
+   windowsize = $(window).width();
+   if (windowsize < 1050 || windowsize < 400 ) {
      //if the window is greater than 440px wide then turn on jScrollPane..
        showTimeSpinner();
        $("#carmic_logo").hide();
