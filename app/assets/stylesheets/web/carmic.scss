@@ -872,36 +872,12 @@ $header-border: $table-cell-border) {
   margin: 10px;
 }
 #spiner_container{
-  width:450px; height:450px;
+  width:460px; height:460px;
   position:relative;
   border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50% ;
-  //vertical-align: top;
-  //display: inline-block;
   margin: 0 auto;
   z-index: 999;
   display: block;
-}
-
-.centerMap{
-  position: relative;
-  //left: 240px;
-  //height: 600px;
-}
-
-.circle {
-  box-shadow:
-    0 0 0 2px #fff,
-    0 0 0 3px rgb(7,165,179),
-    0 0 0 6px #fff,
-    0 0 0 14px rgb(7,165,179),
-    0 0 0 19px #fff,
-    0 0 0 20px rgb(7,165,179);
-
-  -moz-border-radius:50% !important;
-  -webkit-mask-border-radius:50% !important;
-  -webkit-border-radius:50% !important;
-
-
 }
 
 #map {
@@ -924,9 +900,20 @@ $header-border: $table-cell-border) {
   width:400px; height:400px;
   background-color: transparent;
   position:relative;
-  margin-left: 25px; margin-top:25px;
+  margin-left: 28px; margin-top:28px;
   border-radius:50%; -moz-border-radius: 50%; -webkit-border-radius: 50%     ;
   overflow:hidden !important;
+
+}
+
+.circle {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 3px rgb(7,165,179),
+    0 0 0 6px #fff,
+    0 0 0 14px rgb(7,165,179),
+    0 0 0 19px #fff,
+    0 0 0 20px rgb(7,165,179);
 
 }
 
@@ -975,8 +962,11 @@ $header-border: $table-cell-border) {
 }
 
 .add_bg_spin{
+  width:460px; height:460px;
   border: 1px solid rgb(6,149,165);
-  background-image: url('TimeClock.png') !important;
+  //background-image: url('TimeClock.png') !important;
+  background: url('TimeClock.png') !important;
+  background-size: 440px 440px !important;
   background-repeat: no-repeat !important;
   background-position: center !important;
   background-color: rgba(255, 255, 255, 0.5) !important;
