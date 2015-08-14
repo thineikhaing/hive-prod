@@ -70,12 +70,12 @@ Hive::Application.configure do
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = :true
   ActionMailer::Base.smtp_settings = {
-      :address              => "mail.raydiusapp.com",
+      :address              => "smtp.raydiusapp.com",
       :port                 => "587",
       :domain               => "raydiusapp.com",
       :authentication       => :plain,
       :user_name            => "info@raydiusapp.com",
-      :password             => "raydiusadm1n",
+      :password             => "raydiusadm1n" ,
       :enable_starttls_auto => false
   }
 end

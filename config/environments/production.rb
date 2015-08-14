@@ -90,7 +90,7 @@ Hive::Application.configure do
   config.action_mailer.raise_delivery_errors = :true
 
   ActionMailer::Base.smtp_settings = {
-      :address              => "mail.raydiusapp.com",
+      :address              => "smtp.raydiusapp.com",
       :port                 => "587",
       :domain               => "raydiusapp.com",
       :authentication       => :plain,
