@@ -1011,8 +1011,8 @@ $header-border: $table-cell-border) {
   height: 366px;
   display: block;
   position: relative;
-  margin-left: 175px;
-  margin-top: 80px;
+  margin-left: 176px;
+  margin-top: 78px;
 
   div{
     overflow:auto;
@@ -1025,8 +1025,8 @@ $header-border: $table-cell-border) {
   height: 365px;
   display: block;
   position: relative;
-  margin-left: -150px;
-  margin-top: 80px;
+  margin-left: -160px;
+  margin-top: 78px;
   div{
     overflow:auto;
     margin:2px;
@@ -1166,6 +1166,8 @@ div#btn_zoom_in,div#btn_zoom_out{
 
 .blur-bgimage {
   overflow-x: auto;
+  overflow-y: hidden;
+  overflow-style: panner;
 }
 .blur-bgimage:before {
   content: "";
