@@ -1165,9 +1165,9 @@ div#btn_zoom_in,div#btn_zoom_out{
 }
 
 .blur-bgimage {
-  overflow-x: auto;
-  overflow-y: hidden;
-  overflow-style: panner;
+
+  overflow: hidden;
+
 }
 .blur-bgimage:before {
   content: "";
