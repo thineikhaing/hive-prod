@@ -86,8 +86,7 @@ class CarmicController < ApplicationController
     end
 
     if Rails.env.development?
-      p 'call call call'
-      p @url = "http://localhost:5000/api/downloaddata/retrieve_carmic_user"
+      @url = "http://localhost:5000/api/downloaddata/retrieve_carmic_user"
       @image_url = AWS_Link::AWS_Image_D_Link
       @audio_url = AWS_Link::AWS_Audio_D_Link
 
