@@ -1057,22 +1057,19 @@ $header-border: $table-cell-border) {
 
 
 .mapcontrols{
-
-  width: 100%;
-  /*margin: 0 auto;*/
+  min-width: 320px;
   text-align: center;
   .block {
+    margin-top: 20px;
     width: 100px;
-    /*float: left;*/
     display: inline-block;
-    zoom: 1;
-    //padding: 20px;
-    img{
-      width: 65px;
-      height: 65px;
-    }
+    float:none;
+    margin-left:auto;
+    margin-right:auto;
+
     div{
       margin: 20px 4px;
+
     }
   }
 

@@ -76,12 +76,6 @@
               .circle
                 #map
 
-
-          -##btn_zoom_in
-          -#  +
-          -##btn_zoom_out
-          -#  ="-"
-
       .columns.large-4
         %div
           &nbsp
@@ -102,30 +96,43 @@
           rotate
         #back_time{style:'display:none'}
           time
+
     .mapcontrols
       .block
+
         %div#btn_rewindTime
           %a
-            =image_tag("CarmicAssets/MinRW.png")
+            =image_tag("CarmicAssets/MinRW.png", style:"width:60px; height:60px;")
 
         %div#btn_forwardTime
           %a
-            =image_tag("CarmicAssets/MinFF.png")
+            =image_tag("CarmicAssets/MinFF.png", style:"width:60px; height:60px;")
+
       .block
         %div
           %a
-            =image_tag("CarmicAssets/MinTM.png")
+            =image_tag("CarmicAssets/MinTM.png", style:"width:60px; height:60px;")
 
         %div
           %a
-            =image_tag("CarmicAssets/MinRT.png")
+            =image_tag("CarmicAssets/MinRT.png", style:"width:60px; height:60px;")
+
       .block
-        %div#btn_zoom_in
+        %div#btn_map_in
           %a
-            =image_tag("CarmicAssets/MinIn.png")
-        %div#btn_zoom_out
+            =image_tag("CarmicAssets/MinIn.png", style:"width:60px; height:60px;")
+
+        %div#btn_map_out
           %a
-            =image_tag("CarmicAssets/MinOut.png")
+            =image_tag("CarmicAssets/MinOut.png", style:"width:60px; height:60px;")
+
+      -#.block
+        -#%div#btn_zoom_in
+        -#  %a
+        -#    =image_tag("CarmicAssets/MinIn.png", style:"width:60px; height:60px;")
+        -#%div#btn_zoom_out
+        -#  %a
+        -#    =image_tag("CarmicAssets/MinOut.png", style:"width:60px; height:60px;")
       %h5{style: "color:rgb(7,165,179)"}
         Time Filter Status :
         %span#Tstatus now
@@ -227,9 +234,7 @@
                                 = title.last
                               %span.right
                                 #{time_ago_in_words(sTopic.created_at)} ago
-            -#-if @topics_list.present?
-            -#  .paginate{style:'float:right; margin-right:30px;font-size:16px;'}
-            -#    =paginate @topics_list
+
           %br
           #posts_display
             - if @post_lists.present?
@@ -796,11 +801,11 @@
         handler.getMap().setZoom(handler.getMap().getZoom()-1)
     })
 
-    $("#btn_zoom_in").click(function(){
+    $("#btn_map_in").click(function(){
          handler.getMap().setZoom(handler.getMap().getZoom()+1)
      })
 
-     $("#btn_zoom_out").click(function(){
+     $("#btn_map_out").click(function(){
           handler.getMap().setZoom(handler.getMap().getZoom()-1)
       })
 
