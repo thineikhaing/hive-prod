@@ -59,8 +59,14 @@ gem 'rufus-scheduler'  , '< 3.0.0'
 
 gem 'gmaps4rails'
 
-gem 'compass-rails', github: 'Compass/compass-rails'
+#gem 'compass-rails', github: 'Compass/compass-rails'
+#gem 'foundation-rails'
+
+gem 'sass'
+gem 'sass-rails', '>=3.1.0.rc.4'
+gem 'compass-rails', '~> 2.0.alpha.0'
 gem 'foundation-rails'
+
 
 gem 'jquery-ui-rails'
 
@@ -69,8 +75,7 @@ group :development do
   gem 'rails_layout'
 end
 
-gem 'sass'
-gem 'sass-rails', '>=3.1.0.rc.4'
+
 
 group :assets do
   #gem 'sass-rails'                 # Sass adapter for the Rails asset pipeline.

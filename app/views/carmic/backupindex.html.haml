@@ -55,8 +55,8 @@
 
 .row
   .maincontent_wrapper
-    .row.medium-uncollapse.large-collapse
-      .columns.large-4
+    .row{style:''}
+      .columns.large-3
         %div
           &nbsp
         .map_left_control
@@ -67,7 +67,7 @@
               =image_tag("CarmicAssets/MapLeftMid.png", style:'display: block;margin-left:5px !important;')
           %div
             =image_tag("CarmicAssets/MapLeftBtm.png", style:'margin-left:9px !important;')
-      .columns.large-4{style:'margin-top:20px'}
+      .columns.large-6{style:'margin-top:20px'}
 
         #spiner_container
           #dynamic-container
@@ -82,7 +82,7 @@
           -##btn_zoom_out
           -#  ="-"
 
-      .columns.large-4
+      .columns.large-3
         %div
           &nbsp
         .map_right_control
@@ -104,49 +104,37 @@
           time
     .mapcontrols
       .block
-        %div#btn_rewindTime
+        %div
           %a
             =image_tag("CarmicAssets/MinRW.png")
-
-        %div#btn_forwardTime
+        %div
           %a
             =image_tag("CarmicAssets/MinFF.png")
       .block
         %div
           %a
-            =image_tag("CarmicAssets/MinTM.png")
+            =image_tag("CarmicAssets/MinTM.png", id: 'map_zoomIn')
 
         %div
           %a
-            =image_tag("CarmicAssets/MinRT.png")
+            =image_tag("CarmicAssets/MinRT.png", id: 'map_zoomIn')
       .block
         %div#btn_zoom_in
           %a
-            =image_tag("CarmicAssets/MinIn.png")
+            =image_tag("CarmicAssets/MinIn.png", id: 'map_zoomIn')
         %div#btn_zoom_out
           %a
-            =image_tag("CarmicAssets/MinOut.png")
-      %h5{style: "color:rgb(7,165,179)"}
-        Time Filter Status :
-        %span#Tstatus now
-      %input{type:'span', value:'0', id: 'time_val', hidden: true}
-
-
+            =image_tag("CarmicAssets/MinOut.png", id: 'map_zoomIn')
     .row
-      .columns.large-10.large-centered
-        .columns.large-12#middle_bar
+      .columns.large-10.large-centered{style:'padding-right:0px;'}
+        #middle_bar
           %a#timelabel{onclick: "showcurrenttopic()"}now
           %span to one hour ago
           %span.right#txt=Time.now.strftime("%I:%M %P")
 
           #topic_count
             =@topics_list.count+@incidents.count rescue '0'
-    .row
-      .columns.large-10.large-centered
-        .columns.large-12#middle_bar_min
-          %a#timelabel{onclick: "showcurrenttopic()"}now
-          %span to one hour ago
-          %span.right#txt=Time.now.strftime("%I:%M %P")
+
 
         .clear
         #display_topic_post
@@ -177,7 +165,7 @@
                         POSSIBLE COLLISION
                       %span.right
                         #{time_ago_in_words(inc.created_at)} ago
-
+              %hr
             -if @filter_by_time == true
               %input{type:'hidden', value:"#{@topic_by_time.count rescue '0'}", id:'hid_tcount'}
               -@topics_list = @topic_by_time
@@ -235,6 +223,185 @@
             - if @post_lists.present?
               = render :partial => "carmic/all_posts"
 
+  -#.columns.large-10.large-centered{style:'padding-right:0px;'}
+  -#  %ul.tabs{"data-tab" => "",style:'display:none'}
+  -#    %li.tab-title
+  -#      %a{href: "#panel1", id: "car_tab"}
+  -#        %span#user_count=@activeUsersArray.count rescue '0'
+  -#
+  -#    %li.tab-title
+  -#      %a{href: "#panel2", id: "message_tab"}
+  -#        %span#topic_count=@topics_list.count rescue '0'
+  -#
+  -#    %li.tab-title
+  -#      %a{href: "#panel3", id: "incident_tab"}
+  -#        %span#inc_count=@current_incidents.count rescue '0'
+  -#  .tabs-content{style:'border:1px solid '}
+  -#    #panel1.content
+  -#      %table.responstable{style:'margin-bottom:0px'}
+  -#        %thead
+  -#          %tr
+  -#            %th CarNo
+  -#            %th Activity
+  -#            %th Speed
+  -#            %th Direction
+  -#      #active_users
+  -#        %table.responstable{style:'margin-top:0px'}
+  -#          %tbody#tbl_activeusers
+  -#            - if @activeUsersArray.present?
+  -#              -@activeUsersArray = @activeUsersArray
+  -#            -else
+  -#              -@activeUsersArray = @users
+  -#            - if @activeUsersArray.present?
+  -#              - @activeUsersArray.each do |user|
+  -#                %tr{"data-id"=>"#{user["id"]}"}
+  -#                  %td{width:"20%"}
+  -#                    %span
+  -#                      =user["data"]["plate_number"]
+  -#                  %td{width:"20%",style:'text-align:left'}
+  -#                    %span
+  -#                      =user["data"]["activity"]
+  -#                  %td{width:"20%"}
+  -#                    %span
+  -#                      -if user["data"]["speed"].to_i > 0
+  -#                        = user["data"]["speed"].to_i * 30
+  -#                      -else
+  -#                        =user["data"]["speed"].to_i
+  -#                  %td{width:"20%"}
+  -#                    %span
+  -#                      =user["data"]["direction"]
+  -#
+  -#    #panel2.content.active
+  -#      .row
+  -#        .columns.large-12#time_filter
+  -#          #right_banner
+  -#            %a#timelabel{onclick: "showcurrenttopic()"}now
+  -#            %span to one hour ago
+  -#
+  -#          #topic_count
+  -#            =@topics_list.count rescue '0'
+  -#          #left_banner
+  -#            %span.right#txt=Time.now.strftime("%I:%M %P")
+  -#
+  -#
+  -#      .clear
+  -#      #display_topic_post
+  -#        #display_topic
+  -#          -if @incidents.present?
+  -#            -@incidents.each do |inc|
+  -#              -host = User.find(inc.host_id)
+  -#              -peer = User.find(inc.peer_id)
+  -#              -host_color = host.data["color"]
+  -#              -host_num = host.data["plate_number"]
+  -#              -peer_color = peer.data["color"]
+  -#              -peer_num = peer.data["plate_number"]
+  -#              %table.topic_tbl{:width => "100%"}
+  -#                %tr
+  -#                  %td{width:"30%"}
+  -#                    %span
+  -#                      .car_no{style:"background:#"+host_color+" !important"}
+  -#                        =host_num
+  -#                    %span{style:'color:red !important'}
+  -#                      +
+  -#                    %span
+  -#                      .car_no{style:"background:#"+peer_color+" !important"}
+  -#                        =peer_num
+  -#
+  -#
+  -#                  %td{:colspan => "2",width:"70%", class:'topic_row'}
+  -#                    %span.title{style:'color:red !important'}
+  -#                      POSSIBLE COLLISION
+  -#                    %span.right
+  -#                      #{time_ago_in_words(inc.created_at)} ago
+  -#            %hr
+  -#          -if @filter_by_time == true
+  -#            %input{type:'hidden', value:"#{@topic_by_time.count rescue '0'}", id:'hid_tcount'}
+  -#            -@topics_list = @topic_by_time
+  -#            -@topic_avatar_url = @topic_by_time_avatar_url
+  -#          -else
+  -#            %input{type:'hidden', value:"#{@topics_list.count rescue '0'}", id:'hid_tcount'}
+  -#            -@topics_list = @topics_list
+  -#            -@topic_avatar_url = @topic_avatar_url
+  -#
+  -#          %input{type:'hidden', value:"#{@activeUsersArray.count rescue '0'}", id:'hid_ucount'}
+  -#          %ul{:id => "nav"}
+  -#            - if @topics_list.present?
+  -#              -#-@topics_list = @topics_list.first(5)
+  -#              - @topics_list.each do |sTopic|
+  -#                -string =   @topic_avatar_url[sTopic.id].to_s
+  -#                -substring = "carmic"
+  -#                -string.slice! substring
+  -#                -title = sTopic.title.split(':')
+  -#                -car_color = sTopic.user.data["color"]
+  -#                -inc_car = title.first.split("to ")
+  -#                -inc_car = inc_car.last
+  -#                -inc_user = User.where("data -> 'plate_number' = ?",inc_car).take
+  -#
+  -#
+  -#                -if (sTopic.offensive < 3)
+  -#                  %li
+  -#                    %a{href:"#", id:"topicid", topicID: "#{sTopic.id}" , name:"topic_lists"  ,onclick:"retrieve_posts(this);"}
+  -#                      %table.topic_tbl{:width => "100%"}
+  -#                        %tr
+  -#                          %td{width:"30%"}
+  -#                            %span
+  -#                              .car_no{style:"background:#"+car_color+" !important"}
+  -#                                =sTopic.user.data["plate_number"]
+  -#                            %span
+  -#                              >
+  -#                              -if title.count > 1
+  -#                                -inc_color = inc_user.data["color"]
+  -#                                .car_no{style:"background:#"+inc_color+" !important"}
+  -#                                  =inc_car
+  -#                              -else
+  -#                                .car_no
+  -#                                  all
+  -#
+  -#                          %td{:colspan => "2",width:"70%", class:'topic_row'}
+  -#                            %span.title
+  -#                              = title.last
+  -#                            %span.right
+  -#                              #{time_ago_in_words(sTopic.created_at)} ago
+  -#          -#-if @topics_list.present?
+  -#          -#  .paginate{style:'float:right; margin-right:30px;font-size:16px;'}
+  -#          -#    =paginate @topics_list
+  -#        %br
+  -#        #posts_display
+  -#          - if @post_lists.present?
+  -#            = render :partial => "carmic/all_posts"
+  -#
+  -#    #panel3.content
+  -#
+  -#      #current_incident_wrapper
+  -#        -if @current_incidents.present?
+  -#          %input{type:'hidden', value:"#{@current_incidents.count rescue '0'}", id:'hid_current_inc'}
+  -#          -@current_incidents.each do |inc|
+  -#            -host = User.find(inc.host_id)
+  -#            -peer = User.find(inc.peer_id)
+  -#            -host_color = host.data["color"]
+  -#            -host_num = host.data["plate_number"]
+  -#            -peer_color = peer.data["color"]
+  -#            -peer_num = peer.data["plate_number"]
+  -#            %table.topic_tbl{:width => "100%"}
+  -#              %tr
+  -#                %td{width:"30%"}
+  -#                  %span
+  -#                    .car_no{style:"background:#"+host_color+" !important"}
+  -#                      =host_num
+  -#                  %span{style:'color:red !important'}
+  -#                    +
+  -#                  %span
+  -#                  .car_no{style:"background:#"+peer_color+" !important"}
+  -#                    =peer_num
+  -#
+  -#
+  -#                %td{:colspan => "2",width:"70%", class:'topic_row'}
+  -#                  %span.title{style:'color:red !important'}
+  -#                    POSSIBLE COLLISION
+  -#                  %span.right
+  -#                    #{time_ago_in_words(inc.created_at)} ago
+  -#        -else
+  -#          %span There is no current Incident.
 
 :javascript
    Carmic.init();
@@ -818,35 +985,20 @@
 
    function showTimeSpinner(){
 
-     //setTimeout(function () {
-     //
-     //      //$('#spiner_container').addClass("centerMap")
-     //
-     //    }, 400);
+     setTimeout(function () {
+           $("#marker").show();
+           $('#spiner_container').removeClass('rm_bg_spin').addClass('add_bg_spin');
+           $('.circle').addClass("circle_shadow");
+           //$('#spiner_container').addClass("centerMap")
 
-     $("#marker").show();
-     $('#spiner_container').removeClass('rm_bg_spin').addClass('add_bg_spin');
-     $('.circle').addClass("circle_shadow");
+         }, 400);
 
-     $('.map_left_control').hide(200)
-     $('.map_right_control').hide(200)
-
-     $('.add_bg_spin').show(200)
-
-
-     $("#btn_zoom_in").show(200)
-     $("#btn_zoom_out").show(200)
-
-     if (windowsize < 1050 || windowsize < 400 ) {
-        $('#middle_bar').hide()
-         $('#middle_bar_min').show()
-         $('.mapcontrols').show(200)
-     }
-     else{
-        $('#middle_bar').show()
-        $('#middle_bar_min').hide()
-        $('.mapcontrols').hide(200)
-     }
+     $('.map_left_control').hide(1000)
+     $('.map_right_control').hide(1000)
+     $('.add_bg_spin').show(500)
+     $('.mapcontrols').show(500)
+     $("#btn_zoom_in").show(500)
+     $("#btn_zoom_out").show(500)
 
 
        $("#rotate").html(0);
@@ -855,20 +1007,21 @@
 
     function showcurrenttopic(){
        windowsize = $(window).width();
-        if (windowsize < 1050 || windowsize < 400 ) {
+       if (windowsize < 1050 || windowsize < 400 ) {
 
-        }
+       }
        else{
+       setTimeout(function () {
+         $("#marker").hide();
+         $('#spiner_container').removeClass('add_bg_spin').addClass('rm_bg_spin');
+         $('.circle').removeClass("circle_shadow");
+         //$('#spiner_container').removeClass("centerMap")
 
-       $("#marker").hide();
-       $('#spiner_container').removeClass('add_bg_spin').addClass('rm_bg_spin');
-       $('.circle').removeClass("circle_shadow");
-
+       }, 400);
         $("#rotate").html(0);
 
       var lat = handler.getMap().getCenter().lat();
       var long = handler.getMap().getCenter().lng();
-      console.log("call topic")
 
        $.ajax({
 
@@ -896,22 +1049,15 @@
       });
 
         $('#spiner_container').removeClass("centerMap")
-
-        $('.map_left_control').show(200)
-        $('.map_right_control').show(200)
+        $('.map_left_control').show(500)
+        $('.map_right_control').show(500)
         $('.mapcontrols').hide(500)
-
-        $('#middle_bar').show()
-        $('#middle_bar_min').hide()
-        $("#btn_zoom_in").hide(200)
-        $("#btn_zoom_out").hide(200)
-         $("#middle_bar_min").hide(200)
-         $("#middle_bar").show
-
+        $("#btn_zoom_in").hide(500)
+        $("#btn_zoom_out").hide(500)
 
         }
       }
-     window.showcurrenttopic = showcurrenttopic ;
+
 
 
    $(window).resize(function() {
