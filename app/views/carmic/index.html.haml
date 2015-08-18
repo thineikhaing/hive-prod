@@ -113,7 +113,7 @@
           %a
             =image_tag("CarmicAssets/MinTM.png", style:"width:60px; height:60px;")
 
-        %div
+        %div#btn_current_loc
           %a
             =image_tag("CarmicAssets/MinRT.png", style:"width:60px; height:60px;")
 
@@ -250,6 +250,7 @@
            alert($( this ).data("id"))
        }
    });
+
 
 
    $("#map_content").show();
@@ -809,6 +810,24 @@
           handler.getMap().setZoom(handler.getMap().getZoom()-1)
       })
 
+   $("#btn_current_loc").click(function(){
+      if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(showPosition);
+      }
+
+   })
+
+   function showPosition(position) {
+       lat = position.coords.latitude;
+       lng = position.coords.longitude;
+
+        handler.getMap().setCenter(new google.maps.LatLng(lat,lng));
+        handler.getMap().setZoom(18)
+
+        var latlng   = new google.maps.LatLng(lat, lng);
+        getLatLongDetail(latlng);
+   }
+
    $(".time_control").click(function(){
 
         setTimeout(function () {
@@ -833,8 +852,8 @@
      $('#spiner_container').removeClass('rm_bg_spin').addClass('add_bg_spin');
      $('.circle').addClass("circle_shadow");
 
-     $('.map_left_control').hide(200)
-     $('.map_right_control').hide(200)
+     $('.map_left_control').hide(500)
+     $('.map_right_control').hide(500)
 
      $('.add_bg_spin').show(200)
 
@@ -942,3 +961,8 @@
         showcurrenttopic();
         $("#carmic_logo").show();
    }
+
+   //var clickButton = document.getElementById("btn_current_loc");
+   // clickButton.click();
+
+    //$('#btn_current_loc').trigger('click');
