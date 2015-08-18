@@ -19,7 +19,7 @@ table {background:transparent;border: none !important;}
 
 .maincontent_wrapper{
   border:1px solid none;
-  height:900px;
+  height:1100px;
   overflow-y:auto;
   width: 100%;
   overflow-x:hidden;
@@ -86,6 +86,7 @@ table {background:transparent;border: none !important;}
   text-align:left;
   height: 40px;
   line-height: 40px;
+
   color: #fff;
   width:120px; /* fixed width */
   display:inline-block;
@@ -100,6 +101,9 @@ table {background:transparent;border: none !important;}
 #select_country{
   //padding: 0px !important;
   //height: 38px;
+  background: rgb(7,165,179);
+  height: 40px;
+  //width: 90px !important;
   #ok_find{
       margin-top: 5px;
   }

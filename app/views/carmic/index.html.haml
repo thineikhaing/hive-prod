@@ -134,9 +134,9 @@
         -#%div#btn_zoom_out
         -#  %a
         -#    =image_tag("CarmicAssets/MinOut.png", style:"width:60px; height:60px;")
-      %h5{style: "color:rgb(7,165,179)"}
-        Time Filter Status :
-        %span#Tstatus now
+      -#%h5{style: "color:rgb(7,165,179)"}
+      -#  Time Filter Status :
+      -#  %span#Tstatus now
       %input{type:'span', value:'0', id: 'time_val', hidden: true}
 
 
@@ -153,7 +153,7 @@
       .columns.large-10.large-centered
         .columns.large-12#middle_bar_min
           %a#timelabel{onclick: "showcurrenttopic()"}now
-          %span to one hour ago
+          %span#Tstatus to one hour ago
           %span.right#txt=Time.now.strftime("%I:%M %P")
 
         .clear
@@ -862,7 +862,7 @@
      $("#btn_zoom_in").show(200)
      $("#btn_zoom_out").show(200)
 
-     if (windowsize < 1050 || windowsize < 400 ) {
+     if (windowsize < 1100 || windowsize < 400 ) {
         $('#middle_bar').hide()
          $('#middle_bar_min').show()
          $('.mapcontrols').show(200)
@@ -880,7 +880,7 @@
 
     function showcurrenttopic(){
        windowsize = $(window).width();
-        if (windowsize < 1050 || windowsize < 400 ) {
+        if (windowsize < 1100 || windowsize < 400 ) {
 
         }
        else{
@@ -937,11 +937,38 @@
         }
       }
      window.showcurrenttopic = showcurrenttopic ;
+     var time_val = 0;
+     $("#btn_rewindTime").click(function (e) {
+       if (time_val != 0) {
+           time_val = time_val - 1;
+           $("#time_val").val(time_val);
 
+           if(time_val == 0){
+               show_all_topic()
+               $("#Tstatus").text("to one hour ago")
+           }else{
+               topic_filter_by_time(time_val)
+               $("#Tstatus").text(time_val + "hr backward")
+           }
+
+       }else{
+            show_all_topic()
+           $("#Tstatus").text("to one hour ago")
+       }
+
+
+   });
+
+   $("#btn_forwardTime").live("click", function() {
+               time_val = time_val + 1;
+               $("#time_val").val(time_val);
+               topic_filter_by_time(time_val)
+               $("#Tstatus").text(time_val + "hr backward")
+           })
 
    $(window).resize(function() {
      windowsize = $(window).width();
-     if (windowsize < 1050) {
+     if (windowsize < 1100) {
        //if the window is greater than 440px wide then turn on jScrollPane..
          showTimeSpinner();
          $("#carmic_logo").hide();
@@ -954,7 +981,7 @@
 
   window.setInterval(getCoords, 60000);
    windowsize = $(window).width();
-   if (windowsize < 1050 || windowsize < 400 ) {
+   if (windowsize < 1100 || windowsize < 400 ) {
      //if the window is greater than 440px wide then turn on jScrollPane..
        showTimeSpinner();
        $("#carmic_logo").hide();
@@ -963,6 +990,36 @@
         $("#carmic_logo").show();
    }
 
+
+   function show_all_topic(){
+        var lat = handler.getMap().getCenter().lat();
+        var long = handler.getMap().getCenter().lng();
+
+         $.ajax({
+
+          data: {
+            cur_lat: lat,
+            cur_long: long
+          },
+          success: function(html) {
+            var htmlobject = $(html);
+
+            var output = htmlobject.find("#display_topic")[0];
+            var testing = new XMLSerializer().serializeToString(output);
+            $("#display_topic").replaceWith(testing);
+
+            inc_count = parseInt($("#hid_inc_count").val());
+            t_count = parseInt($("#hid_tcount").val());
+            total = inc_count + t_count
+            $("#topic_count").text(total);
+
+             var rotate = 'rotate(' +0 + 'deg)';
+                 $("#marker").css({'-moz-transform': rotate, 'transform' : rotate, '-webkit-transform': rotate, '-ms-transform': rotate});
+             $("#posts_display").hide();
+          }
+
+        });
+   }
    //var clickButton = document.getElementById("btn_current_loc");
    // clickButton.click();
 

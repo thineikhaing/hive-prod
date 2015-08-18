@@ -276,33 +276,9 @@ var Carmic = {
 
 
 
-        $("#btn_rewindTime").click(function (e) {
-            if (time_val != 0) {
-                time_val = time_val - 1;
-                $("#time_val").val(time_val);
-
-                if(time_val == 0){
-                    showcurrenttopic()
-                    $("#Tstatus").text("now")
-                }else{
-                    topic_filter_by_time(time_val)
-                    $("#Tstatus").text(time_val + "hr backward")
-                }
-
-            }else{
-                showcurrenttopic()
-                $("#Tstatus").text("now")
-            }
 
 
-        });
 
-        $("#btn_forwardTime").live("click", function() {
-            time_val = time_val + 1;
-            $("#time_val").val(time_val);
-            topic_filter_by_time(time_val)
-            $("#Tstatus").text(time_val + "hr backward")
-        })
 
         function retrieve_posts(obj){
             var topic_id = obj.getAttribute("topicID");
