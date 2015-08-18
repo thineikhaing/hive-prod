@@ -83,8 +83,9 @@
           %div
             %a
               =image_tag("CarmicAssets/MapRightTop.png", id: 'map_zoomIn')
-          %div
-            =image_tag("CarmicAssets/MapRightMid.png", id: 'control5', style:'display: block;margin-left:5px !important;')
+          %div.btn_current_loc
+            %a
+              =image_tag("CarmicAssets/MapRightMid.png", id: 'control5', style:'display: block;margin-left:5px !important;')
           %div
             %a
               =image_tag("CarmicAssets/MapRightBtm.png", id: 'map_zoomOut')
@@ -113,7 +114,7 @@
           %a
             =image_tag("CarmicAssets/MinTM.png", style:"width:60px; height:60px;")
 
-        %div#btn_current_loc
+        %div.btn_current_loc
           %a
             =image_tag("CarmicAssets/MinRT.png", style:"width:60px; height:60px;")
 
@@ -810,7 +811,7 @@
           handler.getMap().setZoom(handler.getMap().getZoom()-1)
       })
 
-   $("#btn_current_loc").click(function(){
+   $(".btn_current_loc").click(function(){
       if (navigator.geolocation) {
               navigator.geolocation.getCurrentPosition(showPosition);
       }
