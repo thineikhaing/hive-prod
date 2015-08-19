@@ -975,12 +975,12 @@ $header-border: $table-cell-border) {
 
 .add_bg_spin{
   border: 1px solid rgb(6,149,165);
-  //background-image: url('TimeClock.png') !important;
-  background: url('TimeClock.png') !important;
+  background-image: url('TimeClock.png') !important;
+  //background: url('TimeClock.png') !important;
   background-size: 440px 440px !important;
   background-repeat: no-repeat !important;
   background-position: center !important;
-  background-color: rgba(255, 255, 255, 0.5) !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
   display: none;
 }
 
