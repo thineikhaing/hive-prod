@@ -9,6 +9,10 @@
 //= require views/edit_topic_post
 //= require views/edit_column_post
 //= require views/app_list
+//= require jquery/cookie
+//= require jquery.minicolors
+//= require markerclusterer
+//= require underscore
 //= require gmaps/google
 //= require carmic_map
 //= require carmic
