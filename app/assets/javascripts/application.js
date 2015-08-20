@@ -15,6 +15,8 @@
 //= require turbolinks
 //= require foundation
 //= require jquery-ui
+//= require jquery.minicolors
+//= require jquery/cookie
 //= require web
 //= require markerclusterer
 //= require underscore
@@ -22,5 +24,5 @@
 //= require_tree .
 $(function() {
   $(document).foundation();
-//    = require jquery.ui.all
+
 });

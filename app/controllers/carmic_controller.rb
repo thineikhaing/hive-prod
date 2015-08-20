@@ -285,17 +285,15 @@ class CarmicController < ApplicationController
       user = User.find_by_email(params[:email])
       if user.present?
         user.send_password_reset
-        render json: {status: 'Email sent with password reset instructions.'}
-        #respond_to do |format|
-        #  format.js {render inline: "location.reload();" }
-        #end
+        respond_to do |format|
+          format.js {render inline: "location.reload();" }
+        end
         flash[:notice] = "Email sent with password reset instructions."
       else
-        #respond_to do |format|
-        #  format.js {render inline: "location.reload();" }
-        #end
+        respond_to do |format|
+          format.js {render inline: "location.reload();" }
+        end
         flash[:notice] = "Email address does not exist."
-        render json: {status: 'Email address does not exist.'}
       end
     end
 
@@ -365,12 +363,12 @@ class CarmicController < ApplicationController
       p @post = user.posts.build({ topic_id: params[:id] }.merge (params[:post]))
     end
 
-    last_post = Post.last
+    #last_post = Post.last
     #if last_post.content ==  params[:post][:content] && last_post.topic_id = params[:id]
     #  p "same"
     #else
-
-
+    #
+    #
     #end
 
     if @post.content.length > 255 #check for max length of content
