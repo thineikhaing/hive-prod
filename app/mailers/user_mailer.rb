@@ -8,6 +8,9 @@ class UserMailer < ActionMailer::Base
       @email = "http://localhost:5000/verify?email=" + email
     elsif Rails.env.staging? || Rails.env.production?
       @email = "http://h1ve-staging.herokuapp.com/verify?email=" + email
+    else
+      @email = "http://h1ve-production.herokuapp.com/verify?email=" + email
+
     end
     mail(:to => email, :subject => "Please complete your verification")
   end
@@ -15,8 +18,10 @@ class UserMailer < ActionMailer::Base
   def password_reset(user)
     if Rails.env.development? || Rails.env.testing?
       @reset_pwd_url = "http://localhost:5000/reset_password?token=" + user.reset_password_token
-    elsif Rails.env.staging? || Rails.env.production?
+    elsif Rails.env.staging?
       @reset_pwd_url = "http://h1ve-staging.herokuapp.com/reset_password?token=" + user.reset_password_token
+    else
+      @reset_pwd_url = "http://h1ve-production.herokuapp.com/reset_password?token=" + user.reset_password_token
     end
     mail :to => user.email, :subject => "Password Reset"
   end
@@ -24,8 +29,10 @@ class UserMailer < ActionMailer::Base
   def carmic_password_reset(user)
     if Rails.env.development? || Rails.env.testing?
       @reset_pwd_url = "http://localhost:5000/reset_password?token=" + user.reset_password_token
-    elsif Rails.env.staging? || Rails.env.production?
+    elsif Rails.env.staging?
       @reset_pwd_url = "http://h1ve-staging.herokuapp.com/reset_password?token=" + user.reset_password_token
+    else
+      @reset_pwd_url = "http://h1ve-production.herokuapp.com/reset_password?token=" + user.reset_password_token
     end
     mail :to => user.email, :subject => "Password Reset"
   end
