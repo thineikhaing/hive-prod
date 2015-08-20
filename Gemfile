@@ -76,6 +76,7 @@ group :development do
 end
 
 
+gem 'rails_12factor', group: :production
 
 group :assets do
   #gem 'sass-rails'                 # Sass adapter for the Rails asset pipeline.
