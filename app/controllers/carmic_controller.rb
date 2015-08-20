@@ -152,7 +152,7 @@ class CarmicController < ApplicationController
   end
 
   def get_all_posts(topicid)
-
+      p "call get all post"
       p @topic_title = Topic.find(topicid).title
 
       p @topic = Topic.where(id: topicid).first.reload
@@ -361,33 +361,40 @@ class CarmicController < ApplicationController
     p "session user"
     p user = User.find(session[:carmic_user_id])
     if user.present?
-      @post = user.posts.build({ topic_id: params[:id] }.merge (params[:post]))
+      p "post merge"
+      p @post = user.posts.build({ topic_id: params[:id] }.merge (params[:post]))
     end
 
     last_post = Post.last
-    if last_post.content ==  params[:post][:content] && last_post.topic_id = params[:id]
-      p "same"
-    else
-      if @post.content.length > 255 #check for max length of content
-        flash.now[:notice] =  'The max length message is 255'
-      elsif @post.content.length == 0  #check content is blank?
-        flash.now[:notice] = 'Please enter the message'
-      else
-        if @post.save
-          if cookies[:currentlat].present? and cookies[:currentlng].present?
-            @post.latitude = cookies[:currentlat].to_f
-            @post.longitude = cookies[:currentlng].to_f
-            #factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
-            #factual_result = factual.table("global").geo("$circle" => {"$center" => [@post.latitude, @post.longitude], "$meters" => 1000}).first
-            #@post.address = factual_result["address"]
-          end
-          @post.save!
-          @post.broadcast
-        else
-          flash.now[:notice] = 'Error in creating message'
-        end
-      end
+    #if last_post.content ==  params[:post][:content] && last_post.topic_id = params[:id]
+    #  p "same"
+    #else
 
+
+    #end
+
+    if @post.content.length > 255 #check for max length of content
+      flash.now[:notice] =  'The max length message is 255'
+      p "The max length message is 255"
+    elsif @post.content.length == 0  #check content is blank?
+      p "Please enter the message"
+      flash.now[:notice] = 'Please enter the message'
+    else
+      if @post.save
+        p "post is saved"
+        if cookies[:currentlat].present? and cookies[:currentlng].present?
+          @post.latitude = cookies[:currentlat].to_f
+          @post.longitude = cookies[:currentlng].to_f
+          #factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+          #factual_result = factual.table("global").geo("$circle" => {"$center" => [@post.latitude, @post.longitude], "$meters" => 1000}).first
+          #@post.address = factual_result["address"]
+        end
+        @post.save!
+        @post.broadcast
+        p "finish broadcoas post"
+      else
+        flash.now[:notice] = 'Error in creating message'
+      end
     end
 
 
