@@ -23,17 +23,33 @@
   %a.close-reveal-modal X
   %br
   %br
-  = form_for :home, data:{ abide: " " }, url: { controller: "carmic", action: "camic_reset_pwd", method: "camic_reset_pwd"} , :remote => true do |f|
+  = form_for :home, data:{ abide: " " }, url: { controller: "carmic", action: "camic_reset_pwd"} , :html => {:id => "forget_form"}, :remote => true do |f|
     .columns.large-12
       %h4 Reset Password
     .columns.large-12
       %br
     .columns.large-12
       %span email
-      =text_field_tag 'email', nil, placeholder: 'email'
+      =text_field_tag 'email', nil, placeholder: 'email' , id: "forget_email"
       %small.error Name is required and must be a string.
     .columns.large-12
       %br
 
     .columns.large-12.right{style: 'text-align:right'}
-      =submit_tag "submit", class: "button tiny radius form_btn"
+      %input{type:'button', value:'submit',class: "button tiny radius form_btn", id:'forget_form_submit' }
+
+
+:javascript
+
+  $('#forget_form_submit').click(function() {
+      var email = $("#forget_email").val()
+      $.ajax({
+        type: 'POST',
+        url: "#{carmic_camic_reset_pwd_path}",
+        data: {email: email} ,
+        success: function(){
+          $('#forget_pwd').foundation('reveal', 'close');
+          alert("Email sent with password reset instructions.")
+        }
+      })
+   });

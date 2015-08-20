@@ -190,7 +190,7 @@ class CarmicController < ApplicationController
 
       if params[:password].present?
         if HiveApplication.is_a_valid_password(params[:password])  == false
-          @err_msg = "PASSWORDS MUST BE AT LEAST A CHARACTERS LONG AND INCLUDE A NUMBER"
+          @err_msg = "PASSWORDS MUST BE AT LEAST 8 CHARACTERS LONG AND INCLUDE A NUMBER"
           @flag = false
         else
           @password = params[:password]
@@ -238,7 +238,7 @@ class CarmicController < ApplicationController
         respond_to do |format|
           format.js {render inline: "location.reload();" }
         end
-        flash[:error] = "Sigup New User successfully!"
+        flash[:success] = "Sigup New User successfully!"
       end
 
 
@@ -285,15 +285,17 @@ class CarmicController < ApplicationController
       user = User.find_by_email(params[:email])
       if user.present?
         user.send_password_reset
-        respond_to do |format|
-          format.js {render inline: "location.reload();" }
-        end
+        render json: {status: 'Email sent with password reset instructions.'}
+        #respond_to do |format|
+        #  format.js {render inline: "location.reload();" }
+        #end
         flash[:notice] = "Email sent with password reset instructions."
       else
-        respond_to do |format|
-          format.js {render inline: "location.reload();" }
-        end
+        #respond_to do |format|
+        #  format.js {render inline: "location.reload();" }
+        #end
         flash[:notice] = "Email address does not exist."
+        render json: {status: 'Email address does not exist.'}
       end
     end
 
@@ -356,8 +358,8 @@ class CarmicController < ApplicationController
   end
 
   def create_post
-
-    user = User.find(session[:carmic_user_id])
+    p "session user"
+    p user = User.find(session[:carmic_user_id])
     if user.present?
       @post = user.posts.build({ topic_id: params[:id] }.merge (params[:post]))
     end
