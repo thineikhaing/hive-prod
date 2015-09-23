@@ -248,8 +248,7 @@ span.error, small.error {
   width: 100%;
   border: 1px solid orange;
   background: none;
-  //font-size: 18px !important;
-  //font-family: Labrador-A-Light;
+
   thead{
     background: orange !important;
     th{background: orange;}
@@ -262,6 +261,12 @@ span.error, small.error {
     tr:nth-child(odd) {background: none; border-bottom: 1px solid orange;font-size: 25px !important;}
 
   }
+
+  th,td{
+    font-size: 20px !important;
+    font-family: Labrador-A-Medium;
+  }
+
 
 }
 

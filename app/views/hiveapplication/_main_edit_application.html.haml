@@ -1,7 +1,6 @@
 #create_application_form
   = form_for :dev_portal, url: { controller: "hiveapplication", action: "edit_application"}, method: "post", id:"updateapplication" do |f|
-    %fieldset
-      = f.hidden_field :application_id, value: @application.id
+    = f.hidden_field :application_id, value: @application.id
     %table{class: "tbl_create_app_container"}
       %tr
         %td
@@ -23,11 +22,9 @@
                   = "TYPE"
             %tr
               %td
-                %fieldset
-                  = f.text_field :application_name, autofocus: true,  required:true, value: @application.app_name
+                = f.text_field :application_name, autofocus: true,  required:true, value: @application.app_name
               %td
-                %fieldset
-                  = f.select :application_type, options_for_select(HiveApplication.get_application_type, selected: @application.app_type), { }
+                = f.select :application_type, options_for_select(HiveApplication.get_application_type, selected: @application.app_type), { }
             %tr
               %td
                 #text_container
@@ -39,8 +36,7 @@
                   = "APP ICON"
             %tr
               %td
-                %fieldset
-                  = f.text_area  :description, required:true ,cols: "50", rows: "15" , value:@application.description,maxlength: "255"
+                = f.text_area  :description, required:true ,cols: "50", rows: "15" , value:@application.description,maxlength: "255"
               %td
                 %table{width:"100%"}
                   %tr
@@ -48,12 +44,11 @@
                       .upload-preview
                         %img{height: "120px", width: "120px",src:@application.icon_url}
                     %td{width: "50%"}
-                      %fieldset
-                        #btn_upload_icon
-                          .wrapper
-                            = f.file_field :application_icon
-                          .button.tiny.warning
-                            Choose File
+                      #btn_upload_icon
+                        .wrapper
+                          = f.file_field :application_icon
+                        .button.tiny.warning
+                          Choose File
                   %tr
                     %td
                       #text_container

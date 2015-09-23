@@ -79,7 +79,7 @@ end
 gem 'rails_12factor', group: :production
 
 group :assets do
-  #gem 'sass-rails'                 # Sass adapter for the Rails asset pipeline.
+  #gem 'sass-rails'                 # Sass adapter for tamle Rails asset pipeline.
   gem 'bourbon'                   , '>= 3.0.1' # Bourbon provides a comprehensive framework of sass mixins that are designed to be as vanilla as possible. Meaning they should not deter from the original CSS syntax. The mixins contain vendor specific prefixes for all CSS3 properties for support amongst modern browsers. The prefixes also ensure graceful degradation for older browsers that support only CSS3 prefixed properties.
   gem 'uglifier'                  , '~> 2.5.0' # Use Uglifier as compressor for JavaScript assets
 

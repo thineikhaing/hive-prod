@@ -21,11 +21,9 @@
                   = "TYPE"
             %tr
               %td
-                %fieldset
-                  = f.text_field :application_name, autofocus: true,  required:true
+                = f.text_field :application_name, autofocus: true,  required:true
               %td
-                %fieldset
-                  = f.select :application_type, options_for_select(HiveApplication.get_application_type), { }
+                = f.select :application_type, options_for_select(HiveApplication.get_application_type), { }
             %tr
               %td
                 #text_container
@@ -38,8 +36,7 @@
 
             %tr
               %td
-                %fieldset
-                  = f.text_area  :description, required:true ,cols: "50", rows: "15" ,maxlength: "255"
+                = f.text_area  :description, required:true ,cols: "50", rows: "15" ,maxlength: "255"
               %td
                 %table{width:"100%"}
                   %tr
@@ -47,11 +44,10 @@
                       .upload-preview
                         %img{height: "120px", width: "120px"}
                     %td{width: "50%"}
-                      %fieldset
-                        #btn_upload_icon
-                          .wrapper
-                            = f.file_field :application_icon, required:true
-                          %button CHOOSE FILE
+                      #btn_upload_icon
+                        .wrapper
+                          = f.file_field :application_icon, required:true
+                        %button CHOOSE FILE
                   %tr
                     %td
                       #text_container
