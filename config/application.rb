@@ -157,7 +157,6 @@ module PushWoosh_Const
 
   API_ACCESS = "y5dMhjeQ1pcAf3SNnMqy4LBexlqTR0d86p2o3c84NhEajv3Mxsffz8QuEVshTklJ6Qn9JpwVPJKjx0bmsCBn"
 
-
 end
 
 module AWS_Link

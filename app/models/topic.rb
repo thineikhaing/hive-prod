@@ -937,7 +937,6 @@ class Topic < ActiveRecord::Base
             fr:title,
             en:title
         },
-
         data:{
              id: self.id,
              title: self.title,
