@@ -563,3 +563,6 @@ DEPENDENCIES
   turbolinks (~> 2.5.3)
   uglifier (~> 2.5.0)
   xss_terminate (~> 0.22)
+
+BUNDLED WITH
+   1.10.4

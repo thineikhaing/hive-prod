@@ -89,7 +89,7 @@ end
 
 module Carmmunicate_key
   Development_Key = "3d266eb51cdcc31f18721d4300202bef"
-  Staging_Key= "63547bb73e27bc8e55c000e126c2c254"
+  Staging_Key= "fd4e10a082395e85ab1d7791fb41e1e7"
   Production_Key = "05c4919a87614b59e5b6814b02ceff07"
 end
 
