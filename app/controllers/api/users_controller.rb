@@ -719,9 +719,10 @@ class Api::UsersController < ApplicationController
     user = User.find_by_email(email)
     if user.present?
 
-      render json: { status: "ok", user: user}
+      render :json => { status: "ok", user: user}.to_json   ,:callback => params[:callback]
+
     else
-      render json: {status: "no"}
+      render json: {status: "no"}.to_json ,:callback => params[:callback]
     end
 
 

@@ -70,6 +70,9 @@ gem 'foundation-rails'
 
 gem 'jquery-ui-rails'
 
+gem 'rack-jsonp-middleware',
+    :require => 'rack/jsonp'
+
 
 group :development do
   gem 'rails_layout'

@@ -70,6 +70,8 @@ module Hive
         'Access-Control-Request-Method' => '*'
     })
 
+    config.middleware.use Rack::JSONP
+
     config.generators do |g|
       g.factory_girl false
     end
