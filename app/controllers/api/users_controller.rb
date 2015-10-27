@@ -714,6 +714,19 @@ class Api::UsersController < ApplicationController
 
   end
 
+  def check_hive_user
+    email = params[:email]
+    user = User.find_by_email(email)
+    if user.present?
+
+      render json: { status: "ok", user: user}
+    else
+      render json: {status: "no"}
+    end
+
+
+  end
+
   private
 
   def user_params
