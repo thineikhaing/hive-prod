@@ -725,13 +725,23 @@ class Api::UsersController < ApplicationController
       render json: {status: "no"}.to_json ,:callback => params[:callback]
     end
 
+    if params[:hive_id]
+      user = User.find(params[:hive_id])
+      if user.present?
+        user.socal_id = params[:socal_id]
+        user.save!
+      end
+
+    end
+
+
 
   end
 
   private
 
   def user_params
-    params.require(:user).permit(:username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :points, :honor_rating, :created_at, :data, :device_id)
+    params.require(:user).permit(:username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :points, :honor_rating, :created_at, :data, :device_id,:socal_id)
   end
 
 
