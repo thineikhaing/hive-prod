@@ -89,6 +89,8 @@ class HiveapplicationController < ApplicationController
     end
   end
 
+
+
   #function to regenerate api key wiich is not used for the time being
   def regenerate_api_key
     # Check if CURRENT_USER and APPLICATION_ID is present

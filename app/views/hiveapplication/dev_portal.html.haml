@@ -49,10 +49,12 @@
               %td= hive_application.api_key
               %td
                 %span= link_to 'Edit TOPIC/POST', hiveapplication_edit_topic_post_path(:app_id=> hive_application.id)  , :class => 'label warning'
-
+                -#-if  hive_application.app_name.upcase == "SOCAL"
+                -#  =link_to "socal_user", '', :class => 'label warning'
           %tr
             %td{colspan: 5,style: 'text-align:center; font-size: 1.2em; background: orange;'}
               =image_tag "new_app.png"
               =link_to ' New APP', hiveapplication_add_application_path, style: ' color:#fff'
+
 
     %br

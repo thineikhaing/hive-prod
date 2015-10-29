@@ -44,6 +44,13 @@ class Createdata < ActiveRecord::Migration
       AppAdditionalField.create(app_id: carmmic_app.id,table_name: "User", additional_column_name: "direction")
       AppAdditionalField.create(app_id: carmmic_app.id,table_name: "User", additional_column_name: "device_id")
       AppAdditionalField.create(app_id: carmmic_app.id,table_name: "User", additional_column_name: "heartrate")
+
+
+      AppAdditionalField.create(app_id: carmmic_app.id,table_name: "Topic", additional_column_name: "color")
+      AppAdditionalField.create(app_id: carmmic_app.id,table_name: "Topic", additional_column_name: "plate_number")
+
+      AppAdditionalField.create(app_id: carmmic_app.id,table_name: "Post", additional_column_name: "color")
+      AppAdditionalField.create(app_id: carmmic_app.id,table_name: "Post", additional_column_name: "plate_number")
     end
 
     if socal_app.present?
