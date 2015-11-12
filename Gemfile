@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
-ruby "1.9.3"
+#ruby "1.9.3"
+ruby '2.2.3'
 
 #gem 'rails', :git => 'git://github.com/rails/rails.git', :tag => 'v4.1.0.beta1'
 
@@ -47,8 +48,10 @@ gem 'aws-sdk'
 gem 'jquery-minicolors-rails'
 gem 'rqrcode_png'           , '~> 0.1.2'
 
-gem 'html5'
-gem 'xss_terminate', '~> 0.22'
+#gem 'html5'
+#gem 'xss_terminate', '~> 0.22'
+
+gem "loofah-activerecord"
 
 gem 'rack-timeout'
 
