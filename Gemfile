@@ -4,7 +4,7 @@ ruby '2.2.3'
 
 #gem 'rails', :git => 'git://github.com/rails/rails.git', :tag => 'v4.1.0.beta1'
 
-gem 'rails'                       , '4.1.0' # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+gem 'rails', '~> 4.2', '>= 4.2.4' # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 
 gem 'thin'                        , '~> 1.5.0'
 gem 'sprockets-rails'             , '~> 2.1.0'
@@ -19,7 +19,7 @@ gem 'protected_attributes'        , '~> 1.0.7' # Protect attributes from mass as
 gem 'delayed_job'                              # Delayed_job (or DJ) encapsulates the common pattern of asynchronously executing longer tasks in the background. It is a direct extraction from Shopify where the job table is responsible for a multitude of core tasks.
 gem 'delayed_job_active_record'             # ActiveRecord backend for Delayed::Job
 gem "hirefire-resource"           , '~> 0.3.2' # HireFire enables you to auto-scale your dynos, schedule capacity during specific times of the week, and recover crashed processes.
-gem 'devise'                      , '~> 3.2.4' # Flexible authentication solution for Rails with Warden
+gem 'devise'                      , '~> 3.4.0' # Flexible authentication solution for Rails with Warden
 gem 'httparty'                    , '~> 0.13.1' # Makes http fun! Also, makes consuming restful web services dead easy.
 gem 'geocoder'                    , '~> 1.2.0' # Provides object geocoding (by street or IP address), reverse geocoding (coordinates to street address), distance queries for ActiveRecord and Mongoid, result caching, and more. Designed for Rails but works with Sinatra and other Rack frameworks too.
 gem 'pusher'                      , '~> 0.12.0' # Wrapper for pusher.com REST api
