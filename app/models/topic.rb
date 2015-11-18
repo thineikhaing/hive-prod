@@ -600,6 +600,7 @@ class Topic < ActiveRecord::Base
      avatar = Topic.get_avatar(self.user.username)
 
     data = {
+        created_at: self.created_at,
         id: self.id,
         title: self.title,
         user_id: self.user_id,

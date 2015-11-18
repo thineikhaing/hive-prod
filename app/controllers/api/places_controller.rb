@@ -338,7 +338,10 @@ class Api::PlacesController < ApplicationController
     if params[:latitude].present? and params[:longitude].present? and params[:radius].present? and params[:keyword].present?
 
       factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+      p "factual data"
       query = factual.table("global").geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]}).search(params[:keyword])
+
+      #testquery = factual.table("places-us").geo("$circle" => {"$center" => [34.058583, -118.416582], "$meters" => 50}).rows
       box = Geocoder::Calculations.bounding_box("#{params[:latitude]},#{params[:longitude]}", params[:radius], {units: :km})
       places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
 
