@@ -84,8 +84,8 @@ module Factual_Const
 end
 
 module Mealbox_key
-  Development_Key = "3cc83947e0d983b7ab487df4d7136904"
-  Staging_Key= "7c64b6ba8eebebb73bcdf605b052562e"
+  Development_Key = "5eaf74ea85990fd832dcb7fd7e6dc5f9"
+  Staging_Key= "e3dd4f777bf0a84f8ae47a10cfd6072a"
   Production_Key = "d80eab337c8eeba960ecf65772e1f2af"
 end
 
@@ -102,8 +102,8 @@ module Favr_key
 end
 
 module Socal_key
-  Development_Key = "3bb30ce29cf7ed39a9167facb9ca7022"
-  Staging_Key = "93dc338faf53138be3b10da1338461a0"
+  Development_Key = "872e1e6f6717e443d566b3f405d116ae"
+  Staging_Key = "9c1c1f541c66d52d63f3efd22340c044"
   Production_Key = "89433f46a2f596f3f1c8259e8f262c3e"
 end
 
