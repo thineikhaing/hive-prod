@@ -46,9 +46,9 @@ class Topic < ActiveRecord::Base
 
   def as_json(options=nil)
     if options[:content].present?      #return topic json with content information
-      super(only: [:id, :state, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :content])
+      super(only: [:id, :state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information, :content])
     else
-      super(only: [:id,:state, :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information])
+      super(only: [:id,:state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :place_information, :tag_information])
     end
   end
 
@@ -134,6 +134,8 @@ class Topic < ActiveRecord::Base
         notification_range: self.notification_range,
         sepcial_type: self.special_type,
         created_at: self.created_at,
+        points: self.points,
+        free_points:self.free_points,
         data: self.data,
         methods: {
             username: username,
@@ -168,6 +170,8 @@ class Topic < ActiveRecord::Base
         special_type: self.special_type,
         created_at: self.created_at,
         data: self.data,
+        points: self.points,
+        free_points:self.free_points,
         methods: {
             username: username,
             place_information: self.place_information,
@@ -201,6 +205,8 @@ class Topic < ActiveRecord::Base
         special_type: self.special_type,
         created_at: self.created_at,
         data: self.data,
+        points: self.points,
+        free_points:self.free_points,
         methods: {
             username: username,
             place_information: self.place_information,
@@ -234,6 +240,8 @@ class Topic < ActiveRecord::Base
         special_type: self.special_type,
         created_at: self.created_at,
         data: self.data,
+        points: self.points,
+        free_points:self.free_points,
         methods: {
             username: username,
             place_information: self.place_information,
@@ -267,6 +275,8 @@ class Topic < ActiveRecord::Base
         special_type: self.special_type,
         created_at: self.created_at,
         data: self.data,
+        points: self.points,
+        free_points:self.free_points,
         methods: {
             username: username,
             place_information: self.place_information,
@@ -300,6 +310,8 @@ class Topic < ActiveRecord::Base
         special_type: self.special_type,
         created_at: self.created_at,
         data: self.data,
+        points: self.points,
+        free_points:self.free_points,
         methods: {
             username: username,
             place_information: self.place_information,
@@ -362,6 +374,7 @@ class Topic < ActiveRecord::Base
         given_time: self.given_time,
         valid_start_date: self.valid_start_date,
         valid_end_date: self.valid_end_date,
+
         methods: [
             last_post_at: self.last_post_at,
             url: nil,
@@ -406,6 +419,8 @@ class Topic < ActiveRecord::Base
         special_type: self.special_type,
         created_at: self.created_at,
         data: self.data,
+        points: self.points,
+        free_points:self.free_points,
         methods: {
             username: username,
             place_information: self.place_information,
@@ -439,6 +454,8 @@ class Topic < ActiveRecord::Base
         special_type: self.special_type,
         created_at: self.created_at,
         data: self.data,
+        points: self.points,
+        free_points:self.free_points,
         methods: {
             username: username,
             place_information: self.place_information,
@@ -676,6 +693,8 @@ class Topic < ActiveRecord::Base
         special_type: self.special_type,
         created_at: self.created_at,
         data: self.data,
+        points: self.points,
+        free_points:self.free_points,
         methods: {
             username: username,
             place_information: self.place_information,
@@ -959,6 +978,8 @@ class Topic < ActiveRecord::Base
              special_type: self.special_type,
              created_at: self.created_at,
              data: self.data,
+             points: self.points,
+             free_points:self.free_points,
              methods: {
                  username: username,
                  avatar: avatar,

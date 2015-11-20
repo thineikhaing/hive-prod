@@ -714,6 +714,7 @@ class Api::TopicsController < ApplicationController
           reopen_favr(topic_id, user.id,params[:points],params[:free_points], params[:temp_id], params[:latitude],params[:longitude])
         end
       elsif params[:action_type].to_i== Topic::REVOKE
+        p "topic revoke"
         revoke_favr_by_owner(topic_id, user.id, params[:temp_id], params[:latitude],params[:longitude])
       elsif params[:action_type].to_i== Topic::EXTEND
         if params[:extended_time].present?
@@ -1115,6 +1116,7 @@ class Api::TopicsController < ApplicationController
     favr_action = Favraction.find(favr_action_id)
     if favr_action.present?
       action_topic = Topic.find(favr_action.topic_id)
+
       unless action_topic.nil?
         if action_topic.state == Topic::FINISHED
           doer_user = User.find_by_id(favr_action.doer_user_id)
@@ -1137,6 +1139,14 @@ class Api::TopicsController < ApplicationController
           p "doer's point is"
           p doer_user.points
           #doer_user.update_user_points
+
+          #remaining_point = total_points- half_point
+          #if remaining_point >= action_topic.points
+          #  user.points += action_topic.points
+          #else
+          #  user.points += remaining_point
+          #end
+
 
           data = {
               user_id: doer_user.id,
@@ -1181,9 +1191,19 @@ class Api::TopicsController < ApplicationController
             post_content = post.content
             post_created_at = post.created_at
           end
-          action = {action_id: favr_action.id,topic_id:favr_action.topic_id,status: favr_action.status,doer_id:favr_action.doer_user_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: favr_action.honor_to_doer, honor_to_owner: favr_action.honor_to_owner,user_id: favr_action.user_id,created_at:favr_action.created_at,updated_at:favr_action.updated_at}
-          render json: {topic: action_topic , action: action}
+          action = {action_id: favr_action.id,topic_id:favr_action.topic_id,status: favr_action.status,
+                    doer_id:favr_action.doer_user_id,doer_name: doer_name,post_id: post_id,
+                    post_content: post_content, post_created_at: post_created_at, honor_to_doer: favr_action.honor_to_doer,
+                    honor_to_owner: favr_action.honor_to_owner,user_id: favr_action.user_id,created_at:favr_action.created_at,
+                    updated_at:favr_action.updated_at}
+
+          p "render topic and action"
+          p action_topic
+         render json: {topic: action_topic , action: action, test: 'ok'}
+
           #render json: {topic: action_topic, action_status: Favraction::OWNER_REJECTED, reason_post_id:new_post.id, reason_post_content: new_post.content}
+
+
         elsif (action_topic.state == Topic::TASK_EXPIRED || action_topic.state == Topic::EXPIRED)
 
           doer_user = User.find_by_id(favr_action.doer_user_id)
@@ -1268,29 +1288,32 @@ class Api::TopicsController < ApplicationController
 
         post = Post.new
         post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REOPENED)
-
+        p "reopen state *******"
         if post.present?
-          topic_points = action_topic.points
-          topic_free_points= action_topic.free_points
-          total_points = topic_points + topic_free_points
-          half_points = (total_points/2.0).ceil
 
-          point_difference = free_points.to_i-half_points
+          p topic_points = action_topic.points
+          p topic_free_points= action_topic.free_points
+          p total_points = topic_points + topic_free_points
+          p half_points = (total_points/2.0).ceil
+
+          p point_difference = free_points.to_i-half_points
 
           if (point_difference>0)
-            action_topic.points = topic_points  +  points.to_i
-            action_topic.free_points = point_difference + free_points.to_i
+            p "if point diff is greater than 0"
+            p action_topic.points = topic_points  +  points.to_i
+            p action_topic.free_points = point_difference + free_points.to_i
           else
-            action_topic.points =  topic_points  - (point_difference).abs + points.to_i
-            action_topic.free_points = free_points.to_i
+            p "if point diff is less than 0"
+            p action_topic.points =  topic_points  - (point_difference).abs + points.to_i
+            p action_topic.free_points = free_points.to_i
           end
           action_topic.save!
 
-          user.points -= points.to_i
+          p user.points -= points.to_i
           user.save!
         end
 
-        #action_topic.update_event_broadcast
+        action_topic.update_event_broadcast
         render json: {topic: action_topic}
       elsif action_topic.state == Topic::TASK_EXPIRED
         action_record = Favraction.where(:topic_id => action_topic.id).order("id")
@@ -1432,9 +1455,13 @@ class Api::TopicsController < ApplicationController
         p total_points = action_topic.points + action_topic.free_points
         p half_point = (total_points/2.0).ceil
         p remaining_point = total_points- half_point
+
+        p "#############"
         if(remaining_point >= action_topic.points)
+          p "action topic point"
           user.points += action_topic.points
         else
+          p "remaining point"
           user.points  += remaining_point
         end
         user.save!

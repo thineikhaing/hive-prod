@@ -147,7 +147,6 @@ end
 #  FV_D_Master_Secret="1EXyDmHxTNSZRV0raeCthA"
 #end
 
-
 module PushWoosh_Const
   CM_D_APP_ID = "B48C7-FE962"
   CM_S_APP_ID = "82255-61ADD"
