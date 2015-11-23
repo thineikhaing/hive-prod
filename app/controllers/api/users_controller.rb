@@ -365,6 +365,8 @@ class Api::UsersController < ApplicationController
   end
 
   def edit_profile
+    p "currebt use"
+    p current_user
     if current_user.present?
       user = User.find_by_id(current_user.id)
       checkUsername = User.search_data(params[:username])
@@ -384,6 +386,8 @@ class Api::UsersController < ApplicationController
           var.push(31)
         end
       end
+      p "var value"
+      p var
 
       if var.empty?
         if params[:username].present?
@@ -407,7 +411,48 @@ class Api::UsersController < ApplicationController
         render json: { :error => var }, status: 400
       end
     else
-      render json:{ error_msg: "Param authentication token/ user id must be presented" } , status: 400
+      #render json:{ error_msg: "Param authentication token/ user id must be presented" } , status: 400
+      user = User.find_by_authentication_token(params[:auth_token])
+      checkUsername = User.search_data(params[:username])
+      checkEmail = User.find_by_email(params[:email])
+      var = [ ]
+      history = Historychange.new
+
+      if params[:username].present?
+        #checkName = params[:username].split(" ")
+        var.push(33) if Obscenity.profane?(params["username"]) == true
+        #checkName.map { |cN| var.push(33) unless var.include?(33) if cN.downcase == "cunt" or cN.downcase == "shit" or cN.downcase == "cocksucker" or cN.downcase == "piss" or cN.downcase == "tits" or cN.downcase == "fuck" or cN.downcase == "motherfucker" or cN.downcase == "suck" or cN.downcase == "cheebye" }
+        var.push(32) if checkUsername.present?
+      end
+
+      if params[:email].present?
+        if checkEmail != nil
+          var.push(31)
+        end
+      end
+
+      if var.empty?
+        if params[:username].present?
+          user.username = params[:username]
+          user.posts.map { |post| history.create_record("post", post.id, "update", post.topic.id) } if user.posts.present?
+          user.topics.map { |topic| history.create_record("topic", topic.id, "update", nil) } if user.topics.present?
+        end
+
+        if params[:password].present?
+          user.password = params[:password]
+          user.password_confirmation = params[:password]
+        end
+
+        if params[:email].present?
+          user.email = params[:email]
+        end
+
+        user.save!
+        render json: { :user => user, :success => 30 }, status: 200
+      else
+        render json: { :error => var }, status: 400
+      end
+
     end
   end
 

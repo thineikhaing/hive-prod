@@ -743,7 +743,7 @@ class Api::TopicsController < ApplicationController
           last_favr_action.status= Favraction::DOER_RESPONDED_REJ
           post_special_type = Post::DOER_RESPONDED_REJ
         elsif last_favr_action.status== Favraction::OWNER_ACKNOWLEDGED
-          last_favr_action.status=Favraction::DOER_RESPONDED_ACK
+          last_favr_action.status=Favraction::DOER_RESPONDED_ACK                   x
           post_special_type = Post::DOER_RESPONDED_ACK
         end
         last_favr_action.save!

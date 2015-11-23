@@ -11,8 +11,8 @@ class Historychange < ActiveRecord::Base
     false
   end
 
-  #def create_record(type, type_id, type_action, parent_id)
-  #  Historychange.create(type_name: type, type_id: type_id, type_action: type_action, parent_id: parent_id)
-  #end
+  def create_record(type, type_id, type_action, parent_id)
+    Historychange.create(type_name: type, type_id: type_id, type_action: type_action, parent_id: parent_id)
+  end
 
 end

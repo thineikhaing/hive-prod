@@ -31,6 +31,23 @@ class User < ActiveRecord::Base
 
   enums %w(BOT ADMIN VENDOR NORMAL)
 
+  def self.generate_new_username
+    prefix = %w(
+      Angry Anxious Befuddled Bemused Bewildered Bored Bright-eyed Cheerful Cool Cranky Ecstatic Excited
+      Grumpy Happy Hungry Jolly Laid-back Lolling Mellow Merry Mystified Paranoid Playful Sober Tipsy
+    )
+
+    suffix = %w(
+      Aardvark Alligator Beaver Bear Butterfly Cat Chihuahua Chipmunk Corgi Elephant Eagle Giraffe
+      Horse Husky Kangaroo Koala Llama Lion Monkey Panda Puppy Shiba Snorkie Swan Tiger Whale Penguin Duck
+    )
+
+    username = "#{prefix.sample} #{suffix.sample}"
+    username = "#{prefix.sample} #{suffix.sample}" if User.find_by_username(username).present?
+    username
+  end
+
+
   def send_password_reset
     p generate_token(:reset_password_token)
     self.reset_password_sent_at = Time.zone.now
