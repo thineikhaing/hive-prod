@@ -1292,11 +1292,18 @@ class Api::TopicsController < ApplicationController
         if post.present?
 
           p topic_points = action_topic.points
+          #0
           p topic_free_points= action_topic.free_points
+          #2
+
           p total_points = topic_points + topic_free_points
+          #2
+
           p half_points = (total_points/2.0).ceil
+          #1
 
           p point_difference = free_points.to_i-half_points
+          # 0 -1 = -1
 
           if (point_difference>0)
             p "if point diff is greater than 0"
@@ -1305,7 +1312,7 @@ class Api::TopicsController < ApplicationController
           else
             p "if point diff is less than 0"
             p action_topic.points =  topic_points  - (point_difference).abs + points.to_i
-            p action_topic.free_points = free_points.to_i
+            p action_topic.free_points = topic_free_points + free_points.to_i
           end
           action_topic.save!
 
