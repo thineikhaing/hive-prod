@@ -7,18 +7,25 @@ class Api::DownloaddataController < ApplicationController
 
       params[:radius].present? ? radius = params[:radius] : radius = nil
       if hiveApplication.present?
+        p "hive application present"
         topics = Place.nearest_topics_within(params[:latitude], params[:longitude], radius, hiveApplication.id)
         if hiveApplication.id ==1 #Hive Application
+          p "Hive Application"
           render json: { topics: JSON.parse(topics.to_json())}
-        elsif hiveApplication.devuser_id==1 and hiveApplication.id!=1 #All Applications under Herenow account except Hive
+        elsif hiveApplication.devuser_id==1 and hiveApplication.id!=1 and params[:choice].nil? #All Applications under Herenow account except Hive
+          p "All Applications under Herenow account except Hive"
           render json: { topics: JSON.parse(topics.to_json(content: true))}
 
         elsif params[:choice].present? and params[:choice] == "favr"
-          favr_topics = [ ]
+        p "favr Application"
+        favr_topics = [ ]
 
-          topics.each do |topic|
-            favr_topics.push(topic) if topic.topic_type == Topic::FAVR && topic.state != Topic::ACKNOWLEDGED && topic.state != Topic::EXPIRED && topic.state != Topic::REVOKED
-          end
+        topics.each do |topic|
+          favr_topics.push(topic) if topic.topic_type == Topic::FAVR && topic.state != Topic::ACKNOWLEDGED && topic.state != Topic::EXPIRED && topic.state != Topic::REVOKED
+        end
+
+          p "today date"
+          p Date.today
           render json: { topics: favr_topics , date: Date.today}
 
         else #3rd party App
