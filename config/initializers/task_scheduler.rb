@@ -14,10 +14,10 @@ scheduler.in '7d' do
   CarActionLog.delete_all
 end
 
-#scheduler.every '3s' do
-#  puts 'Hello... Rufus'
-#  CarActionLog.delete_all
-#end
+scheduler.every '3s' do
+  puts 'Hello... Rufus'
+  CarActionLog.delete_all
+end
 #
 #scheduler.every '2s' do
 #  puts 'check blood pressure'
