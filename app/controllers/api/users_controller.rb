@@ -327,8 +327,6 @@ class Api::UsersController < ApplicationController
         user.save
       end
 
-      user.points = 20
-      user.save!
       p " favr user :::"
       p user
       avatar = Topic.get_avatar(user.username)
