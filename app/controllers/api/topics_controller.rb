@@ -1309,6 +1309,7 @@ class Api::TopicsController < ApplicationController
           action_topic.save!
 
           p user.points -= points.to_i
+          p user.daily_points -= free_points.to_i
           user.save!
         end
 
