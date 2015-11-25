@@ -10,10 +10,11 @@ scheduler.cron "00 09 * * mon" do
   CarActionLog.delete_all
 end
 
-scheduler.cron '5 0 * * *' do
+scheduler.cron '00 09 * * *' do
+  p "update user daily points"
   users = User.all
   users.each do |user|
-    user.daily_points += 10
+    user.daily_points = 10
     user.save
   end
 end
