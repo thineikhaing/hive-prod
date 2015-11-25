@@ -1314,7 +1314,7 @@ class Api::TopicsController < ApplicationController
         end
 
         action_topic.update_event_broadcast
-        render json: {topic: action_topic}
+        render json: {topic: action_topic , daily_points: action_topic.user.daily_points}
       elsif action_topic.state == Topic::TASK_EXPIRED
         action_record = Favraction.where(:topic_id => action_topic.id).order("id")
         if action_record.present?
@@ -1335,7 +1335,7 @@ class Api::TopicsController < ApplicationController
               post = Post.new
               post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,-1,Post::OWNER_REOPENED)
 
-              render json: {topic: action_topic}
+              render json: {topic: action_topic, daily_points: action_topic.user.daily_points}
             end
           end
         end
