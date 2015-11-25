@@ -236,9 +236,10 @@ class Api::UsersController < ApplicationController
         result = Hash.new
         result[:device_id] = params[:device_token]
         user.data = result
+
         user.save!
 
-        render json: { status: true }
+        render json: { status: true, user_flag: 1}
       end
     else
       render json: { error_msg: "Param user id, authentication token, pusher token must be presented" }, status: 400
