@@ -253,6 +253,7 @@ class Api::TopicsController < ApplicationController
 
       if (topic.topic_type == Topic::FAVR) && user.present?
         user.points -= points
+        user.daily_points -= free_points
         user.save!
         add_favr_action_delay_job(topic.id)
 
@@ -271,25 +272,6 @@ class Api::TopicsController < ApplicationController
           history.parent_id = topic.id
           history.save
         end
-
-        #if topic.topic_type == Topic::LUNCHEON
-        #  post2 = Post.create(content: params[:img_url], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::IMAGE, height: params[:height], width: params[:width])
-        #  post2.delay.image_upload_delayed_job(params[:img_url])
-        #  post3 = Post.create(content: params[:extra_content], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::TEXT)
-        #  history.create_record("post", post2.id, "create", topic.id)
-        #  history.create_record("post", post3.id, "create", topic.id)
-        #
-        #  if params[:promo].present?
-        #    post4 = Post.create(content: params[:promo_content], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::TEXT)
-        #    history.create_record("post", post4.id, "create", topic.id)
-        #  end
-        #
-        #  if params[:coshoot].present?
-        #    post5 = Post.create(content: params[:coshoot_img_url], topic_id: topic.id, user_id: params[:coshoot_user_id], latitude: topic.latitude, longitude: topic.longitude, post_type: Post::IMAGE, height: params[:coshoot_height], width: params[:coshoot_width])
-        #    post5.delay.image_upload_delayed_job(params[:coshoot_img_url])
-        #    history.create_record("post", post5.id, "create", topic.id)
-        #  end
-        #end
 
         if topic.topic_type == Topic::FAVR
           post2 = Post.create(content: params[:extra_content], topic_id: topic.id, user_id: current_user.id, latitude: topic.latitude, longitude: topic.longitude, post_type: Post::TEXT)
@@ -332,9 +314,6 @@ class Api::TopicsController < ApplicationController
         topic.reload
         topic.overall_broadcast
 
-
-
-
         if check_profanity
           current_user.profanity_counter += 1
           current_user.offence_date = Time.now
@@ -344,7 +323,7 @@ class Api::TopicsController < ApplicationController
         check_profanity = false
 
         avatar = Topic.get_avatar(topic.user.username)
-        render json: { topic: topic,avatar: avatar, profanity_counter: current_user.profanity_counter, offence_date: current_user.offence_date }
+        render json: { topic: topic,avatar: avatar, profanity_counter: current_user.profanity_counter, offence_date: current_user.offence_date, daily_points: topic.user.daily_points }
       else
         topic.delete
 
@@ -685,7 +664,7 @@ class Api::TopicsController < ApplicationController
         end
       end
       p mytasks
-      render json: { user_points:user.points, user_positive_honor: user.positive_honor, user_negative_honor: user.negative_honor, user_honored_count: user.honored_times , topics: topic_lists, actions: actions,my_requests: myrequests, my_tasks:mytasks}
+      render json: {daily_points:user.daily_points, user_points:user.points, user_positive_honor: user.positive_honor, user_negative_honor: user.negative_honor, user_honored_count: user.honored_times , topics: topic_lists, actions: actions,my_requests: myrequests, my_tasks:mytasks}
     end
   end
 

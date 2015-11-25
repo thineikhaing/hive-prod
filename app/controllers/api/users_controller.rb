@@ -239,7 +239,7 @@ class Api::UsersController < ApplicationController
 
         user.save!
 
-        render json: { status: true, user_flag: 1}
+        render json: { status: true, daily_points: user.daily_points}
       end
     else
       render json: { error_msg: "Param user id, authentication token, pusher token must be presented" }, status: 400
@@ -332,7 +332,7 @@ class Api::UsersController < ApplicationController
       p " favr user :::"
       p user
       avatar = Topic.get_avatar(user.username)
-      render json: { :user => user, :success => 20 , avatar: avatar}, status: 200
+      render json: { :user => user, :success => 20 , avatar: avatar, daily_point: user.daily_points}, status: 200
     else
       render json: {error_msg: "Params email and password must be presented"} , status: 400
     end
@@ -789,7 +789,7 @@ class Api::UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :points, :honor_rating, :created_at, :data, :device_id,:socal_id)
+    params.require(:user).permit(:username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :points, :honor_rating, :created_at, :data, :device_id,:socal_id,:daily_points)
   end
 
 
