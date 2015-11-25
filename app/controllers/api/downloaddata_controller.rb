@@ -19,7 +19,7 @@ class Api::DownloaddataController < ApplicationController
           topics.each do |topic|
             favr_topics.push(topic) if topic.topic_type == Topic::FAVR && topic.state != Topic::ACKNOWLEDGED && topic.state != Topic::EXPIRED && topic.state != Topic::REVOKED
           end
-          render json: { topics: favr_topics }
+          render json: { topics: favr_topics , date: Date.today}
 
         else #3rd party App
           render json: { topics: JSON.parse(topics.to_json())}
