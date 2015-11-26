@@ -24,7 +24,6 @@ end
 #end
 
 
-#
 #scheduler.every '2s' do
 #  puts 'check blood pressure'
 #end
