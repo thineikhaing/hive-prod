@@ -905,8 +905,9 @@ class Api::TopicsController < ApplicationController
       device_id = hash_array["device_id"] if  hash_array["device_id"].present?
       to_device_id.push(device_id)
     end
-    #require 'openssl'
-    #OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
+
+     p "to device id"
+     p to_device_id
 
     if action_topic.present?
 
