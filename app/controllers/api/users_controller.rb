@@ -11,10 +11,37 @@ class Api::UsersController < ApplicationController
   end
 
   def get_user_avatar
-    avatar = Topic.get_avatar(params[:username])
+    if params[:username]
 
+      user = User.find(params[:user_id])
+      pp = user.avatar_url
 
-    render json: { avatar: avatar }
+      if pp.present?
+        avatar = pp
+        render json: { avatar: avatar , status: 's3 pic'}
+
+      elsif params[:username] == "FavrBot"
+        avatar = "assets/Avatars/Chat-Avatar-Admin.png"
+        render json: { avatar: avatar , status: 'local pic'}
+
+      else
+
+        avatar = Topic.get_avatar(params[:username])
+        render json: { avatar: avatar , status: 'local pic'}
+
+      end
+
+    else params[:profile_picture]
+
+      user = User.find(params[:userid])
+      if user.present?
+        user.avatar_url  = params[:profile_picture]
+        user.save
+        render json: { status: "save user profile picture" }
+      end
+
+    end
+
 
   end
 
