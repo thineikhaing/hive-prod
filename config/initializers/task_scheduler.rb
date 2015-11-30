@@ -6,11 +6,11 @@ scheduler = Rufus::Scheduler.new
 #  CarActionLog.delete_all
 #end
 
-scheduler.cron "00 09 * * mon" do
+scheduler.cron '05 00 * * mon' do
   CarActionLog.delete_all
 end
 
-scheduler.cron '05 00 * * *' do
+scheduler.cron '30 06 * * *' do
   p "update user daily points"
   users = User.all
   users.each do |user|

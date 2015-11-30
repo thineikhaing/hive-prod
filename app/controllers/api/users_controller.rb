@@ -366,8 +366,7 @@ class Api::UsersController < ApplicationController
   end
 
   def edit_profile
-    p "currebt use"
-    p current_user
+
     if current_user.present?
       user = User.find_by_id(current_user.id)
       checkUsername = User.search_data(params[:username])
@@ -409,7 +408,7 @@ class Api::UsersController < ApplicationController
         user.save!
         render json: { :user => user, :success => 30 }, status: 200
       else
-        render json: { :error => var }, status: 400
+        render json: { :error => var, message: 'Duplicate username!' }, status: 400
       end
     else
       #render json:{ error_msg: "Param authentication token/ user id must be presented" } , status: 400
@@ -451,7 +450,7 @@ class Api::UsersController < ApplicationController
         user.save!
         render json: { :user => user, :success => 30 }, status: 200
       else
-        render json: { :error => var }, status: 400
+        render json: { :error => var}, status: 400
       end
 
     end
