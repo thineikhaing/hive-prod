@@ -372,6 +372,19 @@ class Topic < ActiveRecord::Base
 
   def update_event_broadcast(postid=-1,action_id = -1)
     p "update event boradcast"
+
+    avatar = User.find_by_id(self.user_id).avatar_url
+    if avatar.nil?
+      username = User.find_by_id(self.user_id).username
+
+      if username  == "FavrBot"
+        avatar = "assets/Avatars/Chat-Avatar-Admin.png"
+      else
+        avatar = Topic.get_avatar(username)
+      end
+
+    end
+
     data = {
         id: self.id,
         title: self.title,
@@ -390,6 +403,7 @@ class Topic < ActiveRecord::Base
         given_time: self.given_time,
         valid_start_date: self.valid_start_date,
         valid_end_date: self.valid_end_date,
+        avatar_url: avatar,
 
         methods: [
             last_post_at: self.last_post_at,
@@ -639,7 +653,6 @@ class Topic < ActiveRecord::Base
        else
          avatar = Topic.get_avatar(username)
        end
-
      end
 
     data = {
