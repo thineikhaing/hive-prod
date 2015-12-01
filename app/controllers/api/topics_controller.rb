@@ -664,7 +664,10 @@ class Api::TopicsController < ApplicationController
         end
       end
       p mytasks
-      render json: {daily_points:user.daily_points, user_points:user.points, user_positive_honor: user.positive_honor, user_negative_honor: user.negative_honor, user_honored_count: user.honored_times , topics: topic_lists, actions: actions,my_requests: myrequests, my_tasks:mytasks}
+      render json: {daily_points:user.daily_points, user_points:user.points,
+                    user_positive_honor: user.positive_honor, user_negative_honor: user.negative_honor,
+                    user_honored_count: user.honored_times , topics: topic_lists, actions: actions,
+                    my_requests: myrequests, my_tasks:mytasks}
     end
   end
 
