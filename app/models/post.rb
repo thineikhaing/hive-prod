@@ -21,12 +21,29 @@ class Post < ActiveRecord::Base
   validates :content, obscenity: { sanitize: true, replacement: "snork" }
 
   def as_json(options=nil)
-    super(only: [:id, :topic_id, :content, :created_at, :user_id, :post_type,:place_id,:likes, :dislikes, :offensive, :width, :height, :data, :created_at], methods: [:username, :image_url])
+    super(only: [:id, :topic_id, :content, :created_at, :user_id, :post_type,:place_id,:likes, :dislikes, :offensive, :width, :height, :data, :created_at], methods: [:username,:avatar_url, :image_url])
   end
 
   def image_url
     self.img_url
   end
+
+  def avatar_url
+    avatar = User.find_by_id(self.user_id).avatar_url
+    if avatar.nil?
+      username = User.find_by_id(self.user_id).username
+
+      if username  == "FavrBot"
+        avatar = "assets/Avatars/Chat-Avatar-Admin.png"
+      else
+        avatar = Topic.get_avatar(username)
+      end
+
+    end
+
+    return avatar
+  end
+
 
   def create_post(content, topic_id,user_id, post_type, latitude, longitude, temp_id,height=0, width=0, isfavrpost=false,action_id = -1,special_type=0)
 
