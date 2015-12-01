@@ -322,8 +322,22 @@ class Api::TopicsController < ApplicationController
 
         check_profanity = false
 
-        avatar = Topic.get_avatar(topic.user.username)
-        render json: { topic: topic,avatar: avatar, profanity_counter: current_user.profanity_counter, offence_date: current_user.offence_date, daily_points: topic.user.daily_points }
+        #avatar = Topic.get_avatar(topic.user.username)
+
+        avatar = User.find_by_id(topic.user_id).avatar_url
+        if avatar.nil?
+          username = User.find_by_id(topic.user_id).username
+
+          if username  == "FavrBot"
+            avatar = "assets/Avatars/Chat-Avatar-Admin.png"
+          else
+            avatar = Topic.get_avatar(username)
+          end
+
+        end
+
+
+        render json: { topic: topic,avatar_url: avatar, profanity_counter: current_user.profanity_counter, offence_date: current_user.offence_date, daily_points: topic.user.daily_points }
       else
         topic.delete
 

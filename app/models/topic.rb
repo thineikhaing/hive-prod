@@ -630,7 +630,17 @@ class Topic < ActiveRecord::Base
 
      p self.user.username
 
-     avatar = Topic.get_avatar(self.user.username)
+     avatar = User.find_by_id(self.user_id).avatar_url
+     if avatar.nil?
+       username = User.find_by_id(self.user_id).username
+
+       if username  == "FavrBot"
+         avatar = "assets/Avatars/Chat-Avatar-Admin.png"
+       else
+         avatar = Topic.get_avatar(username)
+       end
+
+     end
 
     data = {
         created_at: self.created_at,
@@ -651,7 +661,7 @@ class Topic < ActiveRecord::Base
         given_time: self.given_time,
         valid_start_date: self.valid_start_date,
         valid_end_date: self.valid_end_date,
-        avatar:avatar,
+        avatar_url:avatar,
         methods: [
             last_post_at: self.last_post_at,
             url: nil,
