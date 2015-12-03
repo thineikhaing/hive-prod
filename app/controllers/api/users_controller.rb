@@ -321,8 +321,8 @@ class Api::UsersController < ApplicationController
       user = User.find_by_email(params[:email])
       if user.present?
         p "present?"
-        #if user.valid_password?(params[:password])
-        if user.present?
+        if user.valid_password?(params[:password])
+        #if user.present?
           p "valid_password?"
             user_accounts = UserAccount.where(:user_id => user.id)
 
