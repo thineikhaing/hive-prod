@@ -111,7 +111,6 @@ class Api::UsersController < ApplicationController
       user = User.find_by_authentication_token(params[:auth_token])
       
       if current_user.present?
-        
         if user.id == current_user.id
           checkEmail = User.find_by_email(params[:email])
           var = [ ]
@@ -133,7 +132,6 @@ class Api::UsersController < ApplicationController
           end
           
         end
-        
       else
         render json: { error_msg: "Invalid user id/ authentication token" }, status: 400
       end

@@ -1535,6 +1535,6 @@ class Topic < ActiveRecord::Base
 
   end
 
-
   handle_asynchronously :topic_image_upload_job
+
 end
