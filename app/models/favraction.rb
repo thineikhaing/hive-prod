@@ -58,7 +58,7 @@ class Favraction < ActiveRecord::Base
     end
 
     @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
-
+                                                                                                                                                                                     F
     user = User.find(doer.id)
 
     if user.data.present?
