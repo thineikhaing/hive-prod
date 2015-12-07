@@ -26,6 +26,30 @@
   overflow-x: hidden;
 }
 
+table.user_list {
+  //width: 850px !important;
+  th {
+    background: #FF9B00;
+    color: white;
+    font-size: 20px;
+  }
+
+  td {
+    text-align: left;
+    font-size: 18px;
+  }
+
+  tr {
+    height: 50px !important;
+  }
+
+  tr:hover {
+    //cursor: pointer;
+  }
+
+}
+
+
 table.app_list {
   //width: 850px !important;
   th {

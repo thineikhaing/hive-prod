@@ -1,18 +1,20 @@
-%h3 User Listing
+.row
+  .large-centered.large-12.columns
+    %h3 User Listing
 
-%table.tbl_applisting
-  %thead
-    %tr
-      %th id
-      %th User Name
-      %th email
-      %th Action
-  %tbody
-    -count = 0
-    -@users.each do |user|
-      %tr
-        %td=user.id
-        %td=link_to user.username, user_accounts_path(user.id)
-        %td=user.email rescue ''
-        %td
-= paginate @users
+    %table.tbl_applisting
+      %thead
+        %tr
+          %th id
+          %th User Name
+          %th email
+          %th Action
+      %tbody
+        -count = 0
+        -@users.each do |user|
+          %tr
+            %td=user.id
+            %td=link_to user.username, user_accounts_path(user.id)
+            %td=user.email rescue ''
+            %td
+    = paginate @users

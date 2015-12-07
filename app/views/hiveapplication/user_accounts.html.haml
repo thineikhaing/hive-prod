@@ -1,10 +1,41 @@
-%h4 User Accoutns
+.row
+  .large-centered.large-12.columns
+    %h4 User Accounts
 
-%table.app_list
-  %thead
-    %tr
-      %th Sync Account
-  -@userAccount.each do |acc|
-    %tr
-      %td
-        =acc.account_type
+    %table.user_list
+      %thead
+        %tr
+          %th Sync Account
+      -@userAccount.each do |acc|
+        %tr
+          %td
+            =acc.account_type
+
+    %h4 Topic
+    %table.user_list
+      %thead
+        %tr
+          %th title
+      %tbody
+        -@topics.each do |topic|
+          %tr
+            %td
+              =topic.title
+        %tr
+          %td= paginate @topics , :param_name => "topic_page"
+
+    %h4 Post
+    %table.user_list
+      %thead
+        %tr
+          %th Content
+      %tbody
+        -@posts.each do |post|
+          %tr
+            %td
+              =post.content
+
+        %tr
+          %td= paginate @posts, :param_name => "post_page"
+
+

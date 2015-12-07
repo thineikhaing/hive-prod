@@ -96,6 +96,8 @@ class HiveapplicationController < ApplicationController
   def user_accounts
     @user = User.find(params[:id])
     @userAccount = UserAccount.where(user_id: params[:id])
+    @topics = Topic.where(user_id: params[:id]).page(params[:topic_page]).per(5)
+    @posts = Post.where(user_id: params[:id]).page(params[:post_page]).per(5)
 
   end
 
