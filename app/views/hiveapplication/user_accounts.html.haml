@@ -5,11 +5,33 @@
     %table.user_list
       %thead
         %tr
-          %th Sync Account
-      -@userAccount.each do |acc|
-        %tr
-          %td
-            =acc.account_type
+          %th App Name
+          %th Sync?
+      %tbody
+        -if @userAccount.present?
+          -@userAccount.each do |acc|
+            %tr
+              %td
+                =acc.account_type
+              %td
+                yes
+        -else
+          %tr
+            %td Hive
+            %td no
+          %tr
+            %td MealBox
+            %td no
+          %tr
+            %td Carmmunicate
+            %td no
+          %tr
+            %td Socal
+            %td no
+          %tr
+            %td Favr
+            %td no
+
 
     %h4 Topic
     %table.user_list
