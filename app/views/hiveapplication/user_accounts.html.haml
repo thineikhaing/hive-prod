@@ -1,0 +1,10 @@
+%h4 User Accoutns
+
+%table.app_list
+  %thead
+    %tr
+      %th Sync Account
+  -@userAccount.each do |acc|
+    %tr
+      %td
+        =acc.account_type

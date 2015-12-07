@@ -123,7 +123,11 @@ class Api::UsersController < ApplicationController
             user.token_expiry_date= Date.today + 6.months
             user.save!
 
-            user_account = UserAccount.create(user_id: user.id, account_type: "hive", linked_account_id: user.id,priority: 0)
+            if params[:app_key]
+              hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+              user_account = UserAccount.create(user_id: user.id, account_type: hiveapplication.app_name, linked_account_id: user.id,priority: 0,hiveapplication_id: hiveapplication.id)
+            end
+
             render json: { :user => user, :user_account => user_account, :success => 10 }, status: 200
 
           else

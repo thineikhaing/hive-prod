@@ -12,20 +12,20 @@ Rails.application.routes.draw do
   post "hiveapplication/sign_in"              , path: "sign_in"
   get "hiveapplication/verify"                , path: "verify"
 
-  match "hiveapplication/login_page"          , path: "login_page"              , via: [:get, :post]
-  match "hiveapplication/index"               , path: "index"                   , via: [:get, :post]
-  match "hiveapplication/dev_portal"          , path: "dev_portal"              , via: [:get, :post]
-  match "hiveapplication/application_list"    , path: "dev_portal"              , via: [:get, :post]
-  match "hiveapplication/sign_up"             , path: "sign_up"                 , via: [:get, :post]
-  match "hiveapplication/regenerate_api_key"  , path: "regenerate_api_key"      , via: [:get, :post]
-  match "hiveapplication/delete_application"  , path: "delete_application"      , via: [:get, :post]
-  match "hiveapplication/edit_application"    , path: "edit_application"        , via: [:get, :post]
-  match "hiveapplication/add_application"     , path: "add_application"         , via: [:get, :post]
-  match "hiveapplication/sign_up"             , path: "sign_up"                 , via: [:get, :post]
+  match "hiveapplication/login_page"          , path: "login_page"                , via: [:get, :post]
+  match "hiveapplication/index"               , path: "index"                     , via: [:get, :post]
+  match "hiveapplication/dev_portal"          , path: "dev_portal"                , via: [:get, :post]
+  match "hiveapplication/application_list"    , path: "dev_portal"                , via: [:get, :post]
+  match "hiveapplication/sign_up"             , path: "sign_up"                   , via: [:get, :post]
+  match "hiveapplication/regenerate_api_key"  , path: "regenerate_api_key"        , via: [:get, :post]
+  match "hiveapplication/delete_application"  , path: "delete_application"        , via: [:get, :post]
+  match "hiveapplication/edit_application"    , path: "edit_application"          , via: [:get, :post]
+  match "hiveapplication/add_application"     , path: "add_application"           , via: [:get, :post]
+  match "hiveapplication/sign_up"             , path: "sign_up"                   , via: [:get, :post]
 
-  match "hiveapplication/verify_signup"       , path: "verify_signup"           , via: [:get, :post]
+  match "hiveapplication/verify_signup"       , path: "verify_signup"             , via: [:get, :post]
 
-  match "hiveapplication/forget_password"     , path: "forget_password"         , via: [:get, :post]
+  match "hiveapplication/forget_password"     , path: "forget_password"           , via: [:get, :post]
   match "hiveapplication/reset_password"      , path: "reset_password"          , via: [:get, :post]
   match "hiveapplication/update_password"     , path: "update_password"         , via: [:get, :post]
   match "hiveapplication/edit_column"         , path:"edit_column"              , via: [:get, :post]
@@ -40,9 +40,12 @@ Rails.application.routes.draw do
   match "hiveapplication/delete_post"          , path:"delete_post"              , via: [:get,:post]
   match "hiveapplication/edit_topic"           , path:"edit_topic"              , via: [:get,:post]
   match "hiveapplication/edit_post"            , path:"edit_post"               , via: [:get,:post]
+  match "hiveapplication/users"               , path:"users"               , via: [:get,:post]
+  get 'hiveapplication/user_accounts/:id' => 'hiveapplication#user_accounts', :as => :user_accounts
+
   match "carmic/create_post"                   , path:"create_post"             , via: [:get,:post]
   match "carmic/singup"                       , path:"singup"                    , via: [:get,:post]
-  match "carmic/login"                        , path:"login"                  , via: [:get,:post]
+  match "carmic/login"                        , path:"login"                    , via: [:get,:post]
   match "carmic/camic_reset_pwd"               , path:"camic_reset_pwd"                  , via: [:get,:post]
   get "carmic/logout"                , path: "logout"
 
@@ -64,6 +67,7 @@ Rails.application.routes.draw do
     match "socal/retrieve_invitation_code"          => "socal#retrieve_invitation_code"         , via: [:get, :post]
     match "socal/retrieve_event"                    => "socal#retrieve_event"                   , via: [:get, :post]
     match "socal/create_post"                       => "socal#create_post"                      , via: [:get, :post]
+    match "socal/create_user"                       => "socal#create_user"                      , via: [:get, :post]
     match "socal/download_posts"                    => "socal#download_posts"                   , via: [:get, :post]
     match "socal/topic_state"                       => "socal#topic_state"                      , via: [:get, :post]
     match "socal/retrieve_popular_date"             => "socal#retrieve_popular_date"            , via: [:get, :post]

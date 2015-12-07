@@ -89,7 +89,15 @@ class HiveapplicationController < ApplicationController
     end
   end
 
+  def users
+     @users = User.all.order(:username).page params[:page]
+  end
 
+  def user_accounts
+    @user = User.find(params[:id])
+    @userAccount = UserAccount.where(user_id: params[:id])
+
+  end
 
   #function to regenerate api key wiich is not used for the time being
   def regenerate_api_key

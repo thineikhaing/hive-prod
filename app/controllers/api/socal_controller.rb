@@ -5,15 +5,15 @@ class Api::SocalController < ApplicationController
 
     invitee_array = []
 
-    hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+    hiveapplication = HiveApplication.find_by_api_key("872e1e6f6717e443d566b3f405d116ae")
 
     topic = Socal.new
     topic = topic.create_event(
         params[:event_name],
         params[:datetime],
         params[:email],
-        params[:name],
-        data, hiveapplication.id)
+        params[:username],
+        data, hiveapplication.id,params[:invitation_code])
 
     #invitee_list = params[:invitees].split("{")
     #
@@ -28,7 +28,12 @@ class Api::SocalController < ApplicationController
     #  mail.deliver
     #end
 
+
+
+
+
     user = User.find(topic.user_id)
+
     first_sug = Suggesteddate.find_by_topic_id(topic.id)
     suggesteddates = Suggesteddate.where(topic_id: topic.id)
     if topic.valid?
@@ -74,7 +79,10 @@ class Api::SocalController < ApplicationController
       end
     else
       #normal code
-      p_topic = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
+      p "retrieve topic"
+      p p_topic = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
+      p p_topic.retrieve_data
+      p "retrieve data by topic"
       render json: { status: 'invitee',topic: p_topic.retrieve_data }
     end
 
@@ -130,6 +138,41 @@ class Api::SocalController < ApplicationController
 
     Pusher["#{topic.data["invitation_code"]}_channel"].trigger_async("new_post",data)
     render json:{post: data}
+  end
+
+
+  def create_user
+    user = User.find_by_email(params[:email])
+    if user.nil?
+      user = User.new(email: params[:email])
+    end
+    user.username = params[:username]
+    user.save!
+
+    topic = Topic.where("data -> 'invitation_code'=?",params[:invitation_code]).take
+
+    if user.present?
+      post_content = user.username + " has joined the conversation"
+      post = Post.create(content: post_content, topic_id: topic.id, user_id: user.id)
+
+      data = {
+          id: post.id,
+          content: post.content,
+          invitation_code: params[:invitation_code],
+          username: user.username,
+          created_at: post.created_at
+      }
+
+      Pusher["#{params[:invitation_code]}_channel"].trigger_async("new_post", data)
+
+      votes = Vote.where(user_id: user.id, topic_id: topic.id)
+
+      if votes.present?
+        render json: { user_voted_status: 1 }
+      else
+        render json: { user_voted_status: 0 }
+      end
+    end
   end
 
   def download_posts

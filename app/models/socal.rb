@@ -2,7 +2,7 @@ require 'value_enums'
 
 class Socal
 
-  def create_event (event_name,datetime,email, name,data,app_id)
+  def create_event (event_name,datetime,email, name,data,app_id, inv_code)
 
     user = User.find_by_email(email)
     if user.nil?
@@ -36,10 +36,24 @@ class Socal
 
     topic = Topic.create(title: event_name, data: result,user_id: user.id,hiveapplication_id: app_id)
 
+    #topic.data = { "invitation_code" => inv_code }
+    #topic.data = { "latitude" => ""}
+    #topic.data = { "longitude" => "" }
+    #topic.data = { "address" => ""  }
+    #topic.data = { "place_name" => "" }
+    #topic.data = { "confirm_state" => 0 }
+    #topic.data = { "confirmed_date" => ''}
+
+    topic.save!
+
+    temp_array = []
+     p datetime
     if datetime.present?
-      temp_array = datetime.split(",")
+      p temp_array = datetime.split(",")
+
+      p "temp array"
       temp_array.each do |dt|
-        Suggesteddate.create(topic_id: topic.id, user_id: user.id,suggested_datetime: dt, invitation_code: topic.data["invitation_code"])
+        Suggesteddate.create(topic_id: topic.id, user_id: user.id,suggested_datetime: dt, invitation_code: inv_code)
       end
     end
 
@@ -47,12 +61,14 @@ class Socal
   end
 
   def self.generate_invitation_code(contact = "")
-    a = rand(10)
-    b = rand(10)
-    c = rand(10)
-    d = rand(10)
+    #a = rand(10)
+    #b = rand(10)
+    #c = rand(10)
+    #d = rand(10)
+    #
+    #a.to_s + b.to_s + Time.now.to_formatted_s(:number) + c.to_s + d.to_s
 
-    a.to_s + b.to_s + Time.now.to_formatted_s(:number) + c.to_s + d.to_s
+    [*('A'..'Z'),*('0'..'9')].shuffle[0,6].join
   end
 
 
