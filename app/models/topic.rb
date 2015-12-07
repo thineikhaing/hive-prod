@@ -48,7 +48,7 @@ class Topic < ActiveRecord::Base
     if options[:content].present?      #return topic json with content information
       super(only: [:id, :state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username,:avatar_url, :place_information, :tag_information, :content])
     else
-      super(only: [:id,:state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :avatar_url, :place_information, :tag_information])
+      super(only: [:id,:state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :avatar_url, :place_information, :tag_information, :content])
     end
   end
 
@@ -81,41 +81,17 @@ class Topic < ActiveRecord::Base
     end
   end
 
-  def content
-    testDataArray = [ ]
-    hiveapplication = HiveApplication.find(self.hiveapplication_id)
-    if hiveapplication.present?
-      mealbox_key = ""
-      if Rails.env.development?
-        mealbox_key = Mealbox_key::Development_Key
-      elsif Rails.env.staging?
-        mealbox_key = Mealbox_key::Staging_Key
-      else
-        mealbox_key = Mealbox_key::Production_Key
-      end
-      if hiveapplication.api_key ==  mealbox_key   #api key for mealbox
-        postsArray = self.posts.where(["likes > ? OR dislikes > ?", 0, 0])
-        if postsArray.present?
-          postsArray.each do |pa|
-          total = pa.likes + pa.dislikes
-          testDataArray.push({ total: total, id: pa.id, created_at: pa.created_at })
-          end
-        end
-        new_post = testDataArray.sort_by { |x| [x[:total], x[:created_at]] }
-        if new_post.present?
-          post = Post.find(new_post.last[:id])
-        end
-        if post.present?
-         { popular_post: post, comment_post: self.posts.first}
-        else
-         { popular_post: nil,comment_post: self.posts.first}
 
-        end
-     end
-    end
-  end
+
+  #
+  #
+  #  p "topic content ::::: *****"
+  #  testDataArray = [ ]
+  #
+  #end
 
   # Check for special type for topic creation
+
 
   def self.check_special_type(flare, beacon, sticky, promo, coshoot,question,errand)
     special_type = ""
@@ -340,6 +316,8 @@ class Topic < ActiveRecord::Base
   end
 
   def content(post_id=-1,action_id=-1)
+
+    p "test content logs"
     testDataArray = [ ]
     if action_id > -1
       post_content = ""
@@ -368,6 +346,48 @@ class Topic < ActiveRecord::Base
 
       end
     end
+
+    hiveapplication = HiveApplication.find(self.hiveapplication_id)
+
+    if hiveapplication.present?
+
+      p "if hive present?"
+      mealbox_key = ""
+      if Rails.env.development?
+        mealbox_key = Mealbox_key::Development_Key
+      elsif Rails.env.staging?
+        mealbox_key = Mealbox_key::Staging_Key
+      else
+        mealbox_key = Mealbox_key::Production_Key
+      end
+
+      p  mealbox_key
+      hiveapplication.api_key
+
+      if hiveapplication.api_key ==  mealbox_key   #api key for mealbox
+        p "api key for mealbox"
+
+        postsArray = self.posts.where(["likes > ? OR dislikes > ?", 0, 0])
+        if postsArray.present?
+          postsArray.each do |pa|
+            total = pa.likes + pa.dislikes
+            testDataArray.push({ total: total, id: pa.id, created_at: pa.created_at })
+          end
+        end
+        new_post = testDataArray.sort_by { |x| [x[:total], x[:created_at]] }
+        if new_post.present?
+          post = Post.find(new_post.last[:id])
+        end
+        if post.present?
+          p "popular post"
+          { popular_post: post, comment_post: self.posts.first}
+        else
+          p "popular post nil?"
+          { popular_post: nil,comment_post: self.posts.first}
+        end
+      end
+    end
+
   end
 
   def update_event_broadcast(postid=-1,action_id = -1)
