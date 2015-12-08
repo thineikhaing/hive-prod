@@ -23,10 +23,8 @@ class ApplicationController < ActionController::Base
   end
 
 
-  def authorize
-    #if current_user.nil?
-    #  redirect_to root_path, alert: "Not authorized"
-    #end
+  def authorize_user
+    redirect_to root_url, alert: "Not authorized. Please login..." if current_user.nil?
   end
 
   def current_browser

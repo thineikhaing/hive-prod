@@ -7,44 +7,40 @@
       %br
       = form_for :sign_up, url: { controller: "hiveapplication", action: "sign_up" }, html: {id: "user_signup" } , method: "post" do |f|
 
-        %fieldset
-          = f.label :username, "PLEASE CHOOSE A DEVELOPER ID"
-          = f.text_field :username,value: @username
+        = f.label :username, "PLEASE CHOOSE A DEVELOPER ID"
+        = f.text_field :username,value: @username
         %small.error
           =@err_username rescue ''
         -if @err_username.nil? &&  @username.present?
           .tick
             ✔
 
-        %fieldset
-          = f.label :email, "PLEASE ENTER YOUR EMAIL ADDRESS"
-          = f.email_field :email, value: @email
+        = f.label :email, "PLEASE ENTER YOUR EMAIL ADDRESS"
+        = f.email_field :email, value: @email
         %small.error
           =@err_email rescue ''
         -if @err_email.nil? && @err_confirmEmail.nil? && @email.present?
           .tick
             ✔
 
-        %fieldset
-          = f.label :confirm_email, "CONFIRM YOUR EMAIL ADDRESS"
-          = f.email_field :confirm_email, value: @confirm_email
+        = f.label :confirm_email, "CONFIRM YOUR EMAIL ADDRESS"
+        = f.email_field :confirm_email, value: @confirm_email
         %small.error
           =@err_confirmEmail rescue ''
         -if @err_email.nil? && @err_confirmEmail.nil? &&  @confirm_email.present?
           .tick
             ✔
 
-        %fieldset
-          = f.label :password, "PASSWORD [MIN 8 CHARACTERS INCLUDING A NUMBER]"
-          = f.password_field :password, autocomplete: "off", value: @password
+        = f.label :password, "PASSWORD [MIN 8 CHARACTERS INCLUDING A NUMBER]"
+        = f.password_field :password, autocomplete: "off", value: @password
         %small.error
           =@err_password rescue ''
         -if @err_password.nil? && @err_confirmPassword.nil? &&   @password.present?
           .tick
             ✔
-        %fieldset
-          = f.label :confirm_password, "CONFIRM YOUR PASSWORD"
-          = f.password_field :confirm_password, autocomplete: "off", value: @confirm_password
+
+        = f.label :confirm_password, "CONFIRM YOUR PASSWORD"
+        = f.password_field :confirm_password, autocomplete: "off", value: @confirm_password
         %small.error
           =@err_confirmPassword rescue ''
         -if @err_password.nil? && @err_confirmPassword.nil? && @confirm_password.present?

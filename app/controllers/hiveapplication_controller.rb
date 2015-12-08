@@ -3,6 +3,7 @@ class HiveapplicationController < ApplicationController
 
   before_filter :detect_format, :set_cache_buster
 
+
   skip_before_filter :verify_authenticity_token
 
   #Reset session if user click back button in browser
@@ -90,14 +91,25 @@ class HiveapplicationController < ApplicationController
   end
 
   def users
-     @users = User.all.order(:username).page params[:page]
+    if current_user.nil?
+      redirect_to root_url, alert: "Not authorized. Please login..."
+    else
+      @users = User.all.order(:username).page params[:page]
+    end
+
   end
 
   def user_accounts
-    @user = User.find(params[:id])
-    @userAccount = UserAccount.where(user_id: params[:id])
-    @topics = Topic.where(user_id: params[:id]).page(params[:topic_page]).per(5)
-    @posts = Post.where(user_id: params[:id]).page(params[:post_page]).per(5)
+    if current_user.nil?
+      redirect_to root_url, alert: "Not authorized. Please login..."
+    else
+      @user = User.find(params[:id])
+      @userAccount = UserAccount.where(user_id: params[:id])
+      @topics = Topic.where(user_id: params[:id]).page(params[:topic_page]).per(5)
+      @posts = Post.where(user_id: params[:id]).page(params[:post_page]).per(5)
+
+    end
+
 
   end
 
