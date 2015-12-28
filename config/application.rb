@@ -84,7 +84,7 @@ module Factual_Const
 end
 
 module Mealbox_key
-  Development_Key = "be8222a94a7721a0c25e19e1b71b6883"
+  Development_Key = "5eaf74ea85990fd832dcb7fd7e6dc5f9"
   Staging_Key= "e3dd4f777bf0a84f8ae47a10cfd6072a"
   Production_Key = "d80eab337c8eeba960ecf65772e1f2af"
 end

@@ -5,7 +5,7 @@ class Api::SocalController < ApplicationController
 
     invitee_array = []
 
-    hiveapplication = HiveApplication.find_by_api_key("872e1e6f6717e443d566b3f405d116ae")
+    hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
 
     topic = Socal.new
     topic = topic.create_event(
@@ -27,8 +27,6 @@ class Api::SocalController < ApplicationController
     #  mail = UserMailer.delay.send_invitation({ name: temp[0], email: temp[1] }, params[:invitation_code], inv_code, params[:event_name], index+1)
     #  mail.deliver
     #end
-
-
 
 
 
