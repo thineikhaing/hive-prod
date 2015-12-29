@@ -42,22 +42,23 @@ class Api::SocalController < ApplicationController
   end
 
   def retrieve_invitation_code
-    render json:{invitation_code: Socal.generate_invitation_code}
+    render json:{invitation_code: Socal.generate_invitation_code, host_code: Socal.generate_invitation_code}
   end
 
   def retrieve_event
     p_invite_code = params[:invitation_code].to_s
 
-    if p_invite_code.length == 22
+    p_topic = Topic.where("data -> 'invitation_code' = ? or data -> 'host_code' = ?", p_invite_code,p_invite_code).take
+    if p_topic.present?
 
       #personalized code
-      n_invite_code = "" + p_invite_code
-      n_invite_code[16,4] = ""
+      #n_invite_code = "" + p_invite_code
+      #n_invite_code[16,4] = ""
+      #
+      #p_user_code= p_invite_code.slice(16,4)
 
-      p_user_code= p_invite_code.slice(16,4)
+      if p_topic.data["invitation_code"] == p_invite_code
 
-      if p_user_code == "0000"
-        p_topic = Topic.where("data -> 'invitation_code' = ? ", n_invite_code).take
         p_creator = User.find(p_topic.user_id)
 
         render json:{status: 'host', topic: p_topic.retrieve_data, invitee_name: p_creator.username, invitee_email: p_creator.email }
@@ -75,16 +76,60 @@ class Api::SocalController < ApplicationController
         end
 
       end
-    else
-      #normal code
-      p "retrieve topic"
-      p p_topic = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
-      p p_topic.retrieve_data
-      p "retrieve data by topic"
-      render json: { status: 'invitee',topic: p_topic.retrieve_data }
+
     end
 
+    #else
+    #  #normal code
+    #  p "retrieve topic"
+    #  p p_topic = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
+    #  p p_topic.retrieve_data
+    #  p "retrieve data by topic"
+    #  render json: { status: 'invitee',topic: p_topic.retrieve_data }
+    #end
+
   end
+
+  #def retrieve_event
+  #  p_invite_code = params[:invitation_code].to_s
+  #
+  #  if p_invite_code.length == 22
+  #
+  #    #personalized code
+  #    n_invite_code = "" + p_invite_code
+  #    n_invite_code[16,4] = ""
+  #
+  #    p_user_code= p_invite_code.slice(16,4)
+  #
+  #    if p_user_code == "0000"
+  #      p_topic = Topic.where("data -> 'invitation_code' = ? ", n_invite_code).take
+  #      p_creator = User.find(p_topic.user_id)
+  #
+  #      render json:{status: 'host', topic: p_topic.retrieve_data, invitee_name: p_creator.username, invitee_email: p_creator.email }
+  #
+  #    else
+  #      p_invitee = Invitee.find_by_invitation_code(p_invite_code)
+  #      p_topic = Topic.find(p_invitee.topic_id)
+  #      p_user = User.find(p_invitee.user_id)
+  #      votes = Vote.where(user_id: p_user.id, topic_id: p_topic.id)
+  #
+  #      if votes.present?
+  #        render json: {status: 'host', topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_states: 1 }
+  #      else
+  #        render json: { status: 'host', topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_state: 0 }
+  #      end
+  #
+  #    end
+  #  else
+  #    #normal code
+  #    p "retrieve topic"
+  #    p p_topic = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
+  #    p p_topic.retrieve_data
+  #    p "retrieve data by topic"
+  #    render json: { status: 'invitee',topic: p_topic.retrieve_data }
+  #  end
+  #
+  #end
 
   def vote_date
     confirm_date = params[:id]
