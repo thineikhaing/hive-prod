@@ -182,8 +182,8 @@ class Api::SocalController < ApplicationController
       end
     end
 
-    topic = Topic.find_by_invitation_code(params[:invitation_code])
-    topic.broadcast_event
+    topic =  Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
+    topic.broadcast_event(nil)
 
     render json: { status: true }
 

@@ -1274,7 +1274,10 @@ class Topic < ActiveRecord::Base
 
     if (self.data["confirmed_date"] != "")
 
-      confirmed_event_date = Suggesteddate.find(confirm_date).suggested_datetime
+      if ! confirm_date.nil?
+        confirmed_event_date = Suggesteddate.find(confirm_date).suggested_datetime
+      end
+
 
     end
     user = User.find(self.user_id)
