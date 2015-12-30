@@ -15,6 +15,9 @@ class Api::SocalController < ApplicationController
         params[:username],
         data, hiveapplication.id,params[:invitation_code])
 
+    p "Create event"
+    p data
+
     #invitee_list = params[:invitees].split("{")
     #
     #invitee_list.each_with_index do |i, index|
@@ -191,6 +194,9 @@ class Api::SocalController < ApplicationController
     topic = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
     post = Post.create(content: params[:content], topic_id: topic.id, user_id: user.id)
 
+    p "create post"
+    p user.id
+
     data={
         id: post.id,
         content: post.content,
@@ -198,6 +204,7 @@ class Api::SocalController < ApplicationController
         username: user.username,
         created_at: post.created_at
     }
+    p data
 
     Pusher["#{topic.data["invitation_code"]}_channel"].trigger_async("new_post",data)
     render json:{post: data}
@@ -255,7 +262,7 @@ class Api::SocalController < ApplicationController
   def topic_state
     topic = Topic.where("data -> 'invitation_code'=?",params[:invitation_code]).take
     topic.data["confirm_state"] = params[:confirm_state]
-    topic.data["confirmed_date"] = Suggesteddate.find(params[:confirmed_date_id])
+    topic.data["confirmed_date"] = params[:confirmed_date_id]
     topic.save!
 
     topic.broadcast_event

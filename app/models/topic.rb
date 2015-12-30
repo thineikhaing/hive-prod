@@ -1327,8 +1327,17 @@ class Topic < ActiveRecord::Base
     end
 
     confirmed_event_date = nil
+    p "confirm date :::"
+    p self.data["confirmed_date"]
     if (self.data["confirmed_date"] != nil)
+      if (self.data["confirmed_date"] == "0")
+        p "confirm date is 0, do nothing"
+      else
+        p "confirm date is not 0"
+        p self.data["confirmed_date"]
+        p self.data["confirmed_date"]
       confirmed_event_date = Suggesteddate.find(self.data["confirmed_date"]).suggested_datetime
+      end
     end
 
     user = User.find(self.user_id)
@@ -1347,7 +1356,7 @@ class Topic < ActiveRecord::Base
         creator_name: user.username,
         creator_email: user.email,
         confirm_state: self.data["confirm_state"],
-        confirmed_date: confirmed_event_date
+        confirmed_date: Time.now
     }
   end
 
