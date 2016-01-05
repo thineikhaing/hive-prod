@@ -4,10 +4,10 @@ ruby '2.2.3'
 
 #gem 'rails', :git => 'git://github.com/rails/rails.git', :tag => 'v4.1.0.beta1'
 
-#gem 'rails', '~> 4.2', '>= 4.2.4' # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '5.0.0.beta1'
+gem 'rails', '~> 4.2', '>= 4.2.4' # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+#gem 'rails', '5.0.0.beta1'
 gem 'thin'                        , '~> 1.5.0'
-gem 'sprockets-rails'             , '~> 3.0.0'
+gem 'sprockets-rails'
 gem 'haml-rails'                  # Haml-rails provides Haml generators for Rails 3. It also enables Haml as the templating engine for you, so you don't have to screw around in your own application.rb when your Gemfile already clearly indicated what templating engine you have installed. Hurrah.
 gem 'rails-backbone'              , '~> 0.9.10' # Quickly setup backbone.js for use with rails 3.1. Generators are provided to quickly get started.
 
