@@ -4,11 +4,11 @@ ruby '2.2.3'
 
 #gem 'rails', :git => 'git://github.com/rails/rails.git', :tag => 'v4.1.0.beta1'
 
-gem 'rails', '~> 4.2', '>= 4.2.4' # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-
+#gem 'rails', '~> 4.2', '>= 4.2.4' # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+gem 'rails', '5.0.0.beta1'
 gem 'thin'                        , '~> 1.5.0'
-gem 'sprockets-rails'             , '~> 2.1.0'
-gem 'haml-rails'                  , '~> 0.5.3' # Haml-rails provides Haml generators for Rails 3. It also enables Haml as the templating engine for you, so you don't have to screw around in your own application.rb when your Gemfile already clearly indicated what templating engine you have installed. Hurrah.
+gem 'sprockets-rails'             , '~> 3.0.0'
+gem 'haml-rails'                  # Haml-rails provides Haml generators for Rails 3. It also enables Haml as the templating engine for you, so you don't have to screw around in your own application.rb when your Gemfile already clearly indicated what templating engine you have installed. Hurrah.
 gem 'rails-backbone'              , '~> 0.9.10' # Quickly setup backbone.js for use with rails 3.1. Generators are provided to quickly get started.
 
 #gem 'urbanairship'                , '~> 2.3.3' # Urbanairship is a Ruby library for interacting with the Urban Airship (http://urbanairship.com) API.
@@ -37,8 +37,8 @@ gem "mini_magick"                 , '~> 3.7.0' # Manipulate images with minimal 
 gem "encryptor"                   , '~> 1.3.0' # A simple wrapper for the standard ruby OpenSSL library to encrypt and decrypt strings
 gem 'time_difference'             , '~> 0.3.2' # TimeDifference is the missing Ruby method to calculate difference between two given time. You can do a Ruby time difference in year, month, week, day, hour, minute, and seconds.
 gem 'pg'                          , '~> 0.17.1' # Use postgresql as the database for Active Record
-gem 'coffee-rails'                , '~> 4.0.0' # Use CoffeeScript for .js.coffee assets and views
-gem 'jquery-rails'                , '~> 2.1.3' # Use jquery as the JavaScript library
+gem 'coffee-rails'                , '~> 4.1.0' # Use CoffeeScript for .js.coffee assets and views
+gem 'jquery-rails'               # Use jquery as the JavaScript library
 gem 'turbolinks'                  , '~> 2.5.3' # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'jbuilder'                    , '~> 2.0.6' # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem "rmagick"                     , :require => 'RMagick' #gem to resize the image
@@ -102,7 +102,7 @@ end
 group :development, :test do
   gem 'rspec-rails'       # RSpec for Rails
   #gem 'capybara'            , '~> 1.1.2' # Capybara is an integration testing tool for rack based web applications. It simulates how a user would interact with a website
-  gem 'factory_girl_rails'  , '~> 4.4.1' # factory_girl_rails provides integration between factory_girl and rails 3 (currently just automatic factory definition loading)
+  gem 'factory_girl_rails'   # factory_girl_rails provides integration between factory_girl and rails 3 (currently just automatic factory definition loading)
   gem 'shoulda-matchers'    , '~> 2.6.0' # Making tests easy on the fingers and eyes
   gem 'evergreen'           , :require => 'evergreen/rails' # Run Jasmine JavaScript unit tests, integrate them into Ruby applications.
   gem 'database_cleaner'    , '~> 1.2.0' # Strategies for cleaning databases. Can be used to ensure a clean state for testing.
