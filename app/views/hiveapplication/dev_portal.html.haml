@@ -55,8 +55,24 @@
                 -#  =link_to "socal_user", '', :class => 'label warning'
           %tr
             %td{colspan: 5,style: 'text-align:center; font-size: 1.2em; background: orange;'}
-              =image_tag "new_app.png"
-              =link_to ' New APP', hiveapplication_add_application_path, style: ' color:#fff'
+
+              =link_to((image_tag "new_app.png")+' New APP', hiveapplication_add_application_path, style: ' color:#fff' )
 
 
-    %br
+.row
+  .large-centered.large-12.columns
+    %h3 Developer User List
+
+    %table.tbl_applisting
+      %thead
+        %tr
+          %th id
+          %th User Name
+          %th email
+      %tbody
+        -count = 0
+        -@devuser.each do |user|
+          %tr
+            %td=count = count+1
+            %td=link_to user.username
+            %td=user.email rescue ''
