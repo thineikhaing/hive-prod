@@ -291,7 +291,7 @@ class HiveapplicationController < ApplicationController
                                                   icon_url: params[:dev_portal][:application_icon] ,
                                                   devuser_id: current_user.id, theme_color: params[:dev_portal][:theme_color],
                                                   api_key: api_key )
-        flash[:notice] = ""
+        flash[:notice] = "Add new application successfully."
         hive_application.errors.full_messages.each do |message|
           # do stuff for each error
           flash[:notice] << message
@@ -305,6 +305,7 @@ class HiveapplicationController < ApplicationController
           redirect_to hiveapplication_application_list_path
         end
       end
+
     else
       # Redirect to sign in page
       redirect_to hiveapplication_index_path
