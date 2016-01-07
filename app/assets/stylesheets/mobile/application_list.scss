@@ -28,7 +28,13 @@
   overflow-x: hidden;
 }
 
+
+
+div#table_list{
+   overflow: auto !important;
+}
 table.app_list {
+
   td {
     text-align: center;
     font-size: 44px;

@@ -3,7 +3,8 @@
 %nav.top-bar{"data-topbar" => true}
   %ul.title-area
     %li.name
-      =link_to(image_tag("Hive-Dev-Web-Logo.png", :alt => "Myanmar"))
+      -#=link_to(image_tag("Hive-Dev-Web-Logo.png", :alt => "h1ve"), dev_portal_path)
+      = link_to image_tag('Hive-Dev-Web-Logo.png') , hiveapplication_dev_portal_path
 
     %li.toggle-topbar.menu-icon
       %a{:href => "#"}
