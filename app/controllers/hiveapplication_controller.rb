@@ -83,7 +83,7 @@ class HiveapplicationController < ApplicationController
     session[:table_name] = nil
 
     cur_user = Devuser.find(session[:session_devuser_id])
-    p current_user.role
+    p cur_user.role
 
 
     if cur_user.present?

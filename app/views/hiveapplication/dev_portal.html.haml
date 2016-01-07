@@ -59,20 +59,21 @@
               =link_to((image_tag "new_app.png")+' New APP', hiveapplication_add_application_path, style: ' color:#fff' )
 
 
-.row
-  .large-centered.large-12.columns
-    %h3 Developer User List
+-if @devuser.present?
+  .row
+    .large-centered.large-12.columns
+      %h3 Developer User List
 
-    %table.tbl_applisting
-      %thead
-        %tr
-          %th id
-          %th User Name
-          %th email
-      %tbody
-        -count = 0
-        -@devuser.each do |user|
+      %table.tbl_applisting
+        %thead
           %tr
-            %td=count = count+1
-            %td=link_to user.username
-            %td=user.email rescue ''
+            %th id
+            %th User Name
+            %th email
+        %tbody
+          -count = 0
+          -@devuser.each do |user|
+            %tr
+              %td=count = count+1
+              %td=link_to user.username
+              %td=user.email rescue ''
