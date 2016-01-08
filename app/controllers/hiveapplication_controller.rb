@@ -87,12 +87,14 @@ class HiveapplicationController < ApplicationController
 
 
     if cur_user.present?
+
       if cur_user.role == 1
         @hive_applications = cur_user.hive_applications.order("id ASC")
         session[:no_of_apps] = cur_user.hive_applications.count
 
-        @devuser = Devuser.where("id !=?",cur_user.id)
-        p @devuser.count
+        @devusers = Devuser.where("id !=?",cur_user.id)
+        p @devusers.count
+
       else
         @hive_applications = cur_user.hive_applications.order("id ASC")
         session[:no_of_apps] = cur_user.hive_applications.count

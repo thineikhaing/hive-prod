@@ -59,21 +59,44 @@
               =link_to((image_tag "new_app.png")+' New APP', hiveapplication_add_application_path, style: ' color:#fff' )
 
 
--if @devuser.present?
+-if @devusers.present?
   .row
     .large-centered.large-12.columns
       %h3 Developer User List
+      %ul.accordion{"data-accordion" => ""}
+        -@devusers.each do |user|
+          -hive_apps = user.hive_applications.order("id ASC")
+          %li.accordion-navigation
+            %a{:href => "#"+user.username,style:'background:none !important;border-bottom: 1px solid orange'}
+              =user.username
+              (#{user.email})
 
-      %table.tbl_applisting
-        %thead
-          %tr
-            %th id
-            %th User Name
-            %th email
-        %tbody
-          -count = 0
-          -@devuser.each do |user|
-            %tr
-              %td=count = count+1
-              %td=link_to user.username
-              %td=user.email rescue ''
+            .content{id:user.username,style:'background:none;'}
+              %table.tbl_applisting
+                - hive_apps.each do |hive_application|
+                  %tr
+                    %td
+                      %img{ src:hive_application.icon_url, class:"img_app_icon"}
+                    %td= link_to hive_application.app_name.upcase , hiveapplication_edit_application_path(:app_id=> hive_application.id)
+                    %td= hive_application.app_type
+                    %td= hive_application.api_key
+                    %td
+                      %span= link_to 'Edit TOPIC/POST', hiveapplication_edit_topic_post_path(:app_id=> hive_application.id)  , :class => 'label warning'
+
+
+
+
+      -#
+      -#%table.tbl_applisting
+      -#  %thead
+      -#    %tr
+      -#      %th id
+      -#      %th User Name
+      -#      %th email
+      -#  %tbody
+      -#    -count = 0
+      -#    -@devusers.each do |user|
+      -#      %tr
+      -#        %td=count = count+1
+      -#        %td=link_to user.username
+      -#        %td=user.email rescue ''
