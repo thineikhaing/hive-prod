@@ -395,7 +395,6 @@ class Api::UsersController < ApplicationController
   end
 
   def edit_profile
-
     if current_user.present?
       user = User.find_by_id(current_user.id)
       checkUsername = User.search_data(params[:username])

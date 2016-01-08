@@ -403,10 +403,10 @@ class HiveapplicationController < ApplicationController
         topics = Topic.where(:hiveapplication_id =>  params[:app_id])
         if topics.present?
           topics.each do |topic|
-            topic.remove_record
-            posts = Post.where(:topic_id=>topic.id).delete_all
+            topic.remove_records
+            posts = Post.where(:topic_id=>topic.id)
             posts.each do|post|
-              post.remove_record
+              post.remove_records
             end
             posts.delete_all
           end
@@ -419,6 +419,7 @@ class HiveapplicationController < ApplicationController
       end
       user = Devuser.find(current_user.id)
       @hive_applications = user.hive_applications
+      redirect_to hiveapplication_dev_portal_path
     else
       #redirect back to Sign in Page
       redirect_to hiveapplication_index_path
