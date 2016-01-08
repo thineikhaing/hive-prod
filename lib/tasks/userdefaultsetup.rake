@@ -16,5 +16,17 @@ namespace :userdefaultsetup do
     puts "Countries created"
   end
 
+  desc "add role to admin dev user"
+  task :add_role_to_devadmin => :environment do
+
+    user = Devuser.find_by_username('Hive Admin')
+    user.email = "devs@herenow.io"
+    user.password = "5198278387438044"
+    user.role = 1
+    user.save
+
+    puts "Admin dev user role and info updated!"
+  end
+
     
 end
