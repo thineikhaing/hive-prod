@@ -83,7 +83,7 @@ class Api::PlacesController < ApplicationController
 
     if action_logs.present?
 
-      fav_topic = Topic.find(action_log.type_id)
+      fav_topic = Topic.find(action_logs.type_id)
       places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
 
       p "suggested topic"
