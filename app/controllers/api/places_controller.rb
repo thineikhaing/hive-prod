@@ -69,32 +69,41 @@ class Api::PlacesController < ApplicationController
 
   def get_meal_suggestion
 
-
     # ActionLog.where(action_user_id: 261,action_type: 'favourite')
-    topicmeal = nil
 
-    action_logs =  ActionLog.where(action_user_id: params[:user_id],action_type: 'favourite').take
+
+    p action_logs =  ActionLog.where(action_user_id: params[:user_id],action_type: 'favourite')
     #topics = Topic.nearest(params[:latitude].to_s, params[:longitude].to_s, params[:radius])
 
     "center point and box"
     center_point = [params[:latitude].to_f, params[:longitude].to_f]
     box = Geocoder::Calculations.bounding_box(center_point,5, {units: :km})
-
+    topicmeal = []
 
     if action_logs.present?
+      topicmeal = []
+      action_logs.each do |action|
+        p "action type id"
+        p action.type_id
+        fav_topic = Topic.find(action.type_id)
+        places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
 
-      fav_topic = Topic.find(action_logs.type_id)
-      places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
+        p "suggested topic"
+        p fav_topic
+        p fav_topic.place_id
+        p "++++"
+        places.each do |p|
+          p p.id
+          p "***"
+          if p.id == fav_topic.place_id
+            p p.id
+            p fav_topic
+            p topicmeal
+            topicmeal.push(fav_topic)
 
-      p "suggested topic"
-      fav_topic.place_id
-
-      places.each do |p|
-        if p.id == fav_topic.place_id
-          topicmeal = fav_topic
-        else
-          topicmeal = nil
+          end
         end
+
       end
 
 
