@@ -67,6 +67,19 @@ class Api::PlacesController < ApplicationController
     end
   end
 
+  def get_nearby_shops
+    factual_data_array = []
+    factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+    query = factual.table("places").filters("category_ids" => {"$includes_any" => [312, 347]}).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => 5.to_f*1000})
+
+    query.each do |q|
+      data = { name: q["name"], latitude: q["latitude"], longitude: q["longitude"], address: q["address"], source: 3, user_id: nil, username: nil, source_id: q["factual_id"] }
+      factual_data_array.push(data)
+    end
+    render json: { places: factual_data_array}
+
+  end
+
   def retrieve_places
     data_array = [ ]
     factual_data_array = [ ]

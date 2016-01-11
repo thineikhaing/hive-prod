@@ -169,6 +169,7 @@ Rails.application.routes.draw do
     match "places/within_location"                  => "places#within_location"                 , via: [:get, :post]
     match "places/within_locality"                  => "places#within_locality"                 , via: [:get, :post]
     match "places/getlatlngbyname"                  => "places#getlatlngbyname"                 , via: [:get, :post]
+    match "places/get_nearby_shops"                  => "places#get_nearby_shops"                , via: [:get, :post]
 
     match "demo/test"                               => "demo#test"                              , via: [:get, :post]
     match "demo/test2"                              => "demo#test2"                             , via: [:get, :post]
