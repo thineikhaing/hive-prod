@@ -820,7 +820,7 @@ class Topic < ActiveRecord::Base
       else
         unless check_like.present?
           topic.likes = topic.likes + 1
-          topic_user.point = topic_user.point + 1
+          topic_user.points = topic_user.points + 1
           #actionlog.create_record("topic", topic_id, "like", user.id)
           actionlog =   ActionLog.create(type_name: "topic", type_id: topic_id, action_type: "like", action_user_id: user.id)
           action_status = 1
@@ -829,13 +829,13 @@ class Topic < ActiveRecord::Base
     elsif choice == "dislike"
       if check_like.present?
         topic.likes = topic.likes - 1
-        topic_user.point = topic_user.point - 1
+        topic_user.points = topic_user.points - 1
         ActionLog.find_by_type_name_and_type_id_and_action_type_and_action_user_id("topic", topic_id, "like", user.id).delete
         action_status = -1
       else
         unless check_dislike.present?
           topic.dislikes = topic.dislikes + 1
-          topic_user.point = topic_user.point + 1
+          topic_user.points = topic_user.points + 1
           #actionlog.create_record("topic", topic_id, "dislike", current_user.id)
           actionlog =   ActionLog.create(type_name: "topic", type_id: topic_id, action_type: "dislike", action_user_id: user.id)
           action_status = 1
@@ -1545,6 +1545,15 @@ class Topic < ActiveRecord::Base
 
     end
 
+  end
+
+  def self.nearest(latitude, longitude, radius)
+    # Contains bottom-left and top-right corners
+    radius = 0.3 unless radius.present?
+    center_point = [latitude.to_f, longitude.to_f]
+    p box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
+    #Topic.where(data["latitude"] => box[0] .. box[2], data["longitude"] => box[1] .. box[3])
+    Topic.where("data -> 'latitude' = ? and data -> 'longitude' = ?", box[0] .. box[2],box[1] .. box[3])
   end
 
   handle_asynchronously :topic_image_upload_job

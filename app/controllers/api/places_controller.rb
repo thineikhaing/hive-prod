@@ -67,16 +67,52 @@ class Api::PlacesController < ApplicationController
     end
   end
 
-  def get_nearby_shops
+  def get_meal_suggestion
+
+
+    # ActionLog.where(action_user_id: 261,action_type: 'favourite')
+    topicmeal = nil
+
+    action_logs =  ActionLog.where(action_user_id: params[:user_id],action_type: 'favourite').take
+    #topics = Topic.nearest(params[:latitude].to_s, params[:longitude].to_s, params[:radius])
+
+    "center point and box"
+    center_point = [params[:latitude].to_f, params[:longitude].to_f]
+    box = Geocoder::Calculations.bounding_box(center_point,5, {units: :km})
+
+
+    if action_logs.present?
+
+      fav_topic = Topic.find(action_log.type_id)
+      places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
+
+      p "suggested topic"
+      fav_topic.place_id
+
+      places.each do |p|
+        p p.id
+        if p.id == fav_topic.place_id
+          topicmeal = fav_topic
+        else
+          topicmeal = nil
+        end
+      end
+
+
+    end
+
     factual_data_array = []
     factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
-    query = factual.table("places").filters("category_ids" => {"$includes_any" => [312, 347]}).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => 5.to_f*1000})
+    query = factual.table("places").filters("category_ids" => {"$includes_any" => [338,312, 347]}).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => 5.to_f*1000})
+
+    #query = factual.table("places").filters("category_ids" => {"$includes_any" => [312, 347]}).geo("$circle" => {"$center" => [1.317907,103.843643], "$meters" => 5.to_f*1000})
 
     query.each do |q|
       data = { name: q["name"], latitude: q["latitude"], longitude: q["longitude"], address: q["address"], source: 3, user_id: nil, username: nil, source_id: q["factual_id"] }
       factual_data_array.push(data)
     end
-    render json: { places: factual_data_array}
+
+    render json: { topicmeal: topicmeal, locationmeal: factual_data_array[0]}
 
   end
 

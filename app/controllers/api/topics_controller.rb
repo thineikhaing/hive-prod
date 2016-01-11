@@ -353,6 +353,8 @@ class Api::TopicsController < ApplicationController
       topic = Topic.find_by_id(params[:topic_id])
       if topic.present?
         action_status = topic.user_add_likes(current_user, params[:topic_id], params[:choice])
+        p action_status
+
         topic.reload
 
         hiveapplication = HiveApplication.find(topic.hiveapplication_id)
@@ -360,6 +362,7 @@ class Api::TopicsController < ApplicationController
         if hiveapplication.id ==1 #Hive Application
           render json: { topic: JSON.parse(topic.to_json()), action_status: action_status}
         elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1 #All Applications under Herenow except Hive
+
           render json: { topic: JSON.parse(topic.to_json(content: true)), action_status: action_status}
         else #3rd party App
           render json: { topic: JSON.parse(topic.to_json()), action_status: action_status}
