@@ -90,7 +90,6 @@ class Api::PlacesController < ApplicationController
       fav_topic.place_id
 
       places.each do |p|
-        p p.id
         if p.id == fav_topic.place_id
           topicmeal = fav_topic
         else
@@ -112,6 +111,10 @@ class Api::PlacesController < ApplicationController
       factual_data_array.push(data)
     end
 
+
+    if topicmeal.nil?
+      topicmeal = "Sorry, there is no meal for suggestion!"
+    end
     render json: { topicmeal: topicmeal, locationmeal: factual_data_array[0]}
 
   end
