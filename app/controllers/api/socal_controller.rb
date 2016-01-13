@@ -361,7 +361,6 @@ class Api::SocalController < ApplicationController
     if params[:update_id]
 
       updatesug = Suggesteddate.find(params[:update_id])
-
       c_date = params[:rawdate] +" " + params[:time] + "+800"
       strdate = Time.parse(c_date).to_s
       str_date_array = strdate.split(" ")

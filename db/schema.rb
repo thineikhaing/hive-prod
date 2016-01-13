@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160107094142) do
+ActiveRecord::Schema.define(version: 20160113061845) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -210,6 +210,36 @@ ActiveRecord::Schema.define(version: 20160107094142) do
     t.float    "latitude"
     t.float    "longitude"
     t.integer  "special_type",             default: 0
+  end
+
+  create_table "route_logs", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "start_address"
+    t.string   "end_address"
+    t.float    "start_latitude"
+    t.float    "start_longitude"
+    t.float    "end_latitude"
+    t.float    "end_longitude"
+    t.time     "start_time"
+    t.time     "end_time"
+    t.string   "transport_type"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  create_table "routes_logs", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "start_address"
+    t.string   "end_address"
+    t.float    "start_latitude"
+    t.float    "start_longitude"
+    t.float    "end_latitude"
+    t.float    "end_longitude"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.integer  "transport_type"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
   create_table "suggesteddates", force: :cascade do |t|

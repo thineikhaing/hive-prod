@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :route_logs
   get 'carmic' => 'carmic#index', as: 'carmic'
 
 

@@ -1,0 +1,50 @@
+
+= form_for @route_log do |f|
+  - if @route_log.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@route_log.errors.count, "error")} prohibited this route_log from being saved:"
+      %ul
+        - @route_log.errors.full_messages.each do |msg|
+          %li= msg
+
+  .row
+    .large-6.columns
+      = f.label :user_id
+      = f.collection_select :user_id,User.all, :id, :username,:include_blank => '---  Select User ---'
+
+  .row
+    .large-6.columns
+      = f.label :start_address
+      = f.text_field :start_address
+    .large-6.columns
+      = f.label :end_address
+      = f.text_field :end_address
+  .row
+    .large-6.columns
+      = f.label :start_latitude
+      = f.text_field :start_latitude
+    .large-6.columns
+      = f.label :start_longitude
+      = f.text_field :start_longitude
+  .row
+    .large-6.columns
+      = f.label :end_latitude
+      = f.text_field :end_latitude
+    .large-6.columns
+      = f.label :end_longitude
+      = f.text_field :end_longitude
+  .row
+    .large-6.columns
+      = f.label :start_time
+      = f.time_select :start_time
+    .large-6.columns
+      = f.label :end_time
+      = f.time_select :end_time
+  .row
+    .large-6.columns
+      = f.label :transport_type
+      =f.collection_select :transport_type, RouteLog::TRANSPORT, :to_s, :to_s,
+                :include_blank =>  '---  Select transport type ---'
+  .actions
+    = f.submit 'Save'
+

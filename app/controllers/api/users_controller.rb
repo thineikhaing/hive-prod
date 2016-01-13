@@ -125,7 +125,7 @@ class Api::UsersController < ApplicationController
 
             if params[:app_key]
               hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
-              user_account = UserAccount.create(user_id: user.id, account_type: hiveapplication.app_name, linked_account_id: user.id,priority: 0,hiveapplication_id: hiveapplication.id)
+              user_account = UserAccount.create(user_id: user.id, account_type: hiveapplication.app_name, linked_account_id: 0,priority: 0,hiveapplication_id: hiveapplication.id)
             end
 
             render json: { :user => user, :user_account => user_account, :success => 10 }, status: 200
@@ -356,7 +356,7 @@ class Api::UsersController < ApplicationController
         user.save
       end
 
-      p " favr user :::"
+      p "favr user :::"
       p user
       avatar = Topic.get_avatar(user.username)
       render json: { :user => user, :success => 20 , avatar: avatar, daily_point: user.daily_points}, status: 200

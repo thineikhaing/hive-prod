@@ -1,0 +1,1 @@
+json.extract! @route_log, :id, :user_id, :start_address, :end_address, :start_latitude, :start_longitude, :end_latitude, :end_longitude, :start_time, :end_time, :transport_type, :created_at, :updated_at

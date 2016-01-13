@@ -1,0 +1,2 @@
+module RouteLogsHelper
+end

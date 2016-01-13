@@ -1,0 +1,39 @@
+%h1 Listing route_logs
+
+%table.tbl_applisting
+  %thead
+    %tr
+      %th User
+      %th Start address
+      %th End address
+      %th Start latitude
+      %th Start longitude
+      %th End latitude
+      %th End longitude
+      %th Start time
+      %th End time
+      %th Transport type
+      %th
+      %th
+      %th
+
+  %tbody
+    - @route_logs.each do |route_log|
+      %tr
+        %td= route_log.user_id
+        %td= route_log.start_address
+        %td= route_log.end_address
+        %td= route_log.start_latitude
+        %td= route_log.start_longitude
+        %td= route_log.end_latitude
+        %td= route_log.end_longitude
+        %td= route_log.start_time.strftime("%I:%M %p")
+        %td= route_log.end_time.strftime("%I:%M %p")
+        %td= route_log.transport_type
+        %td= link_to 'Show', route_log
+        %td= link_to 'Edit', edit_route_log_path(route_log)
+        %td= link_to 'Destroy', route_log, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Route log', new_route_log_path

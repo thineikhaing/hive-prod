@@ -71,7 +71,6 @@ class Api::PlacesController < ApplicationController
 
     # ActionLog.where(action_user_id: 261,action_type: 'favourite')
 
-
     p action_logs =  ActionLog.where(action_user_id: params[:user_id],action_type: 'favourite')
     #topics = Topic.nearest(params[:latitude].to_s, params[:longitude].to_s, params[:radius])
 
@@ -100,8 +99,7 @@ class Api::PlacesController < ApplicationController
             p fav_topic
             p topicmeal
             topicmeal.push(fav_topic)
-
-          end
+       end
         end
 
       end

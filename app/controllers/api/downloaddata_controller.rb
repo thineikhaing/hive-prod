@@ -1,6 +1,7 @@
 class Api::DownloaddataController < ApplicationController
 
 
+
   def initial_retrieve
     if params[:app_key].present?
       hiveApplication = HiveApplication.find_by_api_key(params[:app_key])
@@ -8,21 +9,62 @@ class Api::DownloaddataController < ApplicationController
       params[:radius].present? ? radius = params[:radius] : radius = nil
       if hiveApplication.present?
         p "hive application present"
+
         topics = Place.nearest_topics_within(params[:latitude], params[:longitude], radius, hiveApplication.id)
+
         if hiveApplication.id ==1 #Hive Application
           p "Hive Application"
           render json: { topics: JSON.parse(topics.to_json())}
+
+        elsif hiveApplication.app_name == "roundtrip"
+
+          favr_info = []
+          meal_info = []
+
+          user = User.find(params[:user_id])
+          useracccounts = UserAccount.where(user_id: user.id)
+          if useracccounts.count > 0
+
+            useracccounts.each do |acc|
+              if acc.account_type == 'favr'
+                #give user points and honors
+
+                app = HiveApplication.where(app_name: 'Favr')
+                favr_topic = Place.nearest_topics_within(params[:latitude], params[:longitude], radius, app.id)
+                favr_topic = favr_topic.where(user_id: user.id)
+
+                favr_topic.each do |topic|
+                  favr_info.push(topic) if topic.topic_type == Topic::FAVR && topic.state != Topic::ACKNOWLEDGED && topic.state != Topic::EXPIRED && topic.state != Topic::REVOKED
+                end
+
+
+              elsif acc.account_type == 'mealbox'
+                # give user fav meal list
+
+              elsif acc.account_type == 'socal'
+                # give the event list respect to user
+
+              end
+            end
+
+          end
+
+
+          render json: { topics: JSON.parse(topics.to_json(content: true)), favr_info: favr_info , socal_info: '' , mealbox_info: ''}
+
+
         elsif hiveApplication.devuser_id==1 and hiveApplication.id!=1 and params[:choice].nil? #All Applications under Herenow account except Hive
           p "All Applications under Herenow account except Hive"
           render json: { topics: JSON.parse(topics.to_json(content: true))}
 
         elsif params[:choice].present? and params[:choice] == "favr"
         p "favr Application"
-        favr_topics = [ ]
 
-        topics.each do |topic|
-          favr_topics.push(topic) if topic.topic_type == Topic::FAVR && topic.state != Topic::ACKNOWLEDGED && topic.state != Topic::EXPIRED && topic.state != Topic::REVOKED
-        end
+          favr_topics = [ ]
+
+          topics.each do |topic|
+            favr_topics.push(topic) if topic.topic_type == Topic::FAVR && topic.state != Topic::ACKNOWLEDGED && topic.state != Topic::EXPIRED && topic.state != Topic::REVOKED
+          end
 
           p "today date"
           p Date.today

@@ -1,0 +1,36 @@
+%p#notice= notice
+
+%p
+  %b User:
+  = @route_log.user_id
+%p
+  %b Start address:
+  = @route_log.start_address
+%p
+  %b End address:
+  = @route_log.end_address
+%p
+  %b Start latitude:
+  = @route_log.start_latitude
+%p
+  %b Start longitude:
+  = @route_log.start_longitude
+%p
+  %b End latitude:
+  = @route_log.end_latitude
+%p
+  %b End longitude:
+  = @route_log.end_longitude
+%p
+  %b Start time:
+  = @route_log.start_time
+%p
+  %b End time:
+  = @route_log.end_time
+%p
+  %b Transport type:
+  = @route_log.transport_type
+
+= link_to 'Edit', edit_route_log_path(@route_log)
+\|
+= link_to 'Back', route_logs_path
