@@ -125,7 +125,11 @@ class Api::UsersController < ApplicationController
 
             if params[:app_key]
               hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
-              user_account = UserAccount.create(user_id: user.id, account_type: hiveapplication.app_name, linked_account_id: 0,priority: 0,hiveapplication_id: hiveapplication.id)
+              user_account = UserAccount.where(user_id: user.id, hiveapplication_id: hiveapplication.id)
+              if user_account.count == 0
+                user_account = UserAccount.create(user_id: user.id, account_type: hiveapplication.app_name, linked_account_id: 0,priority: 0,hiveapplication_id: hiveapplication.id)
+              end
+
             end
 
             render json: { :user => user, :user_account => user_account, :success => 10 }, status: 200
@@ -158,7 +162,7 @@ class Api::UsersController < ApplicationController
       p name = user.username
       p id = user.id
       
-      render json: { name: name, id: id }, status: 200
+      render json: { name: name, id: id , :success => 1 }, status: 200
       
     else
       
@@ -326,7 +330,17 @@ class Api::UsersController < ApplicationController
         if user.valid_password?(params[:password])
         #if user.present?
           p "valid_password?"
-            user_accounts = UserAccount.where(:user_id => user.id)
+
+          if params[:app_key]
+            hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+            user_account = UserAccount.where(user_id: user.id, hiveapplication_id: hiveapplication.id)
+            if user_account.count == 0
+               UserAccount.create(user_id: user.id, account_type: hiveapplication.app_name, linked_account_id: 0,priority: 0,hiveapplication_id: hiveapplication.id)
+            end
+
+          end
+
+          user_accounts = UserAccount.where(:user_id => user.id)
 
           p name = user.username
           p id = user.id
@@ -343,7 +357,7 @@ class Api::UsersController < ApplicationController
         render json: { :error => var }, status: 400 # User email doesn't exist
       end
 
-    elsif params[:app_name] == 'Favr'
+    elsif params[:app_name]
       user = User.find_by_device_id(params[:device_id])
 
       if user.present?

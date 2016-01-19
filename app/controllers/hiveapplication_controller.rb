@@ -111,7 +111,7 @@ class HiveapplicationController < ApplicationController
     if current_user.nil?
       redirect_to root_url, alert: "Not authorized. Please login..."
     else
-      @users = User.all.order(:username).page params[:page]
+      @users = User.all.order("email desc").page params[:page]
     end
 
   end
