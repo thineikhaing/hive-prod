@@ -265,7 +265,7 @@ class Api::SocalController < ApplicationController
     topic.data["confirmed_date"] = params[:confirmed_date_id]
     topic.save!
 
-    topic.broadcast_event
+    topic.broadcast_event(params[:confirmed_date_id])
 
     render json:{status: true}
 
