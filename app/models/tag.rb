@@ -7,7 +7,7 @@ class Tag < ActiveRecord::Base
 
   enums %w(NORMAL LOCATION)
 
-  attr_accessible :tag_type, :keyword
+  #attr_accessible :tag_type, :keyword
 
 
   def as_json(option=nil)

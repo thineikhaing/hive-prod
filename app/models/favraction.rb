@@ -12,7 +12,7 @@ class Favraction < ActiveRecord::Base
   #enum for favr action status
   enums %w(DEFAULT DOER_STARTED DOER_FINISHED OWNER_ACKNOWLEDGED OWNER_REJECTED DOER_RESPONDED_ACK DOER_RESPONDED_REJ OWNER_REVOKED COMPLETION_REMINDER_SENT EXPIRED_AFTER_STARTED EXPIRED_AFTER_FINISHED EXPIRED)
 
-  attr_accessible :topic_id,:doer_user_id, :status, :user_id
+  #attr_accessible :topic_id,:doer_user_id, :status, :user_id
 
   #def create_record(topic_id, doer_user_id, status, user_id)
   #  p topic_id

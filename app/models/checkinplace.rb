@@ -4,7 +4,7 @@ class Checkinplace < ActiveRecord::Base
   ################
   # Self Methods #
   ################
-  attr_accessible :user_id,:place_id, :created_at, :updated_at
+  #attr_accessible :user_id,:place_id, :created_at, :updated_at
 
 
   def as_json(option=nil)

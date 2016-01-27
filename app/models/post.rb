@@ -9,7 +9,7 @@ class Post < ActiveRecord::Base
   # Setup hstore
   store_accessor :data
 
-  attr_accessible :content, :post_type, :data, :created_at, :user_id, :topic_id, :place_id,:likes,
+  #attr_accessible :content, :post_type, :data, :created_at, :user_id, :topic_id, :place_id,:likes,
                   :dislikes, :offensive, :img_url, :width, :height, :latitude, :longitude ,:special_type
   enums %w(TEXT IMAGE AUDIO VIDEO)
 

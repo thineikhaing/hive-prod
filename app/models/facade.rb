@@ -1,3 +1,3 @@
 class Facade < ActiveRecord::Base
-  attr_accessible :social_priority
+  #attr_accessible :social_priority
 end

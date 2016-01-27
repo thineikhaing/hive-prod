@@ -1,5 +1,5 @@
 class AppAdditionalField < ActiveRecord::Base
-  attr_accessible :app_id,  :table_name, :additional_column_name, :created_at
+  #attr_accessible :app_id,  :table_name, :additional_column_name, :created_at
 
   def self.add_column(table_name, col_name, app_id)
     if  table_name == "Topic"

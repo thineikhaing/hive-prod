@@ -15,7 +15,7 @@ gem 'rails-backbone'              , '~> 0.9.10' # Quickly setup backbone.js for 
 
 gem 'pushwoosh'
 
-gem 'protected_attributes'        , '~> 1.0.7' # Protect attributes from mass assignment
+# gem 'protected_attributes'        , '~> 1.0.7' # Protect attributes from mass assignment
 gem 'delayed_job'                              # Delayed_job (or DJ) encapsulates the common pattern of asynchronously executing longer tasks in the background. It is a direct extraction from Shopify where the job table is responsible for a multitude of core tasks.
 gem 'delayed_job_active_record'             # ActiveRecord backend for Delayed::Job
 gem "hirefire-resource"           , '~> 0.3.2' # HireFire enables you to auto-scale your dynos, schedule capacity during specific times of the week, and recover crashed processes.

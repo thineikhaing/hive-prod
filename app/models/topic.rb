@@ -32,10 +32,10 @@ class Topic < ActiveRecord::Base
 
   paginates_per 5
 
-  attr_accessible :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :data, :created_at,
-                  :image_url, :width, :height, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
-                  :special_type , :extra_info, :valid_start_date, :valid_end_date, :points, :free_points, :state,
-                  :title_indexes, :checker, :given_time
+  #attr_accessible :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :data, :created_at,
+                  # :image_url, :width, :height, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
+                  # :special_type , :extra_info, :valid_start_date, :valid_end_date, :points, :free_points, :state,
+                  # :title_indexes, :checker, :given_time
 
   # Return the tags and location tags related to the topic
 

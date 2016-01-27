@@ -14,7 +14,7 @@ class Devuser < ActiveRecord::Base
   # Setup hstore
   store_accessor :data
 
-  attr_accessible :username, :email, :password, :password_confirmation, :verified, :email_verification_code, :hiveapplication_id, :data
+  #attr_accessible :username, :email, :password, :password_confirmation, :verified, :email_verification_code, :hiveapplication_id, :data
 
   def send_password_reset
     generate_token(:reset_password_token)

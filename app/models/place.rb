@@ -4,7 +4,7 @@ class Place < ActiveRecord::Base
   # Setup hstore
   store_accessor :data
 
-  attr_accessible :name, :category, :address, :locality, :region, :neighbourhood, :chain_name, :country, :postal_code, :website_url, :contact_number, :img_url, :source, :source_id, :latitude, :longitude, :user_id
+  #attr_accessible :name, :category, :address, :locality, :region, :neighbourhood, :chain_name, :country, :postal_code, :website_url, :contact_number, :img_url, :source, :source_id, :latitude, :longitude, :user_id
 
   enums %w(HERENOW USER VENDOR FACTUAL MRT UNKNOWN PRIVATE)
 

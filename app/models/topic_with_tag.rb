@@ -1,5 +1,5 @@
 class TopicWithTag < ActiveRecord::Base
-  attr_accessible :topic_id, :tag_id
+  #attr_accessible :topic_id, :tag_id
 
   belongs_to :topic
   belongs_to :tag

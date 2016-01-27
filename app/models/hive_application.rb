@@ -15,7 +15,7 @@ class HiveApplication < ActiveRecord::Base
 
   mount_uploader :icon_url, ApplicationiconUploader
 
-  attr_accessible :app_name, :app_type, :description, :api_key, :icon_url ,:theme_color, :devuser_id, :created_at
+  #attr_accessible :app_name, :app_type, :description, :api_key, :icon_url ,:theme_color, :devuser_id, :created_at
   validates :app_name, :length => { :maximum => 32 }
   validates :description, :length => { :maximum => 255 }
 

@@ -1,5 +1,5 @@
 class Historychange < ActiveRecord::Base
-  attr_accessible :type_name, :type_id, :type_action, :parent_id
+  #attr_accessible :type_name, :type_id, :type_action, :parent_id
 
   belongs_to :topic
 

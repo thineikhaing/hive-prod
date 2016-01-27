@@ -19,10 +19,10 @@ class User < ActiveRecord::Base
   store_accessor :data
   include Authenticable
 
-  attr_accessible :username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role,
-                  :point, :flareMode, :alert_count, :paid_alert_count, :credits, :last_known_latitude, :last_known_longitude,
-                  :check_in_time, :profanity_counter, :offence_date, :positive_honor, :negative_honor, :honored_times,
-                  :created_at, :data, :device_id,:socal_id,:daily_points
+  #attr_accessible :username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role,
+                  # :point, :flareMode, :alert_count, :paid_alert_count, :credits, :last_known_latitude, :last_known_longitude,
+                  # :check_in_time, :profanity_counter, :offence_date, :positive_honor, :negative_honor, :honored_times,
+                  # :created_at, :data, :device_id,:socal_id,:daily_points
 
   after_initialize :ensure_authentication_token
   after_initialize :ensure_username
