@@ -2,10 +2,10 @@
 
 %p
   %b User:
-  = @user_fav_location.user_id
+  = @user_fav_location.user.username
 %p
   %b Place:
-  = @user_fav_location.place_id
+  = @user_fav_location.place.name
 %p
   %b Place type:
   = @user_fav_location.place_type

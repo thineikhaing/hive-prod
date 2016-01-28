@@ -1,3 +1,5 @@
+$base-font-size: 14px;
+$rem-base: $base-font-size;
 // import the CSS framework
 @import "foundation";
 
@@ -271,18 +273,18 @@ span.error, small.error {
 }
 
 table{
-  width: 100%;
-  border: 1px solid orange;
-  background: none;
-  //font-size: 18px !important;
-  //font-family: Labrador-A-Light;
-  thead{
-    background: orange !important;
-    th{background: orange;}
-  }
-  th{
-    color: #fff;
-  }
+  //width: 100%;
+  //border: 1px solid orange;
+  //background: none;
+  ////font-size: 18px !important;
+  ////font-family: Labrador-A-Light;
+  //thead{
+  //  background: orange !important;
+  //  th{background: orange;}
+  //}
+  //th{
+  //  color: #fff;
+  //}
   tbody{
     tr:nth-child(even) {background: none;font-size: 25px !important;}
     tr:nth-child(odd) {background: none;font-size: 25px !important;}
@@ -291,11 +293,11 @@ table{
 
 }
 
-table tr th, table tr td,table thead tr th, table thead tr td {
-  color: #222222;
-  font-size: 18px;
-  padding: 8px;
-  text-align: left;
-}
+//table tr th, table tr td,table thead tr th, table thead tr td {
+//  color: #222222;
+//  font-size: 18px;
+//  padding: 8px;
+//  text-align: left;
+//}
 
 

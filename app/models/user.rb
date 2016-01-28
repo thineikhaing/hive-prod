@@ -13,6 +13,8 @@ class User < ActiveRecord::Base
   has_many  :user_accounts
   has_many :car_action_logs
 
+  has_many :user_fav_locations
+
   belongs_to :incident_history
 
   # Setup hstore

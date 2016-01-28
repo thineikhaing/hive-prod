@@ -8,15 +8,13 @@
       %th Place type
       %th
       %th
-      %th
 
   %tbody
     - @user_fav_locations.each do |user_fav_location|
       %tr
-        %td= user_fav_location.user_id
-        %td= user_fav_location.place_id
+        %td=link_to user_fav_location.user.username, user_fav_location
+        %td= user_fav_location.place.name
         %td= user_fav_location.place_type
-        %td= link_to 'Show', user_fav_location
         %td= link_to 'Edit', edit_user_fav_location_path(user_fav_location)
         %td= link_to 'Destroy', user_fav_location, :method => :delete, :data => { :confirm => 'Are you sure?' }
 
