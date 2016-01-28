@@ -33,7 +33,7 @@ namespace :userdefaultsetup do
     lookups_json = JSON.parse(File.read("db/lookups.json"));
     #Delete all previous records
     # Lookup.delete_all
-    DatabaseCleaner.clean_with(:truncation, :only => ['lookups'])
+    # DatabaseCleaner.clean_with(:truncation, :only => ['lookups'])
     lookups_json.each do |lookup|
       #puts state
       new_lookup = Lookup.new
