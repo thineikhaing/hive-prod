@@ -1,0 +1,15 @@
+%p#notice= notice
+
+%p
+  %b User:
+  = @user_fav_location.user_id
+%p
+  %b Place:
+  = @user_fav_location.place_id
+%p
+  %b Place type:
+  = @user_fav_location.place_type
+
+= link_to 'Edit', edit_user_fav_location_path(@user_fav_location)
+\|
+= link_to 'Back', user_fav_locations_path

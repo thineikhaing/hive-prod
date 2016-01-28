@@ -1,0 +1,3 @@
+class PlaceType < Lookup
+
+end

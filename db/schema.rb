@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160113061845) do
+ActiveRecord::Schema.define(version: 20160128024038) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -169,6 +169,14 @@ ActiveRecord::Schema.define(version: 20160113061845) do
     t.datetime "updated_at"
   end
 
+  create_table "lookups", force: :cascade do |t|
+    t.string   "lookup_type"
+    t.string   "name"
+    t.string   "value"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
   create_table "places", force: :cascade do |t|
     t.string   "name",           limit: 255
     t.string   "category",       limit: 255, default: ""
@@ -314,6 +322,14 @@ ActiveRecord::Schema.define(version: 20160113061845) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "hiveapplication_id"
+  end
+
+  create_table "user_fav_locations", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "place_id"
+    t.string   "place_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "user_push_tokens", force: :cascade do |t|

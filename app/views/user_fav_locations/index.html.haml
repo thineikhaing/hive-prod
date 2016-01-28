@@ -1,0 +1,25 @@
+%h1 Listing user_fav_locations
+
+%table
+  %thead
+    %tr
+      %th User
+      %th Place
+      %th Place type
+      %th
+      %th
+      %th
+
+  %tbody
+    - @user_fav_locations.each do |user_fav_location|
+      %tr
+        %td= user_fav_location.user_id
+        %td= user_fav_location.place_id
+        %td= user_fav_location.place_type
+        %td= link_to 'Show', user_fav_location
+        %td= link_to 'Edit', edit_user_fav_location_path(user_fav_location)
+        %td= link_to 'Destroy', user_fav_location, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New User fav location', new_user_fav_location_path

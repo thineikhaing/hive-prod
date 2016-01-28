@@ -1,0 +1,6 @@
+[
+    {"name":"Home", "value":"home", "type":"PlaceType"},
+    {"name":"Work", "value":"work", "type":"PlaceType"},
+    {"name":"School", "value":"school", "type":"PlaceType"},
+    {"name":"Others", "value":"others", "type":"PlaceType"}
+]

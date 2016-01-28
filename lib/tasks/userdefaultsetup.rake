@@ -28,5 +28,22 @@ namespace :userdefaultsetup do
     puts "Admin dev user role and info updated!"
   end
 
+  desc "Import Lookup DDM"
+  task :import_lookup_data => :environment do
+    lookups_json = JSON.parse(File.read("db/lookups.json"));
+    #Delete all previous records
+    # Lookup.delete_all
+    DatabaseCleaner.clean_with(:truncation, :only => ['lookups'])
+    lookups_json.each do |lookup|
+      #puts state
+      new_lookup = Lookup.new
+      new_lookup.name = lookup["name"]
+      new_lookup.value = lookup["value"]
+      new_lookup.lookup_type = lookup["type"]
+      new_lookup.save
+    end
+    puts "Lookup DDMs created!"
+  end
+
     
 end

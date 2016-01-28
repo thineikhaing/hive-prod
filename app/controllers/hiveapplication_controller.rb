@@ -82,29 +82,36 @@ class HiveapplicationController < ApplicationController
     session[:app_id] = nil
     session[:table_name] = nil
 
-    cur_user = Devuser.find(session[:session_devuser_id])
-    p cur_user.role
+    if session[:session_devuser_id].nil?
+      redirect_to hiveapplication_index_path
+    else
+
+      cur_user = Devuser.find(session[:session_devuser_id])
+      p cur_user.role
 
 
-    if cur_user.present?
+      if cur_user.present?
 
-      if cur_user.role == 1
-        @hive_applications = cur_user.hive_applications.order("id ASC")
-        session[:no_of_apps] = cur_user.hive_applications.count
+        if cur_user.role == 1
+          @hive_applications = cur_user.hive_applications.order("id ASC")
+          session[:no_of_apps] = cur_user.hive_applications.count
 
-        @devusers = Devuser.where("id !=?",cur_user.id)
-        p @devusers.count
+          @devusers = Devuser.where("id !=?",cur_user.id)
+          p @devusers.count
+
+        else
+          @hive_applications = cur_user.hive_applications.order("id ASC")
+          session[:no_of_apps] = cur_user.hive_applications.count
+
+        end
 
       else
-        @hive_applications = cur_user.hive_applications.order("id ASC")
-        session[:no_of_apps] = cur_user.hive_applications.count
-
+        # Returns to sign in page if CURRENT_USER doesn't exist
+        redirect_to hiveapplication_index_path
       end
 
-    else
-      # Returns to sign in page if CURRENT_USER doesn't exist
-      redirect_to hiveapplication_index_path
     end
+
   end
 
   def users

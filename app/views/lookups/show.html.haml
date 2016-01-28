@@ -1,0 +1,15 @@
+%p#notice= notice
+
+%p
+  %b Lookup type:
+  = @lookup.lookup_type
+%p
+  %b Name:
+  = @lookup.name
+%p
+  %b Value:
+  = @lookup.value
+
+= link_to 'Edit', edit_lookup_path(@lookup)
+\|
+= link_to 'Back', lookups_path

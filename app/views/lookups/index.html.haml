@@ -1,0 +1,25 @@
+%h1 Listing lookups
+
+%table
+  %thead
+    %tr
+      %th Lookup type
+      %th Name
+      %th Value
+      %th
+      %th
+      %th
+
+  %tbody
+    - @lookups.each do |lookup|
+      %tr
+        %td= lookup.lookup_type
+        %td= lookup.name
+        %td= lookup.value
+        %td= link_to 'Show', lookup
+        %td= link_to 'Edit', edit_lookup_path(lookup)
+        %td= link_to 'Destroy', lookup, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+= link_to 'New Lookup', new_lookup_path

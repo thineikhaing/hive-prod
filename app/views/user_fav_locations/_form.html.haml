@@ -1,0 +1,19 @@
+= form_for @user_fav_location do |f|
+  - if @user_fav_location.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@user_fav_location.errors.count, "error")} prohibited this user_fav_location from being saved:"
+      %ul
+        - @user_fav_location.errors.full_messages.each do |msg|
+          %li= msg
+
+  .field
+    = f.label :user_id
+    = f.select :user_id , User.all.map{|user| [user.username, user.id]}, {include_blank: "Select User"}, require: ''
+  .field
+    = f.label :place_id
+    = f.select :place_id , Place.all.map{|place| [place.name, place.id]}, {include_blank: "Select Place"}, require: ''
+  .field
+    = f.label :place_type
+    = f.select :place_type , Lookup.where(lookup_type:'PlaceType').map{|plaec| [plaec.name, plaec.name]}, {include_blank: "Select type of place"}, require: ''
+  .actions
+    = f.submit 'Save'

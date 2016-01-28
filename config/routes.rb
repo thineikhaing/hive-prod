@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
 
+  resources :user_fav_locations
+  resources :lookups
+  #resources :place_types
   resources :route_logs
   get 'carmic' => 'carmic#index', as: 'carmic'
 
