@@ -9,12 +9,8 @@
 
   %br
   = link_to 'Edit', edit_privacy_policy_path(privacy_policy)
--if @privacy_policies
 
--else
-  .row
-    .columns.large-12
-      = link_to 'New Privacy policy', new_privacy_policy_path
+= link_to 'New Privacy policy', new_privacy_policy_path
 
 -#
 -#%table
