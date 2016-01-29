@@ -1,4 +1,5 @@
 -#%h1 Listing privacy_policies
+
 - @privacy_policies.each do |privacy_policy|
   %h3
     Title:
@@ -8,11 +9,12 @@
 
   %br
   = link_to 'Edit', edit_privacy_policy_path(privacy_policy)
+-if @privacy_policies
 
-.row
-  .columns.large-12
-
-    = link_to 'New Privacy policy', new_privacy_policy_path
+-else
+  .row
+    .columns.large-12
+      = link_to 'New Privacy policy', new_privacy_policy_path
 
 -#
 -#%table
