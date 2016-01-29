@@ -1,10 +1,10 @@
 -#%h1 Listing privacy_policies
--privacy_policy = @privacy_policies.first
-%h3
-  Title:
-  =privacy_policy.title
-%p
-  = simple_format(privacy_policy.content)
+- @privacy_policies.each do |privacy_policy|
+  %h3
+    Title:
+    =privacy_policy.title
+  %p
+    = simple_format(privacy_policy.content)
 
 %br
 
