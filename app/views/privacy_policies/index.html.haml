@@ -9,8 +9,11 @@
 
   %br
   = link_to 'Edit', edit_privacy_policy_path(privacy_policy)
+  |
+  = link_to 'Destroy', privacy_policy, :method => :delete, :data => { :confirm => 'Are you sure?' }
 
-= link_to 'New Privacy policy', new_privacy_policy_path
+-if @privacy_policies.count == 0
+  = link_to 'New Privacy policy', new_privacy_policy_path
 
 -#
 -#%table
@@ -29,7 +32,7 @@
 -#        %td= simple_format(privacy_policy.content)
 -#        %td= link_to 'Show', privacy_policy
 -#        %td= link_to 'Edit', edit_privacy_policy_path(privacy_policy)
--#        %td= link_to 'Destroy', privacy_policy, :method => :delete, :data => { :confirm => 'Are you sure?' }
+-#        %td
 -#
 -#%br
 -#
