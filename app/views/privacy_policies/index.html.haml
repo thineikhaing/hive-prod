@@ -6,11 +6,13 @@
   %p
     = simple_format(privacy_policy.content)
 
-%br
+  %br
+  = link_to 'Edit', edit_privacy_policy_path(privacy_policy)
 
 .row
   .columns.large-12
-    = link_to 'Edit', edit_privacy_policy_path(privacy_policy)
+
+    = link_to 'New Privacy policy', new_privacy_policy_path
 
 -#
 -#%table
@@ -33,4 +35,4 @@
 -#
 -#%br
 -#
--#= link_to 'New Privacy policy', new_privacy_policy_path
+-#
