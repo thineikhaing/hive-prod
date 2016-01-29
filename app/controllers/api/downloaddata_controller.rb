@@ -1,7 +1,5 @@
 class Api::DownloaddataController < ApplicationController
 
-
-
   def initial_retrieve
     if params[:app_key].present?
       hiveApplication = HiveApplication.find_by_api_key(params[:app_key])

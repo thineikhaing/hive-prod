@@ -1,0 +1,16 @@
+= form_for @privacy_policy do |f|
+  - if @privacy_policy.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@privacy_policy.errors.count, "error")} prohibited this privacy_policy from being saved:"
+      %ul
+        - @privacy_policy.errors.full_messages.each do |msg|
+          %li= msg
+
+  .field
+    = f.label :title
+    = f.text_field :title
+  .field
+    = f.label :content
+    = f.text_area :content, style: 'height:500px'
+  .actions
+    = f.submit 'Save'

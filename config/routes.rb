@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :privacy_policies
   resources :user_fav_locations
   resources :lookups
   #resources :place_types

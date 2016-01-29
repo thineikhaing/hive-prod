@@ -330,7 +330,6 @@ class Api::UsersController < ApplicationController
         if user.valid_password?(params[:password])
         #if user.present?
           p "valid_password?"
-
           if params[:app_key]
             hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
             user_account = UserAccount.where(user_id: user.id, hiveapplication_id: hiveapplication.id)
