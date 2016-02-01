@@ -1,6 +1,6 @@
 %table
   %tr
-    %td
+    %td{style:'padding: 0px;'}
       #post_fields_list
         - if @Postfieldbyapp.present?
           %table{class: "add_col_post_list"}
@@ -16,16 +16,16 @@
                     %img.image{height: "30px", src: "assets/edit_pencil.png", width: "30px" ,style: "visibility:hidden;margin:5px"}/
                   %td{width:"5%"}
                     %input{name: "id", type: "hidden", value: field["id"], style: "visibility:hidden;"}/
-                  %td{width:"5%"}
+                  %td{width:"5%", style:'padding:0px;'}
                     -#%input{type: "submit", value: "√", style: "visibility:hidden;"}/
                     %img.image{height: "30px", src: "assets/webtick.png", width: "30px",style: "visibility: hidden;"}/
-                  %td{width:"5%"}
+                  %td{width:"5%", style:'padding:0px;'}
                     -#%input{type: "submit", value: "X", style: "visibility:hidden;"}/
                     %img.image{height: "30px", src: "assets/webcross.png", width: "30px",style: "visibility: hidden;"}/
                   %td{width:"60%"}
                     %input{name: "is_edit_btn_clicked", type: "hidden", value: 0}/
   %tr
-    %td
+    %td{style:'padding: 0px;'}
       #create_additional_column_container_post{style: "background: #FDAF37;"}
         %table{width:'100%'}
           = form_for :AppAdditionalColumn, url: { controller: "hiveapplication", action: "edit_column", method: "post"}, :html=> {:id => 'add_new_column_form_post'}, remote:true do |f|
@@ -42,12 +42,12 @@
               %td{width:"5%"}
                 -#= f.hidden_field :table_name, value: "Post"
                 %input{name: "table_name", type: "hidden", value: "Post"}/
-              %td{width:"5%"}
+              %td{width:"5%", style:'padding:0px;'}
                 -#= f.submit "√"
                 -#%input.imgClass{type: "submit", value: ""}/
                 #btn_post_add_field_create_container
                   %img.image{height: "30px", src: "assets/webtick.png", width: "30px"}/
-              %td{width:"5%"}
+              %td{width:"5%", style:'padding:0px;'}
                 -#= f.submit "X"
                 #btn_post_cancel_field_create_container
                   %img.image{height: "30px", src: "assets/webcross.png", width: "30px"}/

@@ -16,43 +16,41 @@ class Api::DownloaddataController < ApplicationController
 
         elsif hiveApplication.app_name == "roundtrip"
 
-          favr_info = []
-          meal_info = []
+          render json: { topics: JSON.parse(topics.to_json())}
 
-          user = User.find(params[:user_id])
-          useracccounts = UserAccount.where(user_id: user.id)
-          if useracccounts.count > 0
-
-            useracccounts.each do |acc|
-              if acc.account_type == 'favr'
-                #give user points and honors
-
-                #api/topic/favr_topics_by_user
-
-
-                #app = HiveApplication.where(app_name: 'Favr')
-                #favr_topic = Place.nearest_topics_within(params[:latitude], params[:longitude], radius, app.id)
-                #favr_topic = favr_topic.where(user_id: user.id)
-                #
-                #favr_topic.each do |topic|
-                #  favr_info.push(topic) if topic.topic_type == Topic::FAVR && topic.state != Topic::ACKNOWLEDGED && topic.state != Topic::EXPIRED && topic.state != Topic::REVOKED
-                #end
-
-              elsif acc.account_type == 'mealbox'
-                # give user fav meal list
-
-
-              elsif acc.account_type == 'socal'
-                # give the event list respect to user
-
-              end
-            end
-
-          end
-
-
-          render json: { topics: JSON.parse(topics.to_json(content: true)), favr_info: favr_info , socal_info: '' , mealbox_info: ''}
-
+          #favr_info = []
+          #meal_info = []
+          #
+          #user = User.find(params[:user_id])
+          #useracccounts = UserAccount.where(user_id: user.id)
+          #if useracccounts.count > 0
+          #
+          #  useracccounts.each do |acc|
+          #    if acc.account_type == 'favr'
+          #      #give user points and honors
+          #
+          #      #api/topic/favr_topics_by_user
+          #
+          #
+          #      #app = HiveApplication.where(app_name: 'Favr')
+          #      #favr_topic = Place.nearest_topics_within(params[:latitude], params[:longitude], radius, app.id)
+          #      #favr_topic = favr_topic.where(user_id: user.id)
+          #      #
+          #      #favr_topic.each do |topic|
+          #      #  favr_info.push(topic) if topic.topic_type == Topic::FAVR && topic.state != Topic::ACKNOWLEDGED && topic.state != Topic::EXPIRED && topic.state != Topic::REVOKED
+          #      #end
+          #
+          #    elsif acc.account_type == 'mealbox'
+          #      # give user fav meal list
+          #
+          #
+          #    elsif acc.account_type == 'socal'
+          #      # give the event list respect to user
+          #
+          #    end
+          #  end
+          #
+          #end
 
         elsif hiveApplication.devuser_id==1 and hiveApplication.id!=1 and params[:choice].nil? #All Applications under Herenow account except Hive
           p "All Applications under Herenow account except Hive"

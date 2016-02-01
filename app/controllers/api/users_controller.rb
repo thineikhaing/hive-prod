@@ -824,6 +824,32 @@ class Api::UsersController < ApplicationController
 
   end
 
+
+  def save_user_fav_location
+    place_id = nil
+    #check the place_id presents
+    if params[:place_id]
+      place_id = params[:place_id].to_i
+    else
+      #create place first if the place_id is null
+      place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
+      place_id = place.id
+
+    end
+
+    userfav = UserFavLocation.create(user_id: current_user.id, place_id: place_id, place_type: params[:type])
+
+    if userfav.present?
+      @fav_locations = UserFavLocation.where(user_id: current_user.id)
+
+      render json:{ userfavlocation: @fav_locations, status: 'user fav location successfully added.'}
+    else
+      render json:{status: 'cannot add location!'}
+    end
+
+
+  end
+
   private
 
   def user_params

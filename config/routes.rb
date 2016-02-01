@@ -135,6 +135,7 @@ Rails.application.routes.draw do
     match "users/create_incident_history"           => "users#create_incident_history"          , via: [:get, :post]
     match "users/check_hive_user"                   => "users#check_hive_user"                  , via: [:get, :post]
     match "users/get_user_avatar"                   => "users#get_user_avatar"                  , via: [:get, :post]
+    match "users/save_user_fav_location"            => "users#save_user_fav_location"           , via: [:get, :post]
 
 
     match "topics/create"                           => "topics#create"                          , via: [:get, :post]

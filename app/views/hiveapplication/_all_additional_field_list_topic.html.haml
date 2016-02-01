@@ -1,8 +1,10 @@
+-#=c_name = @Topicfieldbyapp.first
+-#=c_name
 %table
-  %tr
-    %td
-      #topic_fields_list
-        - if @Topicfieldbyapp.present?
+  - if @Topicfieldbyapp.present?
+    %tr
+      %td{style:'padding: 0px;'}
+        #topic_fields_list
           %table{class: "add_col_topic_list"}
             - @Topicfieldbyapp.each do |field|
               - if field["status"] != 3
@@ -16,16 +18,16 @@
                     %img.image{height: "30px", src: "assets/edit_pencil.png", width: "30px" ,style: "visibility:hidden;margin:5px"}/
                   %td{width:"5%"}
                     %input{name: "id", type: "hidden", value: field["id"], style: "visibility:hidden;"}/
-                  %td{width:"5%"}
+                  %td{width:"5%", style:'padding:0px;'}
                     -#%input{type: "submit", value: "√", style: "visibility:hidden;"}/
                     %img.image{height: "30px", src: "assets/webtick.png", width: "30px",style: "visibility: hidden;"}/
-                  %td{width:"5%"}
+                  %td{width:"5%", style:'padding:0px;'}
                     -#%input{type: "submit", value: "X", style: "visibility:hidden;"}/
                     %img.image{height: "30px", src: "assets/webcross.png", width: "30px",style: "visibility: hidden;"}/
                   %td{width:"60%"}
                     %input{name: "is_edit_btn_clicked", type: "hidden", value: 0}/
   %tr
-    %td
+    %td{style:'padding: 0px;'}
       #create_additional_column_container_topic{style: "background: #FDAF37;"}
         %table{width:'100%'}
           -#= form_for :AppAdditionalColumn, url: { controller: "hiveapplication", action: "edit_column", method: "post"}, :html=> {:id => 'add_new_column_form'}, remote:true do |f|
@@ -42,12 +44,12 @@
             %td{width:"5%"}
               -#= f.hidden_field :table_name, value: "Topic"
               %input{name: "table_name", type: "hidden", value: "Topic"}/
-            %td{width:"5%"}
+            %td{width:"5%", style:'padding:0px;'}
               -#= f.submit "√"
               -#%input.imgClass{type: "submit", value: ""}/
               #btn_topic_add_field_create_container
                 %img.image{height: "30px", src: "assets/webtick.png", width: "30px"}/
-            %td{width:"5%"}
+            %td{width:"5%", style:'padding:0px;'}
               -#= f.submit "X"
               #btn_topic_cancel_field_create_container
                 %img.image{height: "30px", src: "assets/webcross.png", width: "30px"}/
