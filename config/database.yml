@@ -19,8 +19,8 @@ default: &default
   encoding: unicode
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: 5
-
+  pool: <%= ENV["DB_POOL"] || ENV['MAX_THREADS'] || 5 %>
+#
 development:
   <<: *default
   database: hive_development
@@ -89,6 +89,18 @@ test:
 #
 production:
   <<: *default
-  database: hive_production
-  username: raydius
+  url:  <%= ENV["DATABASE_URL"] %>
   password: <%= ENV['HIVE_DATABASE_PASSWORD'] %>
+
+
+staging:
+  <<: *default
+  url:  <%= ENV["DATABASE_URL"] %>
+  password: <%= ENV['HIVE_DATABASE_PASSWORD'] %>
+#staging:
+#  <<: *default
+#  database: hive_production
+#  username: raydius
+#
+#  password: <%= ENV['HIVE_DATABASE_PASSWORD'] %>
+
