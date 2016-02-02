@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :sg_accident_histories
   resources :privacy_policies
   resources :user_fav_locations
   resources :lookups
@@ -113,6 +114,8 @@ Rails.application.routes.draw do
     match "downloaddata/posts_retrieve_for_user"    => "downloaddata#posts_retrieve_for_user"   , via: [:get, :post]
 
     match "downloaddata/retrieve_carmic_user"       => "downloaddata#retrieve_carmic_user"      , via: [:get, :post]
+
+    match "downloaddata/incident_and_breakdown" => "downloaddata#incident_and_breakdown"   , via: [:get, :post]
 
     match "users/create_anonymous_user"             => "users#create_anonymous_user"            , via: [:get, :post]
     match "users/sign_up"                           => "users#sign_up"                          , via: [:get, :post]

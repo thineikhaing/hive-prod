@@ -19,12 +19,16 @@ scheduler.cron '05 00 * * *' do
   end
 end
 
-#scheduler.every '3s' do
+scheduler.every 2.minutes do
 
-#end
+  p "check accident!"
+  SgAccidentHistory.get_incident_and_breakdown
+
+end
+
 
 
 #scheduler.every '2s' do
 #  puts 'check blood pressure'
 #end
-#
+

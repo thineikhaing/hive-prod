@@ -30,6 +30,7 @@ class Topic < ActiveRecord::Base
   enums %w(CREATE START FINISH ACKNOWLEDGE REJECT REVOKE REOPEN EXTEND REMINDER_TIMEUP TASK_TIMEUP FAVR_TIMEUP )
   enums %w(NO YES)
 
+
   paginates_per 5
 
   #attr_accessible :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :data, :created_at,

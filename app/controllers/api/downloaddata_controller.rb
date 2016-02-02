@@ -429,5 +429,164 @@ class Api::DownloaddataController < ApplicationController
     render json: { marker: @hash}
   end
 
+  def incident_and_breakdown
+    full_path = 'http://datamall.mytransport.sg/ltaodataservice.svc/IncidentSet'
+    url = URI.parse(full_path)
+    req = Net::HTTP::Get.new(url.path, initheader = {"accept" =>"application/json", "AccountKey"=>"4G40nh9gmUGe8L2GTNWbgg==", "UniqueUserID"=>"d52627a6-4bde-4fa1-bd48-c6270b02ffc0"})
+
+
+    con = Net::HTTP.new(url.host, url.port)
+    #con.use_ssl = true
+
+    r = con.start {|http| http.request(req)}
+
+    p "get incident list"
+
+
+    @request_payload = JSON.parse r.body
+
+
+    @accident = []
+    @roadwork = []
+    @vehiclebreakdown = []
+    @weather = []
+    @obstacle = []
+    @roadblock = []
+    @heavytraffic = []
+    @misc = []
+    @diversion = []
+    @unattendedvehicle = []
+
+    #
+    #p "incident count"
+    #p @request_payload["d"].count
+    #p "++++++++++"
+
+    @request_payload["d"].each do |data|
+
+      if data["Type"] == "Accident"
+        @accident.push(data)
+
+      elsif data["Type"] == "Road Work"
+        @roadwork.push(data)
+
+      elsif data["Type"] == "Vehicle Breakdown"
+        @vehiclebreakdown.push(data)
+
+      elsif data["Type"] == "Weather"
+        @weather.push(data)
+
+      elsif data["Type"] == "Obstacle"
+        @obstacle.push(data)
+
+      elsif data["Type"] == "Road Block"
+        @roadwork.push(data)
+
+      elsif data["Type"] == "Heavy Traffic"
+        @heavytraffic.push(data)
+
+      elsif data["Type"] == "Misc."
+        @misc.push(data)
+
+      elsif data["Type"] == "Diversion"
+        @diversion.push(data)
+
+      elsif data["Type"] == "Unattended Vehicle"
+        @unattendedvehicle.push(data)
+
+      end
+
+    end
+
+    #p "***************"
+    #p "Accident"
+    #p @accident
+    #p @accident.count
+    #p "------------------"
+    #p "Road Work"
+    #p @roadwork
+    #p @roadwork.count
+    #p "------------------"
+    #p "Vehicle Breakdown"
+    #p @vehiclebreakdown
+    #p @vehiclebreakdown.count
+    #p "------------------"
+    #p "Weather"
+    #p @weather
+    #p @weather.count
+    #p "------------------"
+    #p "Obstacle"
+    #p @obstacle
+    #p @obstacle.count
+    #p "------------------"
+    #p "Road Block"
+    #p @roadblock
+    #p @roadblock.count
+    #p "------------------"
+    #p "Heavy Traffic"
+    #p @heavytraffic
+    #p @heavytraffic.count
+    #p "Misc"
+    #p @misc
+    #p @misc.count
+    #p "------------------"
+    #p "Diversion"
+    #p @diversion
+    #p @diversion.count
+    #p "------------------"
+    #p "Unattended Vehicle"
+    #p @unattendedvehicle
+    #p @unattendedvehicle.count
+    #p "------------------"
+
+    @request_payload["d"].each do |data|
+      p type = data["Type"]
+      if type == "Accident" || type == "Vehicle Breakdown"  || type == "Weather" || type == "Heavy Traffic"
+
+        if type == "Vehicle Breakdown"
+          type = "VehicleBreakdown"
+        elsif type == "Heavy Traffic"
+          type = "HeavyTraffic"
+        end
+
+        message  = data["Message"]  # "(2/2)11:24 Vehicle breakdown on KJE (towards BKE) before Sungei Tengah Exit."
+        inc_datetime= message.match(" ").pre_match #(2/2)11:24
+        message= message.match(" ").post_match
+        inc_date = inc_datetime.scan(/\(([^\)]+)\)/).last.first   # "2/2"
+        current_year =  Time.now.strftime("%Y")
+        inc_date = inc_date+"/"+current_year
+        accidentDate = Date.parse(inc_date).strftime("%d %B %Y")
+        inc_time =  inc_datetime.gsub(/\(.*\)/, "")
+        accidentDateTIme = DateTime.parse(inc_time).strftime("%H:%M:%S %d-%B-%Y")
+
+        p "----------------------"
+        p type
+        p message
+        p accidentDate
+        p accidentDateTIme
+        p latitude = data["Latitude"]
+        p longitude=data["Longitude"]
+        p summary=data["Summary"]
+        p "**********"
+
+        sg_accident = SgAccidentHistory.where(message: message).take
+
+        if sg_accident.nil?
+          p "add new record"
+          SgAccidentHistory.create(type:type,message: message, accident_datetime: accidentDateTIme, latitude:latitude, longitude:longitude, summary:summary )
+
+
+        end
+
+
+      end
+
+
+    end
+
+    render json: { data: @request_payload}
+
+  end
+
 
 end

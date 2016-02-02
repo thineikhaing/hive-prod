@@ -1,0 +1,37 @@
+%h2 SG Transport Accident Records
+
+%br
+%table
+  %thead
+    %tr
+      %th Type
+      %th Message
+      %th Accident datetime
+      %th Latitude
+      %th Longitude
+      -#%th Summary
+      %th Notify
+      %th
+      %th
+      %th
+
+  %tbody
+    - @sg_accident_histories.each do |sg_accident_history|
+      %tr
+        %td= sg_accident_history.type
+        %td= sg_accident_history.message
+        %td
+          = sg_accident_history.accident_datetime.strftime("%I:%M:%S %p")
+          %br
+          = sg_accident_history.accident_datetime.strftime("%d-%b-%Y")
+        %td= sg_accident_history.latitude
+        %td= sg_accident_history.longitude
+        -#%td= sg_accident_history.summary
+        %td= sg_accident_history.notify
+        -#%td= link_to 'Show', sg_accident_history
+        -#%td= link_to 'Edit', edit_sg_accident_history_path(sg_accident_history)
+        -#%td= link_to 'Destroy', sg_accident_history, :method => :delete, :data => { :confirm => 'Are you sure?' }
+
+%br
+
+-#= link_to 'New Sg accident history', new_sg_accident_history_path

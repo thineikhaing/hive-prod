@@ -1,0 +1,27 @@
+%p#notice= notice
+
+%p
+  %b Type:
+  = @sg_accident_history.type
+%p
+  %b Message:
+  = @sg_accident_history.message
+%p
+  %b Accident datetime:
+  = @sg_accident_history.accident_datetime
+%p
+  %b Latitude:
+  = @sg_accident_history.latitude
+%p
+  %b Longitude:
+  = @sg_accident_history.longitude
+%p
+  %b Summary:
+  = @sg_accident_history.summary
+%p
+  %b Notify:
+  = @sg_accident_history.notify
+
+= link_to 'Edit', edit_sg_accident_history_path(@sg_accident_history)
+\|
+= link_to 'Back', sg_accident_histories_path

@@ -1,0 +1,3 @@
+class HeavyTraffic < SgAccidentHistory
+
+end

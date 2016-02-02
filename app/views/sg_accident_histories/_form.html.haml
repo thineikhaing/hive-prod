@@ -1,0 +1,31 @@
+= form_for @sg_accident_history do |f|
+  - if @sg_accident_history.errors.any?
+    #error_explanation
+      %h2= "#{pluralize(@sg_accident_history.errors.count, "error")} prohibited this sg_accident_history from being saved:"
+      %ul
+        - @sg_accident_history.errors.full_messages.each do |msg|
+          %li= msg
+
+  .field
+    = f.label :type
+    = f.text_field :type
+  .field
+    = f.label :message
+    = f.text_field :message
+  .field
+    = f.label :accident_datetime
+    = f.datetime_select :accident_datetime
+  .field
+    = f.label :latitude
+    = f.text_field :latitude
+  .field
+    = f.label :longitude
+    = f.text_field :longitude
+  .field
+    = f.label :summary
+    = f.text_area :summary
+  .field
+    = f.label :notify
+    = f.check_box :notify
+  .actions
+    = f.submit 'Save'

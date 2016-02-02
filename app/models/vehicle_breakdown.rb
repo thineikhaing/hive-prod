@@ -1,0 +1,3 @@
+class VehicleBreakdown < SgAccidentHistory
+
+end
