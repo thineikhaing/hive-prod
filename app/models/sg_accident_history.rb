@@ -60,7 +60,7 @@ class SgAccidentHistory < ActiveRecord::Base
 
     accident = Accident.where(notify: false).take
     if accident.present?
-      users_to_push = get_active_users_to_push(accident.latitude, accident.longitude, 100)
+      users_to_push = get_active_users_to_push(accident.latitude, accident.longitude, 50)
 
       to_device_id = []
 
@@ -73,10 +73,8 @@ class SgAccidentHistory < ActiveRecord::Base
         end
       end
 
-
       p "device_id"
       p to_device_id
-
 
       notification_options = {
           send_date: "now",
@@ -116,7 +114,7 @@ class SgAccidentHistory < ActiveRecord::Base
 
     vehicleBreakdown = VehicleBreakdown.where(notify: false).take
     if vehicleBreakdown.present?
-      users_to_push = get_active_users_to_push(vehicleBreakdown.latitude, vehicleBreakdown.longitude, 100)
+      users_to_push = get_active_users_to_push(vehicleBreakdown.latitude, vehicleBreakdown.longitude, 50)
 
       to_device_id = []
 
@@ -172,8 +170,8 @@ class SgAccidentHistory < ActiveRecord::Base
 
 
     weather = Weather.where(notify: false).take
-    if vehicleBreakdown.present?
-      users_to_push = get_active_users_to_push(weather.latitude, weather.longitude, 100)
+    if weather.present?
+      users_to_push = get_active_users_to_push(weather.latitude, weather.longitude, 50)
 
       to_device_id = []
 
@@ -225,8 +223,8 @@ class SgAccidentHistory < ActiveRecord::Base
     end
 
     heavyTraffic = HeavyTraffic.where(notify: false).take
-    if vehicleBreakdown.present?
-      users_to_push = get_active_users_to_push(heavyTraffic.latitude, heavyTraffic.longitude, 100)
+    if heavyTraffic.present?
+      users_to_push = get_active_users_to_push(heavyTraffic.latitude, heavyTraffic.longitude, 50)
 
       to_device_id = []
 
