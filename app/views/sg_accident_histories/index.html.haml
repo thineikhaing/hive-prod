@@ -4,6 +4,7 @@
 %table
   %thead
     %tr
+      %th #
       %th Type
       %th Message
       %th Accident datetime
@@ -18,10 +19,11 @@
   %tbody
     - @sg_accident_histories.each do |sg_accident_history|
       %tr
+        %td= sg_accident_history.id
         %td= sg_accident_history.type
         %td= sg_accident_history.message
         %td
-          = sg_accident_history.accident_datetime.strftime("%I:%M:%S %p")
+          = sg_accident_history.accident_datetime.strftime("%I:%M %p")
           %br
           = sg_accident_history.accident_datetime.strftime("%d-%b-%Y")
         %td= sg_accident_history.latitude
@@ -33,5 +35,5 @@
         -#%td= link_to 'Destroy', sg_accident_history, :method => :delete, :data => { :confirm => 'Are you sure?' }
 
 %br
-
+= paginate @sg_accident_histories
 -#= link_to 'New Sg accident history', new_sg_accident_history_path

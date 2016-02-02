@@ -4,7 +4,7 @@ class SgAccidentHistoriesController < ApplicationController
   # GET /sg_accident_histories
   # GET /sg_accident_histories.json
   def index
-    @sg_accident_histories = SgAccidentHistory.all.order(:type)
+    @sg_accident_histories = SgAccidentHistory.all.order("accident_datetime desc").page params[:page]
   end
 
   # GET /sg_accident_histories/1
