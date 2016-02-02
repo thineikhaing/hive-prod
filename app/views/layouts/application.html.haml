@@ -33,9 +33,20 @@
 
       %main{role: "main"}
         = render 'layouts/messages'
+        -if current_user.role == 1
+          .row
+            .large-12.columns
+              %div{"data-magellan-expedition" => "fixed"}
+                %dl.sub-nav
+                  %dd
+                    =link_to "Home", hiveapplication_dev_portal_path
 
-        .row
-          .large-12.columns
+                  %dd
+                    =link_to "SG Transport Accident", sg_accident_histories_path
+                  %dd
+                    =link_to "Car ActionLogs", car_action_logs_path
+                  %dd
+                    =link_to "User list", hiveapplication_users_path
             = yield
       -##map_content
 -#
