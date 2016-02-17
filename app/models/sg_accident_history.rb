@@ -14,12 +14,13 @@ class SgAccidentHistory < ActiveRecord::Base
     @request_payload = JSON.parse r.body
     @request_payload["d"].each do |data|
       type = data["Type"]
-      if type == "Accident" || type == "Vehicle Breakdown"  || type == "Weather" || type == "Heavy Traffic"
+      if type == "Accident" || type == "Weather" || type == "Heavy Traffic"
 
         if type == "Vehicle Breakdown"
           type = "VehicleBreakdown"
         elsif type == "Heavy Traffic"
-          type = "HeavyTraffic"
+          string = "HeavyTraffic"
+          type = string
         end
 
         message  = data["Message"]  # "(2/2)11:24 Vehicle breakdown on KJE (towards BKE) before Sungei Tengah Exit."
@@ -275,7 +276,6 @@ class SgAccidentHistory < ActiveRecord::Base
     #  heavyTraffic.save
     #
     #end
-
 
   end
 
