@@ -84,7 +84,7 @@ class Api::DownloaddataController < ApplicationController
 
 
   def retrieve_hiveapplications
-    render json: {apps: JSON.parse(HiveApplication.all.to_json(:test => "true")) }
+    render json: {apps: JSON.parse(HiveApplication.all.to_json(:test => "true"))}
   end
 
   def retrieve_topics_by_app_key
@@ -126,7 +126,7 @@ class Api::DownloaddataController < ApplicationController
 
     tag.each do |t|
       topicwithtag = TopicWithTag.where(tag_id: t.id)
-      topicwithtag.map { |twt| topic_array.push(twt.topic_id) unless topic_array.include?(twt.topic_id) }
+      topicwithtag.map { |twt| topic_array.push(twt.topic_id) unless topic_array.include?(twt.topic_id)}
     end
 
     place.map { |pl| place_array.push(pl.id) unless place_array.include?(pl.id) }
@@ -190,7 +190,7 @@ class Api::DownloaddataController < ApplicationController
 
       render json: { users: userInfo }
     else
-      render json: { error_msg: "Params user id(s) must be presented" } , status: 400
+      render json: { error_msg: "Params user id(s) must be presented"}, status: 400
     end
   end
 
@@ -457,7 +457,6 @@ class Api::DownloaddataController < ApplicationController
     @diversion = []
     @unattendedvehicle = []
 
-    #
     #p "incident count"
     #p @request_payload["d"].count
     #p "++++++++++"
@@ -495,7 +494,6 @@ class Api::DownloaddataController < ApplicationController
         @unattendedvehicle.push(data)
 
       end
-
     end
 
     #p "***************"
