@@ -180,7 +180,13 @@ class Api::UsersController < ApplicationController
     activeUsersArray = [ ]
     p params
     if current_user.present? && params[:latitude].present? && params[:longitude].present?
-      current_user.update_attributes(last_known_latitude: params[:latitude], last_known_longitude: params[:longitude])
+
+      # current_user.update_attributes(last_known_latitude: params[:latitude], last_known_longitude: params[:longitude])
+
+      current_user.last_known_latitude = params[:latitude]
+      current_user.last_known_longitude= params[:longitude]
+      current_user.save
+
       user = User.find(current_user.id)
       user.check_in_time = Time.now
       user.save!

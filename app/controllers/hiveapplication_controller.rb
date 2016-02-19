@@ -532,7 +532,10 @@ class HiveapplicationController < ApplicationController
       # Check if the activation code is within 2 hours
       if @user.reset_password_sent_at < 2.hours.ago
         redirect_to carmic_path, :alert => "Password reset has expired."
-      elsif @user.update_attributes(params[:user])
+      elsif @user.update_attributes(params.require(:user).permit(:username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role,
+                                                                 :point, :flareMode, :alert_count, :paid_alert_count, :credits, :last_known_latitude, :last_known_longitude,
+                                                                 :check_in_time, :profanity_counter, :offence_date, :positive_honor, :negative_honor, :honored_times,
+                                                                 :created_at, :data, :device_id,:socal_id,:daily_points))
         redirect_to carmic_path, :notice => "Password has been reset!"
       else
         render :reset_password #err in saving password, show on reset_password page
@@ -543,7 +546,9 @@ class HiveapplicationController < ApplicationController
       # Check if the activation code is within 2 hours
       if @devuser.reset_password_sent_at < 2.hours.ago
         redirect_to hiveapplication_forget_password_path, :alert => "Password reset has expired."
-      elsif @devuser.update_attributes(params[:devuser])
+
+      elsif @devuser.update_attributes(params.require(:devuser).permit(:username, :email, :password, :password_confirmation, :verified, :email_verification_code, :hiveapplication_id, :data))
+
         redirect_to hiveapplication_index_path, :notice => "Password has been reset!"
       else
         render :reset_password #err in saving password, show on reset_password page
@@ -840,4 +845,9 @@ class HiveapplicationController < ApplicationController
     end
     redirect_to hiveapplication_edit_topic_post_path(:app_id => session[:app_id])
   end
+end
+
+private
+def devuser
+  params.require(:devuser).permit(:username, :email, :password, :password_confirmation, :verified, :email_verification_code, :hiveapplication_id, :data)
 end

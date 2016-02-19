@@ -49,6 +49,7 @@ class Api::TopicsController < ApplicationController
               result = defined_Fields
             end
           end
+
           result = nil unless result.present?
           params[:likes].present? ? likes = params[:likes].to_i : likes = 0
           params[:dislikes].present? ? dislikes = params[:dislikes].to_i : dislikes = 0
@@ -286,7 +287,15 @@ class Api::TopicsController < ApplicationController
           history.save
 
         end
-        topic.update_attributes(radius: params[:radius]) if params[:radius].present? and params[:beacon].present?
+
+        @devuser.update_attributes(params.require(:devuser).permit(:username, :email, :password, :password_confirmation, :verified, :email_verification_code, :hiveapplication_id, :data))
+
+        # topic.update_attributes(radius: params[:radius])
+        if params[:radius].present? and params[:beacon].present?
+          topic.radius = params[:radius]
+          topic.save
+        end
+
         topic.flare if params[:flare].present?
 
        # HISTORY.create_record("topic" , topic.id , "create" , nil )
@@ -568,7 +577,15 @@ class Api::TopicsController < ApplicationController
         data["ingredients"] = data["ingredients"].present? ? data["ingredients"] : topic.data["ingredients"]
         data["advantages"] = data["advantages"].present? ? data["advantages"] : topic.data["advantages"]
         data["weather"] = data["weather"].present? ? data["weather"] : topic.data["weather"]
-        topic.update_attributes(:title => params["title"], :image_url => params["image_url"].present? ? params["image_url"] : topic.image_url, :data => data)
+
+        # topic.update_attributes(:title => params["title"], :image_url => params["image_url"].present? ? params["image_url"] : topic.image_url, :data => data)
+
+        topic.title = params["title"]
+        topic.image_url = params["image_url"] if params["image_url"].present?
+        topic.data = data
+        topic.save
+
+
         render json: { topic: JSON.parse(topic.to_json(content: true))}
       end
     else

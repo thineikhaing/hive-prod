@@ -15,6 +15,10 @@ class HiveApplication < ActiveRecord::Base
 
   mount_uploader :icon_url, ApplicationiconUploader
 
+  # HiveApplication.register Devuser do
+  #   permit_params :username, :email, :password, :password_confirmation, :verified, :email_verification_code, :hiveapplication_id, :data
+  # end
+
   #attr_accessible :app_name, :app_type, :description, :api_key, :icon_url ,:theme_color, :devuser_id, :created_at
   validates :app_name, :length => { :maximum => 32 }
   validates :description, :length => { :maximum => 255 }
