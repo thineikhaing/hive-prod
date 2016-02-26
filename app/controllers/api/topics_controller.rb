@@ -287,8 +287,13 @@ class Api::TopicsController < ApplicationController
           history.save
 
         end
+        p "current user"
 
-        @devuser.update_attributes(params.require(:devuser).permit(:username, :email, :password, :password_confirmation, :verified, :email_verification_code, :hiveapplication_id, :data))
+        p current_user
+        p "dev user ::::"
+        p @devuser
+
+        # @devuser.update_attributes(params.require(:devuser).permit(:username, :email, :password, :password_confirmation, :verified, :email_verification_code, :hiveapplication_id, :data))
 
         # topic.update_attributes(radius: params[:radius])
         if params[:radius].present? and params[:beacon].present?

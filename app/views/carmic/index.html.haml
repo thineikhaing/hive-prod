@@ -198,7 +198,9 @@
             %input{type:'hidden', value:"#{@activeUsersArray.count rescue '0'}", id:'hid_ucount'}
             %input{type:'hidden', value:"#{@incidents.count rescue '0'}", id:'hid_inc_count'}
             %ul{:id => "nav"}
-              - if @topics_list.present?
+              -#=@topics_list.count
+              =@topics_list
+              - if !@topics_list.nil?
                 -#-@topics_list = @topics_list.first(5)
                 - @topics_list.each do |sTopic|
                   -string =   @topic_avatar_url[sTopic.id].to_s

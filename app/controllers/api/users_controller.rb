@@ -843,14 +843,19 @@ class Api::UsersController < ApplicationController
 
     end
 
-    userfav = UserFavLocation.create(user_id: current_user.id, place_id: place_id, place_type: params[:type])
+    user = User.find_by_authentication_token (params[:auth_token]) if params[:auth_token].present?
 
-    if userfav.present?
+    userfav = UserFavLocation.where(user_id: user.id , place_id: place_id)
+
+    if userfav.count == 0
+
+      UserFavLocation.create(user_id: current_user.id, place_id: place_id, place_type: params[:type])
+
       @fav_locations = UserFavLocation.where(user_id: current_user.id)
-
       render json:{ userfavlocation: @fav_locations, status: 'user fav location successfully added.'}
+
     else
-      render json:{status: 'cannot add location!'}
+      render json:{status: 'location already exit!'}
     end
 
 

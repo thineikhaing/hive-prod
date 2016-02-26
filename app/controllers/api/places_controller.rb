@@ -361,6 +361,7 @@ class Api::PlacesController < ApplicationController
     if params[:locality].present? and params[:keyword].present?
       factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
       query = factual.table("global").filters("locality" => params[:locality]).search(params[:keyword])
+      # query = factual.table("global").filters({'region':params[:locality]}).search(params[:keyword])
 
       render json: query
     else

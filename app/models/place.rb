@@ -73,9 +73,12 @@ class Place < ActiveRecord::Base
         return { place: place, status: 70 }
       elsif source_id.present?
         factual_result = factual.table("places").filters("factual_id" => source_id.to_s).first
-
+        p factual_result
         if factual_result["category_labels"].present?
-          factual_result["category_labels"].each do |fr|
+          p factual_result["category_labels"]
+
+          category_labels = factual_result["category_labels"]
+          category_labels.each do |fr|
             if choice== "luncheon"
               #fr.each do |frtype|
               #  if frtype == "Food and Dining"
@@ -87,7 +90,7 @@ class Place < ActiveRecord::Base
               if category.nil?
                 category = ""
               end
-              category.present? ? category << "," << fr : category << fr.first.to_s
+              category.present? ? category << "," << fr.to_s : category << fr.first.to_s
             end
           end
         end
