@@ -851,7 +851,7 @@ class Api::UsersController < ApplicationController
 
       if userfav.count == 0
 
-        UserFavLocation.create(user_id: current_user.id, place_id: place_id, place_type: params[:type])
+        UserFavLocation.create(user_id: current_user.id, place_id: place_id, place_type: params[:place_type])
 
         @fav_locations = UserFavLocation.where(user_id: current_user.id)
         render json:{ userfavlocation: @fav_locations, status: 'user fav location successfully added.'}
