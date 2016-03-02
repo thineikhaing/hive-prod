@@ -406,7 +406,7 @@ class Api::UsersController < ApplicationController
         else
           account = UserAccount.new
           new_account = UserAccount.create(user_id: user.id,account_type: "facebook", priority: 0, linked_account_id: params[:fb_id])
-          render json: { :user => user,  :fb_exists => true,:user_accounts => user_accounts, :success => 40 }, status: 200
+          render json: { :user => user,  :fb_exists => true,:user_accounts => new_account, :success => 40 }, status: 200
         end
       else
         render json:{ error_msg: "Invalid user id/ authentication token"}, status: 400
