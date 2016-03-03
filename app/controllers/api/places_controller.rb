@@ -67,38 +67,7 @@ class Api::PlacesController < ApplicationController
     end
   end
 
-  def retrieve_places
-    data_array = [ ]
-    factual_data_array = [ ]
 
-    if params[:latitude].present? and params[:longitude].present? and params[:radius].present?
-      places = Place.nearest(params[:latitude], params[:longitude], params[:radius])
-
-      places.each do |pl|
-        data_array.push(pl)
-      end
-
-      factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
-      query = factual.table("global").geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius].to_f*1000})
-
-      query.each do |q|
-        data = { name: q["name"], latitude: q["latitude"], longitude: q["longitude"], address: q["address"], source: 3, user_id: nil, username: nil, source_id: q["factual_id"] }
-        factual_data_array.push(data)
-      end
-
-      data_array.each do |da|
-        factual_data_array.each do |fda|
-          factual_data_array.delete(fda) if da[:name] == fda[:name]
-        end
-      end
-
-      data_array = data_array + factual_data_array
-
-      render json: { places: data_array}
-    else
-      render json: { error_msg: "Params latitude, longitude and radius must be presented" }, status: 400
-    end
-  end
 
   def user_recent_places
     if current_user.present?
@@ -367,6 +336,43 @@ class Api::PlacesController < ApplicationController
     else
       render json: { status: false }
     end
+  end
+
+  def retrieve_places
+
+    data_array = [ ]
+    factual_data_array = [ ]
+
+    if params[:latitude].present? and params[:longitude].present? and params[:radius].present?
+      places = Place.nearest(params[:latitude], params[:longitude], params[:radius])
+
+      places.each do |pl|
+        data_array.push(pl)
+      end
+
+      factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+     p query = factual.table("global").geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius].to_f*1000})
+
+
+      query.each do |q|
+        data = { name: q["name"], latitude: q["latitude"], longitude: q["longitude"], address: q["address"], source: 3, user_id: nil, username: nil, source_id: q["factual_id"] }
+        factual_data_array.push(data)
+      end
+
+      data_array.each do |da|
+        factual_data_array.each do |fda|
+          factual_data_array.delete(fda) if da[:name] == fda[:name]
+        end
+      end
+
+      data_array = data_array + factual_data_array
+
+      render json: { places: data_array}
+    else
+      render json: { error_msg: "Params latitude, longitude and radius must be presented" }, status: 400
+    end
+
+
   end
 
   def getlatlngbyname

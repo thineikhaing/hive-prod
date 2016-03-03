@@ -149,6 +149,8 @@ Rails.application.routes.draw do
     match "topics/favr_action"                      => "topics#favr_action"                     , via: [:get, :post]
     match "topics/honor_to_owner"                   => "topics#honor_to_owner"                  , via: [:get, :post]
     match "topics/user_rating"                      => "topics#user_rating"                     , via: [:get, :post]
+    match "topics/topics_within_two_points"         => "topics#topics_within_two_points"    , via: [:get, :post]
+
 
     match "topics/topic_liked"                      => "topics#topic_liked"                     , via: [:get, :post]
     match "topics/topic_offensive"                  => "topics#topic_offensive"                 , via: [:get, :post]

@@ -36,6 +36,109 @@ class Place < ActiveRecord::Base
     topics_array
   end
 
+
+  # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)
+  def self.nearest_topics_within_start_and_end(s_latitude, s_longitude,e_latitude, e_longitude, radius, hive_id)
+
+    p "radius between two points"
+    p radius_between = Geocoder::Calculations.distance_between([s_latitude,s_longitude], [e_latitude,e_longitude], {units: :km})
+    radius_between = radius_between.round
+
+    radius = 1
+
+    if radius_between <= 0.5
+      radius = 0.5
+      p "counting from start point with radius 500m"
+
+    elsif radius_between.between?(0.5, 1)
+
+      radius = 1
+      p "counting from start point with radius 1km"
+
+    elsif radius_between.between?(1, 2)
+
+      radius =  radius_between
+      p "topic list distance between two points unit in km"
+
+    elsif radius_between > 2
+
+      radius = 1
+      p "topic list within 1km of each points"
+    end
+
+
+    if radius_between > 2
+
+      s_center_point = [s_latitude.to_f, s_longitude.to_f]
+      s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
+      s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
+
+      e_center_point = [e_latitude.to_f, e_longitude.to_f]
+      e_box = Geocoder::Calculations.bounding_box(e_center_point, radius, {units: :km})
+      e_places = Place.where(latitude: e_box[0] .. e_box[2], longitude: e_box[1] .. e_box[3])
+
+      topics_array = [ ]
+
+      s_places.each do |place|
+        if place.topics.present?
+          place.topics.each do |topic|
+            if hive_id==1
+              topics_array.push(topic)
+            else
+              if topic.hiveapplication_id == hive_id
+                topics_array.push(topic)
+              end
+            end
+
+          end
+        end
+      end
+
+      e_places.each do |place|
+        if place.topics.present?
+          place.topics.each do |topic|
+            if hive_id==1
+              topics_array.push(topic)
+            else
+              if topic.hiveapplication_id == hive_id
+                topics_array.push(topic)
+              end
+            end
+
+          end
+        end
+      end
+
+    else
+
+      s_center_point = [s_latitude.to_f, s_longitude.to_f]
+      s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
+      s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
+
+      topics_array = [ ]
+
+      s_places.each do |place|
+        if place.topics.present?
+          place.topics.each do |topic|
+            if hive_id==1
+              topics_array.push(topic)
+            else
+              if topic.hiveapplication_id == hive_id
+                topics_array.push(topic)
+              end
+            end
+
+          end
+        end
+      end
+
+    end
+
+
+
+    topics_array
+  end
+
   def add_record(name, latitude, longitude, address, source, source_id, place_id, user_id, auth_token, choice,img_url,category="",locality="",country="",postcode="")
     factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
     user = User.find(user_id)

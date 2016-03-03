@@ -533,13 +533,26 @@ class Api::TopicsController < ApplicationController
      end
   end
 
+  def topics_within_two_points
 
+    s_latitude = params[:s_latitude]
+    s_longitude = params[:s_longitude]
+
+    e_latitude = params[:e_latitude]
+    e_longitude = params[:e_longitude]
+
+    hive_app = HiveApplication.find_by_api_key(params[:app_key])
+
+     topics = Place.nearest_topics_within_start_and_end(s_latitude, s_longitude, e_latitude,e_longitude , nil, hive_app.id)
+
+     render json: {topics:topics, status: "nearest topics within start and end"}
+
+   end
   #private
   #def restrict_access
   #  hiveapplication = HiveApplication.find_by(api_key: params[:api_key])
   #  render json: {error_msg: "unauthorized access"} unless hiveapplication
   #end
-
 
 #for now juice app only used this following 2 api's
 
