@@ -543,11 +543,17 @@ class Api::TopicsController < ApplicationController
 
     hive_app = HiveApplication.find_by_api_key(params[:app_key])
 
+    if hive_app.present?
+
      topics = Place.nearest_topics_within_start_and_end(s_latitude, s_longitude, e_latitude,e_longitude , nil, hive_app.id)
 
      render json: {topics:topics, status: "nearest topics within start and end"}
+    else
+      render json: {status: "Params app_key must be presented"}
 
-   end
+    end
+  end
+
   #private
   #def restrict_access
   #  hiveapplication = HiveApplication.find_by(api_key: params[:api_key])
