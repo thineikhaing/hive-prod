@@ -77,6 +77,8 @@ gem 'rack-jsonp-middleware',
     :require => 'rack/jsonp'
 
 
+gem "hstore_accessor"
+
 group :development do
   gem 'rails_layout'
 end

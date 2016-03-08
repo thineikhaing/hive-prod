@@ -29,11 +29,18 @@ class Api::TopicsController < ApplicationController
 
         end
 
+        p "get data value"
         if current_user.present?
           data = getHashValuefromString(params[:data]) if params[:data].present?
+
+          p walk = getHashValuefromString(params[:walk]) if params[:walk].present?
+
+          p train = getHashValuefromString(params[:train]) if params[:train].present?
+
           #get all extra columns that define in app setting
           appAdditionalField = AppAdditionalField.where(:app_id => hiveapplication.id, :table_name => "Topic")
           if appAdditionalField.present?
+            p "defined field"
             defined_Fields = Hash.new
             appAdditionalField.each do |field|
               defined_Fields[field.additional_column_name] = nil
@@ -41,14 +48,43 @@ class Api::TopicsController < ApplicationController
             #get all extra columns that define in app setting against with the params data
             if data.present?
               data = defined_Fields.deep_merge(data)
+
               result = Hash.new
+
               defined_Fields.keys.each do |key|
-                result.merge!(data.extract! (key))
+
+                p result.merge!(data.extract! (key))
               end
+
             else
               result = defined_Fields
             end
+
+            if walk.present?
+
+              p "merge with walk"
+              p result["walk"]= walk
+
+              # to retrieve
+              # JSON.parse hash_as_string.gsub('=>', ':')
+            end
+
+            if train.present?
+
+              p "merge with train"
+              p result["train"]= train
+            end
+
+            if params[:depature_time].present?
+              result["depature_time"]= params[:depature_time]
+              result["arrival_time"]= params[:arrival_time]
+            end
+
+
           end
+
+          p "after merge all data"
+          p result
 
           result = nil unless result.present?
           params[:likes].present? ? likes = params[:likes].to_i : likes = 0

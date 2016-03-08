@@ -17,6 +17,18 @@ class Topic < ActiveRecord::Base
 
   # Setup hstore
   store_accessor :data
+
+
+  # hstore_accessor :options,
+  #                 color: :string,
+  #     weight: :integer,
+  #     price: :float,
+  #     built_at: :datetime,
+  #     build_date: :date,
+  #     tags: :array, # deprecated
+  #     ratings: :hash # deprecated
+  # miles: :decimal
+  #
   #enums for topic type
 
   enums %w(NORMAL IMAGE AUDIO VIDEO RPSGAME WEB POLL LUNCHEON FAVR CARMMUNICATE)
