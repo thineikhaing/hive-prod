@@ -17,10 +17,10 @@
             .parallelogram{style:'width: 55px;height: 55px;background:orange'}
               -#setting
             %br
-            .parallelogram{style: "width: 55px;height: 55px;position:relative;left: -36px;background: rgb(80,227,194)"}
+            .parallelogram{style: "width: 55px;height: 55px;position:relative;left: -36px;background: rgb(80,227,194);border: rgb(80,227,194)"}
 
           .columns.large-8
-            .parallelogram{style:'width: 270px;height: 270px;position: relative;left: -66px;'}
+            .parallelogram{style:'width: 270px;height: 270px;position: relative;left: -66px;', id: 'map_'+hive_application.id.to_s}
 
 
         .columns.large-6
@@ -41,13 +41,15 @@
           .columns.large-6
             .parallelogram{style:'width: 270px;height: 55px;border:none;'}
               %p{style:"text-indent:2em;"}
-                %span.status_count 2750
+                %span.status_count
+                  2750
               %p
                 %span.status_title alphabetical chihuahua
             %br
             .parallelogram{style:'width: 270px;height: 55px;margin-top: 48px;left: -60px;position: relative;border:none;'}
               %p{style:"text-indent:2em;"}
-                %span.status_count 30,0000
+                %span.status_count
+                  =Topic.where(hiveapplication_id: hive_application.id).count rescue '0'
               %p
                 %span.status_title bus 123 is late again, where ...
             %br
@@ -58,4 +60,81 @@
             6
 
 
+:javascript
+  var map = new ol.Map({
+    target: 'map_1',
+    layers: [
+      new ol.layer.Tile({
+        source: new ol.source.MapQuest({layer: 'sat'})
+      })
+    ],
+    view: new ol.View({
+      center: ol.proj.fromLonLat([37.41, 8.82]),
+      zoom: 4
+    })
+  });
 
+  var map = new ol.Map({
+    target: 'map_2',
+    layers: [
+      new ol.layer.Tile({
+        source: new ol.source.MapQuest({layer: 'sat'})
+      })
+    ],
+    view: new ol.View({
+      center: ol.proj.fromLonLat([37.41, 8.82]),
+      zoom: 4
+    })
+  });
+
+  var map = new ol.Map({
+    target: 'map_3',
+    layers: [
+      new ol.layer.Tile({
+        source: new ol.source.MapQuest({layer: 'sat'})
+      })
+    ],
+    view: new ol.View({
+      center: ol.proj.fromLonLat([37.41, 8.82]),
+      zoom: 4
+    })
+  });
+
+  var map = new ol.Map({
+    target: 'map_4',
+    layers: [
+      new ol.layer.Tile({
+        source: new ol.source.MapQuest({layer: 'sat'})
+      })
+    ],
+    view: new ol.View({
+      center: ol.proj.fromLonLat([37.41, 8.82]),
+      zoom: 4
+    })
+  });
+
+  var map = new ol.Map({
+    target: 'map_5',
+    layers: [
+      new ol.layer.Tile({
+        source: new ol.source.MapQuest({layer: 'sat'})
+      })
+    ],
+    view: new ol.View({
+      center: ol.proj.fromLonLat([37.41, 8.82]),
+      zoom: 4
+    })
+  });
+
+  var map = new ol.Map({
+    target: 'map_6',
+    layers: [
+      new ol.layer.Tile({
+        source: new ol.source.MapQuest({layer: 'sat'})
+      })
+    ],
+    view: new ol.View({
+      center: ol.proj.fromLonLat([37.41, 8.82]),
+      zoom: 4
+    })
+  });

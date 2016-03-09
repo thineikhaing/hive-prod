@@ -93,7 +93,7 @@ group :assets do
 
 end
 group :development do
-  gem 'heroku'                    , '~> 3.6.0' # Client library and command-line tool to deploy and manage apps on Heroku.
+  # gem 'heroku'                    , '~> 3.6.0' # Client library and command-line tool to deploy and manage apps on Heroku.
   gem 'foreman' # Process manager for applications with multiple components
   gem 'pivotal_git_scripts'       , '~> 1.1.4' # These scripts are helpers for managing developer workflow when using git repos hosted on GitHub.
   gem 'license_finder'      , :git => "https://github.com/pivotal/LicenseFinder.git" # Do you know the licenses of all your application's dependencies? What open source software licenses will your business accept? LicenseFinder culls your Gemfile, detects the licenses of the gems in it, and gives you a report that you can act on. If you already know what licenses your business is comfortable with, you can whitelist them, leaving you with an action report of only those dependencies that have licenses that fall outside of the whitelist.
