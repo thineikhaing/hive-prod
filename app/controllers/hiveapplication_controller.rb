@@ -304,16 +304,16 @@ class HiveapplicationController < ApplicationController
   def add_application
     # Check if CURRENT_USER exist
     if current_user.present?
-      if params[:dev_portal].present?
+      if params[:developer_portal].present?
 
         # Generate random number for APPLICATION_KEY
         api_key = SecureRandom.hex
 
-        hive_application = HiveApplication.create(app_name: params[:dev_portal][:application_name],
-                                                  app_type: params[:dev_portal][:application_type],
-                                                  description: params[:dev_portal][:description],
-                                                  icon_url: params[:dev_portal][:application_icon] ,
-                                                  devuser_id: current_user.id, theme_color: params[:dev_portal][:theme_color],
+        hive_application = HiveApplication.create(app_name: params[:developer_portal][:application_name],
+                                                  app_type: params[:developer_portal][:application_type],
+                                                  description: params[:developer_portal][:description],
+                                                  icon_url: params[:developer_portal][:application_icon] ,
+                                                  devuser_id: current_user.id, theme_color: params[:developer_portal][:theme_color],
                                                   api_key: api_key )
         flash[:notice] = "Add new application successfully."
         hive_application.errors.full_messages.each do |message|
@@ -323,7 +323,7 @@ class HiveapplicationController < ApplicationController
 
         unless hive_application.errors.any?
           # Creates a bot for the the application
-          User.create(email: "bot@#{params[:dev_portal][:application_name]}", username: "#{params[:dev_portal][:application_name]} Bot", role: User::BOT)
+          User.create(email: "bot@#{params[:developer_portal][:application_name]}", username: "#{params[:developer_portal][:application_name]} Bot", role: User::BOT)
 
           # Redirect back to list of applications
           redirect_to hiveapplication_application_list_path
@@ -367,19 +367,19 @@ class HiveapplicationController < ApplicationController
 
       check_status_changes
       # Check if APPLICATION_ID that user click and CURRENT_USER exist
-    elsif params[:dev_portal].present? && current_user.present?
-      application_id = params[:dev_portal][:application_id]
+    elsif params[:developer_portal].present? && current_user.present?
+      application_id = params[:developer_portal][:application_id]
       application = HiveApplication.find(application_id)
 
       #save the updated Application information
       if application.present?
-        application.app_name = params[:dev_portal][:application_name]
-        application.app_type = params[:dev_portal][:application_type]
-        application.description = params[:dev_portal][:description]
-        application.theme_color = params[:dev_portal][:theme_color]
+        application.app_name = params[:developer_portal][:application_name]
+        application.app_type = params[:developer_portal][:application_type]
+        application.description = params[:developer_portal][:description]
+        application.theme_color = params[:developer_portal][:theme_color]
 
-        if params[:dev_portal][:application_icon].present?
-          application.icon_url = params[:dev_portal][:application_icon]
+        if params[:developer_portal][:application_icon].present?
+          application.icon_url = params[:developer_portal][:application_icon]
         end
 
         application.save!

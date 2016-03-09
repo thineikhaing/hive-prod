@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
 
+  root to: 'home#index'
+  post "sign_in"  =>  'home#sign_in'  , via: [:get, :post]
+  match "developer_portal"  =>  'home#developer_portal'  , via: [:get, :post]
+
   resources :sg_accident_histories
   resources :privacy_policies
   resources :user_fav_locations
@@ -11,7 +15,7 @@ Rails.application.routes.draw do
 
   devise_for :users
   devise_for :devusers
-  root to: "hiveapplication#login_page"
+  # root to: "hiveapplication#login_page"
 
   resources :hiveapplication
   resources :car_action_logs

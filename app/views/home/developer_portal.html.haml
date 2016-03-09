@@ -1,0 +1,61 @@
+.row
+  .columns.large-12
+    %h3 THE APIARY
+    %span.warning.label developer
+    %br
+
+-if @hive_applications.present?
+  - @hive_applications.each do |hive_application|
+    .row{style:'margin-top:50px;margin-bottom:80px;'}
+      .small-10.large-centered.columns
+        .columns.large-6
+
+          .columns.large-2
+            =hive_application.app_name
+          .columns.large-2
+
+            .parallelogram{style:'width: 55px;height: 55px;background:orange'}
+              -#setting
+            %br
+            .parallelogram{style: "width: 55px;height: 55px;position:relative;left: -36px;background: rgb(80,227,194)"}
+
+          .columns.large-8
+            .parallelogram{style:'width: 270px;height: 270px;position: relative;left: -66px;'}
+
+
+        .columns.large-6
+
+          .columns.large-2
+            .parallelogram{style:'width: 65px;height: 40px;background:orange;'}
+            .parallelogram{style:'width: 65px;height: 15px;position: relative;top: -11px;left: -16px;background: rgb(75,146,230);border-color: rgb(75,146,230);'}
+              %p{style:'font-size: 14px;line-height: 10px;color: #fff;text-align: center;'} active
+
+            .parallelogram{style:'width: 65px;height: 40px;background:orange;margin-top:37px;left: -60px;position: relative;'}
+            .parallelogram{style:'width: 65px;height: 15px;position: relative;top: -11px;left: -76px;background: rgb(125,211,34);border-color: rgb(125,211,34);'}
+              %p{style:'font-size: 14px;line-height: 10px;color: #fff;text-align: center;'} newest
+
+            .parallelogram{style:'width: 65px;height: 40px;background:orange;margin-top:37px;left: -124px;position: relative;'}
+            .parallelogram{style:'width: 200px;height: 15px;position: relative;top: -11px;left: -140px;background: orange;border-color: orange;'}
+              %p{style:'font-size: 14px;line-height: 10px;color: #fff;text-align: center;'} goldhill plaza
+
+          .columns.large-6
+            .parallelogram{style:'width: 270px;height: 55px;border:none;'}
+              %p{style:"text-indent:2em;"}
+                %span.status_count 2750
+              %p
+                %span.status_title alphabetical chihuahua
+            %br
+            .parallelogram{style:'width: 270px;height: 55px;margin-top: 48px;left: -60px;position: relative;border:none;'}
+              %p{style:"text-indent:2em;"}
+                %span.status_count 30,0000
+              %p
+                %span.status_title bus 123 is late again, where ...
+            %br
+            .parallelogram{style:'width: 270px;height: 55px;margin-top: 50px;left: -124px;position: relative;z-index: 9;border:none;'}
+              %p{style:"text-indent:2em;line-height: 2;"}
+                %span.status_count singapore
+          .columns.large-4
+            6
+
+
+

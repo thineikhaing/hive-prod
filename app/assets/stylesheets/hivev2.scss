@@ -1,0 +1,120 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+
+
+ *= require jquery-ui
+ *= require_self
+ */
+//@import "settings";
+@import "foundation";
+//@import "compass";
+
+h3{color:orange}
+
+.parallelogram {
+  border:2px solid orange;
+  display:inline-block;
+  //margin: 0 0 0 20px;
+  padding: 0 3px 0 3px;
+  -webkit-transform: skew(-30deg);
+  -moz-transform: skew(-30deg);
+  -o-transform: skew(-30deg);
+}
+
+.parallelinput{
+  margin-bottom: 16px;
+  padding: 0px 30px;
+}
+.parallelogram input {
+  outline: none;
+  border: none;
+  -webkit-transform: skew(30deg);
+  -moz-transform: skew(30deg);
+  -o-transform: skew(30deg);
+  background: none;
+  margin-bottom: 0px;
+  box-shadow: none;
+  padding: 0px;
+  height: 25px;
+  width: 250px;
+}
+
+.parallelogram p{
+
+  -webkit-transform: skew(30deg);
+  -moz-transform: skew(30deg);
+  -o-transform: skew(30deg);
+  margin-bottom: 0px;
+  line-height: 25px;
+
+}
+
+.parallelbtn{
+  background: orange;
+  height: 25px;
+}
+
+.parallelogram .paralsumbit{
+  outline: none;
+  border: none;
+  -webkit-transform: skew(30deg);
+  -moz-transform: skew(30deg);
+  -o-transform: skew(30deg);
+  background: none;
+  margin-bottom: 0px;
+  box-shadow: none;
+  padding: 0px;
+  height: 24px;
+  width: 60px;
+  color:#fff;
+  position:relative;
+  top: -5px;
+}
+
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+  color:    orange;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+  color:    orange;
+  opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+  color:    orange;
+  opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color:    orange;
+}
+:placeholder-shown { /* Standard (https://drafts.csswg.org/selectors-4/#placeholder) */
+  color:    orange;
+}
+
+#triangle-topleft {
+  width: 0;
+  height: 0;
+  border-top: 70px solid red;
+  border-right: 70px solid transparent;
+}
+
+.columns {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.status_count{
+  font-size: 24px;
+}
+
+.status_title{
+
+  font-size: 14px;
+}

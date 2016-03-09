@@ -1,0 +1,16 @@
+!!!
+%html
+  %head
+    %title Hive
+    = include_gon
+    = stylesheet_link_tag   "hivev2"
+    = javascript_include_tag "hivev2"
+
+    = csrf_meta_tags
+
+  %body
+    .container
+      .header{style:'height:60px;'}
+      .row
+        .large-12.collapse
+          = yield

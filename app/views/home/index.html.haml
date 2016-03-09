@@ -1,0 +1,21 @@
+.row
+  .columns.large-4.large-centered{style:'margin-top:200px;'}
+
+    %h3 THE APIARY
+    %br
+    = form_for :dev_users, url: { controller: "home", action: "sign_in" }, method: "post" do |f|
+
+      .parallelogram.parallelinput
+        = f.text_field :email, class: "sign_in_input" , placeholder: 'username or email'
+      %br
+      .parallelogram.parallelinput
+        = f.password_field :password , autocomplete: "off", class: "sign_in_input"   , placeholder: 'password'
+
+      .row{style:'float:right;margin-right: 32px;'}
+        = link_to "forgot?", hiveapplication_forget_password_path, style:'color: orange'
+
+        .parallelogram.parallelbtn
+          = f.submit "ok", class: 'paralsumbit'
+      %br
+      .field{style:'float:right'}
+
