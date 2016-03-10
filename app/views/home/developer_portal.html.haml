@@ -1,140 +1,267 @@
-.row
-  .columns.large-12
-    %h3 THE APIARY
-    %span.warning.label developer
-    %br
+-#.row
+-#  .small-12.large-centered.columns{style:'margin:20px;'}
+-#    .columns.large-6
+-#
+-#      .columns.large-2
+-#        .polygon-each
+-#          .polygon-each-img-wrap
+-#
+-#            .logo_borders
+-#              rd
+-#            %svg.logo_svg
+-#              %defs
+-#                %clipPath#logo-clip{:clipPathUnits => "objectBoundingBox"}
+-#                  %polygon{:points => "0 0, 1 0, 0 1, 0 1" }
+-#
+-#
+-#      .columns.large-2
+-#        .polygon-each
+-#          .polygon-each-img-wrap
+-#            %img.polygon-clip-rhomboid{:alt => "demo-clip-rhomboid", :src => "http://karenmenezes.com/shapes-polygon/image.jpg"}
+-#
+-#          %svg.clip-svg
+-#            %defs
+-#              %clipPath#polygon-clip-rhomboid{:clipPathUnits => "objectBoundingBox"}
+-#                %polygon{:points => "0 1, 0.3 0, 1 0, 0.7 1"}/
+-#
+-#      .columns.large-8
+-#
+-#    .columns.large-6
+-#
+-#.row
+-#
+-#
+-#
+-#  .polygon-each
+-#    .polygon-each-img-wrap
+-#      %img.polygon-clip-triangle-right{:alt => "demo-clip-triangle-right", :src => "http://karenmenezes.com/shapes-polygon/image.jpg"}
+-#    %h4 Triangle: Right
+-#    %p A triangle where one of its interior angles is a right angle.
+-#    %p
+-#      %em Polygon > Triangle
+-#    %svg.clip-svg
+-#      %defs
+-#        %clipPath#polygon-clip-triangle-right{:clipPathUnits => "objectBoundingBox"}
+-#          %polygon{:points => " 1 1, 1 1,0.41 1, 0.41 0"}/
+-#
+-#.row
+-#  .columns.large-12.main_content
+-#    %h3 THE APIARY
+-#    %span.warning.label developer
+-#    %br
+-#
+-#    -if @hive_applications.present?
+-#      - @hive_applications.each do |hive_application|
+-#        .row{style:'margin-top:50px;margin-bottom:80px;'}
+-#          .small-10.large-centered.columns
+-#            .columns.large-6
+-#
+-#              =hive_application.app_name
+-#
+-#              .parallelogram{style:'width: 55px;height: 55px;background:orange;position:relative;float:left'}
+-#                -#setting
+-#              %br
+-#              .parallelogram{style: "width: 55px;height: 55px;position:relative;left: -36px;background: rgb(80,227,194);border: rgb(80,227,194);float:left"}
+-#
+-#
+-#              .parallelogram{style:'width: 270px;height: 270px;position: relative;left: -66px;float:left', id: 'map_'+hive_application.id.to_s}
+-#
+-#
+-#            .columns.large-6
+-#
+-#              .columns.large-2
+-#                .parallelogram{style:'width: 65px;height: 40px;background:orange;'}
+-#                .parallelogram{style:'width: 65px;height: 15px;position: relative;top: -11px;left: -16px;background: rgb(75,146,230);border-color: rgb(75,146,230);'}
+-#                  %p{style:'font-size: 14px;line-height: 10px;color: #fff;text-align: center;'} active
+-#
+-#                .parallelogram{style:'width: 65px;height: 40px;background:orange;margin-top:37px;left: -60px;position: relative;'}
+-#                .parallelogram{style:'width: 65px;height: 15px;position: relative;top: -11px;left: -76px;background: rgb(125,211,34);border-color: rgb(125,211,34);'}
+-#                  %p{style:'font-size: 14px;line-height: 10px;color: #fff;text-align: center;'} newest
+-#
+-#                .parallelogram{style:'width: 65px;height: 40px;background:orange;margin-top:37px;left: -124px;position: relative;'}
+-#                .parallelogram{style:'width: 200px;height: 15px;position: relative;top: -11px;left: -140px;background: orange;border-color: orange;'}
+-#                  %p{style:'font-size: 14px;line-height: 10px;color: #fff;text-align: center;'} goldhill plaza
+-#
+-#              .columns.large-6
+-#                .parallelogram{style:'width: 270px;height: 55px;border:none;'}
+-#                  %p{style:"text-indent:2em;"}
+-#                    %span.status_count
+-#                      2750
+-#                  %p
+-#                    %span.status_title alphabetical chihuahua
+-#                %br
+-#                .parallelogram{style:'width: 270px;height: 55px;margin-top: 48px;left: -60px;position: relative;border:none;'}
+-#                  %p{style:"text-indent:2em;"}
+-#                    %span.status_count
+-#                      =Topic.where(hiveapplication_id: hive_application.id).count rescue '0'
+-#                  %p
+-#                    %span.status_title bus 123 is late again, where ...
+-#                %br
+-#                .parallelogram{style:'width: 270px;height: 55px;margin-top: 50px;left: -124px;position: relative;z-index: 9;border:none;'}
+-#                  %p{style:"text-indent:2em;line-height: 2;"}
+-#                    %span.status_count singapore
+-#              .columns.large-4
+-#                6
+
 
 -if @hive_applications.present?
-  - @hive_applications.each do |hive_application|
-    .row{style:'margin-top:50px;margin-bottom:80px;'}
-      .small-10.large-centered.columns
-        .columns.large-6
+  - @hive_applications.each do |app|
+    .row{style:'margin-top:30px;margin-bottom:30px;'}
+      .columns.large-5
+        %div{style:'position:relative;float:left;width:65px;'}
+          .logo_borders
+            rd
+          %svg.logo_svg
+            %defs
+              %clipPath#logo-clip{:clipPathUnits => "objectBoundingBox"}
+                %polygon{:points => "0 0, 1 0, 0 1, 0 1" }
 
-          .columns.large-2
-            =hive_application.app_name
-          .columns.large-2
+        %div{style:'position:relative;float:left;'}
+          .parallelogram{style:'width: 55px;height: 52px;background:orange;;position:relative;margin-left: -5px;'}
+          %br
+          .parallelogram{style:'width: 55px;height: 52px;background:orange;position:relative;margin-left: -40px;background:rgb(80,227,194)'}
 
-            .parallelogram{style:'width: 55px;height: 55px;background:orange'}
-              -#setting
-            %br
-            .parallelogram{style: "width: 55px;height: 55px;position:relative;left: -36px;background: rgb(80,227,194);border: rgb(80,227,194)"}
-
-          .columns.large-8
-            .parallelogram{style:'width: 270px;height: 270px;position: relative;left: -66px;', id: 'map_'+hive_application.id.to_s}
-
-
-        .columns.large-6
-
-          .columns.large-2
-            .parallelogram{style:'width: 65px;height: 40px;background:orange;'}
-            .parallelogram{style:'width: 65px;height: 15px;position: relative;top: -11px;left: -16px;background: rgb(75,146,230);border-color: rgb(75,146,230);'}
-              %p{style:'font-size: 14px;line-height: 10px;color: #fff;text-align: center;'} active
-
-            .parallelogram{style:'width: 65px;height: 40px;background:orange;margin-top:37px;left: -60px;position: relative;'}
-            .parallelogram{style:'width: 65px;height: 15px;position: relative;top: -11px;left: -76px;background: rgb(125,211,34);border-color: rgb(125,211,34);'}
-              %p{style:'font-size: 14px;line-height: 10px;color: #fff;text-align: center;'} newest
-
-            .parallelogram{style:'width: 65px;height: 40px;background:orange;margin-top:37px;left: -124px;position: relative;'}
-            .parallelogram{style:'width: 200px;height: 15px;position: relative;top: -11px;left: -140px;background: orange;border-color: orange;'}
-              %p{style:'font-size: 14px;line-height: 10px;color: #fff;text-align: center;'} goldhill plaza
-
-          .columns.large-6
-            .parallelogram{style:'width: 270px;height: 55px;border:none;'}
-              %p{style:"text-indent:2em;"}
-                %span.status_count
-                  2750
-              %p
-                %span.status_title alphabetical chihuahua
-            %br
-            .parallelogram{style:'width: 270px;height: 55px;margin-top: 48px;left: -60px;position: relative;border:none;'}
-              %p{style:"text-indent:2em;"}
-                %span.status_count
-                  =Topic.where(hiveapplication_id: hive_application.id).count rescue '0'
-              %p
-                %span.status_title bus 123 is late again, where ...
-            %br
-            .parallelogram{style:'width: 270px;height: 55px;margin-top: 50px;left: -124px;position: relative;z-index: 9;border:none;'}
-              %p{style:"text-indent:2em;line-height: 2;"}
-                %span.status_count singapore
-          .columns.large-4
-            6
+        %div{style:'position:relative;float:left;'}
+          .parallelogram{style:'width: 265px;height: 240px;position: relative;margin-left: -50px;'}
 
 
+      .columns.large-6{style:'margin-left:15px;'}
+        .row
+          .columns.large-12
+            %div{style:'position:relative;float:left;width:560px;'}
+
+              %div{style:'position:relative;float:left;width:65px;'}
+                .parallelogram{style:'width: 65px;height: 40px;background:orange;'}
+                .parallelogram{style:'width: 65px;height: 15px;position: relative;top: -11px;left: -16px;background: rgb(75,146,230);border-color: rgb(75,146,230);'}
+                  %p{style:'font-size: 14px;line-height: 10px;color: #fff;text-align: center;'} active
+
+              .parallelogram{style:'width: 250px;height: 55px;border:none; margin-left:1px;border: 1px solid gainsboro;padding-left: 10px;padding-right: 10px;'}
+                %p{style:"text-indent:2em;"}
+                  %span.status_count
+                    2750
+                %p
+                  %span.status_title alphabetical chihuahua
+              .infobox{style:'margin-top:27px;position: relative;'}
+                =image_tag("Avatars/Chat-Avatar-Chihuahua.png")
+
+
+        .row
+          .columns.large-12
+            %div{style:'position:relative;float:left;width:560px;'}
+
+              %div{style:'position:relative;float:left;width:65px;'}
+                .parallelogram{style:'width: 65px;height: 40px;background:orange;margin-top:27px;position: relative;'}
+                .parallelogram{style:'width: 65px;height: 15px;position: relative;top: -11px;left: -16px;background: rgb(125,211,34);border-color: rgb(125,211,34);'}
+                  %p{style:'font-size: 14px;line-height: 10px;color: #fff;text-align: center;'} newest
+
+
+              .parallelogram{style:'width: 270px;height: 55px;margin-top: 30px;position: relative;border:none;border: 1px solid gainsboro;padding-left: 10px;padding-right: 10px;'}
+                %p{style:"text-indent:2em;"}
+                  %span.status_count
+                    =Topic.where(hiveapplication_id: hive_application.id).count rescue '0'
+                %p
+                  %span.status_title bus 123 is late again, where ...
+
+              .infobox{style:'margin-top:27px;position: relative;'}
+                33
+
+
+        .row
+          .columns.large-12
+            %div{style:'position:relative;float:left;width:560px;'}
+
+              %div{style:'position:relative;float:left;width:65px;'}
+                .parallelogram{style:'width: 65px;height: 40px;background:orange;margin-top:27px;position: relative;'}
+                .parallelogram{style:'width: 200px;height: 15px;position: relative;top: -11px;left: -16px;background: orange;border-color: orange;'}
+                  %p{style:'font-size: 14px;line-height: 10px;color: #fff;text-align: center;'} goldhill plaza
+
+              .parallelogram{style:'width: 270px;height: 53px;margin-top: 30px;position: relative;border:none;border: 1px solid gainsboro;padding-left: 10px;padding-right: 10px;'}
+                %p{style:"text-indent:2em;"}
+                  %span.status_count
+                    singapore
+
+
+
+
+
+      .columns.large-12
+        %hr
 :javascript
-  var map = new ol.Map({
-    target: 'map_1',
-    layers: [
-      new ol.layer.Tile({
-        source: new ol.source.MapQuest({layer: 'sat'})
-      })
-    ],
-    view: new ol.View({
-      center: ol.proj.fromLonLat([37.41, 8.82]),
-      zoom: 4
-    })
-  });
+  //var map = new ol.Map({
+  //  target: 'map_1',
+  //  layers: [
+  //    new ol.layer.Tile({
+  //      source: new ol.source.MapQuest({layer: 'sat'})
+  //    })
+  //  ],
+  //  view: new ol.View({
+  //    center: ol.proj.fromLonLat([37.41, 8.82]),
+  //    zoom: 4
+  //  })
+  //});
+  //
+  //var map = new ol.Map({
+  //  target: 'map_2',
+  //  layers: [
+  //    new ol.layer.Tile({
+  //      source: new ol.source.MapQuest({layer: 'sat'})
+  //    })
+  //  ],
+  //  view: new ol.View({
+  //    center: ol.proj.fromLonLat([37.41, 8.82]),
+  //    zoom: 4
+  //  })
+  //});
+  //
+  //var map = new ol.Map({
+  //  target: 'map_3',
+  //  layers: [
+  //    new ol.layer.Tile({
+  //      source: new ol.source.MapQuest({layer: 'sat'})
+  //    })
+  //  ],
+  //  view: new ol.View({
+  //    center: ol.proj.fromLonLat([37.41, 8.82]),
+  //    zoom: 4
+  //  })
+  //});
+  //
+  //var map = new ol.Map({
+  //  target: 'map_4',
+  //  layers: [
+  //    new ol.layer.Tile({
+  //      source: new ol.source.MapQuest({layer: 'sat'})
+  //    })
+  //  ],
+  //  view: new ol.View({
+  //    center: ol.proj.fromLonLat([37.41, 8.82]),
+  //    zoom: 4
+  //  })
+  //});
+  //
+  //var map = new ol.Map({
+  //  target: 'map_5',
+  //  layers: [
+  //    new ol.layer.Tile({
+  //      source: new ol.source.MapQuest({layer: 'sat'})
+  //    })
+  //  ],
+  //  view: new ol.View({
+  //    center: ol.proj.fromLonLat([37.41, 8.82]),
+  //    zoom: 4
+  //  })
+  //});
 
-  var map = new ol.Map({
-    target: 'map_2',
-    layers: [
-      new ol.layer.Tile({
-        source: new ol.source.MapQuest({layer: 'sat'})
-      })
-    ],
-    view: new ol.View({
-      center: ol.proj.fromLonLat([37.41, 8.82]),
-      zoom: 4
-    })
-  });
+  //var map = new ol.Map({
+-#    target: 'map_6',
+-#    layers: [
+-#      new ol.layer.Tile({
+-#        source: new ol.source.MapQuest({layer: 'sat'})
+-#      })
+-#    ],
+-#    view: new ol.View({
+-#      center: ol.proj.fromLonLat([37.41, 8.82]),
+-#      zoom: 4
+-#    })
+-#  });
 
-  var map = new ol.Map({
-    target: 'map_3',
-    layers: [
-      new ol.layer.Tile({
-        source: new ol.source.MapQuest({layer: 'sat'})
-      })
-    ],
-    view: new ol.View({
-      center: ol.proj.fromLonLat([37.41, 8.82]),
-      zoom: 4
-    })
-  });
-
-  var map = new ol.Map({
-    target: 'map_4',
-    layers: [
-      new ol.layer.Tile({
-        source: new ol.source.MapQuest({layer: 'sat'})
-      })
-    ],
-    view: new ol.View({
-      center: ol.proj.fromLonLat([37.41, 8.82]),
-      zoom: 4
-    })
-  });
-
-  var map = new ol.Map({
-    target: 'map_5',
-    layers: [
-      new ol.layer.Tile({
-        source: new ol.source.MapQuest({layer: 'sat'})
-      })
-    ],
-    view: new ol.View({
-      center: ol.proj.fromLonLat([37.41, 8.82]),
-      zoom: 4
-    })
-  });
-
-  var map = new ol.Map({
-    target: 'map_6',
-    layers: [
-      new ol.layer.Tile({
-        source: new ol.source.MapQuest({layer: 'sat'})
-      })
-    ],
-    view: new ol.View({
-      center: ol.proj.fromLonLat([37.41, 8.82]),
-      zoom: 4
-    })
-  });

@@ -16,9 +16,19 @@
  */
 //@import "settings";
 @import "foundation";
-//@import "compass";
+@import "hivev2/*";
 
 h3{color:orange}
+
+.infobox{
+  border:2px solid orange;
+  display:inline-block;
+  width: 25px;
+  height: 30px;
+  margin-left: 20px;
+  text-align: center;
+  color: orange;
+}
 
 .parallelogram {
   border:2px solid orange;
@@ -106,8 +116,9 @@ h3{color:orange}
 }
 
 .columns {
-  padding-left: 0;
-  padding-right: 0;
+  //padding-left: 0;
+  //padding-right: 0;
+  //margin:20px;
 }
 
 .status_count{
