@@ -54,28 +54,28 @@ class HomeController < ApplicationController
 
 
       if Rails.env.development?
-        carmmunicate_key = Carmmunicate_key::Development_Key
-        favr_key = Favr_key::Development_Key
-        meal_key = Mealbox_key::Development_Key
-        socal_key = Socal_key::Development_Key
-        hive_key = Hive_key::Development_Key
-        round_key = RoundTrip_key::Development_Key
+        @carmmunicate_key = Carmmunicate_key::Development_Key
+        @favr_key = Favr_key::Development_Key
+        @meal_key = Mealbox_key::Development_Key
+        @socal_key = Socal_key::Development_Key
+        @hive_key = Hive_key::Development_Key
+        @round_key = RoundTrip_key::Development_Key
 
       elsif Rails.env.staging?
-        carmmunicate_key = Carmmunicate_key::Staging_Key
-        favr_key = Favr_key::Staging_Key
-        meal_key = Mealbox_key::Staging_Key
-        socal_key = Socal_key::Staging_Key
-        hive_key = Hive_key::Staging_Key
-        round_key = RoundTrip_key::Staging_Key
+        @carmmunicate_key = Carmmunicate_key::Staging_Key
+        @favr_key = Favr_key::Staging_Key
+        @meal_key = Mealbox_key::Staging_Key
+        @socal_key = Socal_key::Staging_Key
+        @hive_key = Hive_key::Staging_Key
+        @round_key = RoundTrip_key::Staging_Key
 
       else
-        carmmunicate_key = Carmmunicate_key::Production_Key
-        favr_key = Favr_key::Production_Key
-        meal_key = Mealbox_key::Production_Key
-        socal_key = Socal_key::Production_Key
-        hive_key = Hive_key::Production_Key
-        round_key = RoundTrip_key::Production_Key
+        @carmmunicate_key = Carmmunicate_key::Production_Key
+        @favr_key = Favr_key::Production_Key
+        @meal_key = Mealbox_key::Production_Key
+        @socal_key = Socal_key::Production_Key
+        @hive_key = Hive_key::Production_Key
+        @round_key = RoundTrip_key::Production_Key
 
       end
 
@@ -84,7 +84,7 @@ class HomeController < ApplicationController
       @hive_applications.each do |app|
 
 
-        if app.api_key == carmmunicate_key
+        if app.api_key == @carmmunicate_key
 
           p "query detail info of carmunicate"
 
@@ -106,7 +106,7 @@ class HomeController < ApplicationController
             @CMlatestTopicUser.push(t.username)
           end
 
-        elsif app.api_key == meal_key
+        elsif app.api_key == @meal_key
           p "query detail info of meal box"
 
           topics_by_places = [ ]
@@ -127,7 +127,7 @@ class HomeController < ApplicationController
             @MBlatestTopicUser.push(t.username)
           end
 
-        elsif app.api_key == favr_key
+        elsif app.api_key == @favr_key
           p "query detail info of favr"
 
 
@@ -149,7 +149,7 @@ class HomeController < ApplicationController
             @FVlatestTopicUser.push(t.username)
           end
 
-        elsif app.api_key == socal_key
+        elsif app.api_key == @socal_key
           p "query detial info of socal"
 
           topics_by_places = [ ]
@@ -170,7 +170,7 @@ class HomeController < ApplicationController
             @SClatestTopicUser.push(t.username)
           end
 
-        elsif app.api_key == round_key
+        elsif app.api_key == @round_key
           p "query detial info of socal"
 
           topics_by_places = [ ]
@@ -192,7 +192,7 @@ class HomeController < ApplicationController
           end
 
 
-        elsif app.api_key == hive_key
+        elsif app.api_key == @hive_key
 
           topics_by_places = [ ]
           @latestTopics = [ ]

@@ -15,6 +15,7 @@
 //= require turbolinks
 //= require foundation
 //= require jquery-ui
+//= require hivev2lib/hivev2_map
 //= require jquery/cookie
 
 

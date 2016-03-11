@@ -4,54 +4,30 @@
     %span.warning.label developer
     %br
     %span welcome back, #{current_user.username}
+    %span#address
 -if @hive_applications.present?
   - @hive_applications.each do |app|
-    -theme_color = app.theme_color
-    -if Rails.env.development?
-      -carmmunicate_key = Carmmunicate_key::Development_Key
-      -favr_key = Favr_key::Development_Key
-      -meal_key = Mealbox_key::Development_Key
-      -socal_key = Socal_key::Development_Key
-      -hive_key = Hive_key::Development_Key
-      -round_key = RoundTrip_key::Development_Key
-
-    -elsif Rails.env.staging?
-      -carmmunicate_key = Carmmunicate_key::Staging_Key
-      -favr_key = Favr_key::Staging_Key
-      -meal_key = Mealbox_key::Staging_Key
-      -socal_key = Socal_key::Staging_Key
-      -hive_key = Hive_key::Staging_Key
-      -round_key = RoundTrip_key::Staging_Key
-    -else
-      -carmmunicate_key = Carmmunicate_key::Production_Key
-      -favr_key = Favr_key::Production_Key
-      -meal_key = Mealbox_key::Production_Key
-      -socal_key = Socal_key::Production_Key
-      -hive_key = Hive_key::Production_Key
-      -round_key = RoundTrip_key::Production_Key
-
-
     .row{style:'margin-top:30px;margin-bottom:30px;'}
       .columns.large-5
         %div{style:'position:relative;float:left;width:65px;'}
-          .logo_borders{style:"background-color:#{theme_color} !important;background:#{theme_color} !important"}
+          .logo_borders{style:"background-color:#{app.theme_color} !important;background:#{app.theme_color} !important"}
 
-            -if app.api_key == hive_key
+            -if app.api_key == @hive_key
               hv
 
-            -if app.api_key == socal_key
+            -if app.api_key == @socal_key
               sc
 
-            -if app.api_key == carmmunicate_key
+            -if app.api_key == @carmmunicate_key
               cm
 
-            -if app.api_key == meal_key
+            -if app.api_key == @meal_key
               mb
 
-            -if app.api_key == favr_key
+            -if app.api_key == @favr_key
               fv
 
-            -if app.api_key == round_key
+            -if app.api_key == @round_key
               rt
 
           %svg.logo_svg
@@ -65,119 +41,62 @@
           .parallelogram{style:'width: 55px;height: 52px;background:orange;position:relative;margin-left: -40px;background:rgb(80,227,194)'}
 
         %div{style:'position:relative;float:left;'}
-          .parallelogram{style:'width: 265px;height: 240px;position: relative;margin-left: -50px;'}
+
+          -if app.api_key == @hive_key
+            .parallelogram#hv_map{style:'width: 265px;height: 240px;position: relative;margin-left: -50px !important;'}
+
+          -if app.api_key == @socal_key
+            .parallelogram#sc_map{style:'width: 265px;height: 240px;position: relative;margin-left: -50px!important;;'}
+
+          -if app.api_key == @carmmunicate_key
+            .parallelogram#cm_map{style:'width: 265px;height: 240px;position: relative;margin-left: -50px !important;;'}
+
+          -if app.api_key == @meal_key
+            .parallelogram#mb_map{style:'width: 265px;height: 240px;position: relative;margin-left: -50px !important;;'}
+
+          -if app.api_key == @favr_key
+            .parallelogram#fv_map{style:'width: 265px;height: 240px;position: relative;margin-left: -50px !important;;'}
+
+          -if app.api_key == @round_key
+            .parallelogram#rt_map{style:'width: 265px;height: 240px;position: relative;margin-left: -50px !important;;'}
 
 
       .columns.large-6{style:'margin-left:15px;'}
 
-        -if app.api_key == hive_key
+        -if app.api_key == @hive_key
           = render 'home/hv_users'
           = render 'home/hv_topics'
           = render 'home/hv_location'
 
-        -if app.api_key == socal_key
+        -if app.api_key == @socal_key
           = render 'home/rt_users'
           = render 'home/rt_topics'
           = render 'home/rt_location'
 
-        -if app.api_key == carmmunicate_key
+        -if app.api_key == @carmmunicate_key
           = render 'home/cm_users'
           = render 'home/cm_topics'
           = render 'home/cm_location'
 
-        -if app.api_key == meal_key
+        -if app.api_key == @meal_key
           = render 'home/mb_users'
           = render 'home/mb_topics'
           = render 'home/mb_location'
 
-        -if app.api_key == favr_key
+        -if app.api_key == @favr_key
           = render 'home/fv_users'
           = render 'home/fv_topics'
           = render 'home/fv_location'
 
-        -if app.api_key == round_key
+        -if app.api_key == @round_key
           = render 'home/sc_users'
           = render 'home/sc_topics'
           = render 'home/sc_location'
       .columns.large-12
+        .small-6.large-centered.columns
+      .columns.large-12
         %hr
 
 :javascript
-  //var map = new ol.Map({
-  //  target: 'map_1',
-  //  layers: [
-  //    new ol.layer.Tile({
-  //      source: new ol.source.MapQuest({layer: 'sat'})
-  //    })
-  //  ],
-  //  view: new ol.View({
-  //    center: ol.proj.fromLonLat([37.41, 8.82]),
-  //    zoom: 4
-  //  })
-  //});
-  //
-  //var map = new ol.Map({
-  //  target: 'map_2',
-  //  layers: [
-  //    new ol.layer.Tile({
-  //      source: new ol.source.MapQuest({layer: 'sat'})
-  //    })
-  //  ],
-  //  view: new ol.View({
-  //    center: ol.proj.fromLonLat([37.41, 8.82]),
-  //    zoom: 4
-  //  })
-  //});
-  //
-  //var map = new ol.Map({
-  //  target: 'map_3',
-  //  layers: [
-  //    new ol.layer.Tile({
-  //      source: new ol.source.MapQuest({layer: 'sat'})
-  //    })
-  //  ],
-  //  view: new ol.View({
-  //    center: ol.proj.fromLonLat([37.41, 8.82]),
-  //    zoom: 4
-  //  })
-  //});
-  //
-  //var map = new ol.Map({
-  //  target: 'map_4',
-  //  layers: [
-  //    new ol.layer.Tile({
-  //      source: new ol.source.MapQuest({layer: 'sat'})
-  //    })
-  //  ],
-  //  view: new ol.View({
-  //    center: ol.proj.fromLonLat([37.41, 8.82]),
-  //    zoom: 4
-  //  })
-  //});
-  //
-  //var map = new ol.Map({
-  //  target: 'map_5',
-  //  layers: [
-  //    new ol.layer.Tile({
-  //      source: new ol.source.MapQuest({layer: 'sat'})
-  //    })
-  //  ],
-  //  view: new ol.View({
-  //    center: ol.proj.fromLonLat([37.41, 8.82]),
-  //    zoom: 4
-  //  })
-  //});
 
-  //var map = new ol.Map({
--#    target: 'map_6',
--#    layers: [
--#      new ol.layer.Tile({
--#        source: new ol.source.MapQuest({layer: 'sat'})
--#      })
--#    ],
--#    view: new ol.View({
--#      center: ol.proj.fromLonLat([37.41, 8.82]),
--#      zoom: 4
--#    })
--#  });
-
+  Hivemaps.init()
