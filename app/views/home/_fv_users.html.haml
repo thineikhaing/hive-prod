@@ -14,6 +14,9 @@
             =@FVlatestTopicUser.count
         %p
           %span.status_title
-            =@FVlatestTopicUser[0]
+            -if @FVlatestTopicUser.count < 1
+              no user
+            -else
+              =@FVlatestTopicUser[0]
       .infobox{style:'margin-top:27px;position: relative;'}
         =image_tag("Avatars/Chat-Avatar-Chihuahua.png")

@@ -58,18 +58,24 @@ class HomeController < ApplicationController
         favr_key = Favr_key::Development_Key
         meal_key = Mealbox_key::Development_Key
         socal_key = Socal_key::Development_Key
+        hive_key = Hive_key::Development_Key
+        round_key = RoundTrip_key::Development_Key
 
       elsif Rails.env.staging?
         carmmunicate_key = Carmmunicate_key::Staging_Key
         favr_key = Favr_key::Staging_Key
         meal_key = Mealbox_key::Staging_Key
         socal_key = Socal_key::Staging_Key
+        hive_key = Hive_key::Staging_Key
+        round_key = RoundTrip_key::Staging_Key
 
       else
         carmmunicate_key = Carmmunicate_key::Production_Key
         favr_key = Favr_key::Production_Key
         meal_key = Mealbox_key::Production_Key
         socal_key = Socal_key::Production_Key
+        hive_key = Hive_key::Production_Key
+        round_key = RoundTrip_key::Production_Key
 
       end
 
@@ -164,8 +170,29 @@ class HomeController < ApplicationController
             @SClatestTopicUser.push(t.username)
           end
 
+        elsif app.api_key == round_key
+          p "query detial info of socal"
 
-        elsif app.app_name == 'hv'
+          topics_by_places = [ ]
+          @RTlatestTopics = [ ]
+          @RTlatestTopicUser = [ ]
+
+          @placesMap.map{|f|
+            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+          }
+
+          topics_by_places.each do |t|
+            if t.present?
+              @RTlatestTopics.push(t)
+            end
+          end
+
+          @RTlatestTopics.each do |t|
+            @RTlatestTopicUser.push(t.username)
+          end
+
+
+        elsif app.api_key == hive_key
 
           topics_by_places = [ ]
           @latestTopics = [ ]

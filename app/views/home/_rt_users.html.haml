@@ -11,12 +11,12 @@
       .parallelogram{style:'width: 250px;height: 55px;border:none; margin-left:1px;border: 1px solid gainsboro;padding-left: 10px;padding-right: 10px;'}
         %p{style:"text-indent:2em;"}
           %span.status_count
-            =@MBlatestTopicUser.count
+            =@RTlatestTopicUser.count
         %p
           %span.status_title
-            -if @MBlatestTopicUser.count < 1
+            -if @RTlatestTopicUser.count < 1
               no user
             -else
-              =@MBlatestTopicUser[0]
+              =@RTlatestTopicUser[0]
       .infobox{style:'margin-top:27px;position: relative;'}
         =image_tag("Avatars/Chat-Avatar-Chihuahua.png")

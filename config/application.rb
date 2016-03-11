@@ -83,6 +83,18 @@ module Factual_Const
   Secret = "yes4DHYok4jefKCSydsfO6NsYPbmvuMSU5ZcRnjR"
 end
 
+module RoundTrip_key
+  Development_Key = "6743376735558ee9794f3222a526dbec"
+  Staging_Key= "8a626e7fac0f8f91c67b6a3e0cc0dd8b"
+  Production_Key = "95a729b4ba7f45bbf386d1639af342e5"
+end
+
+module Hive_key
+  Development_Key = "d4090b8abdc4986d9e83af9b6306a2af"
+  Staging_Key= "2fe8f008a7cbfeaccdb8a69c7a061d7a"
+  Production_Key = "12166309abc609c6a8ffe1fc1d9ba9e4"
+end
+
 module Mealbox_key
   Development_Key = "5eaf74ea85990fd832dcb7fd7e6dc5f9"
   Staging_Key= "e3dd4f777bf0a84f8ae47a10cfd6072a"
