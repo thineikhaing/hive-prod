@@ -1,3 +1,9 @@
+.row
+  .columns.large-12.main_content
+    %h3 THE APIARY
+    %span.warning.label developer
+    %br
+    %span welcome back, #{current_user.username}
 -if @hive_applications.present?
   - @hive_applications.each do |app|
     -theme_color = app.theme_color
@@ -23,8 +29,6 @@
       -socal_key = Socal_key::Production_Key
       -hive_key = Hive_key::Production_Key
       -round_key = RoundTrip_key::Production_Key
-
-      end
 
 
     .row{style:'margin-top:30px;margin-bottom:30px;'}
