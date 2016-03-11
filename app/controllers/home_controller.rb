@@ -199,7 +199,7 @@ class HomeController < ApplicationController
           @latestTopicUser = [ ]
 
           @placesMap.map{|f|
-            topics_by_places.push(f.topics.last)
+            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
           }
 
           topics_by_places.each do |t|
