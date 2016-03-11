@@ -39,7 +39,7 @@ RSpec.describe PrivacyPoliciesController, type: :controller do
   describe "GET #index" do
     it "assigns all privacy_policies as @privacy_policies" do
       privacy_policy = PrivacyPolicy.create! valid_attributes
-      get :index, {}, valid_session
+      get :home, {}, valid_session
       expect(assigns(:privacy_policies)).to eq([privacy_policy])
     end
   end

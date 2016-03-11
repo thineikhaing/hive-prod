@@ -1,11 +1,11 @@
 class HomeController < ApplicationController
    layout :special_layout
-  def index
+  def home
     # render layout: nil
 
   end
 
-  def sign_in
+  def dev_sign_in
     # Check for user authentication
     user = Devuser.find_by_email(params[:dev_users][:email])
 
@@ -43,44 +43,189 @@ class HomeController < ApplicationController
   end
 
   def developer_portal
-    # Check for CURRENT_USER
-    # Shows list of hiveapplications owned
-    #clear the session array
-    session[:transaction_list_topics] = []
-    session[:transaction_list_posts] = []
-    session[:app_id] = nil
-    session[:table_name] = nil
 
-    if session[:session_devuser_id].nil?
+
+    if current_user.nil?
       redirect_to root_path
     else
-
-      cur_user = Devuser.find(session[:session_devuser_id])
-      p cur_user.role
-
-
-      if cur_user.present?
-
-        if cur_user.role == 1
-          @hive_applications = cur_user.hive_applications.order("id ASC")
-          session[:no_of_apps] = cur_user.hive_applications.count
+      cur_user = Devuser.find(current_user.id)
+      @hive_applications = cur_user.hive_applications.order("id ASC")
 
 
 
-        end
+      if Rails.env.development?
+        carmmunicate_key = Carmmunicate_key::Development_Key
+        favr_key = Favr_key::Development_Key
+        meal_key = Mealbox_key::Development_Key
+        socal_key = Socal_key::Development_Key
 
-        render layout: "special_layout"
+      elsif Rails.env.staging?
+        carmmunicate_key = Carmmunicate_key::Staging_Key
+        favr_key = Favr_key::Staging_Key
+        meal_key = Mealbox_key::Staging_Key
+        socal_key = Socal_key::Staging_Key
 
       else
-        # Returns to sign in page if CURRENT_USER doesn't exist
-        redirect_to root_path
+        carmmunicate_key = Carmmunicate_key::Production_Key
+        favr_key = Favr_key::Production_Key
+        meal_key = Mealbox_key::Production_Key
+        socal_key = Socal_key::Production_Key
+
       end
+
+      @placesMap = Place.order("created_at DESC").reload
+
+      @hive_applications.each do |app|
+
+
+        if app.api_key == carmmunicate_key
+
+          p "query detail info of carmunicate"
+
+          topics_by_places = [ ]
+          @CMlatestTopics = [ ]
+          @CMlatestTopicUser = [ ]
+
+          @placesMap.map{|f|
+            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+          }
+
+          topics_by_places.each do |t|
+            if t.present?
+              @CMlatestTopics.push(t)
+            end
+          end
+
+          @CMlatestTopics.each do |t|
+            @CMlatestTopicUser.push(t.username)
+          end
+
+        elsif app.api_key == meal_key
+          p "query detail info of meal box"
+
+          topics_by_places = [ ]
+          @MBlatestTopics = [ ]
+          @MBlatestTopicUser = [ ]
+
+          @placesMap.map{|f|
+            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+          }
+
+          topics_by_places.each do |t|
+            if t.present?
+              @MBlatestTopics.push(t)
+            end
+          end
+
+          @MBlatestTopics.each do |t|
+            @MBlatestTopicUser.push(t.username)
+          end
+
+        elsif app.api_key == favr_key
+          p "query detail info of favr"
+
+
+          topics_by_places = [ ]
+          @FVlatestTopics = [ ]
+          @FVlatestTopicUser = [ ]
+
+          @placesMap.map{|f|
+            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+          }
+
+          topics_by_places.each do |t|
+            if t.present?
+              @FVlatestTopics.push(t)
+            end
+          end
+
+          @FVlatestTopics.each do |t|
+            @FVlatestTopicUser.push(t.username)
+          end
+
+        elsif app.api_key == socal_key
+          p "query detial info of socal"
+
+          topics_by_places = [ ]
+          @SClatestTopics = [ ]
+          @SClatestTopicUser = [ ]
+
+          @placesMap.map{|f|
+            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+          }
+
+          topics_by_places.each do |t|
+            if t.present?
+              @SClatestTopics.push(t)
+            end
+          end
+
+          @SClatestTopics.each do |t|
+            @SClatestTopicUser.push(t.username)
+          end
+
+
+        elsif app.app_name == 'hv'
+
+          topics_by_places = [ ]
+          @latestTopics = [ ]
+          @latestTopicUser = [ ]
+
+          @placesMap.map{|f|
+            topics_by_places.push(f.topics.last)
+          }
+
+          topics_by_places.each do |t|
+            if t.present?
+              @latestTopics.push(t)
+            end
+          end
+
+          @latestTopics.each do |t|
+            @latestTopicUser.push(t.username)
+          end
+
+          p "query detial info of hive"
+        end
+      end
+
+
+      render layout: "special_layout"
 
     end
 
-
-
   end
+
+
+
+   def map_view
+     @placesMap = Place.order("created_at DESC").reload
+
+     #filtering for normal topic, image, audio and video
+     @latestTopics = [ ]
+     @latestTopicUser = [ ]
+
+     @placesMap.map { |f|
+       @latestTopics.push(f.topics.last)
+     }
+
+     @latestTopics.each do |topic|
+       if topic.present?
+         @latestTopicUser.push(topic.username)
+       end
+
+       # else
+       #   @latestTopicUser.push("nothing")
+       # end
+     end
+     p "detail info"
+     gon.places =  @placesMap.as_json
+     p "************"
+     gon.latestTopicUser = @latestTopicUser
+
+     p gon.latestTopics = @latestTopics
+
+   end
 
 
    private

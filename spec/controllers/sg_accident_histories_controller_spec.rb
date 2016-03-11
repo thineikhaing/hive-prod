@@ -39,7 +39,7 @@ RSpec.describe SgAccidentHistoriesController, type: :controller do
   describe "GET #index" do
     it "assigns all sg_accident_histories as @sg_accident_histories" do
       sg_accident_history = SgAccidentHistory.create! valid_attributes
-      get :index, {}, valid_session
+      get :home, {}, valid_session
       expect(assigns(:sg_accident_histories)).to eq([sg_accident_history])
     end
   end

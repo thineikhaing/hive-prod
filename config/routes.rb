@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
   root to: 'home#index'
-  post "sign_in"  =>  'home#sign_in'  , via: [:get, :post]
+  post "dev_sign_in"  =>  'home#dev_sign_in'  , via: [:get, :post]
   match "developer_portal"  =>  'home#developer_portal'  , via: [:get, :post]
 
   resources :sg_accident_histories

@@ -348,7 +348,7 @@ class Api::HivewebController < ApplicationController
 
     #GET AVATAR URL
     #check for special case that cannot match the avatar
-    avatar_url = "Chat-Avatar-Puppy.png" if(username.index("Snorkie").present?)
+    avatar_url = "Chat-Avatar-Puppy.png" if(username.home("Snorkie").present?)
     avatar_url = "Chat-Avatar-Koala.png" if(username.index("Bear").present?)
     avatar_url = "Chat-Avatar-Kitten.png" if(username.index("Cat").present?)
     avatar_url = "Chat-Avatar-Kitten.png" if(username.index("Jaguar").present?)

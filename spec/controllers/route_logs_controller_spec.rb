@@ -39,7 +39,7 @@ RSpec.describe RouteLogsController, type: :controller do
   describe "GET #index" do
     it "assigns all route_logs as @route_logs" do
       route_log = RouteLog.create! valid_attributes
-      get :index, {}, valid_session
+      get :home, {}, valid_session
       expect(assigns(:route_logs)).to eq([route_log])
     end
   end

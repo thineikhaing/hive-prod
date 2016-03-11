@@ -39,7 +39,7 @@ RSpec.describe CarActionLogsController, :type => :controller do
   describe "GET index" do
     it "assigns all car_action_logs as @car_action_logs" do
       car_action_log = CarActionLog.create! valid_attributes
-      get :index, {}, valid_session
+      get :home, {}, valid_session
       expect(assigns(:car_action_logs)).to eq([car_action_log])
     end
   end

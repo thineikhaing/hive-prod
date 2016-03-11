@@ -3,7 +3,7 @@
 
     %h3 THE APIARY
     %br
-    = form_for :dev_users, url: { controller: "home", action: "sign_in" }, method: "post" do |f|
+    = form_for :dev_users, url: { controller: "home", action: "dev_sign_in" }, method: "post" do |f|
 
       .parallelogram.parallelinput
         = f.text_field :email, class: "sign_in_input" , placeholder: 'username or email'

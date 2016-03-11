@@ -39,7 +39,7 @@ RSpec.describe UserFavLocationsController, type: :controller do
   describe "GET #index" do
     it "assigns all user_fav_locations as @user_fav_locations" do
       user_fav_location = UserFavLocation.create! valid_attributes
-      get :index, {}, valid_session
+      get :home, {}, valid_session
       expect(assigns(:user_fav_locations)).to eq([user_fav_location])
     end
   end

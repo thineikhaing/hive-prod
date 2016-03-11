@@ -364,7 +364,6 @@ class Topic < ActiveRecord::Base
 
     if hiveapplication.present?
 
-      p "if hive present?"
       mealbox_key = ""
       if Rails.env.development?
         mealbox_key = Mealbox_key::Development_Key
@@ -374,7 +373,6 @@ class Topic < ActiveRecord::Base
         mealbox_key = Mealbox_key::Production_Key
       end
 
-      p  mealbox_key
       hiveapplication.api_key
 
       if hiveapplication.api_key ==  mealbox_key   #api key for mealbox

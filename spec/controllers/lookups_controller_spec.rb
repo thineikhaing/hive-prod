@@ -39,7 +39,7 @@ RSpec.describe LookupsController, type: :controller do
   describe "GET #index" do
     it "assigns all lookups as @lookups" do
       lookup = Lookup.create! valid_attributes
-      get :index, {}, valid_session
+      get :home, {}, valid_session
       expect(assigns(:lookups)).to eq([lookup])
     end
   end
