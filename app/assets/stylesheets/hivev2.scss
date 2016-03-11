@@ -65,6 +65,10 @@ h3{color:orange}
   -o-transform: skew(30deg);
   margin-bottom: 0px;
   line-height: 25px;
+  //width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
 }
 
