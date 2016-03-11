@@ -31,7 +31,24 @@
       .columns.large-5
         %div{style:'position:relative;float:left;width:65px;'}
           .logo_borders{style:"background-color:#{theme_color} !important;background:#{theme_color} !important"}
-            =app.app_name
+
+            -if app.api_key == hive_key
+              hv
+
+            -if app.api_key == socal_key
+              sc
+
+            -if app.api_key == carmmunicate_key
+              cm
+
+            -if app.api_key == meal_key
+              mb
+
+            -if app.api_key == favr_key
+              fv
+
+            -if app.api_key == round_key
+              rt
 
           %svg.logo_svg
             %defs
