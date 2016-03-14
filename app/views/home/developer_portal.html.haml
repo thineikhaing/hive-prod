@@ -69,7 +69,7 @@
             = render 'home/hv_topics'
           = render 'home/hv_location'
 
-        -if app.api_key == @socal_key
+        -if app.api_key == @round_key
           #display_socalinfo
             = render 'home/rt_users'
             = render 'home/rt_topics'
@@ -93,7 +93,7 @@
             = render 'home/fv_topics'
           = render 'home/fv_location'
 
-        -if app.api_key == @round_key
+        -if app.api_key == @socal_key
           #display_roundinfo
             = render 'home/sc_users'
             = render 'home/sc_topics'

@@ -33,57 +33,10 @@ var Hivemaps = {
         this.geoloc(this.success,this.fail);
 
 
-        address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
-
-    },
-
-    display_address: function(myLatlng) {
-        var geocoder = new google.maps.Geocoder();
-        geocoder.geocode({ 'latLng': myLatlng },
-            function (results, status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    if (results[0]) {
-
-                        for (var i = 0; i < results[0].address_components.length; i++) {
-                            var addr = results[0].address_components[i];
-                            // check if this entry in address_components has a type of country
-                            if (addr.types[0] == 'country')
-                                country = addr.long_name;
-                            else if (addr.types[0] == 'street_address') // address 1
-                                address = address + addr.long_name;
-                            else if (addr.types[0] == 'establishment')
-                                address = address + addr.long_name;
-                            else if (addr.types[0] == 'route')  // address 2
-                                address = address + addr.long_name;
-                            else if (addr.types[0] == 'postal_code')       // Zip
-                                zip = addr.short_name;
-                            else if (addr.types[0] == ['administrative_area_level_1'])       // State
-                                state = addr.long_name;
-                            else if (addr.types[0] == ['locality'])       // City
-                                city = addr.long_name;
-                        }
-
-
-                        if (results[0].formatted_address != null) {
-                            formattedAddress = results[0].formatted_address;
-                        }
-
-                        //debugger;
-
-                        var location = results[0].geometry.location;
-
-
-                    }
-
-                }
-
-            });
-
-        return {address: formattedAddress, country: country}
-
 
 
     },
+
 
     geoloc:function(success, fail){
         var is_echo = false;
@@ -123,6 +76,66 @@ var Hivemaps = {
             latitude =lat;
             longitude = lng;
 
+            var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
+            var latlng   = new google.maps.LatLng(latitude,longitude);
+            var geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ 'latLng': latlng },
+                function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        if (results[0]) {
+
+                            for (var i = 0; i < results[0].address_components.length; i++) {
+                                var addr = results[0].address_components[i];
+                                // check if this entry in address_components has a type of country
+                                if (addr.types[0] == 'country')
+                                    country = addr.long_name;
+                                else if (addr.types[0] == 'street_address') // address 1
+                                    address = address + addr.long_name;
+                                else if (addr.types[0] == 'establishment')
+                                    address = address + addr.long_name;
+                                else if (addr.types[0] == 'route')  // address 2
+                                    address = address + addr.long_name;
+                                else if (addr.types[0] == 'postal_code')       // Zip
+                                    zip = addr.short_name;
+                                else if (addr.types[0] == ['administrative_area_level_1'])       // State
+                                    state = addr.long_name;
+                                else if (addr.types[0] == ['locality'])       // City
+                                    city = addr.long_name;
+                            }
+
+
+                            if (results[0].formatted_address != null) {
+                                formattedAddress = results[0].formatted_address;
+                                $("#round_address").html(formattedAddress)
+                                $("#round_country").html(country)
+
+                                $("#hive_address").html(formattedAddress)
+                                $("#hive_country").html(country)
+
+                                $("#meal_address").html(formattedAddress)
+                                $("#meal_country").html(country)
+
+                                $("#favr_address").html(formattedAddress)
+                                $("#favr_country").html(country)
+
+                                $("#socal_address").html(formattedAddress)
+                                $("#socal_country").html(country)
+
+                                $("#carmic_address").html(formattedAddress)
+                                $("#carmic_country").html(country)
+                            }
+
+                            //debugger;
+
+                            var location = results[0].geometry.location;
+
+
+                        }
+
+                    }
+
+                });
+
             var hvmarkers = new OpenLayers.Layer.Markers("Markers");
             var hvcurrentPosition = new OpenLayers.LonLat(lng,lat).transform( fromProjection, toProjection);
             var hvcurrentPositionIcon = new OpenLayers.Icon('/assets/hivev2/WebMapMe.png', size, offset);
@@ -158,15 +171,58 @@ var Hivemaps = {
                         var app_info = new XMLSerializer().serializeToString(output);
                         $("#display_hiveinfo").replaceWith(app_info);
 
-                        var latlng   = new google.maps.LatLng(xCoord,yCoord);
-                        var add = Hivemaps.display_address(latlng)
 
-                        if (add.address.replace(/\s/g,"") != ""){
-                            $("#hive_address").html(add.address)
-                            $("#hive_country").html(add.country)
-                        }
+
                     }
                 });
+
+                var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
+                var latlng   = new google.maps.LatLng(xCoord,yCoord);
+                var geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ 'latLng': latlng },
+                    function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            if (results[0]) {
+
+                                for (var i = 0; i < results[0].address_components.length; i++) {
+                                    var addr = results[0].address_components[i];
+                                    // check if this entry in address_components has a type of country
+                                    if (addr.types[0] == 'country')
+                                        country = addr.long_name;
+                                    else if (addr.types[0] == 'street_address') // address 1
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'establishment')
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'route')  // address 2
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'postal_code')       // Zip
+                                        zip = addr.short_name;
+                                    else if (addr.types[0] == ['administrative_area_level_1'])       // State
+                                        state = addr.long_name;
+                                    else if (addr.types[0] == ['locality'])       // City
+                                        city = addr.long_name;
+                                }
+
+
+                                if (results[0].formatted_address != null) {
+                                    formattedAddress = results[0].formatted_address;
+
+                                    $("#hive_address").html(formattedAddress)
+                                    $("#hive_country").html(country)
+                                }
+
+                                //debugger;
+
+                                var location = results[0].geometry.location;
+
+
+                            }
+
+                        }
+
+                    });
+
+
 
 
 
@@ -209,15 +265,53 @@ var Hivemaps = {
                         var app_info = new XMLSerializer().serializeToString(output);
                         $("#display_mealinfo").replaceWith(app_info);
 
-                        var latlng   = new google.maps.LatLng(xCoord,yCoord);
-                        var add = Hivemaps.display_address(latlng)
-
-                        if (add.address.replace(/\s/g,"") != ""){
-                            $("#meal_address").html(add.address)
-                            $("#meal_country").html(add.country)
-                        }
                     }
                 });
+
+                var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
+                var latlng   = new google.maps.LatLng(xCoord,yCoord);
+                var geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ 'latLng': latlng },
+                    function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            if (results[0]) {
+
+                                for (var i = 0; i < results[0].address_components.length; i++) {
+                                    var addr = results[0].address_components[i];
+                                    // check if this entry in address_components has a type of country
+                                    if (addr.types[0] == 'country')
+                                        country = addr.long_name;
+                                    else if (addr.types[0] == 'street_address') // address 1
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'establishment')
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'route')  // address 2
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'postal_code')       // Zip
+                                        zip = addr.short_name;
+                                    else if (addr.types[0] == ['administrative_area_level_1'])       // State
+                                        state = addr.long_name;
+                                    else if (addr.types[0] == ['locality'])       // City
+                                        city = addr.long_name;
+                                }
+
+
+                                if (results[0].formatted_address != null) {
+                                    formattedAddress = results[0].formatted_address;
+                                    $("#meal_address").html(formattedAddress)
+                                    $("#meal_country").html(country)
+                                }
+
+                                //debugger;
+
+                                var location = results[0].geometry.location;
+
+
+                            }
+
+                        }
+
+                    });
 
             });
 
@@ -261,16 +355,53 @@ var Hivemaps = {
                         var app_info = new XMLSerializer().serializeToString(output);
                         $("#display_carmicinfo").replaceWith(app_info);
 
-                        var latlng   = new google.maps.LatLng(xCoord,yCoord);
-                        var add = Hivemaps.display_address(latlng)
-
-                        if (add.address.replace(/\s/g,"") != ""){
-                            $("#carmic_address").html(add.address)
-                            $("#carmic_country").html(add.country)
-                        }
-
                     }
                 });
+
+                var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
+                var latlng   = new google.maps.LatLng(xCoord,yCoord);
+                var geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ 'latLng': latlng },
+                    function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            if (results[0]) {
+
+                                for (var i = 0; i < results[0].address_components.length; i++) {
+                                    var addr = results[0].address_components[i];
+                                    // check if this entry in address_components has a type of country
+                                    if (addr.types[0] == 'country')
+                                        country = addr.long_name;
+                                    else if (addr.types[0] == 'street_address') // address 1
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'establishment')
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'route')  // address 2
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'postal_code')       // Zip
+                                        zip = addr.short_name;
+                                    else if (addr.types[0] == ['administrative_area_level_1'])       // State
+                                        state = addr.long_name;
+                                    else if (addr.types[0] == ['locality'])       // City
+                                        city = addr.long_name;
+                                }
+
+
+                                if (results[0].formatted_address != null) {
+                                    formattedAddress = results[0].formatted_address;
+                                    $("#carmic_address").html(formattedAddress)
+                                    $("#carmic_country").html(country)
+                                }
+
+                                //debugger;
+
+                                var location = results[0].geometry.location;
+
+
+                            }
+
+                        }
+
+                    });
 
             });
 
@@ -313,16 +444,54 @@ var Hivemaps = {
                         var app_info = new XMLSerializer().serializeToString(output);
                         $("#display_socalinfo").replaceWith(app_info);
 
-                        var latlng   = new google.maps.LatLng(xCoord,yCoord);
-                        var add = Hivemaps.display_address(latlng)
-
-                        if (add.address.replace(/\s/g,"") != ""){
-                            $("#socal_address").html(add.address)
-                            $("#socal_country").html(add.country)
-                        }
-
                     }
                 });
+
+
+                var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
+                var latlng   = new google.maps.LatLng(xCoord,yCoord);
+                var geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ 'latLng': latlng },
+                    function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            if (results[0]) {
+
+                                for (var i = 0; i < results[0].address_components.length; i++) {
+                                    var addr = results[0].address_components[i];
+                                    // check if this entry in address_components has a type of country
+                                    if (addr.types[0] == 'country')
+                                        country = addr.long_name;
+                                    else if (addr.types[0] == 'street_address') // address 1
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'establishment')
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'route')  // address 2
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'postal_code')       // Zip
+                                        zip = addr.short_name;
+                                    else if (addr.types[0] == ['administrative_area_level_1'])       // State
+                                        state = addr.long_name;
+                                    else if (addr.types[0] == ['locality'])       // City
+                                        city = addr.long_name;
+                                }
+
+
+                                if (results[0].formatted_address != null) {
+                                    formattedAddress = results[0].formatted_address;
+                                    $("#socal_address").html(formattedAddress)
+                                    $("#socal_country").html(country)
+                                }
+
+                                //debugger;
+
+                                var location = results[0].geometry.location;
+
+
+                            }
+
+                        }
+
+                    });
 
             });
 
@@ -363,15 +532,53 @@ var Hivemaps = {
                         var app_info = new XMLSerializer().serializeToString(output);
                         $("#display_favrinfo").replaceWith(app_info);
 
-                        var latlng   = new google.maps.LatLng(xCoord,yCoord);
-                        var add = Hivemaps.display_address(latlng)
-
-                        if (add.address.replace(/\s/g,"") != ""){
-                            $("#favr_address").html(add.address)
-                            $("#favr_country").html(add.country)
-                        }
                     }
                 });
+
+                var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
+                var latlng   = new google.maps.LatLng(xCoord,yCoord);
+                var geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ 'latLng': latlng },
+                    function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            if (results[0]) {
+
+                                for (var i = 0; i < results[0].address_components.length; i++) {
+                                    var addr = results[0].address_components[i];
+                                    // check if this entry in address_components has a type of country
+                                    if (addr.types[0] == 'country')
+                                        country = addr.long_name;
+                                    else if (addr.types[0] == 'street_address') // address 1
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'establishment')
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'route')  // address 2
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'postal_code')       // Zip
+                                        zip = addr.short_name;
+                                    else if (addr.types[0] == ['administrative_area_level_1'])       // State
+                                        state = addr.long_name;
+                                    else if (addr.types[0] == ['locality'])       // City
+                                        city = addr.long_name;
+                                }
+
+
+                                if (results[0].formatted_address != null) {
+                                    formattedAddress = results[0].formatted_address;
+                                    $("#favr_address").html(formattedAddress)
+                                    $("#favr_country").html(country)
+                                }
+
+                                //debugger;
+
+                                var location = results[0].geometry.location;
+
+
+                            }
+
+                        }
+
+                    });
 
             });
 
@@ -411,16 +618,54 @@ var Hivemaps = {
                         var output = htmlobject.find("#display_roundinfo")[0];
                         var app_info = new XMLSerializer().serializeToString(output);
                         $("#display_roundinfo").replaceWith(app_info);
-
-                        var latlng   = new google.maps.LatLng(xCoord,yCoord);
-                        var add = Hivemaps.display_address(latlng)
-
-                        if (add.address.replace(/\s/g,"") != ""){
-                            $("#round_address").html(add.address)
-                            $("#round_country").html(add.country)
-                        }
                     }
                 });
+
+
+                var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
+                var latlng   = new google.maps.LatLng(xCoord,yCoord);
+                var geocoder = new google.maps.Geocoder();
+                geocoder.geocode({ 'latLng': latlng },
+                    function (results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            if (results[0]) {
+
+                                for (var i = 0; i < results[0].address_components.length; i++) {
+                                    var addr = results[0].address_components[i];
+                                    // check if this entry in address_components has a type of country
+                                    if (addr.types[0] == 'country')
+                                        country = addr.long_name;
+                                    else if (addr.types[0] == 'street_address') // address 1
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'establishment')
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'route')  // address 2
+                                        address = address + addr.long_name;
+                                    else if (addr.types[0] == 'postal_code')       // Zip
+                                        zip = addr.short_name;
+                                    else if (addr.types[0] == ['administrative_area_level_1'])       // State
+                                        state = addr.long_name;
+                                    else if (addr.types[0] == ['locality'])       // City
+                                        city = addr.long_name;
+                                }
+
+
+                                if (results[0].formatted_address != null) {
+                                    formattedAddress = results[0].formatted_address;
+                                    $("#round_address").html(formattedAddress)
+                                    $("#round_country").html(country)
+                                }
+
+                                //debugger;
+
+                                var location = results[0].geometry.location;
+
+
+                            }
+
+                        }
+
+                    });
 
             });
 
