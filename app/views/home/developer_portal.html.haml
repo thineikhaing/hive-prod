@@ -43,55 +43,61 @@
         %div{style:'position:relative;float:left;'}
 
           -if app.api_key == @hive_key
-            .parallelogram#hv_map{style:'width: 265px;height: 240px;position: relative;margin-left: -50px !important;'}
+            .parallelogram#hv_map{"data-apikey"=>"#{app.api_key}"}
 
           -if app.api_key == @socal_key
-            .parallelogram#sc_map{style:'width: 265px;height: 240px;position: relative;margin-left: -50px!important;;'}
+            .parallelogram#sc_map{"data-apikey"=>"#{app.api_key}"}
 
           -if app.api_key == @carmmunicate_key
-            .parallelogram#cm_map{style:'width: 265px;height: 240px;position: relative;margin-left: -50px !important;;'}
+            .parallelogram#cm_map{"data-apikey"=>"#{app.api_key}"}
 
           -if app.api_key == @meal_key
-            .parallelogram#mb_map{style:'width: 265px;height: 240px;position: relative;margin-left: -50px !important;;'}
+            .parallelogram#mb_map{"data-apikey"=>"#{app.api_key}"}
 
           -if app.api_key == @favr_key
-            .parallelogram#fv_map{style:'width: 265px;height: 240px;position: relative;margin-left: -50px !important;;'}
+            .parallelogram#fv_map{"data-apikey"=>"#{app.api_key}"}
 
           -if app.api_key == @round_key
-            .parallelogram#rt_map{style:'width: 265px;height: 240px;position: relative;margin-left: -50px !important;;'}
+            .parallelogram#rt_map{"data-apikey"=>"#{app.api_key}"}
 
 
       .columns.large-6{style:'margin-left:15px;'}
 
         -if app.api_key == @hive_key
-          = render 'home/hv_users'
-          = render 'home/hv_topics'
-          = render 'home/hv_location'
+          #display_hiveinfo
+            = render 'home/hv_users'
+            = render 'home/hv_topics'
+            = render 'home/hv_location'
 
         -if app.api_key == @socal_key
-          = render 'home/rt_users'
-          = render 'home/rt_topics'
-          = render 'home/rt_location'
+          #display_socalinfo
+            = render 'home/rt_users'
+            = render 'home/rt_topics'
+            = render 'home/rt_location'
 
         -if app.api_key == @carmmunicate_key
-          = render 'home/cm_users'
-          = render 'home/cm_topics'
-          = render 'home/cm_location'
+          #display_carmicinfo
+            = render 'home/cm_users'
+            = render 'home/cm_topics'
+            = render 'home/cm_location'
 
         -if app.api_key == @meal_key
-          = render 'home/mb_users'
-          = render 'home/mb_topics'
-          = render 'home/mb_location'
+          #display_mealinfo
+            = render 'home/mb_users'
+            = render 'home/mb_topics'
+            = render 'home/mb_location'
 
         -if app.api_key == @favr_key
-          = render 'home/fv_users'
-          = render 'home/fv_topics'
-          = render 'home/fv_location'
+          #display_favrinfo
+            = render 'home/fv_users'
+            = render 'home/fv_topics'
+            = render 'home/fv_location'
 
         -if app.api_key == @round_key
-          = render 'home/sc_users'
-          = render 'home/sc_topics'
-          = render 'home/sc_location'
+          #display_roundinfo
+            = render 'home/sc_users'
+            = render 'home/sc_topics'
+            = render 'home/sc_location'
       .columns.large-12
         .small-6.large-centered.columns
       .columns.large-12

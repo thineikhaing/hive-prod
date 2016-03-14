@@ -32,6 +32,19 @@ var Hivemaps = {
 
         this.geoloc(this.success,this.fail);
 
+
+        //cm_map.on('moveend',function(){
+        //    // this will only get called when there is a actual move
+        //    // this is not always idea; when doing toggling actions
+        //    // before and after pan
+        //    console.log("[ moveend ]");
+        //}),
+        //
+        //cm_map.on('movestart',function(){
+        //    // Whish this callback was available :(
+        //    console.log("[ movestart ]");
+        //})
+
     },
 
     geoloc:function(success, fail){
@@ -85,6 +98,32 @@ var Hivemaps = {
 
             hvmarkers.addMarker(hvcurrentPositionMarker);
 
+            hv_map.events.register("moveend", hv_map, function(){
+
+                var mapExtent = hv_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
+
+                var xCoord = mapExtent.lat
+                var yCoord = mapExtent.lon
+
+                console.log(xCoord)
+                console.log(yCoord)
+
+                $.ajax({
+                    data: {
+                        cur_lat: xCoord,
+                        cur_long: yCoord,
+                        api_key: $("#hv_map").data("apikey")
+                    },
+                    success: function(html) {
+                        var htmlobject = $(html);
+                        var output = htmlobject.find("#display_hiveinfo")[0];
+                        var app_info = new XMLSerializer().serializeToString(output);
+                        $("#display_hiveinfo").replaceWith(app_info);
+                    }
+                });
+
+            });
+
             // setting for hive map
 
             var mbmarkers = new OpenLayers.Layer.Markers("Markers");
@@ -99,6 +138,33 @@ var Hivemaps = {
             mb_map.setCenter (mbcurrentPosition, zoom);
 
             mbmarkers.addMarker(mbcurrentPositionMarker);
+
+            mb_map.events.register("moveend", mb_map, function(){
+
+                var mapExtent = mb_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
+
+                var xCoord = mapExtent.lat
+                var yCoord = mapExtent.lon
+
+                console.log(xCoord)
+                console.log(yCoord)
+
+                $.ajax({
+                    data: {
+                        cur_lat: xCoord,
+                        cur_long: yCoord,
+                        api_key: $("#mb_map").data("apikey")
+                    },
+                    success: function(html) {
+                        var htmlobject = $(html);
+                        var output = htmlobject.find("#display_mealinfo")[0];
+                        var app_info = new XMLSerializer().serializeToString(output);
+                        $("#display_mealinfo").replaceWith(app_info);
+                    }
+                });
+
+            });
+
 
             // setting for mealbox map
 
@@ -115,6 +181,35 @@ var Hivemaps = {
 
             cmmarkers.addMarker(cmcurrentPositionMarker);
 
+            cm_map.events.register("moveend", cm_map, function(){
+
+                var mapExtent = cm_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
+
+                var xCoord = mapExtent.lat
+                var yCoord = mapExtent.lon
+
+                console.log(xCoord)
+                console.log(yCoord)
+
+                $.ajax({
+
+                    data: {
+                        cur_lat: xCoord,
+                        cur_long: yCoord,
+                        api_key: $("#cm_map").data("apikey")
+
+                    },
+                    success: function(html) {
+                        var htmlobject = $(html);
+                        var output = htmlobject.find("#display_carmicinfo")[0];
+                        var app_info = new XMLSerializer().serializeToString(output);
+                        $("#display_carmicinfo").replaceWith(app_info);
+
+                    }
+                });
+
+            });
+
             // setting for carmunicate map
 
             var scmarkers = new OpenLayers.Layer.Markers("Markers");
@@ -130,8 +225,36 @@ var Hivemaps = {
 
             scmarkers.addMarker(sccurrentPositionMarker);
 
-            // setting for socal map
+            sc_map.events.register("moveend", sc_map, function(){
 
+                var mapExtent = sc_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
+
+                var xCoord = mapExtent.lat
+                var yCoord = mapExtent.lon
+
+                console.log(xCoord)
+                console.log(yCoord)
+
+                $.ajax({
+
+                    data: {
+                        cur_lat: xCoord,
+                        cur_long: yCoord,
+                        api_key: $("#sc_map").data("apikey")
+
+                    },
+                    success: function(html) {
+                        var htmlobject = $(html);
+                        var output = htmlobject.find("#display_socalinfo")[0];
+                        var app_info = new XMLSerializer().serializeToString(output);
+                        $("#display_socalinfo").replaceWith(app_info);
+
+                    }
+                });
+
+            });
+
+            // setting for socal map
 
             var fvmarkers = new OpenLayers.Layer.Markers("Markers");
             var fvcurrentPosition = new OpenLayers.LonLat(lng,lat).transform( fromProjection, toProjection);
@@ -145,6 +268,32 @@ var Hivemaps = {
             fv_map.setCenter (fvcurrentPosition, zoom);
 
             fvmarkers.addMarker(fvcurrentPositionMarker);
+
+            fv_map.events.register("moveend", fv_map, function(){
+
+                var mapExtent = fv_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
+
+                var xCoord = mapExtent.lat
+                var yCoord = mapExtent.lon
+
+                console.log(xCoord)
+                console.log(yCoord)
+
+                $.ajax({
+                    data: {
+                        cur_lat: xCoord,
+                        cur_long: yCoord,
+                        api_key: $("#fv_map").data("apikey")
+                    },
+                    success: function(html) {
+                        var htmlobject = $(html);
+                        var output = htmlobject.find("#display_favrinfo")[0];
+                        var app_info = new XMLSerializer().serializeToString(output);
+                        $("#display_favrinfo").replaceWith(app_info);
+                    }
+                });
+
+            });
 
             // setting for favr map
 
@@ -161,11 +310,42 @@ var Hivemaps = {
 
             rtmarkers.addMarker(rtcurrentPositionMarker);
 
+            rt_map.events.register("moveend", rt_map, function(){
+
+                var mapExtent = rt_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
+
+                var xCoord = mapExtent.lat
+                var yCoord = mapExtent.lon
+
+                console.log(xCoord)
+                console.log(yCoord)
+
+                $.ajax({
+                    data: {
+                        cur_lat: xCoord,
+                        cur_long: yCoord,
+                        api_key: $("#rt_map").data("apikey")
+                    },
+                    success: function(html) {
+                        var htmlobject = $(html);
+                        var output = htmlobject.find("#display_roundinfo")[0];
+                        var app_info = new XMLSerializer().serializeToString(output);
+                        $("#display_roundinfo").replaceWith(app_info);
+                    }
+                });
+
+            });
+
             // setting for round trop map
         }
 
     },
     fail:function(){}
+
+
+
+
+
 };
 
 

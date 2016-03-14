@@ -341,8 +341,6 @@ class Api::HivewebController < ApplicationController
 
   end
 
-
-
   def get_avatar(username)
     avatar_url = nil
 
@@ -760,5 +758,8 @@ class Api::HivewebController < ApplicationController
     end
 
   end
+
+
+
 
 end
