@@ -79,7 +79,7 @@ class HomeController < ApplicationController
 
       end
 
-      @placesMap = Place.order("created_at DESC").reload
+      @placesMap = Place.all.reload
 
       lat = params[:cur_lat] if params[:cur_lat].present?
       lng = params[:cur_long] if params[:cur_long].present?
@@ -96,7 +96,7 @@ class HomeController < ApplicationController
 
           if params[:cur_lat].present? &&  params[:api_key] == @carmmunicate_key
 
-            places =  Place.nearest(lat,lng,3)
+            places =  Place.nearest(lat,lng,2)
 
             if places.present?
               places_id = []

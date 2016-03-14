@@ -51,11 +51,15 @@ function getLatLongDetail(myLatlng) {
                     }
                     $("#state").text(city)
                     $("#address").text(formattedAddress)
+
+                    return formattedAddress
                 }
 
             }
 
         });
+
+
 
     window.getLatLongDetail = getLatLongDetail;
 }

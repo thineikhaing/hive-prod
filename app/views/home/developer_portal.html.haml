@@ -67,37 +67,37 @@
           #display_hiveinfo
             = render 'home/hv_users'
             = render 'home/hv_topics'
-            = render 'home/hv_location'
+          = render 'home/hv_location'
 
         -if app.api_key == @socal_key
           #display_socalinfo
             = render 'home/rt_users'
             = render 'home/rt_topics'
-            = render 'home/rt_location'
+          = render 'home/rt_location'
 
         -if app.api_key == @carmmunicate_key
           #display_carmicinfo
             = render 'home/cm_users'
             = render 'home/cm_topics'
-            = render 'home/cm_location'
+          = render 'home/cm_location'
 
         -if app.api_key == @meal_key
           #display_mealinfo
             = render 'home/mb_users'
             = render 'home/mb_topics'
-            = render 'home/mb_location'
+          = render 'home/mb_location'
 
         -if app.api_key == @favr_key
           #display_favrinfo
             = render 'home/fv_users'
             = render 'home/fv_topics'
-            = render 'home/fv_location'
+          = render 'home/fv_location'
 
         -if app.api_key == @round_key
           #display_roundinfo
             = render 'home/sc_users'
             = render 'home/sc_topics'
-            = render 'home/sc_location'
+          = render 'home/sc_location'
       .columns.large-12
         .small-6.large-centered.columns
       .columns.large-12

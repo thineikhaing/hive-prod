@@ -33,17 +33,55 @@ var Hivemaps = {
         this.geoloc(this.success,this.fail);
 
 
-        //cm_map.on('moveend',function(){
-        //    // this will only get called when there is a actual move
-        //    // this is not always idea; when doing toggling actions
-        //    // before and after pan
-        //    console.log("[ moveend ]");
-        //}),
-        //
-        //cm_map.on('movestart',function(){
-        //    // Whish this callback was available :(
-        //    console.log("[ movestart ]");
-        //})
+        address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
+
+    },
+
+    display_address: function(myLatlng) {
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ 'latLng': myLatlng },
+            function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    if (results[0]) {
+
+                        for (var i = 0; i < results[0].address_components.length; i++) {
+                            var addr = results[0].address_components[i];
+                            // check if this entry in address_components has a type of country
+                            if (addr.types[0] == 'country')
+                                country = addr.long_name;
+                            else if (addr.types[0] == 'street_address') // address 1
+                                address = address + addr.long_name;
+                            else if (addr.types[0] == 'establishment')
+                                address = address + addr.long_name;
+                            else if (addr.types[0] == 'route')  // address 2
+                                address = address + addr.long_name;
+                            else if (addr.types[0] == 'postal_code')       // Zip
+                                zip = addr.short_name;
+                            else if (addr.types[0] == ['administrative_area_level_1'])       // State
+                                state = addr.long_name;
+                            else if (addr.types[0] == ['locality'])       // City
+                                city = addr.long_name;
+                        }
+
+
+                        if (results[0].formatted_address != null) {
+                            formattedAddress = results[0].formatted_address;
+                        }
+
+                        //debugger;
+
+                        var location = results[0].geometry.location;
+
+
+                    }
+
+                }
+
+            });
+
+        return {address: formattedAddress, country: country}
+
+
 
     },
 
@@ -119,8 +157,18 @@ var Hivemaps = {
                         var output = htmlobject.find("#display_hiveinfo")[0];
                         var app_info = new XMLSerializer().serializeToString(output);
                         $("#display_hiveinfo").replaceWith(app_info);
+
+                        var latlng   = new google.maps.LatLng(xCoord,yCoord);
+                        var add = Hivemaps.display_address(latlng)
+
+                        if (add.address.replace(/\s/g,"") != ""){
+                            $("#hive_address").html(add.address)
+                            $("#hive_country").html(add.country)
+                        }
                     }
                 });
+
+
 
             });
 
@@ -160,6 +208,14 @@ var Hivemaps = {
                         var output = htmlobject.find("#display_mealinfo")[0];
                         var app_info = new XMLSerializer().serializeToString(output);
                         $("#display_mealinfo").replaceWith(app_info);
+
+                        var latlng   = new google.maps.LatLng(xCoord,yCoord);
+                        var add = Hivemaps.display_address(latlng)
+
+                        if (add.address.replace(/\s/g,"") != ""){
+                            $("#meal_address").html(add.address)
+                            $("#meal_country").html(add.country)
+                        }
                     }
                 });
 
@@ -205,6 +261,14 @@ var Hivemaps = {
                         var app_info = new XMLSerializer().serializeToString(output);
                         $("#display_carmicinfo").replaceWith(app_info);
 
+                        var latlng   = new google.maps.LatLng(xCoord,yCoord);
+                        var add = Hivemaps.display_address(latlng)
+
+                        if (add.address.replace(/\s/g,"") != ""){
+                            $("#carmic_address").html(add.address)
+                            $("#carmic_country").html(add.country)
+                        }
+
                     }
                 });
 
@@ -249,6 +313,14 @@ var Hivemaps = {
                         var app_info = new XMLSerializer().serializeToString(output);
                         $("#display_socalinfo").replaceWith(app_info);
 
+                        var latlng   = new google.maps.LatLng(xCoord,yCoord);
+                        var add = Hivemaps.display_address(latlng)
+
+                        if (add.address.replace(/\s/g,"") != ""){
+                            $("#socal_address").html(add.address)
+                            $("#socal_country").html(add.country)
+                        }
+
                     }
                 });
 
@@ -290,6 +362,14 @@ var Hivemaps = {
                         var output = htmlobject.find("#display_favrinfo")[0];
                         var app_info = new XMLSerializer().serializeToString(output);
                         $("#display_favrinfo").replaceWith(app_info);
+
+                        var latlng   = new google.maps.LatLng(xCoord,yCoord);
+                        var add = Hivemaps.display_address(latlng)
+
+                        if (add.address.replace(/\s/g,"") != ""){
+                            $("#favr_address").html(add.address)
+                            $("#favr_country").html(add.country)
+                        }
                     }
                 });
 
@@ -331,6 +411,14 @@ var Hivemaps = {
                         var output = htmlobject.find("#display_roundinfo")[0];
                         var app_info = new XMLSerializer().serializeToString(output);
                         $("#display_roundinfo").replaceWith(app_info);
+
+                        var latlng   = new google.maps.LatLng(xCoord,yCoord);
+                        var add = Hivemaps.display_address(latlng)
+
+                        if (add.address.replace(/\s/g,"") != ""){
+                            $("#round_address").html(add.address)
+                            $("#round_country").html(add.country)
+                        }
                     }
                 });
 
