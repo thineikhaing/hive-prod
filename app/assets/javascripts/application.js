@@ -18,7 +18,7 @@
 //= require jquery.minicolors
 //= require jquery/cookie
 //= require web
-//= require markerclustererbk
+//= require markerclusterer
 //= require underscore
 //= require gmaps/google
 //= require_tree .

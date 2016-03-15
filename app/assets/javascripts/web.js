@@ -11,7 +11,7 @@
 //= require views/app_list
 //= require jquery/cookie
 //= require jquery.minicolors
-//= require markerclustererbk
+//= require markerclusterer
 //= require underscore
 //= require gmaps/google
 //= require carmic_map
