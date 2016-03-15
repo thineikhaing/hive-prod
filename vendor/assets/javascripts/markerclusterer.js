@@ -73,7 +73,7 @@
  * @param {Array of GMarker} opt_markers Initial set of markers to be clustered.
  * @param {MarkerClustererOptions} opt_opts A container for optional arguments.
  */
-function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_key) {
+function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong) {
   // private members
   var clusters_ = [];
   var map_ = map;
@@ -302,132 +302,27 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
       cur_lat = xCoord;
       cur_long = yCoord;
 
-        console.log("Redraw all clusters in viewport.")
-        console.log(strids)
-        console.log(api_key)
+      $.ajax({
 
-        data= {
-                param_place: strids,
-                cur_lat: cur_lat,
-                cur_long: cur_long,
-                api_key: api_key
-              };
-
-
-        var url = 'api/hivev2/get_topic_by_latlon';
-
-        $.ajax({
-            dataType: "json",
-            cache: false,
-            url:url,
-            data: data,
-            error: function(XMLHttpRequest, errorTextStatus, error){
-                showMessage("Failed to submit : "+ errorTextStatus+" ;"+error);
-            },
-            success: function(data){
-
-                console.log(data.topicslist)
-                appname= data.appname
-
-                if (data.topic_count > 0){
-
-                    title = data.topicslist[0].title
-                    topic_count = data.topic_count
-
-
-                    console.log(topic_count)
-                    console.log(title)
-                    console.log(appname)
-
-                    if (appname == "carmunicate"){
-
-                        $("#c-topic-count").html(topic_count)
-                        $("#c-topic-title").html(title)
-                    }
-                    else if(appname == "favr"){
-
-                        $("#f-topic-count").html(topic_count)
-                        $("#f-topic-title").html(title)
-
-                    }
-                    else if(appname == "meal"){
-                        console.log("meal info")
-                        $("#m-topic-count").html(topic_count)
-                        $("#m-topic-title").html(title)
-                    }
-                    else if(appname == "socal"){
-                        $("#s-topic-count").html(topic_count)
-                        $("#s-topic-title").html(title)
-                    }
-                    else if(appname == "round"){
-                        $("#r-topic-count").html(topic_count)
-                        $("#r-topic-title").html(title)
-                    }
-                    else{
-                        $("#h-topic-count").html(topic_count)
-                        $("#h-topic-title").html(title)
-                    }
-
-                }
-                else{
-
-                    if (appname == "carmunicate"){
-
-                        $("#c-topic-count").html("0")
-                        $("#c-topic-title").html("no topic")
-                    }
-                    else if(appname == "favr"){
-
-                        $("#f-topic-count").html("0")
-                        $("#f-topic-title").html("no topic")
-
-                    }
-                    else if(appname == "meal"){
-                        $("#m-topic-count").html("0")
-                        $("#m-topic-title").html("no topic")
-                    }
-                    else if(appname == "socal"){
-                        $("#s-topic-count").html("0")
-                        $("#s-topic-title").html("no topic")
-                    }
-                    else if(appname == "round"){
-                        ("#r-topic-count").html("0")
-                        $("#r-topic-title").html("no topic")
-                    }
-                    else{
-                        $("#h-topic-count").html("0")
-                        $("#h-topic-title").html("no topic")
-                    }
-
-
-                }
-
-
-
-            }
-        });
-
-      //$.ajax({
-      //
-      //  data: {
-      //    param_place: strids,
-      //    cur_lat: cur_lat,
-      //    cur_long: cur_long
-      //  },
-      //  success: function(html) {
-      //    var htmlobject = $(html);
-      //    var output = htmlobject.find("#display_topic")[0];
-      //    var testing = new XMLSerializer().serializeToString(output);
-      //    selected = document.getElementsByClassName("selected");
-      //    for (var i = 0; i < selected.length; i++)
-      //    {
-      //      document.getElementsByClassName("selected")[i].innerHTML=("&nbsp;");
-      //    }
-      //    $("#display_topic").replaceWith(testing);
-      //    //clear the post when map is dragged
-      //    $("#display_post").html("&nbsp;");
-      //  }
-      //});
+        data: {
+          param_place: strids,
+          cur_lat: cur_lat,
+          cur_long: cur_long
+        },
+        success: function(html) {
+          var htmlobject = $(html);
+          var output = htmlobject.find("#display_topic")[0];
+          var testing = new XMLSerializer().serializeToString(output);
+          selected = document.getElementsByClassName("selected");
+          for (var i = 0; i < selected.length; i++)
+          {
+            document.getElementsByClassName("selected")[i].innerHTML=("&nbsp;");
+          }
+          $("#display_topic").replaceWith(testing);
+          //clear the post when map is dragged
+          $("#display_post").html("&nbsp;");
+        }
+      });
 
     }
   };
@@ -783,11 +678,6 @@ function Cluster(markerClusterer) {
             //clear the existing post
 
           }
-
-
-
-          console.log("gon latestTopics;")
-          console.log(topic_id)
 
           var scrollHeight = 0;
           $.ajax({

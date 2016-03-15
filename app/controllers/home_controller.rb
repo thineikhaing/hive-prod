@@ -2,7 +2,6 @@ class HomeController < ApplicationController
    layout :special_layout
   def home
     # render layout: nil
-
   end
 
   def dev_sign_in
@@ -38,15 +37,13 @@ class HomeController < ApplicationController
       redirect_to root_path
     end
 
-
-
   end
 
   def developer_portal
-
-
+    place_for_map_view
     if current_user.nil?
       redirect_to root_path
+
     else
       cur_user = Devuser.find(current_user.id)
       @hive_applications = cur_user.hive_applications.order("id ASC")
@@ -77,10 +74,16 @@ class HomeController < ApplicationController
 
       end
 
-      @placesMap = Place.all.reload
+
 
       lat = params[:cur_lat] if params[:cur_lat].present?
       lng = params[:cur_long] if params[:cur_long].present?
+
+      if params[:cur_lat.present?]
+        @placesMap =  Place.nearest(lat,lng,1)
+      else
+        @placesMap = Place.all.reload
+      end
 
       @hive_applications.each do |app|
 
@@ -92,28 +95,21 @@ class HomeController < ApplicationController
           @CMlatestTopics = [ ]
           @CMlatestTopicUser = [ ]
 
-          if params[:cur_lat].present? &&  params[:api_key] == @carmmunicate_key
+          if params[:cur_lat.present?]
 
-            places =  Place.nearest(lat,lng,2)
-
-            if places.present?
-              places_id = []
-              places.each do |p|
-                places_id.push p.id
-              end
-              p @topics_list = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
-              p "carmic topic count"
-              p @topics_list.count
-
-              @CMlatestTopics =  @topics_list
-
-             end
-
+            places_id = []
+            @placesMap.each do |p|
+              places_id.push p.id
+            end
+            topics_by_places = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
           else
 
             @placesMap.map{|f|
               topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
             }
+
+          end
+
 
             topics_by_places.each do |t|
               if t.present?
@@ -121,13 +117,9 @@ class HomeController < ApplicationController
               end
             end
 
-          end
-
-          if @CMlatestTopics.present?
             @CMlatestTopics.each do |t|
               @CMlatestTopicUser.push(t.username)
             end
-          end
 
         end
 
@@ -138,42 +130,28 @@ class HomeController < ApplicationController
           @MBlatestTopics = [ ]
           @MBlatestTopicUser = [ ]
 
-          if params[:cur_lat].present? &&  params[:api_key] == @meal_key
-
-            places =  Place.nearest(lat,lng,3)
-
-            if places.present?
-              places_id = []
-              places.each do |p|
-                places_id.push p.id
-              end
-              p @topics_list = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
-              p "carmic topic count"
-              p @topics_list.count
-
-              @MBlatestTopics =  @topics_list
-
+          if params[:cur_lat.present?]
+            places_id = []
+            @placesMap.each do |p|
+              places_id.push p.id
             end
-
+            topics_by_places = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
           else
-
             @placesMap.map{|f|
               topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
             }
-
-            topics_by_places.each do |t|
-              if t.present?
-                @MBlatestTopics.push(t)
-              end
-            end
-
           end
 
-          if @MBlatestTopics.present?
-            @MBlatestTopics.each do |t|
-              @MBlatestTopicUser.push(t.username)
+          topics_by_places.each do |t|
+            if t.present?
+              @MBlatestTopics.push(t)
             end
           end
+
+          @MBlatestTopics.each do |t|
+            @MBlatestTopicUser.push(t.username)
+          end
+
         end
 
         if app.api_key == @favr_key
@@ -183,41 +161,26 @@ class HomeController < ApplicationController
           @FVlatestTopics = [ ]
           @FVlatestTopicUser = [ ]
 
-          if params[:cur_lat].present? &&  params[:api_key] == @favr_key
-
-            places =  Place.nearest(lat,lng,3)
-
-            if places.present?
-              places_id = []
-              places.each do |p|
-                places_id.push p.id
-              end
-              p @topics_list = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
-              p "carmic topic count"
-              p @topics_list.count
-
-              @FVlatestTopics =  @topics_list
-
+          if params[:cur_lat.present?]
+            places_id = []
+            @placesMap.each do |p|
+              places_id.push p.id
             end
+            topics_by_places = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
           else
-
             @placesMap.map{|f|
               topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
             }
-
-            topics_by_places.each do |t|
-              if t.present?
-                @FVlatestTopics.push(t)
-              end
-            end
-
           end
 
-          if @FVlatestTopics.present?
-
-            @FVlatestTopics.each do |t|
-              @FVlatestTopicUser.push(t.username)
+          topics_by_places.each do |t|
+            if t.present?
+              @FVlatestTopics.push(t)
             end
+          end
+
+          @FVlatestTopics.each do |t|
+            @FVlatestTopicUser.push(t.username)
           end
 
         end
@@ -229,41 +192,29 @@ class HomeController < ApplicationController
           @SClatestTopics = [ ]
           @SClatestTopicUser = [ ]
 
-          if params[:cur_lat].present? &&  params[:api_key] == @socal_key
-
-            places =  Place.nearest(lat,lng,3)
-
-            if places.present?
-              places_id = []
-              places.each do |p|
-                places_id.push p.id
-              end
-              p @topics_list = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
-              p "carmic topic count"
-              p @topics_list.count
-
-              @SClatestTopics =  @topics_list
-
+          if params[:cur_lat.present?]
+            places_id = []
+            @placesMap.each do |p|
+              places_id.push p.id
             end
+            topics_by_places = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
           else
 
             @placesMap.map{|f|
               topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
             }
-
-            topics_by_places.each do |t|
-              if t.present?
-                @SClatestTopics.push(t)
-              end
-            end
-
           end
 
-          if @SClatestTopics.present?
-            @SClatestTopics.each do |t|
-              @SClatestTopicUser.push(t.username)
+          topics_by_places.each do |t|
+            if t.present?
+              @SClatestTopics.push(t)
             end
           end
+
+          @SClatestTopics.each do |t|
+            @SClatestTopicUser.push(t.username)
+          end
+
 
         end
 
@@ -274,90 +225,64 @@ class HomeController < ApplicationController
           @RTlatestTopics = [ ]
           @RTlatestTopicUser = [ ]
 
-          if params[:cur_lat].present? &&  params[:api_key] == @round_key
-
-            places =  Place.nearest(lat,lng,3)
-
-            if places.present?
-              places_id = []
-              places.each do |p|
-                places_id.push p.id
-              end
-              p @topics_list = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
-              p "carmic topic count"
-              p @topics_list.count
-
-              @RTlatestTopics =  @topics_list
-
+          if params[:cur_lat.present?]
+            places_id = []
+            @placesMap.each do |p|
+              places_id.push p.id
             end
+            topics_by_places = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
           else
-
             @placesMap.map{|f|
               topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
             }
-
-            topics_by_places.each do |t|
-              if t.present?
-                @RTlatestTopics.push(t)
-              end
-            end
-
           end
 
-          if @RTlatestTopics.present?
-            @RTlatestTopics.each do |t|
-              @RTlatestTopicUser.push(t.username)
+
+          topics_by_places.each do |t|
+            if t.present?
+              @RTlatestTopics.push(t)
             end
           end
+
+
+          @RTlatestTopics.each do |t|
+            @RTlatestTopicUser.push(t.username)
+          end
+
 
         end
 
         if app.api_key == @hive_key
 
-          topics_by_places = [ ]
-          @latestTopics = [ ]
-          @latestTopicUser = [ ]
+        topics_by_places = [ ]
+        @latestTopics = [ ]
+        @latestTopicUser = [ ]
+        if params[:cur_lat.present?]
+          places_id = []
+          @placesMap.each do |p|
+            places_id.push p.id
+          end
+          topics_by_places = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
+        else
+          @placesMap.map{|f|
+            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+          }
+        end
 
-          if params[:cur_lat].present? &&  params[:api_key] == @hive_key
 
-            places =  Place.nearest(lat,lng,3)
-            if places.present?
-              places_id = []
-              places.each do |p|
-                places_id.push p.id
-              end
-              p @topics_list = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
-              p "carmic topic count"
-              p @topics_list.count
-
-              @latestTopics =  @topics_list
-
-            end
-          else
-            @placesMap.map{|f|
-              topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
-            }
-
-            topics_by_places.each do |t|
-              if t.present?
-                @latestTopics.push(t)
-              end
+          topics_by_places.each do |t|
+            if t.present?
+              @latestTopics.push(t)
             end
           end
 
-
-          if @latestTopics.present?
-            @latestTopics.each do |t|
-              @latestTopicUser.push(t.username)
-            end
+          @latestTopics.each do |t|
+            @latestTopicUser.push(t.username)
           end
 
           p "query detial info of hive"
         end
       end
-
-
-
 
 
       render layout: "special_layout"
@@ -366,77 +291,7 @@ class HomeController < ApplicationController
 
   end
 
-   def get_all_topics(lat,lng,hive_id)
-
-     places = Place.nearest(lat,lng,5)
-     if places.present?
-       places_id = []
-       places.each do |p|
-         places_id.push p.id
-       end
-       p @topics_list = Topic.where(:place_id => places_id,hiveapplication_id:hive_id).order("id desc")
-       p @total_topic_count = @topics_list = Topic.where(:place_id => places_id).order("id desc")
-
-       # if not @topics_list.nil?
-       #   for topic in @topics_list
-       #     #getting avatar url
-       #     @topic_avatar_url = Hash.new
-       #     if topic.offensive < 3 and topic.special_type == 3
-       #       @topic_avatar_url[topic.id] = "/assets/Avatars/Chat-Avatar-Admin.png"
-       #     else
-       #       username = topic.user.username
-       #       get_avatar(username)
-       #       @topic_avatar_url[topic.id] = request.url.split('?').first + @avatar_url
-       #     end
-       #   end
-       # end
-     end
-   end
-
-
-   def get_nearest_user(lat, lng)
-     @usersArray = []
-     @activeuserRadius = []
-
-     users = User.nearest(lat, lng, 6)
-     users =users.where("data -> 'color' != ''")
-
-     users.each do |u|
-       if u.check_in_time.present?
-         @usersArray.push(u)
-       end
-     end
-
-
-     @usersArray.each do |ua|
-       user = User.find(ua.id)
-       @activeuserRadius.push(user)
-     end
-
-     p @us
-   end
-
-
-
-   def get_all_posts(topicid)
-     p "call get all post"
-     p @topic_title = Topic.find(topicid).title
-
-     p @topic = Topic.where(id: topicid).first.reload
-     p @posts = @topic.posts.includes(:user).sort #limits max 20 posts???
-     @post_avatar_url = Hash.new
-
-     @posts.each do |post|
-       username = post.user.username
-       get_avatar(username)
-       p @post_avatar_url[post.id] = request.url.split('?').first + (@avatar_url)
-     end
-
-     @topicid = Integer(topicid)
-
-   end
-
-   def map_view
+   def place_for_map_view
      @placesMap = Place.order("created_at DESC").reload
 
      #filtering for normal topic, image, audio and video
@@ -450,19 +305,14 @@ class HomeController < ApplicationController
      @latestTopics.each do |topic|
        if topic.present?
          @latestTopicUser.push(topic.username)
+       else
+         @latestTopicUser.push("nothing")
        end
-
-       # else
-       #   @latestTopicUser.push("nothing")
-       # end
      end
-     p "detail info"
+     #gon.watch.newplaces = @placesMap
      gon.places =  @placesMap.as_json
-     p "************"
      gon.latestTopicUser = @latestTopicUser
-
-     p gon.latestTopics = @latestTopics
-
+     gon.latestTopics = @latestTopics
    end
 
    private

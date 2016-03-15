@@ -35,10 +35,10 @@
 
 
       .parallelogram{style:'width: 270px;height: 55px;margin-top: 30px;'}
-        .status_count
+        .status_count#h-topic-count
           =@latestTopics.count
 
-        .status_title
+        .status_title#h-topic-title
           =@latestTopics.first.title rescue 'No Topic'
 
       .postbox

@@ -35,10 +35,11 @@
 
 
       .parallelogram{style:'width: 270px;height: 55px;margin-top: 30px;'}
-        .status_count
+
+        .status_count#r-topic-count
           =@RTlatestTopics.count
 
-        .status_title
+        .status_title#r-topic-title
           =@RTlatestTopics.first.title rescue 'No Topic'
 
       .postbox

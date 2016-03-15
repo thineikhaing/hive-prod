@@ -35,10 +35,11 @@
 
 
       .parallelogram{style:'width: 270px;height: 55px;margin-top: 30px;'}
-        .status_count
+
+        .status_count#f-topic-count
           =@FVlatestTopics.count
 
-        .status_title
+        .status_title#f-topic-title
           =@FVlatestTopics.first.title rescue 'No Topic'
 
       .postbox

@@ -33,6 +33,7 @@ var Hivemaps = {
         this.geoloc(this.success,this.fail);
 
 
+        console.log(gon.places)
 
 
     },
@@ -75,6 +76,7 @@ var Hivemaps = {
 
             latitude =lat;
             longitude = lng;
+
 
             var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
             var latlng   = new google.maps.LatLng(latitude,longitude);
@@ -149,6 +151,10 @@ var Hivemaps = {
 
             hvmarkers.addMarker(hvcurrentPositionMarker);
 
+            api_key =  $("#hv_map").data("apikey")
+
+            Hivemaps.addplacemarker(hv_map,lat, lng,api_key)
+
             hv_map.events.register("moveend", hv_map, function(){
 
                 var mapExtent = hv_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
@@ -158,23 +164,6 @@ var Hivemaps = {
 
                 console.log(xCoord)
                 console.log(yCoord)
-
-                //$.ajax({
-                //    data: {
-                //        cur_lat: xCoord,
-                //        cur_long: yCoord,
-                //        api_key: $("#hv_map").data("apikey")
-                //    },
-                //    success: function(html) {
-                //        var htmlobject = $(html);
-                //        var output = htmlobject.find("#display_hiveinfo")[0];
-                //        var app_info = new XMLSerializer().serializeToString(output);
-                //        $("#display_hiveinfo").replaceWith(app_info);
-                //
-                //
-                //
-                //    }
-                //});
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -254,56 +243,56 @@ var Hivemaps = {
                 console.log(yCoord)
 
                 var url = 'api/hivev2/get_topic_by_latlon';
-
+                var api_key=  $("#mb_map").data("apikey");
                 data =  {cur_lat: xCoord,
                         cur_long: yCoord,
                         api_key: $("#mb_map").data("apikey")};
 
-                $.ajax({
-                    dataType: "json",
-                    cache: false,
-                    url:url,
-                    data: data,
-                    error: function(XMLHttpRequest, errorTextStatus, error){
-                        showMessage("Failed to submit : "+ errorTextStatus+" ;"+error);
-                    },
-                    success: function(data){
+                //$.ajax({
+                //    dataType: "json",
+                //    cache: false,
+                //    url:url,
+                //    data: data,
+                //    error: function(XMLHttpRequest, errorTextStatus, error){
+                //        showMessage("Failed to submit : "+ errorTextStatus+" ;"+error);
+                //    },
+                //    success: function(data){
+                //
+                //        if (data.latestTopics.length > 0){
+                //            title = data.pop_topic.title
+                //            topic_count = data.latestTopics.length
+                //
+                //            username = data.latestTopicUsers[0]
+                //            user_count = data.latestTopicUsers.length
+                //
+                //            post_count = data.pop_topic_posts.length
+                //
+                //            console.log(title)
+                //
+                //            console.log("post_count ",post_count)
+                //
+                //            $("#m-topic-count").html(topic_count)
+                //            $("#m-topic-title").html(title)
+                //            $("#m-user-count").html(user_count)
+                //            $("#m-user-name").html(username)
+                //            $("#m-post-count").html(post_count)
+                //        }else{
+                //
+                //            $("#m-topic-count").html('0')
+                //            $("#n-topic-title").html('no topic')
+                //            $("#m-user-count").html('0')
+                //            $("#m-user-name").html('no user')
+                //            $("#m-post-count").html('0')
+                //        }
+                //
+                //
+                //        $(data.latestTopics).each(function(e){
+                //
+                //        });
+                //    }
+                //});
 
-                        if (data.latestTopics.length > 0){
-                            title = data.pop_topic.title
-                            topic_count = data.latestTopics.length
-
-                            username = data.latestTopicUsers[0]
-                            user_count = data.latestTopicUsers.length
-
-                            post_count = data.pop_topic_posts.length
-
-                            console.log(title)
-
-                            console.log("post_count ",post_count)
-
-                            $("#m-topic-count").html(topic_count)
-                            $("#m-topic-title").html(title)
-                            $("#m-user-count").html(user_count)
-                            $("#m-user-name").html(username)
-                            $("#m-post-count").html(post_count)
-                        }else{
-
-                            $("#m-topic-count").html('0')
-                            $("#n-topic-title").html('no topic')
-                            $("#m-user-count").html('0')
-                            $("#m-user-name").html('no user')
-                            $("#m-post-count").html('0')
-                        }
-
-
-                        $(data.latestTopics).each(function(e){
-
-                        });
-                    }
-                });
-
-
+                Hivemaps.addplacemarker(mb_map,lat, lng,api_key)
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -379,53 +368,56 @@ var Hivemaps = {
                 console.log(yCoord)
 
                 var url = 'api/hivev2/get_topic_by_latlon';
+                var api_key = $("#cm_map").data("apikey")
 
                 data =  {cur_lat: xCoord,
                     cur_long: yCoord,
                     api_key: $("#cm_map").data("apikey")};
 
-                $.ajax({
-                    dataType: "json",
-                    cache: false,
-                    url:url,
-                    data: data,
-                    error: function(XMLHttpRequest, errorTextStatus, error){
-                        showMessage("Failed to submit : "+ errorTextStatus+" ;"+error);
-                    },
-                    success: function(data){
+                Hivemaps.addplacemarker(cm_map,lat, lng,api_key)
 
-                        if (data.latestTopics.length > 0){
-                            title = data.pop_topic.title
-                            topic_count = data.latestTopics.length
-
-                            username = data.latestTopicUsers[0]
-                            user_count = data.latestTopicUsers.length
-
-                            post_count = data.pop_topic_posts.length
-
-                            console.log(title)
-
-                            console.log("post_count ",post_count)
-
-                            $("#c-topic-count").html(topic_count)
-                            $("#c-topic-title").html(title)
-                            $("#c-user-count").html(user_count)
-                            $("#c-user-name").html(username)
-                            $("#c-post-count").html(post_count)
-                        }else{
-                            $("#c-topic-count").html('0')
-                            $("#c-topic-title").html('no topic')
-                            $("#c-user-count").html('0')
-                            $("#c-user-name").html('no user')
-                            $("#c-post-count").html('0')
-                        }
-
-
-                        $(data.latestTopics).each(function(e){
-
-                        });
-                    }
-                });
+                //$.ajax({
+                //    dataType: "json",
+                //    cache: false,
+                //    url:url,
+                //    data: data,
+                //    error: function(XMLHttpRequest, errorTextStatus, error){
+                //        showMessage("Failed to submit : "+ errorTextStatus+" ;"+error);
+                //    },
+                //    success: function(data){
+                //
+                //        if (data.latestTopics.length > 0){
+                //            title = data.pop_topic.title
+                //            topic_count = data.latestTopics.length
+                //
+                //            username = data.latestTopicUsers[0]
+                //            user_count = data.latestTopicUsers.length
+                //
+                //            post_count = data.pop_topic_posts.length
+                //
+                //            console.log(title)
+                //
+                //            console.log("post_count ",post_count)
+                //
+                //            $("#c-topic-count").html(topic_count)
+                //            $("#c-topic-title").html(title)
+                //            $("#c-user-count").html(user_count)
+                //            $("#c-user-name").html(username)
+                //            $("#c-post-count").html(post_count)
+                //        }else{
+                //            $("#c-topic-count").html('0')
+                //            $("#c-topic-title").html('no topic')
+                //            $("#c-user-count").html('0')
+                //            $("#c-user-name").html('no user')
+                //            $("#c-post-count").html('0')
+                //        }
+                //
+                //
+                //        $(data.latestTopics).each(function(e){
+                //
+                //        });
+                //    }
+                //});
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -499,6 +491,8 @@ var Hivemaps = {
                 console.log(xCoord)
                 console.log(yCoord)
 
+                var api_key = $("#sc_map").data("apikey")
+
                 //$.ajax({
                 //
                 //    data: {
@@ -516,6 +510,7 @@ var Hivemaps = {
                 //    }
                 //});
 
+                Hivemaps.addplacemarker(sc_map,lat, lng,api_key)
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -603,6 +598,7 @@ var Hivemaps = {
                 //
                 //    }
                 //});
+                Hivemaps.addplacemarker(fv_map,lat, lng,api_key);
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -690,6 +686,7 @@ var Hivemaps = {
                 //    }
                 //});
 
+                Hivemaps.addplacemarker(rt_map,lat, lng,api_key);
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -742,9 +739,226 @@ var Hivemaps = {
         }
 
     },
-    fail:function(){}
+    fail:function(){} ,
 
 
+    addplacemarker:function(param_map,param_lat, param_lng,api_key){
+
+        var places = new Array();
+        var latestTopicUser = new Array();
+        markerArray = new Array();
+
+        places = gon.places;
+        latestTopicUser = gon.latestTopicUser;
+
+        for (var i = 0; i < places.length; i++)
+        {
+            lat = places[i].latitude;
+            lng = places[i].longitude;
+            title = places[i].name;
+            id = places[i].id;
+            var placePosition = new OpenLayers.LonLat(lng,lat).transform(fromProjection, toProjection);
+            var placeMarker;
+            if (latestTopicUser[i] != "nothing")
+            {
+                if (title.indexOf("MRT") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/MapMRT.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+//            forumMarker.URL = forumsUrl[i];
+                }
+                else if (latestTopicUser[i].indexOf("Aardvark") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/AardvarkMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Alligator") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/AlligatorMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Bear") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/BearMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Beaver") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/BeaverMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Bluebird") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/BluebirdMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Butterfly") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/ButterflyMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Cat") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/CatMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Chihuahua") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/ChihuahuaMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Chipmunk") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/ChipmunkMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Duck") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/DuckMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Eagle") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/EagleMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Elephant") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/ElephantMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Giraffe") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/GiraffeMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Horse") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/HorseMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Husky") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/HuskyMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Jaguar") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/JaguarMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Kangaroo") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/KangarooMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Kitten") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/KittenMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Koala") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/KoalaMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Lion") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/LionMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Llama") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/LlamaMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Monkey") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/MonkeyMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Panda") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/PandaMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Penguin") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/PenguinMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Puppy") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/PuppyMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+
+                }
+                else if (latestTopicUser[i].indexOf("Raydius") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/RaydiusMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Seal") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/SealMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Snorkie") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/SnorkieMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Swan") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/SwanMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Tiger") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/TigerMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else if (latestTopicUser[i].indexOf("Whale") != -1)
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/WhaleMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/SingleMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+            }
+            else
+            {
+                if (title.indexOf("MRT" != -1))
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/MapMRT.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+                else
+                {
+                    var icon = new OpenLayers.Icon('/assets/map/SingleMap.png', size, offset);
+                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                }
+            }
+            markerArray.push(placeMarker);
+            placeMarker.title = places[i].name;
+            placeMarker.id = places[i].id;
+            placeMarker.url = null;
+
+        }
+        // Settings for clustering markers
+        mOptions = {
+            gridSize: 50,
+            maxZoom: 15
+        };
+
+        console.log(param_lat)
+        console.log(param_lng)
+
+        var markerCluster = new MarkerClusterer(param_map, markerArray, mOptions,param_lat, param_lng,api_key);
+    },
 
 
 

@@ -17,6 +17,7 @@
 //= require jquery-ui
 //= require hivev2lib/hivev2_map
 //= require jquery/cookie
+//= require markerclusterer
 
 
 $(function() {
