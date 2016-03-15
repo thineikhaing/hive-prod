@@ -11,10 +11,10 @@
 
       .parallelogram{style:'width: 250px;height: 55px;'}
 
-        .status_count
+        .status_count#m-user-count
           =@MBlatestTopicUser.count
 
-        .status_title
+        .status_title#m-user-name
           -if @MBlatestTopicUser.count < 1
             no user
           -else
@@ -35,13 +35,13 @@
 
 
       .parallelogram{style:'width: 270px;height: 55px;margin-top: 30px;'}
-        .status_count
+        .status_count#m-topic-count
           =@MBlatestTopics.count
 
-        .status_title
+        .status_title#m-topic-title
           =@MBlatestTopics.first.title rescue 'No Topic'
 
-      .postbox
+      .postbox#m-post-count
         -if @latestTopics.count > 0
           =@latestTopics.first.posts.count rescue '0'
         -else

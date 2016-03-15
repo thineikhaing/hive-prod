@@ -8,7 +8,7 @@ class Api::Hivev2Controller < ApplicationController
     lng = params[:cur_long]
     app = HiveApplication.find_by_api_key(params[:api_key])
 
-    places =  Place.nearest(lat,lng,2)
+    places =  Place.nearest(lat,lng,1)
 
     if places.present?
       places_id = []
@@ -22,6 +22,14 @@ class Api::Hivev2Controller < ApplicationController
       end
     end
 
-    render json: {status: "ok!", latestTopics: latestTopics, latestTopicUsers: latestTopicUser}
+    pop_topic = []
+    pop_topic_posts = []
+
+    if latestTopics.count > 0
+      pop_topic = latestTopics.first
+      pop_topic_posts = pop_topic.posts
+    end
+
+    render json: {status: "ok!", latestTopics: latestTopics, latestTopicUsers: latestTopicUser, pop_topic: pop_topic, pop_topic_posts: pop_topic_posts}
   end
 end

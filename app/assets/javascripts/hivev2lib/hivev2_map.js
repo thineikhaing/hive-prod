@@ -257,8 +257,7 @@ var Hivemaps = {
 
                 data =  {cur_lat: xCoord,
                         cur_long: yCoord,
-                        api_key: $("#mb_map").data("apikey")}
-                ;
+                        api_key: $("#mb_map").data("apikey")};
 
                 $.ajax({
                     dataType: "json",
@@ -269,12 +268,38 @@ var Hivemaps = {
                         showMessage("Failed to submit : "+ errorTextStatus+" ;"+error);
                     },
                     success: function(data){
-                        alert(data.latestTopics)
-                        alert(data.latestTopicUsers)
 
-                        //$(data).each(function(e){
-                        //
-                        //});
+                        if (data.latestTopics.length > 0){
+                            title = data.pop_topic.title
+                            topic_count = data.latestTopics.length
+
+                            username = data.latestTopicUsers[0]
+                            user_count = data.latestTopicUsers.length
+
+                            post_count = data.pop_topic_posts.length
+
+                            console.log(title)
+
+                            console.log("post_count ",post_count)
+
+                            $("#m-topic-count").html(topic_count)
+                            $("#m-topic-title").html(title)
+                            $("#m-user-count").html(user_count)
+                            $("#m-user-name").html(username)
+                            $("#m-post-count").html(post_count)
+                        }else{
+
+                            $("#m-topic-count").html('0')
+                            $("#n-topic-title").html('no topic')
+                            $("#m-user-count").html('0')
+                            $("#m-user-name").html('no user')
+                            $("#m-post-count").html('0')
+                        }
+
+
+                        $(data.latestTopics).each(function(e){
+
+                        });
                     }
                 });
 
@@ -353,22 +378,54 @@ var Hivemaps = {
                 console.log(xCoord)
                 console.log(yCoord)
 
-                //$.ajax({
-                //
-                //    data: {
-                //        cur_lat: xCoord,
-                //        cur_long: yCoord,
-                //        api_key: $("#cm_map").data("apikey")
-                //
-                //    },
-                //    success: function(html) {
-                //        var htmlobject = $(html);
-                //        var output = htmlobject.find("#display_carmicinfo")[0];
-                //        var app_info = new XMLSerializer().serializeToString(output);
-                //        $("#display_carmicinfo").replaceWith(app_info);
-                //
-                //    }
-                //});
+                var url = 'api/hivev2/get_topic_by_latlon';
+
+                data =  {cur_lat: xCoord,
+                    cur_long: yCoord,
+                    api_key: $("#cm_map").data("apikey")};
+
+                $.ajax({
+                    dataType: "json",
+                    cache: false,
+                    url:url,
+                    data: data,
+                    error: function(XMLHttpRequest, errorTextStatus, error){
+                        showMessage("Failed to submit : "+ errorTextStatus+" ;"+error);
+                    },
+                    success: function(data){
+
+                        if (data.latestTopics.length > 0){
+                            title = data.pop_topic.title
+                            topic_count = data.latestTopics.length
+
+                            username = data.latestTopicUsers[0]
+                            user_count = data.latestTopicUsers.length
+
+                            post_count = data.pop_topic_posts.length
+
+                            console.log(title)
+
+                            console.log("post_count ",post_count)
+
+                            $("#c-topic-count").html(topic_count)
+                            $("#c-topic-title").html(title)
+                            $("#c-user-count").html(user_count)
+                            $("#c-user-name").html(username)
+                            $("#c-post-count").html(post_count)
+                        }else{
+                            $("#c-topic-count").html('0')
+                            $("#c-topic-title").html('no topic')
+                            $("#c-user-count").html('0')
+                            $("#c-user-name").html('no user')
+                            $("#c-post-count").html('0')
+                        }
+
+
+                        $(data.latestTopics).each(function(e){
+
+                        });
+                    }
+                });
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
