@@ -330,7 +330,6 @@ class Topic < ActiveRecord::Base
 
   def content(post_id=-1,action_id=-1)
 
-    p "test content logs"
     testDataArray = [ ]
     if action_id > -1
       post_content = ""
