@@ -95,21 +95,9 @@ class HomeController < ApplicationController
           @CMlatestTopics = [ ]
           @CMlatestTopicUser = [ ]
 
-          if params[:cur_lat.present?]
-
-            places_id = []
-            @placesMap.each do |p|
-              places_id.push p.id
-            end
-            topics_by_places = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
-          else
-
-            @placesMap.map{|f|
-              topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
-            }
-
-          end
-
+          @placesMap.map{|f|
+            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+          }
 
             topics_by_places.each do |t|
               if t.present?
@@ -130,17 +118,9 @@ class HomeController < ApplicationController
           @MBlatestTopics = [ ]
           @MBlatestTopicUser = [ ]
 
-          if params[:cur_lat.present?]
-            places_id = []
-            @placesMap.each do |p|
-              places_id.push p.id
-            end
-            topics_by_places = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
-          else
-            @placesMap.map{|f|
-              topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
-            }
-          end
+          @placesMap.map{|f|
+            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+          }
 
           topics_by_places.each do |t|
             if t.present?
@@ -161,17 +141,9 @@ class HomeController < ApplicationController
           @FVlatestTopics = [ ]
           @FVlatestTopicUser = [ ]
 
-          if params[:cur_lat.present?]
-            places_id = []
-            @placesMap.each do |p|
-              places_id.push p.id
-            end
-            topics_by_places = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
-          else
-            @placesMap.map{|f|
-              topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
-            }
-          end
+          @placesMap.map{|f|
+            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+          }
 
           topics_by_places.each do |t|
             if t.present?
@@ -192,18 +164,9 @@ class HomeController < ApplicationController
           @SClatestTopics = [ ]
           @SClatestTopicUser = [ ]
 
-          if params[:cur_lat.present?]
-            places_id = []
-            @placesMap.each do |p|
-              places_id.push p.id
-            end
-            topics_by_places = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
-          else
-
-            @placesMap.map{|f|
-              topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
-            }
-          end
+          @placesMap.map{|f|
+            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+          }
 
           topics_by_places.each do |t|
             if t.present?
@@ -225,18 +188,9 @@ class HomeController < ApplicationController
           @RTlatestTopics = [ ]
           @RTlatestTopicUser = [ ]
 
-          if params[:cur_lat.present?]
-            places_id = []
-            @placesMap.each do |p|
-              places_id.push p.id
-            end
-            topics_by_places = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
-          else
-            @placesMap.map{|f|
-              topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
-            }
-          end
-
+          @placesMap.map{|f|
+            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+          }
 
           topics_by_places.each do |t|
             if t.present?
@@ -257,18 +211,10 @@ class HomeController < ApplicationController
         topics_by_places = [ ]
         @latestTopics = [ ]
         @latestTopicUser = [ ]
-        if params[:cur_lat.present?]
-          places_id = []
-          @placesMap.each do |p|
-            places_id.push p.id
-          end
-          topics_by_places = Topic.where(:place_id => places_id,hiveapplication_id:app.id).order("id desc")
-        else
-          @placesMap.map{|f|
-            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
-          }
-        end
 
+        @placesMap.map{|f|
+          topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+        }
 
           topics_by_places.each do |t|
             if t.present?
