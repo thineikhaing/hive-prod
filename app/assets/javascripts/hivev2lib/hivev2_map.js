@@ -159,22 +159,22 @@ var Hivemaps = {
                 console.log(xCoord)
                 console.log(yCoord)
 
-                $.ajax({
-                    data: {
-                        cur_lat: xCoord,
-                        cur_long: yCoord,
-                        api_key: $("#hv_map").data("apikey")
-                    },
-                    success: function(html) {
-                        var htmlobject = $(html);
-                        var output = htmlobject.find("#display_hiveinfo")[0];
-                        var app_info = new XMLSerializer().serializeToString(output);
-                        $("#display_hiveinfo").replaceWith(app_info);
-
-
-
-                    }
-                });
+                //$.ajax({
+                //    data: {
+                //        cur_lat: xCoord,
+                //        cur_long: yCoord,
+                //        api_key: $("#hv_map").data("apikey")
+                //    },
+                //    success: function(html) {
+                //        var htmlobject = $(html);
+                //        var output = htmlobject.find("#display_hiveinfo")[0];
+                //        var app_info = new XMLSerializer().serializeToString(output);
+                //        $("#display_hiveinfo").replaceWith(app_info);
+                //
+                //
+                //
+                //    }
+                //});
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -253,20 +253,32 @@ var Hivemaps = {
                 console.log(xCoord)
                 console.log(yCoord)
 
-                $.ajax({
-                    data: {
-                        cur_lat: xCoord,
-                        cur_long: yCoord,
-                        api_key: $("#mb_map").data("apikey")
-                    },
-                    success: function(html) {
-                        var htmlobject = $(html);
-                        var output = htmlobject.find("#display_mealinfo")[0];
-                        var app_info = new XMLSerializer().serializeToString(output);
-                        $("#display_mealinfo").replaceWith(app_info);
+                var url = 'api/hivev2/get_topic_by_latlon';
 
+                data =  {cur_lat: xCoord,
+                        cur_long: yCoord,
+                        api_key: $("#mb_map").data("apikey")}
+                ;
+
+                $.ajax({
+                    dataType: "json",
+                    cache: false,
+                    url:url,
+                    data: data,
+                    error: function(XMLHttpRequest, errorTextStatus, error){
+                        showMessage("Failed to submit : "+ errorTextStatus+" ;"+error);
+                    },
+                    success: function(data){
+                        alert(data.latestTopics)
+                        alert(data.latestTopicUsers)
+
+                        //$(data).each(function(e){
+                        //
+                        //});
                     }
                 });
+
+
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -341,22 +353,22 @@ var Hivemaps = {
                 console.log(xCoord)
                 console.log(yCoord)
 
-                $.ajax({
-
-                    data: {
-                        cur_lat: xCoord,
-                        cur_long: yCoord,
-                        api_key: $("#cm_map").data("apikey")
-
-                    },
-                    success: function(html) {
-                        var htmlobject = $(html);
-                        var output = htmlobject.find("#display_carmicinfo")[0];
-                        var app_info = new XMLSerializer().serializeToString(output);
-                        $("#display_carmicinfo").replaceWith(app_info);
-
-                    }
-                });
+                //$.ajax({
+                //
+                //    data: {
+                //        cur_lat: xCoord,
+                //        cur_long: yCoord,
+                //        api_key: $("#cm_map").data("apikey")
+                //
+                //    },
+                //    success: function(html) {
+                //        var htmlobject = $(html);
+                //        var output = htmlobject.find("#display_carmicinfo")[0];
+                //        var app_info = new XMLSerializer().serializeToString(output);
+                //        $("#display_carmicinfo").replaceWith(app_info);
+                //
+                //    }
+                //});
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -430,22 +442,22 @@ var Hivemaps = {
                 console.log(xCoord)
                 console.log(yCoord)
 
-                $.ajax({
-
-                    data: {
-                        cur_lat: xCoord,
-                        cur_long: yCoord,
-                        api_key: $("#sc_map").data("apikey")
-
-                    },
-                    success: function(html) {
-                        var htmlobject = $(html);
-                        var output = htmlobject.find("#display_socalinfo")[0];
-                        var app_info = new XMLSerializer().serializeToString(output);
-                        $("#display_socalinfo").replaceWith(app_info);
-
-                    }
-                });
+                //$.ajax({
+                //
+                //    data: {
+                //        cur_lat: xCoord,
+                //        cur_long: yCoord,
+                //        api_key: $("#sc_map").data("apikey")
+                //
+                //    },
+                //    success: function(html) {
+                //        var htmlobject = $(html);
+                //        var output = htmlobject.find("#display_socalinfo")[0];
+                //        var app_info = new XMLSerializer().serializeToString(output);
+                //        $("#display_socalinfo").replaceWith(app_info);
+                //
+                //    }
+                //});
 
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
@@ -520,20 +532,20 @@ var Hivemaps = {
                 console.log(xCoord)
                 console.log(yCoord)
 
-                $.ajax({
-                    data: {
-                        cur_lat: xCoord,
-                        cur_long: yCoord,
-                        api_key: $("#fv_map").data("apikey")
-                    },
-                    success: function(html) {
-                        var htmlobject = $(html);
-                        var output = htmlobject.find("#display_favrinfo")[0];
-                        var app_info = new XMLSerializer().serializeToString(output);
-                        $("#display_favrinfo").replaceWith(app_info);
-
-                    }
-                });
+                //$.ajax({
+                //    data: {
+                //        cur_lat: xCoord,
+                //        cur_long: yCoord,
+                //        api_key: $("#fv_map").data("apikey")
+                //    },
+                //    success: function(html) {
+                //        var htmlobject = $(html);
+                //        var output = htmlobject.find("#display_favrinfo")[0];
+                //        var app_info = new XMLSerializer().serializeToString(output);
+                //        $("#display_favrinfo").replaceWith(app_info);
+                //
+                //    }
+                //});
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -607,19 +619,19 @@ var Hivemaps = {
                 console.log(xCoord)
                 console.log(yCoord)
 
-                $.ajax({
-                    data: {
-                        cur_lat: xCoord,
-                        cur_long: yCoord,
-                        api_key: $("#rt_map").data("apikey")
-                    },
-                    success: function(html) {
-                        var htmlobject = $(html);
-                        var output = htmlobject.find("#display_roundinfo")[0];
-                        var app_info = new XMLSerializer().serializeToString(output);
-                        $("#display_roundinfo").replaceWith(app_info);
-                    }
-                });
+                //$.ajax({
+                //    data: {
+                //        cur_lat: xCoord,
+                //        cur_long: yCoord,
+                //        api_key: $("#rt_map").data("apikey")
+                //    },
+                //    success: function(html) {
+                //        var htmlobject = $(html);
+                //        var output = htmlobject.find("#display_roundinfo")[0];
+                //        var app_info = new XMLSerializer().serializeToString(output);
+                //        $("#display_roundinfo").replaceWith(app_info);
+                //    }
+                //});
 
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";

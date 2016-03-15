@@ -51,8 +51,6 @@ class HomeController < ApplicationController
       cur_user = Devuser.find(current_user.id)
       @hive_applications = cur_user.hive_applications.order("id ASC")
 
-
-
       if Rails.env.development?
         @carmmunicate_key = Carmmunicate_key::Development_Key
         @favr_key = Favr_key::Development_Key
@@ -392,7 +390,6 @@ class HomeController < ApplicationController
        #     end
        #   end
        # end
-
      end
    end
 
@@ -467,7 +464,6 @@ class HomeController < ApplicationController
      p gon.latestTopics = @latestTopics
 
    end
-
 
    private
 

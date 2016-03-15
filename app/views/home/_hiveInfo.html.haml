@@ -1,0 +1,62 @@
+.row
+  .columns.large-12
+    %div.right_div
+
+      %div.wrapper
+        .parallelogram.user_div
+
+        .parallelogram.user_div_ft
+          %p.user_status active
+
+
+      .parallelogram{style:'width: 250px;height: 55px;'}
+
+        .status_count
+          =@latestTopicUser.count
+
+        .status_title
+          -if @latestTopicUser.count < 1
+            no user
+          -else
+            =@latestTopicUser[0]
+      .picbox
+        =image_tag("Avatars/Chat-Avatar-Chihuahua.png")
+
+
+.row
+  .columns.large-12
+    %div.right_div
+
+      %div.wrapper
+        .parallelogram.topic_div
+
+        .parallelogram.topic_div_ft
+          %p.topic_status newest
+
+
+      .parallelogram{style:'width: 270px;height: 55px;margin-top: 30px;'}
+        .status_count
+          =@latestTopics.count
+
+        .status_title
+          =@latestTopics.first.title rescue 'No Topic'
+
+      .postbox
+        -if @latestTopics.count > 0
+          =@latestTopics.first.posts.count rescue '0'
+        -else
+          0
+
+.row
+  .columns.large-12
+    %div.right_div
+
+      %div.wrapper
+        .parallelogram.loc_div
+
+        .parallelogram.adddiv
+          %p.addinfo#hive_address goldhill plaza
+
+      .parallelogram.country_div
+        .status_country#hive_country
+          singapore

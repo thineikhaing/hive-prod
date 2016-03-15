@@ -20,14 +20,36 @@
 
 h3{color:orange}
 
-.infobox{
-  border:2px solid orange;
-  display:inline-block;
-  width: 25px;
-  height: 30px;
-  margin-left: 20px;
+.picbox{
+  border: 2px solid orange;
+  display: inline-block;
+  width: 40px;
+  height: 50px;
   text-align: center;
-  color: orange;
+  /* margin-top: -27px !important; */
+  position: relative;
+  /* top: -27px; */
+  /* margin-left: 40px; */
+  float: right;
+  margin-right: 50px;
+  line-height: 50px;
+  font-size: 27px;
+}
+
+.postbox{
+  border: 2px solid orange;
+  display: inline-block;
+  width: 40px;
+  height: 50px;
+  text-align: center;
+  margin-top: 35px ;
+  position: relative;
+  /* top: -27px; */
+  /* margin-left: 40px; */
+  float: right;
+  margin-right: 50px;
+  line-height: 50px;
+  font-size: 27px;
 }
 
 .parallelogram {
@@ -63,7 +85,6 @@ h3{color:orange}
   -moz-transform: skew(30deg);
   -o-transform: skew(30deg);
   margin-bottom: 0px;
-  line-height: 25px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -126,13 +147,33 @@ h3{color:orange}
   //margin:20px;
 }
 
+.status_count, .status_title,.status_country{
+  -webkit-transform: skew(30deg);
+  -moz-transform: skew(30deg);
+  -o-transform: skew(30deg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .status_count{
-  font-size: 24px;
+  font-size: 30px;
+  text-indent: 2em;
+  height: 30px;
+  line-height: 30px;
 }
 
 .status_title{
 
   font-size: 14px;
+  text-indent: 1em;
+}
+
+.status_country{
+  font-size: 26px;
+  text-indent: 1em;
+  height: 30px;
+  line-height: 30px;
 }
 
 .app_information{
@@ -142,7 +183,7 @@ h3{color:orange}
 }
 
 .adddiv{
-  width: 230px;height: 20px;position: relative;top: -6px;left: -16px;background: orange;border-color: orange;
+  width: 270px;height: 20px;position: relative;top: -6px;left: -16px;background: orange;border-color: orange;
 }
 
 .addinfo{
@@ -156,4 +197,36 @@ h3{color:orange}
   border: none;
   padding-right: 10px;
   text-indent: 1em;
+}
+
+.right_div{
+  position:relative;float:left;width:560px;
+}
+
+.wrapper{
+  position:relative;float:left;width:65px;
+}
+
+.user_div{
+  width: 65px;height: 40px;background:orange;
+}
+
+.user_div_ft{
+  width: 65px;height: 15px;position: relative;top: -11px;left: -16px;background: rgb(75,146,230);border-color: rgb(75,146,230);
+}
+
+.topic_div{
+  width: 65px;height: 40px;background:orange;margin-top:27px;
+}
+
+.topic_div_ft{
+  width: 65px;height: 15px;position: relative;top: -11px;left: -16px;background: rgb(125,211,34);border-color: rgb(125,211,34);
+}
+
+.loc_div{
+  width: 65px;height: 40px;background:orange;margin-top:27px;
+}
+
+.user_status,.topic_status{
+  font-size: 14px;line-height: 10px;color: #fff;text-align: center;
 }
