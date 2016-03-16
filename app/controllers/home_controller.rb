@@ -266,7 +266,7 @@ class HomeController < ApplicationController
 
    def devapp_list
 
-     place_for_map_view
+     # place_for_map_view
 
      if Rails.env.development?
        @carmmunicate_key = Carmmunicate_key::Development_Key
