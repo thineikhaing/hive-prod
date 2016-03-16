@@ -153,7 +153,7 @@ var Hivemaps = {
 
             api_key =  $("#hv_map").data("apikey")
 
-           // Hivemaps.addplacemarker(hv_map,lat, lng,api_key)
+            Hivemaps.addplacemarker(hv_map,lat, lng,api_key)
 
             hv_map.events.register("moveend", hv_map, function(){
 
@@ -292,7 +292,7 @@ var Hivemaps = {
                 //    }
                 //});
 
-                // Hivemaps.addplacemarker(mb_map,lat, lng,api_key)
+                Hivemaps.addplacemarker(mb_map,lat, lng,api_key)
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -374,7 +374,7 @@ var Hivemaps = {
                     cur_long: yCoord,
                     api_key: $("#cm_map").data("apikey")};
 
-              //  Hivemaps.addplacemarker(cm_map,lat, lng,api_key)
+                Hivemaps.addplacemarker(cm_map,lat, lng,api_key)
 
                 //$.ajax({
                 //    dataType: "json",
@@ -510,7 +510,7 @@ var Hivemaps = {
                 //    }
                 //});
 
-               // Hivemaps.addplacemarker(sc_map,lat, lng,api_key)
+                Hivemaps.addplacemarker(sc_map,lat, lng,api_key)
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -600,7 +600,7 @@ var Hivemaps = {
                 //});
 
 
-                //Hivemaps.addplacemarker(fv_map,lat, lng,api_key);
+                Hivemaps.addplacemarker(fv_map,lat, lng,api_key);
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -688,7 +688,7 @@ var Hivemaps = {
                 //    }
                 //});
 
-               // Hivemaps.addplacemarker(rt_map,lat, lng,api_key);
+               Hivemaps.addplacemarker(rt_map,lat, lng,api_key);
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
