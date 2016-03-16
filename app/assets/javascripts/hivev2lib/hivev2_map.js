@@ -21,7 +21,7 @@ var Hivemaps = {
         fromProjection = new OpenLayers.Projection("EPSG:4326");   // Transform from WGS 1984
         toProjection = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Projection;
 
-        size = new OpenLayers.Size(50,50);
+        size = new OpenLayers.Size(2,2);
         offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
 
         mOptions = {
@@ -31,9 +31,6 @@ var Hivemaps = {
         latitude = '', longitude = '', zoom = 16;
 
         this.geoloc(this.success,this.fail);
-
-
-        console.log(gon.places)
 
 
     },
@@ -449,23 +446,6 @@ var Hivemaps = {
 
                 var api_key = $("#sc_map").data("apikey")
 
-                //$.ajax({
-                //
-                //    data: {
-                //        cur_lat: xCoord,
-                //        cur_long: yCoord,
-                //        api_key: $("#sc_map").data("apikey")
-                //
-                //    },
-                //    success: function(html) {
-                //        var htmlobject = $(html);
-                //        var output = htmlobject.find("#display_socalinfo")[0];
-                //        var app_info = new XMLSerializer().serializeToString(output);
-                //        $("#display_socalinfo").replaceWith(app_info);
-                //
-                //    }
-                //});
-
                 Hivemaps.addplacemarker(sc_map,lat, lng,api_key)
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
@@ -702,220 +682,232 @@ var Hivemaps = {
 
     addplacemarker:function(param_map,param_lat, param_lng,api_key){
 
+        markerArray = new Array();
         var places = new Array();
         var latestTopicUser = new Array();
-        markerArray = new Array();
 
-        places = gon.places;
-        latestTopicUser = gon.latestTopicUser;
+        var url = 'api/hivev2/place_for_map_view';
+        $.ajax({
+            url: url,
+            success: function(data) {
 
-        for (var i = 0; i < places.length; i++)
-        {
-            lat = places[i].latitude;
-            lng = places[i].longitude;
-            title = places[i].name;
-            id = places[i].id;
-            var placePosition = new OpenLayers.LonLat(lng,lat).transform(fromProjection, toProjection);
-            var placeMarker;
-            if (latestTopicUser[i] != "nothing")
-            {
-                if (title.indexOf("MRT") != -1)
+                places = data.places
+                latestTopicUser = data.latestTopicUser
+
+
+                for (var i = 0; i < places.length; i++)
                 {
-                    var icon = new OpenLayers.Icon('/assets/map/MapMRT.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-//            forumMarker.URL = forumsUrl[i];
-                }
-                else if (latestTopicUser[i].indexOf("Aardvark") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/AardvarkMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Alligator") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/AlligatorMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Bear") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/BearMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Beaver") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/BeaverMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Bluebird") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/BluebirdMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Butterfly") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/ButterflyMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Cat") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/CatMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Chihuahua") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/ChihuahuaMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Chipmunk") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/ChipmunkMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Duck") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/DuckMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Eagle") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/EagleMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Elephant") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/ElephantMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Giraffe") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/GiraffeMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Horse") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/HorseMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Husky") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/HuskyMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Jaguar") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/JaguarMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Kangaroo") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/KangarooMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Kitten") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/KittenMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Koala") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/KoalaMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Lion") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/LionMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Llama") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/LlamaMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Monkey") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/MonkeyMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Panda") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/PandaMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Penguin") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/PenguinMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Puppy") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/PuppyMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                    lat = places[i].latitude;
+                    lng = places[i].longitude;
+
+                    title = places[i].name;
+                    id = places[i].id;
+                    var placePosition = new OpenLayers.LonLat(lng,lat).transform(fromProjection, toProjection);
+                    var placeMarker;
+                    if (latestTopicUser[i] != "nothing")
+                    {
+                        if (title.indexOf("MRT") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/MapMRT.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+
+                        }
+                        else if (latestTopicUser[i].indexOf("Aardvark") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/AardvarkMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Alligator") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/AlligatorMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Bear") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/BearMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Beaver") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/BeaverMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Bluebird") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/BluebirdMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Butterfly") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/ButterflyMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Cat") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/CatMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Chihuahua") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/ChihuahuaMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Chipmunk") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/ChipmunkMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Duck") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/DuckMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Eagle") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/EagleMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Elephant") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/ElephantMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Giraffe") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/GiraffeMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Horse") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/HorseMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Husky") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/HuskyMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Jaguar") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/JaguarMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Kangaroo") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/KangarooMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Kitten") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/KittenMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Koala") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/KoalaMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Lion") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/LionMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Llama") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/LlamaMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Monkey") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/MonkeyMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Panda") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/PandaMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Penguin") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/PenguinMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Puppy") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/PuppyMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+
+                        }
+                        else if (latestTopicUser[i].indexOf("Raydius") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/RaydiusMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Seal") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/SealMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Snorkie") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/SnorkieMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Swan") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/SwanMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Tiger") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/TigerMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else if (latestTopicUser[i].indexOf("Whale") != -1)
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/WhaleMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/SingleMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                    }
+                    else
+                    {
+                        if (title.indexOf("MRT" != -1))
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/MapMRT.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                        else
+                        {
+                            var icon = new OpenLayers.Icon('/assets/map/SingleMap.png', size, offset);
+                            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+                        }
+                    }
+                    markerArray.push(placeMarker);
+                    placeMarker.title = places[i].name;
+                    placeMarker.id = places[i].id;
+                    placeMarker.url = null;
 
                 }
-                else if (latestTopicUser[i].indexOf("Raydius") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/RaydiusMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Seal") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/SealMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Snorkie") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/SnorkieMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Swan") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/SwanMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Tiger") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/TigerMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else if (latestTopicUser[i].indexOf("Whale") != -1)
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/WhaleMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/SingleMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
+
+                // Settings for clustering markers
+                mOptions = {
+                    gridSize: 50,
+                    maxZoom: 15
+                };
+
+
+                var markerCluster = new MarkerClusterer(param_map, markerArray, mOptions,param_lat, param_lng,api_key);
             }
-            else
-            {
-                if (title.indexOf("MRT" != -1))
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/MapMRT.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-                else
-                {
-                    var icon = new OpenLayers.Icon('/assets/map/SingleMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
-                }
-            }
-            markerArray.push(placeMarker);
-            placeMarker.title = places[i].name;
-            placeMarker.id = places[i].id;
-            placeMarker.url = null;
+        });
 
-        }
-        // Settings for clustering markers
-        mOptions = {
-            gridSize: 50,
-            maxZoom: 15
-        };
 
-        console.log(param_lat)
-        console.log(param_lng)
 
-        var markerCluster = new MarkerClusterer(param_map, markerArray, mOptions,param_lat, param_lng,api_key);
+
     },
 
 

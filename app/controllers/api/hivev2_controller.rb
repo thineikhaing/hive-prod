@@ -92,5 +92,27 @@ class Api::Hivev2Controller < ApplicationController
 
   end
 
+  def place_for_map_view
+    @placesMap = Place.order("created_at DESC").reload
+
+    #filtering for normal topic, image, audio and video
+    @latestTopics = [ ]
+    @latestTopicUser = [ ]
+
+    @placesMap.map { |f|
+      @latestTopics.push(f.topics.last)
+    }
+
+    @latestTopics.each do |topic|
+      if topic.present?
+        @latestTopicUser.push(topic.username)
+      else
+        @latestTopicUser.push("nothing")
+      end
+    end
+
+    render json: {places: @placesMap,latestTopicUser: @latestTopicUser,latestTopics: @latestTopics }
+  end
+
 
 end

@@ -268,6 +268,8 @@ class HomeController < ApplicationController
 
      # place_for_map_view
 
+     @placesMap = Place.order("created_at DESC").reload
+
      if Rails.env.development?
        @carmmunicate_key = Carmmunicate_key::Development_Key
        @favr_key = Favr_key::Development_Key

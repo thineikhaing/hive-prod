@@ -9,6 +9,8 @@ Rails.application.routes.draw do
 
   match "get_topic_by_map"  =>  'home#get_topic_by_map'  , via: [:get, :post]
 
+
+
   resources :sg_accident_histories
   resources :privacy_policies
   resources :user_fav_locations
@@ -79,6 +81,7 @@ Rails.application.routes.draw do
   namespace :api do
 
     match "hivev2/get_topic_by_latlon"              => "hivev2#get_topic_by_latlon"                     , via: [:get, :post]
+    match "hivev2/place_for_map_view"               => "hivev2#place_for_map_view"                     , via: [:get, :post]
 
     match "socal/create_event"                      => "socal#create_event"                     , via: [:get, :post]
     match "socal/retrieve_invitation_code"          => "socal#retrieve_invitation_code"         , via: [:get, :post]
