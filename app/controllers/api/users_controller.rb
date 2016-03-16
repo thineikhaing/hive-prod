@@ -189,6 +189,8 @@ class Api::UsersController < ApplicationController
 
       user = User.find(current_user.id)
       user.check_in_time = Time.now
+      user.last_known_latitude = params[:latitude]
+      user.last_known_longitude= params[:longitude]
       user.save!
       params[:radius].present? ? radius = params[:radius].to_i : radius = 1
 

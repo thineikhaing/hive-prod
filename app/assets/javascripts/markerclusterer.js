@@ -327,6 +327,9 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
             success: function(data){
 
                 console.log(data.topicslist)
+
+                console.log(data.activeUsersArray)
+
                 appname= data.appname
 
                 if (data.topic_count > 0){

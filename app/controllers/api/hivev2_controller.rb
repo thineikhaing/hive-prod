@@ -82,7 +82,35 @@ class Api::Hivev2Controller < ApplicationController
       @topics_list= stickyTopic
       p @topics_list+= listOfTopics
 
-      render json: {topicslist: @topics_list, topic_count: @topics_list.count,appname: appname}
+      usersArray = [ ]
+      activeUsersArray = [ ]
+      "time allow"
+      time_allowance = Time.now - 10.minutes.ago
+
+
+      users = User.nearest(lat1, long1, 1)
+      users.each do |u|
+        p u.id
+        if u.check_in_time.present?
+          p time_difference = Time.now - u.check_in_time
+          unless time_difference.to_i > time_allowance.to_i
+            usersArray.push(u)
+          end
+        end
+      end
+
+
+      usersArray.each do |ua|
+
+        user = User.find(ua.id)
+        active_users = { id: ua.id, username: ua.username, last_known_latitude: ua.last_known_latitude, last_known_longitude: ua.last_known_longitude , data: ua.data, updated_at: ua.updated_at}
+        activeUsersArray.push(active_users)
+
+      end
+      p "active user array"
+      p activeUsersArray
+
+      render json: {topicslist: @topics_list, topic_count: @topics_list.count,appname: appname,activeUsersArray: activeUsersArray}
     else
 
       render json: {topicslist: "no topic list",appname: appname}
