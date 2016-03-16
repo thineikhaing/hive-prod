@@ -248,50 +248,6 @@ var Hivemaps = {
                         cur_long: yCoord,
                         api_key: $("#mb_map").data("apikey")};
 
-                //$.ajax({
-                //    dataType: "json",
-                //    cache: false,
-                //    url:url,
-                //    data: data,
-                //    error: function(XMLHttpRequest, errorTextStatus, error){
-                //        showMessage("Failed to submit : "+ errorTextStatus+" ;"+error);
-                //    },
-                //    success: function(data){
-                //
-                //        if (data.latestTopics.length > 0){
-                //            title = data.pop_topic.title
-                //            topic_count = data.latestTopics.length
-                //
-                //            username = data.latestTopicUsers[0]
-                //            user_count = data.latestTopicUsers.length
-                //
-                //            post_count = data.pop_topic_posts.length
-                //
-                //            console.log(title)
-                //
-                //            console.log("post_count ",post_count)
-                //
-                //            $("#m-topic-count").html(topic_count)
-                //            $("#m-topic-title").html(title)
-                //            $("#m-user-count").html(user_count)
-                //            $("#m-user-name").html(username)
-                //            $("#m-post-count").html(post_count)
-                //        }else{
-                //
-                //            $("#m-topic-count").html('0')
-                //            $("#n-topic-title").html('no topic')
-                //            $("#m-user-count").html('0')
-                //            $("#m-user-name").html('no user')
-                //            $("#m-post-count").html('0')
-                //        }
-                //
-                //
-                //        $(data.latestTopics).each(function(e){
-                //
-                //        });
-                //    }
-                //});
-
                 Hivemaps.addplacemarker(mb_map,lat, lng,api_key)
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";

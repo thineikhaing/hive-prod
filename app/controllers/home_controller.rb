@@ -257,7 +257,7 @@ class HomeController < ApplicationController
          @latestTopicUser.push("nothing")
        end
      end
-     #gon.watch.newplaces = @placesMap
+
      gon.places =  @placesMap.as_json
      gon.latestTopicUser = @latestTopicUser
      gon.latestTopics = @latestTopics
@@ -265,6 +265,9 @@ class HomeController < ApplicationController
 
 
    def devapp_list
+
+     place_for_map_view
+
      if Rails.env.development?
        @carmmunicate_key = Carmmunicate_key::Development_Key
        @favr_key = Favr_key::Development_Key
