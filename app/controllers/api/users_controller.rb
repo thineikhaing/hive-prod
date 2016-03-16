@@ -46,16 +46,76 @@ class Api::UsersController < ApplicationController
   end
 
   def create_anonymous_user
+
+    if Rails.env.development?
+      @carmmunicate_key = Carmmunicate_key::Development_Key
+      @favr_key = Favr_key::Development_Key
+      @meal_key = Mealbox_key::Development_Key
+      @socal_key = Socal_key::Development_Key
+      @hive_key = Hive_key::Development_Key
+      @round_key = RoundTrip_key::Development_Key
+
+    elsif Rails.env.staging?
+      @carmmunicate_key = Carmmunicate_key::Staging_Key
+      @favr_key = Favr_key::Staging_Key
+      @meal_key = Mealbox_key::Staging_Key
+      @socal_key = Socal_key::Staging_Key
+      @hive_key = Hive_key::Staging_Key
+      @round_key = RoundTrip_key::Staging_Key
+
+    else
+      @carmmunicate_key = Carmmunicate_key::Production_Key
+      @favr_key = Favr_key::Production_Key
+      @meal_key = Mealbox_key::Production_Key
+      @socal_key = Socal_key::Production_Key
+      @hive_key = Hive_key::Production_Key
+      @round_key = RoundTrip_key::Production_Key
+    end
+
     if params[:device_id].present?
+
+      app_key = params[:api_key] if params[:api_key].present?
+
       if User.find_by_device_id(params[:device_id]).present?
         #device_id already existed in system
         render json: { status: false }
       else
         user = User.create!(device_id: params[:device_id], password: Devise.friendly_token)
         user.token_expiry_date= Date.today + 6.months
+
+        app_data = Hash.new
+
+        if app_key == @carmmunicate_key
+          app_data["carmic"] = true
+
+        elsif app_key == @favr_key
+
+          app_data["favr"] = true
+
+        elsif app_key == @meal_key
+
+          app_data["meal"] = true
+
+        elsif app_key == @hive_key
+
+          app_data["hive"] = true
+
+        elsif app_key == @round_key
+
+          app_data["round"] = true
+
+        end
+
+        user.app_data = app_data
+
         user.save!
+
+
         render json: { user: user }
       end
+
+
+
     else
       render json: { error_msg: "Invalid application key" } , status: 400
     end
@@ -121,6 +181,8 @@ class Api::UsersController < ApplicationController
             user.password = params[:password]
             user.password_confirmation = params[:password]
             user.token_expiry_date= Date.today + 6.months
+
+
             user.save!
 
             if params[:app_key]

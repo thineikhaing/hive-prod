@@ -89,6 +89,13 @@ class Api::Hivev2Controller < ApplicationController
 
 
       users = User.nearest(lat1, long1, 1)
+
+      if app.api_key == @carmmunicate_key
+        users = users.where(app_data["carmic"]: true)
+      end
+
+
+
       users.each do |u|
         p u.id
         if u.check_in_time.present?
