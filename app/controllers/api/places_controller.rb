@@ -368,6 +368,29 @@ class Api::PlacesController < ApplicationController
       data_array = data_array + factual_data_array
 
       render json: { places: data_array}
+
+    elsif params[:hivvemap]
+
+      placesMap = Place.order("created_at DESC").reload
+
+      #filtering for normal topic, image, audio and video
+      latestTopics = [ ]
+      latestTopicUser = [ ]
+
+      placesMap.map { |f|
+        latestTopics.push(f.topics.last)
+      }
+
+      latestTopics.each do |topic|
+        if topic.present?
+          latestTopicUser.push(topic.username)
+        else
+          latestTopicUser.push("nothing")
+        end
+      end
+
+      render json: {places: placesMap,latestTopicUser: latestTopicUser,latestTopics: latestTopics }
+
     else
       render json: { error_msg: "Params latitude, longitude and radius must be presented" }, status: 400
     end

@@ -686,9 +686,10 @@ var Hivemaps = {
         var places = new Array();
         var latestTopicUser = new Array();
 
-        var url = 'api/hivev2/place_for_map_view';
+        var url = '/api/places/retrieve_places';
         $.ajax({
             url: url,
+            data: {hivvemap: ''},
             success: function(data) {
 
                 places = data.places
