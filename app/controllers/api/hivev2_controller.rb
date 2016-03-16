@@ -94,7 +94,7 @@ class Api::Hivev2Controller < ApplicationController
       p "find nearset user"
       usersArray = [ ]
       activeUsersArray = [ ]
-      "time allow"
+      p "time allow"
       time_allowance = Time.now - 10.minutes.ago
 
 
