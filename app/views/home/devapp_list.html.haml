@@ -1,1 +1,84 @@
-%h3 Developer application list
+%h3 THE APIARY
+%span.warning.label developer
+%br
+%span welcome back, #{current_user.username}
+
+-if @hive_applications.present?
+  - @hive_applications.each do |app|
+    .row{style:'margin-top:30px;margin-bottom:30px;'}
+      .columns.large-5
+        %div{style:'position:relative;float:left;width:65px;'}
+          .logo_borders{style:"background-color:#{app.theme_color} !important;background:#{app.theme_color} !important"}
+
+            -if app.api_key == @hive_key
+              hv
+
+            -if app.api_key == @socal_key
+              sc
+
+            -if app.api_key == @carmmunicate_key
+              cm
+
+            -if app.api_key == @meal_key
+              mb
+
+            -if app.api_key == @favr_key
+              fv
+
+            -if app.api_key == @round_key
+              rt
+
+          %svg.logo_svg
+            %defs
+              %clipPath#logo-clip{:clipPathUnits => "objectBoundingBox"}
+                %polygon{:points => "0 0, 1 0, 0 1, 0 1" }
+
+        %div{style:'position:relative;float:left;'}
+          .parallelogram{style:'width: 55px;height: 52px;background:orange;;position:relative;margin-left: -5px;'}
+          %br
+          .parallelogram{style:'width: 55px;height: 52px;background:orange;position:relative;margin-left: -40px;background:rgb(80,227,194)'}
+
+        %div{style:'position:relative;float:left;'}
+
+          -if app.api_key == @hive_key
+            .parallelogram#hv_map{"data-apikey"=>"#{app.api_key}"}
+
+          -if app.api_key == @socal_key
+            .parallelogram#sc_map{"data-apikey"=>"#{app.api_key}"}
+
+          -if app.api_key == @carmmunicate_key
+            .parallelogram#cm_map{"data-apikey"=>"#{app.api_key}"}
+
+          -if app.api_key == @meal_key
+            .parallelogram#mb_map{"data-apikey"=>"#{app.api_key}"}
+
+          -if app.api_key == @favr_key
+            .parallelogram#fv_map{"data-apikey"=>"#{app.api_key}"}
+
+          -if app.api_key == @round_key
+            .parallelogram#rt_map{"data-apikey"=>"#{app.api_key}"}
+
+
+      .columns.large-6{style:'margin-left:15px;'}
+
+        -if app.api_key == @hive_key
+          = render 'home/hiveInfo'
+
+        -if app.api_key == @round_key
+          = render 'home/roundtripInfo'
+
+        -if app.api_key == @carmmunicate_key
+          = render 'home/carmicInfo'
+
+        -if app.api_key == @meal_key
+          = render 'home/mealboxInfo'
+
+        -if app.api_key == @favr_key
+          = render 'home/favarInfo'
+
+        -if app.api_key == @socal_key
+          = render 'home/socalInfo'
+      .columns.large-12
+        .small-6.large-centered.columns
+      .columns.large-12
+        %hr
