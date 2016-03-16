@@ -5,6 +5,8 @@ Rails.application.routes.draw do
 
   match "home/application_portal"  , path: "application_portal"      , via: [:get, :post]
 
+  match "devapp_list"  =>  'home#devapp_list'   , via: [:get, :post]
+
   match "get_topic_by_map"  =>  'home#get_topic_by_map'  , via: [:get, :post]
 
   resources :sg_accident_histories

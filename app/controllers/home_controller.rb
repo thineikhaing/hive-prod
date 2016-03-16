@@ -23,7 +23,7 @@ class HomeController < ApplicationController
           #store CURRENT_USER_ID in session
           session[:session_devuser_id] = user.id
           # Redirects to create application view if user has verified account.
-          redirect_to home_application_portal_path
+          redirect_to devapp_list_path
           #redirect_to HIVEAPPLICATION_APPLICATION_LIST_PATH
         else
           # Redirects back to index view if user hasn't verified account.
@@ -38,6 +38,8 @@ class HomeController < ApplicationController
     end
 
   end
+
+
 
   def application_portal
     place_for_map_view
@@ -259,6 +261,11 @@ class HomeController < ApplicationController
      gon.places =  @placesMap.as_json
      gon.latestTopicUser = @latestTopicUser
      gon.latestTopics = @latestTopics
+   end
+
+
+   def devapp_list
+
    end
 
    private
