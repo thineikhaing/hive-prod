@@ -322,7 +322,7 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
             url:url,
             data: data,
             error: function(XMLHttpRequest, errorTextStatus, error){
-                showMessage("Failed to submit : "+ errorTextStatus+" ;"+error);
+                console.log("Failed to submit : "+ errorTextStatus+" ;"+error);
             },
             success: function(data){
 

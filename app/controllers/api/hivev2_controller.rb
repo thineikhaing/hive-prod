@@ -66,6 +66,7 @@ class Api::Hivev2Controller < ApplicationController
 
     #Retrieve the sticky topic
     #stickyTopic = Topic.where(:special_type => "3", :topic_type => 0)
+    p "get sticky topic"
     stickyTopic = Topic.where("hiveapplication_id = ? and topic_type in (?)",app.id, [0,1,2,3])
 
     if @place_array.present?
@@ -80,6 +81,9 @@ class Api::Hivev2Controller < ApplicationController
           end
         end
       end
+
+      p "get topic list in view"
+
       listOfTopics = topicsInView_array
       listOfTopics.sort! { |a,b| a.created_at <=> b.created_at }
       listOfTopics.reverse!
@@ -87,6 +91,7 @@ class Api::Hivev2Controller < ApplicationController
       @topics_list= stickyTopic
       @topics_list+= listOfTopics
 
+      p "find nearset user"
       usersArray = [ ]
       activeUsersArray = [ ]
       "time allow"
@@ -95,9 +100,9 @@ class Api::Hivev2Controller < ApplicationController
 
       users = User.nearest(lat1, long1, 1)
 
-      if app.api_key == @carmmunicate_key
-        users = users.where("app_data ->'carmic' = 'true'")
-      end
+      # if app.api_key == @carmmunicate_key
+      #   users = users.where("app_data ->'carmic' = 'true'")
+      # end
 
       # users.each do |u|
       #   if u.check_in_time.present?
@@ -119,6 +124,8 @@ class Api::Hivev2Controller < ApplicationController
         activeUsersArray.push(active_users)
 
       end
+
+      p "get active user list"
 
       p "avatar url"
       p users.count
