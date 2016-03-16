@@ -2,7 +2,7 @@ Hive::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
   # Code is not reloaded between requests
-  config.cache_classes = true
+  config.cache_classes = false
 
   # Do not eager load code on boot.
   config.eager_load = false
