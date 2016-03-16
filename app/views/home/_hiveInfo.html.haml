@@ -11,15 +11,15 @@
 
       .parallelogram{style:'width: 250px;height: 55px;'}
 
-        .status_count
+        .status_count#h-usercount
           -#=@latestTopicUser.count
 
-        .status_title
+        .status_title#h-username
           -#-if @latestTopicUser.count < 1
           -#  no user
           -#-else
           -#  =@latestTopicUser[0]
-      .picbox
+      .picbox#f-avatar
         =image_tag("Avatars/Chat-Avatar-Chihuahua.png")
 
 
@@ -41,7 +41,7 @@
         .status_title#h-topic-title
           -#=@latestTopics.first.title rescue 'No Topic'
 
-      .postbox
+      .postbox#h-post-count
         -#-if @latestTopics.count > 0
         -#  =@latestTopics.first.posts.count rescue '0'
         -#-else

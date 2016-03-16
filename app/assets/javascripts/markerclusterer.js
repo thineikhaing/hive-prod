@@ -326,49 +326,153 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
             },
             success: function(data){
 
-                console.log(data.topicslist)
+                console.log(data.pop_topic)
 
                 console.log(data.activeUsersArray)
 
                 appname= data.appname
 
+                console.log(appname)
+
+                if (data.usercount > 0) {
+
+                    usercount = data.usercount
+                    username = data.activename
+                    avatar= data.avatar
+
+                    console.log(usercount)
+                    console.log(username)
+                    console.log(avatar)
+
+                    image ='<img src="'+avatar+'"><img/>'
+
+                    if (appname == "carmunicate"){
+
+                        $("#c-usercount").html(usercount)
+                        $("#c-username").html(username)
+                        $("#c-avatar").html(image)
+                    }
+                    else if(appname == "favr"){
+
+                        $("#f-usercount").html(usercount)
+                        $("#f-username").html(username)
+                        $("#f-avatar").html(image)
+
+                    }
+                    else if(appname == "meal"){
+
+                        $("#m-usercount").html(usercount)
+                        $("#m-username").html(username)
+                        $("#m-avatar").html(image)
+                    }
+                    else if(appname == "socal"){
+
+                        $("#s-usercount").html(usercount)
+                        $("#s-username").html(username)
+                        $("#s-avatar").html(image)
+                    }
+                    else if(appname == "round"){
+                        $("#r-usercount").html(usercount)
+                        $("#r-username").html(username)
+                        $("#r-avatar").html(image)
+                    }
+                    else{
+
+                        $("#h-usercount").html(usercount)
+                        $("#h-username").html(username)
+                        $("#h-avatar").html(image)
+                    }
+
+                }else
+                {
+
+                    image ='<img src="assets/Avatars/Chat-Avatar.png"><img/>'
+
+                    if (appname == "carmunicate"){
+
+                        $("#c-usercount").html("0")
+                        $("#c-username").html("no user")
+                        $("#c-avatar").html(image)
+                    }
+                    else if(appname == "favr"){
+
+                        $("#f-usercount").html("0")
+                        $("#f-username").html("no user")
+                        $("#f-avatar").html(image)
+
+                    }
+                    else if(appname == "meal"){
+
+                        $("#m-usercount").html("0")
+                        $("#m-username").html("no user")
+                        $("#m-avatar").html(image)
+                    }
+                    else if(appname == "socal"){
+
+                        $("#s-usercount").html("0")
+                        $("#s-username").html("no user")
+                        $("#s-avatar").html(image)
+                    }
+                    else if(appname == "round"){
+                        $("#r-usercount").html("0")
+                        $("#r-username").html("no user")
+                        $("#r-avatar").html(image)
+                    }
+                    else{
+
+                        $("#h-usercount").html("0")
+                        $("#h-username").html("no user")
+                        $("#h-avatar").html(image)
+                    }
+
+                }
+
+
                 if (data.topic_count > 0){
 
-                    title = data.topicslist[0].title
+                    title = data.pop_topic.title
                     topic_count = data.topic_count
-
+                    post_count = data.post_count
 
                     console.log(topic_count)
                     console.log(title)
                     console.log(appname)
+                    console.log(post_count)
 
                     if (appname == "carmunicate"){
 
                         $("#c-topic-count").html(topic_count)
                         $("#c-topic-title").html(title)
+                        $("#c-post-count").html(post_count)
+
                     }
                     else if(appname == "favr"){
 
                         $("#f-topic-count").html(topic_count)
                         $("#f-topic-title").html(title)
+                        $("#f-post-count").html(post_count)
 
                     }
                     else if(appname == "meal"){
                         console.log("meal info")
                         $("#m-topic-count").html(topic_count)
                         $("#m-topic-title").html(title)
+                        $("#m-post-count").html(post_count)
                     }
                     else if(appname == "socal"){
                         $("#s-topic-count").html(topic_count)
                         $("#s-topic-title").html(title)
+                        $("#s-post-count").html(post_count)
                     }
                     else if(appname == "round"){
                         $("#r-topic-count").html(topic_count)
                         $("#r-topic-title").html(title)
+                        $("#r-post-count").html(post_count)
                     }
                     else{
                         $("#h-topic-count").html(topic_count)
                         $("#h-topic-title").html(title)
+                        $("#h-post-count").html(post_count)
                     }
 
                 }
@@ -378,28 +482,34 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
 
                         $("#c-topic-count").html("0")
                         $("#c-topic-title").html("no topic")
+                        $("#c-post-count").html("0")
                     }
                     else if(appname == "favr"){
 
                         $("#f-topic-count").html("0")
                         $("#f-topic-title").html("no topic")
+                        $("#f-post-count").html("0")
 
                     }
                     else if(appname == "meal"){
                         $("#m-topic-count").html("0")
                         $("#m-topic-title").html("no topic")
+                        $("#m-post-count").html("0")
                     }
                     else if(appname == "socal"){
                         $("#s-topic-count").html("0")
                         $("#s-topic-title").html("no topic")
+                        $("#s-post-count").html("0")
                     }
                     else if(appname == "round"){
                         ("#r-topic-count").html("0")
                         $("#r-topic-title").html("no topic")
+                        $("#r-post-count").html("0")
                     }
                     else{
                         $("#h-topic-count").html("0")
                         $("#h-topic-title").html("no topic")
+                        $("#h-post-count").html("0")
                     }
 
 

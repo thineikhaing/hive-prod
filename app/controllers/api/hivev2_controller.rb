@@ -28,17 +28,23 @@ class Api::Hivev2Controller < ApplicationController
     end
 
     if params[:api_key] == @carmmunicate_key
-      appname = "carmunicate"
+      p appname = "carmunicate"
+
     elsif params[:api_key] == @favr_key
-      appname = "favr"
+      p appname = "favr"
+
     elsif params[:api_key] == @meal_key
-      appname = "meal"
+      p appname = "meal"
+
     elsif params[:api_key] == @socal_key
-      appname = "socal"
+      p appname = "socal"
+
     elsif params[:api_key] == @round_key
-      appname = "round"
+      p appname = "round"
+
     else
-      appname = "hive"
+      p appname = "hive"
+
     end
 
     if !params[:param_place].nil?
@@ -78,9 +84,8 @@ class Api::Hivev2Controller < ApplicationController
       listOfTopics.sort! { |a,b| a.created_at <=> b.created_at }
       listOfTopics.reverse!
 
-      p "get all topic by lat and lng"
       @topics_list= stickyTopic
-      p @topics_list+= listOfTopics
+      @topics_list+= listOfTopics
 
       usersArray = [ ]
       activeUsersArray = [ ]
@@ -91,33 +96,56 @@ class Api::Hivev2Controller < ApplicationController
       users = User.nearest(lat1, long1, 1)
 
       if app.api_key == @carmmunicate_key
-        users = users.where(app_data["carmic"]: true)
+        users = users.where("app_data ->'carmic' = 'true'")
       end
 
+      # users.each do |u|
+      #   if u.check_in_time.present?
+      #     time_difference = Time.now - u.check_in_time
+      #     unless time_difference.to_i > time_allowance.to_i
+      #       usersArray.push(u)
+      #     end
+      #   end
+      # end
 
-
-      users.each do |u|
-        p u.id
-        if u.check_in_time.present?
-          p time_difference = Time.now - u.check_in_time
-          unless time_difference.to_i > time_allowance.to_i
-            usersArray.push(u)
-          end
-        end
-      end
-
-
-      usersArray.each do |ua|
+      users.each do |ua|
 
         user = User.find(ua.id)
-        active_users = { id: ua.id, username: ua.username, last_known_latitude: ua.last_known_latitude, last_known_longitude: ua.last_known_longitude , data: ua.data, updated_at: ua.updated_at}
+        active_users = { id: ua.id, username: ua.username,
+                         last_known_latitude: ua.last_known_latitude,
+                         last_known_longitude: ua.last_known_longitude ,
+                         app_data: ua.app_data,
+                         data: ua.data, updated_at: ua.updated_at}
         activeUsersArray.push(active_users)
 
       end
-      p "active user array"
-      p activeUsersArray
 
-      render json: {topicslist: @topics_list, topic_count: @topics_list.count,appname: appname,activeUsersArray: activeUsersArray}
+      p "avatar url"
+      p users.count
+      username = ''
+      avatar = ''
+      pop_topic = ''
+      postcount = 0
+      if users.count > 0
+        p "username and avatar"
+        p username = users.first.username
+        p avatar = Topic.get_avatar(users.first.username)
+      end
+
+      if @topics_list.count > 0
+        pop_topic= @topics_list.first
+        p postcount = @topics_list.first.posts.count
+      end
+
+
+      render json: {pop_topic: pop_topic,
+                    topic_count: @topics_list.count,
+                    post_count: postcount,
+                    appname: appname,
+                    activeUsersArray: activeUsersArray,
+                    usercount: users.count,
+                    activename: username,
+                    avatar: avatar}
     else
 
       render json: {topicslist: "no topic list",appname: appname}

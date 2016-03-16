@@ -11,15 +11,15 @@
 
       .parallelogram{style:'width: 250px;height: 55px;'}
 
-        .status_count#c-user-count
+        .status_count#c-usercount
           -#=@CMlatestTopicUser.count
 
-        .status_title#c-user-name
+        .status_title#c-username
           -#-if @CMlatestTopicUser.count < 1
           -#  no user
           -#-else
           -#  =@CMlatestTopicUser[0]
-      .picbox
+      .picbox#c-avatar
         =image_tag("Avatars/Chat-Avatar-Chihuahua.png")
 
 

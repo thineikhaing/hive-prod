@@ -467,6 +467,7 @@ var Hivemaps = {
 
                 var xCoord = mapExtent.lat
                 var yCoord = mapExtent.lon
+                var api_key = $("#fv_map").data("apikey")
 
                 Hivemaps.addplacemarker(fv_map,lat, lng,api_key);
 
@@ -541,6 +542,8 @@ var Hivemaps = {
 
                 console.log(xCoord)
                 console.log(yCoord)
+
+                var api_key = $("#rt_map").data("apikey")
 
                Hivemaps.addplacemarker(rt_map,lat, lng,api_key);
 

@@ -11,15 +11,15 @@
 
       .parallelogram{style:'width: 250px;height: 55px;'}
 
-        .status_count
+        .status_count#f-usercount
           -#=@FVlatestTopicUser.count
 
-        .status_title
+        .status_title#f-username
           -#-if @FVlatestTopicUser.count < 1
           -#  no user
           -#-else
           -#  =@FVlatestTopicUser[0]
-      .picbox
+      .picbox#f-avatar
         =image_tag("Avatars/Chat-Avatar-Chihuahua.png")
 
 
@@ -42,7 +42,7 @@
         .status_title#f-topic-title
           -#=@FVlatestTopics.first.title rescue 'No Topic'
 
-      .postbox
+      .postbox#f-post-count
         -#-if @FVlatestTopics.count > 0
         -#  =@FVlatestTopics.first.posts.count rescue '0'
         -#-else

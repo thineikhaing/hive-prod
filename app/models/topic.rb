@@ -1088,7 +1088,7 @@ class Topic < ActiveRecord::Base
     avatar_url = "assets/Avatars/Chat-Avatar-Koala.png" if(username.index("Bear").present?)
     avatar_url = "assets/Avatars/Chat-Avatar-Kitten.png" if(username.index("Cat").present?)
     avatar_url = "assets/Avatars/Chat-Avatar-Kitten.png" if(username.index("Jaguar").present?)
-    avatar_url = "assets/Avatars/Chat-Avatar-Kitten.png" if(username.index("Lion").present?)
+    avatar_url = "assets/Avatars/Chat-Avatar-Lion.png" if(username.index("Lion").present?)
     avatar_url = "assets/Avatars/Chat-Avatar-Admin.png" if(username.index("Raydius GameBot").present?)
 
     urls = ["assets/Avatars/Chat-Avatar-Chipmunk.png",
