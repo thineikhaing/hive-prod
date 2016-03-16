@@ -2,7 +2,8 @@ Rails.application.routes.draw do
 
   root to: 'home#index'
   post "dev_sign_in"  =>  'home#dev_sign_in'  , via: [:get, :post]
-  match "application_portal"  =>  'home#application_portal'  , via: [:get, :post]
+
+  match "home/application_portal"  , path: "application_portal"      , via: [:get, :post]
 
   match "get_topic_by_map"  =>  'home#get_topic_by_map'  , via: [:get, :post]
 

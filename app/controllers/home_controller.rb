@@ -23,7 +23,7 @@ class HomeController < ApplicationController
           #store CURRENT_USER_ID in session
           session[:session_devuser_id] = user.id
           # Redirects to create application view if user has verified account.
-          redirect_to application_portal_path
+          redirect_to home_application_portal_path
           #redirect_to HIVEAPPLICATION_APPLICATION_LIST_PATH
         else
           # Redirects back to index view if user hasn't verified account.
