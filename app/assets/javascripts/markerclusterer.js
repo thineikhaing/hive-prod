@@ -515,32 +515,9 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
 
                 }
 
-
-
             }
         });
 
-      //$.ajax({
-      //
-      //  data: {
-      //    param_place: strids,
-      //    cur_lat: cur_lat,
-      //    cur_long: cur_long
-      //  },
-      //  success: function(html) {
-      //    var htmlobject = $(html);
-      //    var output = htmlobject.find("#display_topic")[0];
-      //    var testing = new XMLSerializer().serializeToString(output);
-      //    selected = document.getElementsByClassName("selected");
-      //    for (var i = 0; i < selected.length; i++)
-      //    {
-      //      document.getElementsByClassName("selected")[i].innerHTML=("&nbsp;");
-      //    }
-      //    $("#display_topic").replaceWith(testing);
-      //    //clear the post when map is dragged
-      //    $("#display_post").html("&nbsp;");
-      //  }
-      //});
 
     }
   };

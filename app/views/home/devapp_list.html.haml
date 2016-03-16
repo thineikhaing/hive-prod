@@ -7,7 +7,8 @@
   - @hive_applications.each do |app|
     .row{style:'margin-top:30px;margin-bottom:30px;'}
       .columns.large-5
-        %div{style:'position:relative;float:left;width:65px;'}
+
+        %div{style:'position:relative;width:65px;z-index:111;float:left'}
           .logo_borders{style:"background-color:#{app.theme_color} !important;background:#{app.theme_color} !important"}
 
             -if app.api_key == @hive_key
@@ -34,9 +35,9 @@
                 %polygon{:points => "0 0, 1 0, 0 1, 0 1" }
 
         %div{style:'position:relative;float:left;'}
-          .parallelogram{style:'width: 55px;height: 52px;background:orange;;position:relative;margin-left: -5px;'}
+          .parallelogram{style:'width: 55px;height: 52px;background:orange;;position:relative;margin-left: -5px;z-index:999'}
           %br
-          .parallelogram{style:'width: 55px;height: 52px;background:orange;position:relative;margin-left: -40px;background:rgb(80,227,194)'}
+          .parallelogram{style:'width: 55px;height: 52px;background:orange;position:relative;margin-left: -40px;background:rgb(80,227,194);z-index:999'}
 
         %div{style:'position:relative;float:left;'}
 

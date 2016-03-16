@@ -44,7 +44,6 @@ class Api::Hivev2Controller < ApplicationController
 
     else
       p appname = "hive"
-
     end
 
     if !params[:param_place].nil?
@@ -66,7 +65,7 @@ class Api::Hivev2Controller < ApplicationController
 
     #Retrieve the sticky topic
     #stickyTopic = Topic.where(:special_type => "3", :topic_type => 0)
-    p "get sticky topic"
+
     stickyTopic = Topic.where("hiveapplication_id = ? and topic_type in (?)",app.id, [0,1,2,3])
 
     if @place_array.present?
@@ -82,8 +81,6 @@ class Api::Hivev2Controller < ApplicationController
         end
       end
 
-      p "get topic list in view"
-
       listOfTopics = topicsInView_array
       listOfTopics.sort! { |a,b| a.created_at <=> b.created_at }
       listOfTopics.reverse!
@@ -91,27 +88,26 @@ class Api::Hivev2Controller < ApplicationController
       @topics_list= stickyTopic
       @topics_list+= listOfTopics
 
-      p "find nearset user"
+
       usersArray = [ ]
       activeUsersArray = [ ]
-      p "time allow"
+
       time_allowance = Time.now - 10.minutes.ago
-
-
       users = User.nearest(lat1, long1, 1)
 
-      # if app.api_key == @carmmunicate_key
-      #   users = users.where("app_data ->'carmic' = 'true'")
-      # end
 
-      # users.each do |u|
-      #   if u.check_in_time.present?
-      #     time_difference = Time.now - u.check_in_time
-      #     unless time_difference.to_i > time_allowance.to_i
-      #       usersArray.push(u)
-      #     end
-      #   end
-      # end
+      if app.api_key == @carmmunicate_key
+        users = users.where("app_data ->'carmic' = 'true'")
+      end
+
+      users.each do |u|
+        if u.check_in_time.present?
+          time_difference = Time.now - u.check_in_time
+          unless time_difference.to_i > time_allowance.to_i
+            usersArray.push(u)
+          end
+        end
+      end
 
       users.each do |ua|
 
@@ -125,10 +121,6 @@ class Api::Hivev2Controller < ApplicationController
 
       end
 
-      p "get active user list"
-
-      p "avatar url"
-      p users.count
       username = ''
       avatar = ''
       pop_topic = ''
@@ -148,11 +140,11 @@ class Api::Hivev2Controller < ApplicationController
       render json: {pop_topic: pop_topic,
                     topic_count: @topics_list.count,
                     post_count: postcount,
-                    appname: appname,
                     activeUsersArray: activeUsersArray,
                     usercount: users.count,
                     activename: username,
-                    avatar: avatar}
+                    avatar: avatar,
+                    appname: appname}
     else
 
       render json: {topicslist: "no topic list",appname: appname}

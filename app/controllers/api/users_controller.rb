@@ -84,6 +84,7 @@ class Api::UsersController < ApplicationController
         user.token_expiry_date= Date.today + 6.months
 
         app_data = Hash.new
+        result = Hash.new
 
         if app_key == @carmmunicate_key
           app_data["carmic"] = true
@@ -103,15 +104,22 @@ class Api::UsersController < ApplicationController
         elsif app_key == @round_key
 
           app_data["round"] = true
+          else
+            app_data["socal"] = true
 
         end
 
         user.app_data = app_data
+        if params[:app_name]
+          result[:device_id] = params[:device_id]
+          user.data = result
+          avatar = Topic.get_avatar(user.username)
+        end
 
         user.save!
 
 
-        render json: { user: user }
+        render json:  { :user => user, :success => 20 , avatar: avatar, daily_point: user.daily_points}, status: 200
       end
 
 

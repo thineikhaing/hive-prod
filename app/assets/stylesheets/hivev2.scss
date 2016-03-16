@@ -31,7 +31,7 @@ h3{color:orange}
   /* top: -27px; */
   /* margin-left: 40px; */
   float: right;
-  margin-right: 50px;
+  margin-right: 20px;
   line-height: 50px;
   font-size: 27px;
 }
@@ -47,7 +47,7 @@ h3{color:orange}
   /* top: -27px; */
   /* margin-left: 40px; */
   float: right;
-  margin-right: 50px;
+  margin-right: 20px;
   line-height: 50px;
   font-size: 27px;
 }
@@ -200,7 +200,8 @@ h3{color:orange}
 }
 
 .right_div{
-  position:relative;float:left;width:560px;
+  position:relative;
+  z-index: 99;
 }
 
 .wrapper{
@@ -229,4 +230,9 @@ h3{color:orange}
 
 .user_status,.topic_status{
   font-size: 14px;line-height: 10px;color: #fff;text-align: center;
+}
+
+.right_wrapper{
+position:relative;float:left;
+  border: 1px solid;
 }
