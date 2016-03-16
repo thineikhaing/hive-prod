@@ -12,13 +12,13 @@
       .parallelogram{style:'width: 250px;height: 55px;'}
 
         .status_count
-          =@RTlatestTopicUser.count
+          -#=@RTlatestTopicUser.count
 
         .status_title
-          -if @RTlatestTopicUser.count < 1
-            no user
-          -else
-            =@RTlatestTopicUser[0]
+          -#-if @RTlatestTopicUser.count < 1
+          -#  no user
+          -#-else
+          -#  =@RTlatestTopicUser[0]
       .picbox
         =image_tag("Avatars/Chat-Avatar-Chihuahua.png")
 
@@ -37,16 +37,16 @@
       .parallelogram{style:'width: 270px;height: 55px;margin-top: 30px;'}
 
         .status_count#r-topic-count
-          =@RTlatestTopics.count
+          -#=@RTlatestTopics.count
 
         .status_title#r-topic-title
-          =@RTlatestTopics.first.title rescue 'No Topic'
+          -#=@RTlatestTopics.first.title rescue 'No Topic'
 
       .postbox
-        -if @RTlatestTopics.count > 0
-          =@RTlatestTopics.first.posts.count rescue '0'
-        -else
-          0
+        -#-if @RTlatestTopics.count > 0
+        -#  =@RTlatestTopics.first.posts.count rescue '0'
+        -#-else
+        -#  0
 
 .row
   .columns.large-12

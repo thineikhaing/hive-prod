@@ -23,7 +23,7 @@ class HomeController < ApplicationController
           #store CURRENT_USER_ID in session
           session[:session_devuser_id] = user.id
           # Redirects to create application view if user has verified account.
-          redirect_to developer_portal_path
+          redirect_to application_portal_path
           #redirect_to HIVEAPPLICATION_APPLICATION_LIST_PATH
         else
           # Redirects back to index view if user hasn't verified account.
@@ -39,7 +39,7 @@ class HomeController < ApplicationController
 
   end
 
-  def developer_portal
+  def application_portal
     place_for_map_view
     if current_user.nil?
       redirect_to root_path
@@ -76,159 +76,159 @@ class HomeController < ApplicationController
 
 
 
-      lat = params[:cur_lat] if params[:cur_lat].present?
-      lng = params[:cur_long] if params[:cur_long].present?
+      # lat = params[:cur_lat] if params[:cur_lat].present?
+      # lng = params[:cur_long] if params[:cur_long].present?
+      #
+      # if params[:cur_lat.present?]
+      #   @placesMap =  Place.nearest(lat,lng,1)
+      # else
+      #   @placesMap = Place.all.reload
+      # end
 
-      if params[:cur_lat.present?]
-        @placesMap =  Place.nearest(lat,lng,1)
-      else
-        @placesMap = Place.all.reload
-      end
-
-      @hive_applications.each do |app|
-
-        if app.api_key == @carmmunicate_key
-
-          p "query detail info of carmunicate"
-
-          topics_by_places = [ ]
-          @CMlatestTopics = [ ]
-          @CMlatestTopicUser = [ ]
-
-          @placesMap.map{|f|
-            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
-          }
-
-            topics_by_places.each do |t|
-              if t.present?
-                @CMlatestTopics.push(t)
-              end
-            end
-
-            @CMlatestTopics.each do |t|
-              @CMlatestTopicUser.push(t.username)
-            end
-
-        end
-
-        if app.api_key == @meal_key
-          p "query detail info of meal box"
-
-          topics_by_places = [ ]
-          @MBlatestTopics = [ ]
-          @MBlatestTopicUser = [ ]
-
-          @placesMap.map{|f|
-            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
-          }
-
-          topics_by_places.each do |t|
-            if t.present?
-              @MBlatestTopics.push(t)
-            end
-          end
-
-          @MBlatestTopics.each do |t|
-            @MBlatestTopicUser.push(t.username)
-          end
-
-        end
-
-        if app.api_key == @favr_key
-          p "query detail info of favr"
-
-          topics_by_places = [ ]
-          @FVlatestTopics = [ ]
-          @FVlatestTopicUser = [ ]
-
-          @placesMap.map{|f|
-            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
-          }
-
-          topics_by_places.each do |t|
-            if t.present?
-              @FVlatestTopics.push(t)
-            end
-          end
-
-          @FVlatestTopics.each do |t|
-            @FVlatestTopicUser.push(t.username)
-          end
-
-        end
-
-        if app.api_key == @socal_key
-          p "query detial info of socal"
-
-          topics_by_places = [ ]
-          @SClatestTopics = [ ]
-          @SClatestTopicUser = [ ]
-
-          @placesMap.map{|f|
-            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
-          }
-
-          topics_by_places.each do |t|
-            if t.present?
-              @SClatestTopics.push(t)
-            end
-          end
-
-          @SClatestTopics.each do |t|
-            @SClatestTopicUser.push(t.username)
-          end
-
-
-        end
-
-        if app.api_key == @round_key
-          p "query detial info of socal"
-
-          topics_by_places = [ ]
-          @RTlatestTopics = [ ]
-          @RTlatestTopicUser = [ ]
-
-          @placesMap.map{|f|
-            topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
-          }
-
-          topics_by_places.each do |t|
-            if t.present?
-              @RTlatestTopics.push(t)
-            end
-          end
-
-
-          @RTlatestTopics.each do |t|
-            @RTlatestTopicUser.push(t.username)
-          end
-
-
-        end
-
-        if app.api_key == @hive_key
-
-        topics_by_places = [ ]
-        @latestTopics = [ ]
-        @latestTopicUser = [ ]
-
-        @placesMap.map{|f|
-          topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
-        }
-
-          topics_by_places.each do |t|
-            if t.present?
-              @latestTopics.push(t)
-            end
-          end
-
-          @latestTopics.each do |t|
-            @latestTopicUser.push(t.username)
-          end
-
-          p "query detial info of hive"
-        end
-      end
+      # @hive_applications.each do |app|
+      #
+      #   if app.api_key == @carmmunicate_key
+      #
+      #     p "query detail info of carmunicate"
+      #
+      #     topics_by_places = [ ]
+      #     @CMlatestTopics = [ ]
+      #     @CMlatestTopicUser = [ ]
+      #
+      #     @placesMap.map{|f|
+      #       topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+      #     }
+      #
+      #       topics_by_places.each do |t|
+      #         if t.present?
+      #           @CMlatestTopics.push(t)
+      #         end
+      #       end
+      #
+      #       @CMlatestTopics.each do |t|
+      #         @CMlatestTopicUser.push(t.username)
+      #       end
+      #
+      #   end
+      #
+      #   if app.api_key == @meal_key
+      #     p "query detail info of meal box"
+      #
+      #     topics_by_places = [ ]
+      #     @MBlatestTopics = [ ]
+      #     @MBlatestTopicUser = [ ]
+      #
+      #     @placesMap.map{|f|
+      #       topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+      #     }
+      #
+      #     topics_by_places.each do |t|
+      #       if t.present?
+      #         @MBlatestTopics.push(t)
+      #       end
+      #     end
+      #
+      #     @MBlatestTopics.each do |t|
+      #       @MBlatestTopicUser.push(t.username)
+      #     end
+      #
+      #   end
+      #
+      #   if app.api_key == @favr_key
+      #     p "query detail info of favr"
+      #
+      #     topics_by_places = [ ]
+      #     @FVlatestTopics = [ ]
+      #     @FVlatestTopicUser = [ ]
+      #
+      #     @placesMap.map{|f|
+      #       topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+      #     }
+      #
+      #     topics_by_places.each do |t|
+      #       if t.present?
+      #         @FVlatestTopics.push(t)
+      #       end
+      #     end
+      #
+      #     @FVlatestTopics.each do |t|
+      #       @FVlatestTopicUser.push(t.username)
+      #     end
+      #
+      #   end
+      #
+      #   if app.api_key == @socal_key
+      #     p "query detial info of socal"
+      #
+      #     topics_by_places = [ ]
+      #     @SClatestTopics = [ ]
+      #     @SClatestTopicUser = [ ]
+      #
+      #     @placesMap.map{|f|
+      #       topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+      #     }
+      #
+      #     topics_by_places.each do |t|
+      #       if t.present?
+      #         @SClatestTopics.push(t)
+      #       end
+      #     end
+      #
+      #     @SClatestTopics.each do |t|
+      #       @SClatestTopicUser.push(t.username)
+      #     end
+      #
+      #
+      #   end
+      #
+      #   if app.api_key == @round_key
+      #     p "query detial info of socal"
+      #
+      #     topics_by_places = [ ]
+      #     @RTlatestTopics = [ ]
+      #     @RTlatestTopicUser = [ ]
+      #
+      #     @placesMap.map{|f|
+      #       topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+      #     }
+      #
+      #     topics_by_places.each do |t|
+      #       if t.present?
+      #         @RTlatestTopics.push(t)
+      #       end
+      #     end
+      #
+      #
+      #     @RTlatestTopics.each do |t|
+      #       @RTlatestTopicUser.push(t.username)
+      #     end
+      #
+      #
+      #   end
+      #
+      #   if app.api_key == @hive_key
+      #
+      #   topics_by_places = [ ]
+      #   @latestTopics = [ ]
+      #   @latestTopicUser = [ ]
+      #
+      #   @placesMap.map{|f|
+      #     topics_by_places.push(f.topics.where(hiveapplication_id: app.id).last)
+      #   }
+      #
+      #     topics_by_places.each do |t|
+      #       if t.present?
+      #         @latestTopics.push(t)
+      #       end
+      #     end
+      #
+      #     @latestTopics.each do |t|
+      #       @latestTopicUser.push(t.username)
+      #     end
+      #
+      #     p "query detial info of hive"
+      #   end
+      # end
 
 
       render layout: "special_layout"
