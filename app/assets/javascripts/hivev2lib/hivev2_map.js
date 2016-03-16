@@ -74,7 +74,6 @@ var Hivemaps = {
             latitude =lat;
             longitude = lng;
 
-
             var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
             var latlng   = new google.maps.LatLng(latitude,longitude);
             var geocoder = new google.maps.Geocoder();
@@ -123,11 +122,6 @@ var Hivemaps = {
                                 $("#carmic_address").html(formattedAddress)
                                 $("#carmic_country").html(country)
                             }
-
-                            //debugger;
-
-                            var location = results[0].geometry.location;
-
 
                         }
 
@@ -329,49 +323,6 @@ var Hivemaps = {
 
                 Hivemaps.addplacemarker(cm_map,lat, lng,api_key)
 
-                //$.ajax({
-                //    dataType: "json",
-                //    cache: false,
-                //    url:url,
-                //    data: data,
-                //    error: function(XMLHttpRequest, errorTextStatus, error){
-                //        showMessage("Failed to submit : "+ errorTextStatus+" ;"+error);
-                //    },
-                //    success: function(data){
-                //
-                //        if (data.latestTopics.length > 0){
-                //            title = data.pop_topic.title
-                //            topic_count = data.latestTopics.length
-                //
-                //            username = data.latestTopicUsers[0]
-                //            user_count = data.latestTopicUsers.length
-                //
-                //            post_count = data.pop_topic_posts.length
-                //
-                //            console.log(title)
-                //
-                //            console.log("post_count ",post_count)
-                //
-                //            $("#c-topic-count").html(topic_count)
-                //            $("#c-topic-title").html(title)
-                //            $("#c-user-count").html(user_count)
-                //            $("#c-user-name").html(username)
-                //            $("#c-post-count").html(post_count)
-                //        }else{
-                //            $("#c-topic-count").html('0')
-                //            $("#c-topic-title").html('no topic')
-                //            $("#c-user-count").html('0')
-                //            $("#c-user-name").html('no user')
-                //            $("#c-post-count").html('0')
-                //        }
-                //
-                //
-                //        $(data.latestTopics).each(function(e){
-                //
-                //        });
-                //    }
-                //});
-
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
                 var geocoder = new google.maps.Geocoder();
@@ -517,25 +468,6 @@ var Hivemaps = {
                 var xCoord = mapExtent.lat
                 var yCoord = mapExtent.lon
 
-                console.log(xCoord)
-                console.log(yCoord)
-
-                //$.ajax({
-                //    data: {
-                //        cur_lat: xCoord,
-                //        cur_long: yCoord,
-                //        api_key: $("#fv_map").data("apikey")
-                //    },
-                //    success: function(html) {
-                //        var htmlobject = $(html);
-                //        var output = htmlobject.find("#display_favrinfo")[0];
-                //        var app_info = new XMLSerializer().serializeToString(output);
-                //        $("#display_favrinfo").replaceWith(app_info);
-                //
-                //    }
-                //});
-
-
                 Hivemaps.addplacemarker(fv_map,lat, lng,api_key);
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
@@ -609,20 +541,6 @@ var Hivemaps = {
 
                 console.log(xCoord)
                 console.log(yCoord)
-
-                //$.ajax({
-                //    data: {
-                //        cur_lat: xCoord,
-                //        cur_long: yCoord,
-                //        api_key: $("#rt_map").data("apikey")
-                //    },
-                //    success: function(html) {
-                //        var htmlobject = $(html);
-                //        var output = htmlobject.find("#display_roundinfo")[0];
-                //        var app_info = new XMLSerializer().serializeToString(output);
-                //        $("#display_roundinfo").replaceWith(app_info);
-                //    }
-                //});
 
                Hivemaps.addplacemarker(rt_map,lat, lng,api_key);
 
@@ -717,10 +635,9 @@ var Hivemaps = {
 
                 // Settings for clustering markers
                 mOptions = {
-                    gridSize: 50,
-                    maxZoom: 15
+                    gridSize: 1,
+                    maxZoom: 1
                 };
-
 
                 var markerCluster = new MarkerClusterer(param_map, markerArray, mOptions,param_lat, param_lng,api_key);
             }
