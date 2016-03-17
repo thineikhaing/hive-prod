@@ -268,3 +268,28 @@ position:relative;float:left;
   height: 200px;
   overflow-y: auto;
 }
+
+.setting{
+  width: 55px;height: 52px;background:orange;;position:relative;margin-left: -5px;z-index:999;
+}
+
+.setting > img{
+
+  -webkit-transform: skew(30deg);
+  -moz-transform: skew(30deg);
+  -o-transform: skew(30deg);
+  width: 36px;
+  margin-left: 5px;
+  margin-top: 5px;
+}
+
+.action_alarm{
+  width: 55px;
+  height: 52px;
+  position: relative;
+  margin-left: -40px;
+  background: rgb(80,227,194);
+  z-index: 999;
+  border: none;
+  margin-top: 6px;
+}
