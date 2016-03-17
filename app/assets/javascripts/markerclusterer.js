@@ -507,7 +507,7 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
                         $("#s-post-count").html("0")
                     }
                     else if(appname == "round"){
-                        ("#r-topic-count").html("0")
+                        $("#r-topic-count").html("0")
                         $("#r-topic-title").html("no topic")
                         $("#r-post-count").html("0")
                     }
