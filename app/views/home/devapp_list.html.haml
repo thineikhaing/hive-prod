@@ -68,7 +68,7 @@
               #rt_map{"data-apikey"=>"#{app.api_key}"}
 
 
-      .columns.large-6{style:'margin-left:15px;'}
+      .columns.large-6{style:'margin-left:15px;margin-bottom:30px;'}
 
         -if app.api_key == @hive_key
           = render 'home/hiveInfo'
@@ -88,7 +88,15 @@
         -if app.api_key == @socal_key
           = render 'home/socalInfo'
       .columns.large-12
-        .small-6.large-centered.columns
+        -#.small-6.large-centered.columns
+        .footer_app
+          application name:
+          =app.app_name.upcase
+          %br
+          api key:
+          =app.api_key
+
+
       .columns.large-12
         %hr
 
