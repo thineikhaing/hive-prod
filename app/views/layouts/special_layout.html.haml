@@ -14,8 +14,28 @@
     %script{:src => "http://www.openlayers.org/api/OpenLayers.js"}
 
   %body
+    = javascript_tag do
+      PUSHER_KEY = "#{Pusher.key}";
+    = javascript_include_tag "web", "http://js.pusher.com/1.11/pusher.min.js"
     .container
       .header{style:'height:60px;'}
       .row
         .large-12.columns
           = yield
+
+
+        #wrapper_post_list.reveal-modal{"aria-hidden" => "true", "aria-labelledby" => "modalTitle", "data-reveal" => "", :role => "dialog"}
+          %table#display_topic{style:'margin:0 auto;'}
+          .post_div
+            %table#display_post{style:'margin:0 auto;'}
+
+
+          %a.close-reveal-modal{"aria-label" => "Close"} ×
+
+
+
+        #wrapper_topic_list.reveal-modal{"aria-hidden" => "true", "aria-labelledby" => "modalTitle", "data-reveal" => "", :role => "dialog"}
+          .topic_modal_div
+            %table#topiclist_table{style:'margin:0 auto;'}
+
+          %a.close-reveal-modal{"aria-label" => "Close"} ×

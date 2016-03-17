@@ -429,7 +429,7 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
 
 
                 if (data.topic_count > 0){
-
+                    topic_id = data.pop_topic.id
                     title = data.pop_topic.title
                     topic_count = data.topic_count
                     post_count = data.post_count
@@ -438,12 +438,15 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
                     console.log(title)
                     console.log(appname)
                     console.log(post_count)
+                    console.log("topic id")
+                    console.log(topic_id)
 
                     if (appname == "carmunicate"){
 
                         $("#c-topic-count").html(topic_count)
                         $("#c-topic-title").html(title)
                         $("#c-post-count").html(post_count)
+                        $("#c-post-count").attr("data-topicid", topic_id);
 
                     }
                     else if(appname == "favr"){
@@ -451,6 +454,7 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
                         $("#f-topic-count").html(topic_count)
                         $("#f-topic-title").html(title)
                         $("#f-post-count").html(post_count)
+                        $("#f-post-count").attr("data-topicid", topic_id);
 
                     }
                     else if(appname == "meal"){
@@ -458,6 +462,7 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
                         $("#m-topic-count").html(topic_count)
                         $("#m-topic-title").html(title)
                         $("#m-post-count").html(post_count)
+                        $("#m-post-count").attr("data-topicid", topic_id);
                     }
                     else if(appname == "socal"){
                         $("#s-topic-count").html(topic_count)

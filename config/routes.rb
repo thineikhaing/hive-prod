@@ -82,6 +82,7 @@ Rails.application.routes.draw do
 
     match "hivev2/get_topic_by_latlon"              => "hivev2#get_topic_by_latlon"                     , via: [:get, :post]
     match "hivev2/place_for_map_view"               => "hivev2#place_for_map_view"                     , via: [:get, :post]
+    match "hivev2/get_posts_by_topicid"             => "hivev2#get_posts_by_topicid"                     , via: [:get, :post]
 
     match "socal/create_event"                      => "socal#create_event"                     , via: [:get, :post]
     match "socal/retrieve_invitation_code"          => "socal#retrieve_invitation_code"         , via: [:get, :post]

@@ -6,7 +6,7 @@
 -if @hive_applications.present?
   - @hive_applications.each do |app|
     .row{style:'margin-top:30px;margin-bottom:30px;'}
-      .columns.large-5
+      .columns.large-5{style:"margin-bottom: 30px;"}
 
         %div{style:'position:relative;width:65px;z-index:111;float:left'}
           .logo_borders{style:"background-color:#{app.theme_color} !important;background:#{app.theme_color} !important"}
@@ -42,22 +42,28 @@
         %div{style:'position:relative;float:left;'}
 
           -if app.api_key == @hive_key
-            .parallelogram#hv_map{"data-apikey"=>"#{app.api_key}"}
+            .inner_circle
+              #hv_map{"data-apikey"=>"#{app.api_key}"}
 
           -if app.api_key == @socal_key
-            .parallelogram#sc_map{"data-apikey"=>"#{app.api_key}"}
+            .inner_circle
+              #sc_map{"data-apikey"=>"#{app.api_key}"}
 
           -if app.api_key == @carmmunicate_key
-            .parallelogram#cm_map{"data-apikey"=>"#{app.api_key}"}
+            .inner_circle
+              #cm_map{"data-apikey"=>"#{app.api_key}"}
 
           -if app.api_key == @meal_key
-            .parallelogram#mb_map{"data-apikey"=>"#{app.api_key}"}
+            .inner_circle
+              #mb_map{"data-apikey"=>"#{app.api_key}"}
 
           -if app.api_key == @favr_key
-            .parallelogram#fv_map{"data-apikey"=>"#{app.api_key}"}
+            .inner_circle
+              #fv_map{"data-apikey"=>"#{app.api_key}"}
 
           -if app.api_key == @round_key
-            .parallelogram#rt_map{"data-apikey"=>"#{app.api_key}"}
+            .inner_circle
+              #rt_map{"data-apikey"=>"#{app.api_key}"}
 
 
       .columns.large-6{style:'margin-left:15px;'}

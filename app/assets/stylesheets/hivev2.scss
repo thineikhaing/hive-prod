@@ -20,6 +20,14 @@
 
 h3{color:orange}
 
+.container{
+  //position:absolute;
+  //width:100%;
+  //overflow-y:hidden;
+  //top:0;
+  //bottom:0;
+}
+
 .picbox{
   border: 2px solid orange;
   display: inline-block;
@@ -55,11 +63,11 @@ h3{color:orange}
 .parallelogram {
   border:2px solid orange;
   display:inline-block;
-  //margin: 0 0 0 20px;
-  //padding: 0 3px 0 3px;
   -webkit-transform: skew(-30deg);
   -moz-transform: skew(-30deg);
   -o-transform: skew(-30deg);
+  position: relative;
+  z-index: 999;
 }
 
 .parallelinput{
@@ -112,8 +120,22 @@ h3{color:orange}
   top: -5px;
 }
 
+
+.inner_circle {
+  border:2px solid orange;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: absolute;
+  -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC); /* this fixes the overflow:hidden in Chrome/Opera */
+  margin-left:-20px;
+}
+
 #hv_map , #sc_map, #cm_map, #mb_map, #fv_map ,#rt_map{
-  width: 265px;height: 240px;position: relative;margin-left: -50px !important;
+  width: 280px;height: 280px;position: relative;margin-left: 0px !important;
+  position: relative;
+
 }
 
 ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
@@ -235,4 +257,14 @@ h3{color:orange}
 .right_wrapper{
 position:relative;float:left;
   border: 1px solid;
+}
+
+.topic_modal_div{
+  height: 300px;
+  overflow-y: auto;
+}
+
+.post_div{
+  height: 200px;
+  overflow-y: auto;
 }

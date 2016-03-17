@@ -34,14 +34,14 @@
           %p.topic_status newest
 
 
-      .parallelogram{style:'width: 240px;height: 55px;margin-top: 30px;'}
+      .parallelogram{"data-app"=>"#{@carmmunicate_key}","data-reveal-id"=>"wrapper_topic_list", onclick: "showtopic(this)",style:'width: 240px;height: 55px;margin-top: 30px;'}
         .status_count#c-topic-count
           -#=@CMlatestTopics.count
 
         .status_title#c-topic-title
           -#=@CMlatestTopics.first.title rescue 'No Topic'
 
-      .postbox#c-post-count
+      .postbox#c-post-count{"data-topicid"=>'0',"data-reveal-id"=>"wrapper_post_list", onclick: "showposts(this)"}
         -#-if @CMlatestTopics.count > 0
         -#  =@CMlatestTopics.first.posts.count rescue '0'
         -#-else
@@ -60,3 +60,7 @@
       .parallelogram.country_div
         .status_country#carmic_country
           singapore
+
+
+
+

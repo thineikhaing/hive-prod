@@ -295,8 +295,13 @@ class HomeController < ApplicationController
        @round_key = RoundTrip_key::Production_Key
      end
 
-     cur_user = Devuser.find(current_user.id)
-     @hive_applications = cur_user.hive_applications.order("id ASC")
+     if current_user.nil?
+       redirect_to root_path
+     else
+       cur_user = Devuser.find(current_user.id)
+       @hive_applications = cur_user.hive_applications.order("id ASC")
+     end
+
    end
 
    private
