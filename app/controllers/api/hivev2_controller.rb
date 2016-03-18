@@ -65,8 +65,8 @@ class Api::Hivev2Controller < ApplicationController
 
     #Retrieve the sticky topic
     #stickyTopic = Topic.where(:special_type => "3", :topic_type => 0)
-
-    stickyTopic = Topic.where("hiveapplication_id = ? and topic_type in (?)",app.id, [0,1,2,3])
+    p "sticky topic"
+    p stickyTopic = Topic.where("special_type =? and topic_type in (?) and hiveapplication_id =?", "3", [0,1,2,3],app.id)
 
     if @place_array.present?
       place_array = @place_array
@@ -80,13 +80,16 @@ class Api::Hivev2Controller < ApplicationController
           end
         end
       end
-
-      listOfTopics = topicsInView_array
+      p "topicsInView_array"
+      p listOfTopics = topicsInView_array
       listOfTopics.sort! { |a,b| a.created_at <=> b.created_at }
       listOfTopics.reverse!
 
       @topics_list= stickyTopic
       @topics_list+= listOfTopics
+
+      p "total topic"
+      p @topics_list.count
 
 
       usersArray = [ ]
@@ -151,8 +154,8 @@ class Api::Hivev2Controller < ApplicationController
         p postcount = @topics_list.first.posts.count
       end
 
-
       render json: {pop_topic: pop_topic,
+                    topics_list: @topics_list,
                     topic_count: @topics_list.count,
                     post_count: postcount,
                     activeUsersArray: activeUsersArray,
@@ -177,9 +180,9 @@ class Api::Hivev2Controller < ApplicationController
   def get_posts_by_topicid
 
     if params[:topic].present?
-      p topic = Topic.find(params[:topic])
-      p lat1 =Float(cookies[:currentlat])
-      p long1 =Float(cookies[:currentlng])
+      topic = Topic.find(params[:topic])
+      lat1 =Float(cookies[:currentlat])
+      long1 =Float(cookies[:currentlng])
       topicavatar = get_avatar(topic.user.username)
 
      posts = Post.where(topic_id: topic.id)
@@ -191,11 +194,15 @@ class Api::Hivev2Controller < ApplicationController
        post_avatar_url[post.id] = (@avatar_url)
      end
 
-       render json: {topic: topic,posts: posts, postavatars: post_avatar_url, topicavatar: topicavatar}
+      p posts
+      p posts.count
+
+      render json: {topic: topic,posts: posts, postavatars: post_avatar_url, topicavatar: topicavatar}
 
     elsif params[:app_id]
       topic_avatar_url = Hash.new
       app = HiveApplication.find_by_api_key(params[:app_id])
+
       topics = Topic.where(hiveapplication_id: app.id)
 
       topics.each do |topic|

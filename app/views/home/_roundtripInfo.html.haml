@@ -34,7 +34,7 @@
           %p.topic_status newest
 
 
-      .parallelogram{"data-app"=>"#{@round_key}","data-reveal-id"=>"wrapper_topic_list", onclick: "showtopic(this)",style:'width: 240px;height: 55px;margin-top: 30px;'}
+      .parallelogram#r-topic-list{"data-topiclist"=>"", onclick: "showtopic(this)",style:'width: 240px;height: 55px;margin-top: 30px;'}
 
         .status_count#r-topic-count
           -#=@RTlatestTopics.count
@@ -42,7 +42,7 @@
         .status_title#r-topic-title
           -#=@RTlatestTopics.first.title rescue 'No Topic'
 
-      .postbox#r-post-count{"data-topicid"=>'0',"data-reveal-id"=>"wrapper_post_list", onclick: "showposts(this)"}
+      .postbox#r-post-count{"data-topicid"=>'0',"data-postcount"=>'0', onclick: "showposts(this)"}
         -#-if @RTlatestTopics.count > 0
         -#  =@RTlatestTopics.first.posts.count rescue '0'
         -#-else

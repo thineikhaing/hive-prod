@@ -34,7 +34,7 @@
           %p.topic_status newest
 
 
-      .parallelogram{"data-app"=>"#{@socal_key}","data-reveal-id"=>"wrapper_topic_list", onclick: "showtopic(this)",style:'width: 240px;height: 55px;margin-top: 30px;'}
+      .parallelogram#s-topic-list{"data-topiclist"=>"", onclick: "showtopic(this)",style:'width: 240px;height: 55px;margin-top: 30px;'}
 
         .status_count#s-topic-count
           -#=@SClatestTopics.count
@@ -42,7 +42,7 @@
         .status_title#s-topic-title
           -#=@SClatestTopics.first.title rescue 'No Topic'
 
-      .postbox#s-post-count{"data-topicid"=>'0',"data-reveal-id"=>"wrapper_post_list", onclick: "showposts(this)"}
+      .postbox#s-post-count{"data-topicid"=>'0',"data-postcount"=>'0', onclick: "showposts(this)"}
         -#-if @SClatestTopics.count > 0
         -#  =@SClatestTopics.first.posts.count rescue '0'
         -#-else

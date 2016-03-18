@@ -26,44 +26,56 @@ $(function() {
 
 function showposts(obj){
     var id = $(obj).data("topicid")
+    var postcount = $(obj).data("postcount")
+
     var post_list;
 
-    $('#display_post').html("");
-    if (id > 0 ){
-        var url = 'api/hivev2/get_posts_by_topicid';
-        $.ajax({
-            url: url,
-            data: {topic: id},
-            success: function(data) {
-                title = data.topic.title
-                avatar = data.topicavatar
+    if (postcount == 0){
 
-                timage  ='<img src='+avatar+'><img/>'
+        $('#wrapper_post_list').foundation('reveal', 'close');
+    }
+    else{
 
-                topic='<tr><td><div class="picbox">'+timage+'<div></td>'
-                    +'<td>'+title+'</td>'
-                    +'<td>'+data.topic.created_at+'</td></tr>'
+        $('#display_topic').html('');
+        $('#display_post').html("");
+        if (id > 0 ){
+            var url = 'api/hivev2/get_posts_by_topicid';
+            $.ajax({
+                url: url,
+                data: {topic: id},
+                success: function(data) {
+                    title = data.topic.title
+                    avatar = data.topicavatar
 
-                $('#display_topic').html(topic);
+                    timage  ='<img src='+avatar+'><img/>'
 
-                $(data.posts).each(function(e){
-                    id = data.posts[e].id
-                    image = data.postavatars[id]
+                    topic='<tr><td><div class="picbox">'+timage+'<div></td>'
+                        +'<td>'+title+'</td>'
+                        +'<td>'+data.topic.created_at+'</td></tr>'
 
-                    image ='<img src='+image+'><img/>'
-                    post_list+='<tr><td><div class="picbox">'+image+'<div></td>'
-                        +'<td>'+data.posts[e].content+'</td>'
-                        +'<td>'+data.posts[e].created_at+'</td></tr>'
+                    $('#display_topic').html(topic);
 
-                    $('#display_post').html(post_list);
+                    $(data.posts).each(function(e){
+                        id = data.posts[e].id
+                        image = data.postavatars[id]
 
-                })
+                        image ='<img src='+image+'><img/>'
+                        post_list+='<tr><td><div class="picbox">'+image+'<div></td>'
+                            +'<td>'+data.posts[e].content+'</td>'
+                            +'<td>'+data.posts[e].created_at+'</td></tr>'
 
-                $('#wrapper_post_list').foundation('reveal', 'open');
+                        $('#display_post').html(post_list);
 
-            }
-        });
+                    })
 
+
+
+                }
+            });
+
+
+            $('#wrapper_post_list').foundation('reveal', 'open');
+        }
 
     }
 
@@ -71,37 +83,37 @@ function showposts(obj){
 
 function showtopic(obj){
     $('#topiclist_table').html("");
-    var app_id = $(obj).data("app")
-    var topic_list;
-    if (id > 0 ){
-        var url = 'api/hivev2/get_posts_by_topicid';
-        $.ajax({
-            url: url,
-            data: {app_id: app_id},
-            success: function(data) {
+    var data = $(obj).data("topiclist")
 
-                $(data.topics).each(function(e){
-                    id = data.topics[e].id
-                    image = data.topicavatars[id]
+    //alert(data.length)
 
-                    image ='<img src='+image+'><img/>'
-                    topic_list+='<tr><td><div class="picbox">'+image+'<div></td>'
-                        +'<td>'+data.topics[e].title+'</td>'
-                        +'<td>'+data.topics[e].created_at+'</td></tr>'
+    if (data.length == 0){
 
-
-
-                })
-
-                $('#topiclist_table').html(topic_list);
-
-                $('#wrapper_topic_list').foundation('reveal', 'open');
-
-            }
-        });
-
-
+        $('#wrapper_topic_list').foundation('reveal', 'close');
     }
+    else{
+
+        var topic_list = ''
+        console.log("topic list")
+        for (var i = 0, l = data.length; i < l; i++) {
+
+            console.log(data[i])
+            var obj = data[i];
+            image ='<img src='+data[i].avatar_url+'><img/>'
+            title = data[i].title
+            created_at = data[i].created_at
+
+            topic_list+='<tr><td><div class="picbox">'+image+'<div></td>'
+                +'<td>'+title+'</td>'
+                +'<td>'+created_at+'</td></tr>'
+
+
+        }
+        $('#topiclist_table').html(topic_list);
+        $('#wrapper_topic_list').foundation('reveal', 'open');
+    }
+
+
 
 
 

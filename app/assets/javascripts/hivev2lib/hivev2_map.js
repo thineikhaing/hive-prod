@@ -143,7 +143,6 @@ var Hivemaps = {
             hvmarkers.addMarker(hvcurrentPositionMarker);
 
             api_key =  $("#hv_map").data("apikey")
-
             Hivemaps.addplacemarker(hv_map,lat, lng,api_key)
 
             hv_map.events.register("moveend", hv_map, function(){
@@ -191,7 +190,6 @@ var Hivemaps = {
                                     $("#hive_country").html(country)
                                 }
 
-                                //debugger;
 
                                 var location = results[0].geometry.location;
 
@@ -223,6 +221,9 @@ var Hivemaps = {
 
             mbmarkers.addMarker(mbcurrentPositionMarker);
 
+            var api_key=  $("#mb_map").data("apikey");
+            Hivemaps.addplacemarker(mb_map,lat, lng,api_key)
+
             mb_map.events.register("moveend", mb_map, function(){
 
                 var mapExtent = mb_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
@@ -232,14 +233,6 @@ var Hivemaps = {
 
                 console.log(xCoord)
                 console.log(yCoord)
-
-                var url = 'api/hivev2/get_topic_by_latlon';
-                var api_key=  $("#mb_map").data("apikey");
-                data =  {cur_lat: xCoord,
-                        cur_long: yCoord,
-                        api_key: $("#mb_map").data("apikey")};
-
-                Hivemaps.addplacemarker(mb_map,lat, lng,api_key)
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -275,7 +268,6 @@ var Hivemaps = {
                                     $("#meal_country").html(country)
                                 }
 
-                                //debugger;
 
                                 var location = results[0].geometry.location;
 
@@ -304,6 +296,9 @@ var Hivemaps = {
 
             cmmarkers.addMarker(cmcurrentPositionMarker);
 
+            var api_key = $("#cm_map").data("apikey")
+            Hivemaps.addplacemarker(cm_map,lat, lng,api_key)
+
             cm_map.events.register("moveend", cm_map, function(){
 
                 var mapExtent = cm_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
@@ -314,14 +309,13 @@ var Hivemaps = {
                 console.log(xCoord)
                 console.log(yCoord)
 
-                var url = 'api/hivev2/get_topic_by_latlon';
-                var api_key = $("#cm_map").data("apikey")
+
 
                 data =  {cur_lat: xCoord,
                     cur_long: yCoord,
                     api_key: $("#cm_map").data("apikey")};
 
-                Hivemaps.addplacemarker(cm_map,lat, lng,api_key)
+
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -357,7 +351,7 @@ var Hivemaps = {
                                     $("#carmic_country").html(country)
                                 }
 
-                                //debugger;
+
 
                                 var location = results[0].geometry.location;
 
@@ -385,6 +379,9 @@ var Hivemaps = {
 
             scmarkers.addMarker(sccurrentPositionMarker);
 
+            var api_key = $("#sc_map").data("apikey")
+            Hivemaps.addplacemarker(sc_map,lat, lng,api_key)
+
             sc_map.events.register("moveend", sc_map, function(){
 
                 var mapExtent = sc_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
@@ -394,10 +391,6 @@ var Hivemaps = {
 
                 console.log(xCoord)
                 console.log(yCoord)
-
-                var api_key = $("#sc_map").data("apikey")
-
-                Hivemaps.addplacemarker(sc_map,lat, lng,api_key)
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -433,7 +426,6 @@ var Hivemaps = {
                                     $("#socal_country").html(country)
                                 }
 
-                                //debugger;
 
                                 var location = results[0].geometry.location;
 
@@ -461,15 +453,15 @@ var Hivemaps = {
 
             fvmarkers.addMarker(fvcurrentPositionMarker);
 
+            var api_key = $("#fv_map").data("apikey")
+            Hivemaps.addplacemarker(fv_map,lat, lng,api_key);
+
             fv_map.events.register("moveend", fv_map, function(){
 
                 var mapExtent = fv_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
 
                 var xCoord = mapExtent.lat
                 var yCoord = mapExtent.lon
-                var api_key = $("#fv_map").data("apikey")
-
-                Hivemaps.addplacemarker(fv_map,lat, lng,api_key);
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -505,7 +497,6 @@ var Hivemaps = {
                                     $("#favr_country").html(country)
                                 }
 
-                                //debugger;
 
                                 var location = results[0].geometry.location;
 
@@ -533,6 +524,9 @@ var Hivemaps = {
 
             rtmarkers.addMarker(rtcurrentPositionMarker);
 
+            var api_key = $("#rt_map").data("apikey")
+            Hivemaps.addplacemarker(rt_map,lat, lng,api_key);
+
             rt_map.events.register("moveend", rt_map, function(){
 
                 var mapExtent = rt_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
@@ -542,10 +536,6 @@ var Hivemaps = {
 
                 console.log(xCoord)
                 console.log(yCoord)
-
-                var api_key = $("#rt_map").data("apikey")
-
-               Hivemaps.addplacemarker(rt_map,lat, lng,api_key);
 
                 var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
                 var latlng   = new google.maps.LatLng(xCoord,yCoord);
@@ -581,7 +571,7 @@ var Hivemaps = {
                                     $("#round_country").html(country)
                                 }
 
-                                //debugger;
+
 
                                 var location = results[0].geometry.location;
 
@@ -602,7 +592,6 @@ var Hivemaps = {
 
 
     addplacemarker:function(param_map,param_lat, param_lng,api_key){
-
         markerArray = new Array();
         var places = new Array();
         var latestTopicUser = new Array();

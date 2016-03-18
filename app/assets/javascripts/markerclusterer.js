@@ -302,9 +302,9 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
       cur_lat = xCoord;
       cur_long = yCoord;
 
-        console.log("Redraw all clusters in viewport.")
-        console.log(strids)
-        console.log(api_key)
+        //console.log("Redraw all clusters in viewport.")
+        //console.log(strids)
+        //console.log(api_key)
 
         data= {
                 param_place: strids,
@@ -325,10 +325,10 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
                 console.log("Failed to submit : "+ errorTextStatus+" ;"+error);
             },
             success: function(data){
-
-                console.log(data.pop_topic)
-
-                console.log(data.activeUsersArray)
+                //
+                //console.log(data.pop_topic)
+                //
+                //console.log(data.activeUsersArray)
 
                 appname= data.appname
 
@@ -429,17 +429,20 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
 
 
                 if (data.topic_count > 0){
+
                     topic_id = data.pop_topic.id
                     title = data.pop_topic.title
                     topic_count = data.topic_count
                     post_count = data.post_count
+                    topics_list = data.topics_list
 
-                    console.log(topic_count)
-                    console.log(title)
-                    console.log(appname)
-                    console.log(post_count)
-                    console.log("topic id")
-                    console.log(topic_id)
+                    var topic_arr = []
+
+                    for (var i = 0, l = data.topics_list.length; i < l; i++) {
+                        var obj = data.topics_list[i];
+                        console.log(obj)
+                        topic_arr.push(obj)
+                    }
 
                     if (appname == "carmunicate"){
 
@@ -447,6 +450,8 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
                         $("#c-topic-title").html(title)
                         $("#c-post-count").html(post_count)
                         $("#c-post-count").attr("data-topicid", topic_id);
+                        $("#c-post-count").attr("data-postcount", post_count);
+                        $("#c-topic-list").attr("data-topiclist", JSON.stringify(topic_arr));
 
                     }
                     else if(appname == "favr"){
@@ -455,6 +460,8 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
                         $("#f-topic-title").html(title)
                         $("#f-post-count").html(post_count)
                         $("#f-post-count").attr("data-topicid", topic_id);
+                        $("#f-post-count").attr("data-postcount", post_count);
+                        $("#f-topic-list").attr("data-topiclist", JSON.stringify(topic_arr));
 
                     }
                     else if(appname == "meal"){
@@ -463,21 +470,35 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
                         $("#m-topic-title").html(title)
                         $("#m-post-count").html(post_count)
                         $("#m-post-count").attr("data-topicid", topic_id);
+                        $("#m-post-count").attr("data-postcount", post_count);
+                        $("#m-topic-list").attr("data-topiclist", JSON.stringify(topic_arr));
+
                     }
                     else if(appname == "socal"){
                         $("#s-topic-count").html(topic_count)
                         $("#s-topic-title").html(title)
                         $("#s-post-count").html(post_count)
+                        $("#s-post-count").attr("data-topicid", topic_id);
+                        $("#s-post-count").attr("data-postcount", post_count);
+                        $("#s-topic-list").attr("data-topiclist", JSON.stringify(topic_arr));
+
                     }
                     else if(appname == "round"){
                         $("#r-topic-count").html(topic_count)
                         $("#r-topic-title").html(title)
                         $("#r-post-count").html(post_count)
+                        $("#r-post-count").attr("data-topicid", topic_id);
+                        $("#r-post-count").attr("data-postcount", post_count);
+                        $("#r-topic-list").attr("data-topiclist", JSON.stringify(topic_arr));
+
                     }
                     else{
                         $("#h-topic-count").html(topic_count)
                         $("#h-topic-title").html(title)
                         $("#h-post-count").html(post_count)
+                        $("#h-post-count").attr("data-topicid", topic_id);
+                        $("#h-post-count").attr("data-postcount", post_count);
+                        $("#h-topic-list").attr("data-topiclist", JSON.stringify(topic_arr));
                     }
 
                 }
