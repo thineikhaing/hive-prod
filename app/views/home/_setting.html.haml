@@ -20,10 +20,10 @@
       %tr
         %td
           DESCRIPTION
-          -##remain_char_container
-          -#  %label{for: "myalue"}
+          .char_container
+            %label{for: "char_container#{@app.id}"}
           %br
-          = f.text_area  :description, required:true ,cols: "50", rows: "8" , value:@app.description,maxlength: "255"
+          = f.text_area  :description, required:true ,cols: "50", rows: "8" , value:@app.description,maxlength: "255" , id: "appdesc#{@app.id}"
 
 
       %tr
@@ -39,7 +39,7 @@
               %td{width: "80%"}
                 #btn_upload_icon
                   .wrapper
-                    = f.file_field :application_icon
+                    = f.file_field :application_icon  , id: "appicon#{@app.id}"
                   .button.tiny.warning
                     Choose File
             %tr
@@ -61,4 +61,37 @@
   console.log(app_id)
   $(".spectrum_color").spectrum({
         preferredFormat: "rgb",
+  });
+
+  $('#appdesc'+app_id).change(updateCountdown);
+  $('#appdesc'+app_id).keyup(updateCountdown);
+
+  $("#appicon"+app_id).on( 'change', function(){
+      var allowedExtension = ["jpg", "jpeg", "gif", "png"];
+      if (this.value.split(".").length == 2){
+        extName = this.value.split(".")[1] ;
+        if ($.inArray(extName, allowedExtension) == -1)
+        {
+          alert ("Invalid upload icon file format");
+          $("#btn_edit_application").attr('disabled','disabled');
+        }
+        else
+        {
+          $("#btn_edit_application").removeAttr('disabled');
+          var preview = $(".upload-preview img");
+          var file = this.files[0];
+          var reader = new FileReader();
+          reader.onload = function(e){
+            image_base64 = e.target.result;
+            preview.attr("src", image_base64);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
     });
+
+  function updateCountdown(){
+    var remaining = 255 - $('#appdesc'+app_id).val().length;
+    $("label[for='char_container#{@app.id}']").html( "( <font color='red'> " + remaining + "</font> CHARACTERS REMAINING )");
+  }

@@ -100,11 +100,10 @@
       .columns.large-12
         %hr
 
-    .row{style:'margin-top:30px;margin-bottom:30px;'}
-      .columns.large-12{style:"margin-bottom: 30px;"}
+    .row
+      .columns.large-12
         .reveal-modal{"aria-hidden" => "true", "aria-labelledby" => "modalTitle", "data-reveal" => "", :role => "dialog","id"=>"setting#{@app.id}"}
           = render 'home/setting'
 
 :javascript
   Hivemaps.init()
-  Devportal.init();
