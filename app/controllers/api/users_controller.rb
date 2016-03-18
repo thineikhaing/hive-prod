@@ -119,7 +119,7 @@ class Api::UsersController < ApplicationController
         user.save!
 
 
-        render json:  { :user => user, :success => 20 , avatar: avatar, daily_point: user.daily_points}, status: 200
+        render json: { :user => user, :success => 20 , avatar: avatar, daily_point: user.daily_points}, status: 200
       end
 
 

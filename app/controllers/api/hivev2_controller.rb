@@ -98,6 +98,21 @@ class Api::Hivev2Controller < ApplicationController
 
       if app.api_key == @carmmunicate_key
         users = users.where("app_data ->'carmic' = 'true'")
+
+      elsif app.api_key == @favr_key
+        users = users.where("app_data ->'favr' = 'true'")
+
+      elsif app.api_key == @meal_key
+        users = users.where("app_data ->'meal' = 'true'")
+
+      elsif app.api_key == @hive_key
+        users = users.where("app_data ->'hive' = 'true'")
+
+      elsif app.api_key == @round_key
+        users = users.where("app_data ->'round' = 'true'")
+
+      elsif app.api_key == @socal_key
+        users = users.where("app_data ->'socal' = 'true'")
       end
 
       users.each do |u|

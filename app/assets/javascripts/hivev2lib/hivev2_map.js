@@ -638,8 +638,8 @@ var Hivemaps = {
 
                 // Settings for clustering markers
                 mOptions = {
-                    gridSize: 1,
-                    maxZoom: 1
+                    gridSize: 0,
+                    maxZoom: 0
                 };
 
                 var markerCluster = new MarkerClusterer(param_map, markerArray, mOptions,param_lat, param_lng,api_key);
