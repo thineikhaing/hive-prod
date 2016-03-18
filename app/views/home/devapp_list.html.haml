@@ -10,7 +10,7 @@
 
         %div{style:'position:relative;width:65px;z-index:111;float:left'}
           .logo_borders{style:"background-color:#{app.theme_color} !important;background:#{app.theme_color} !important"}
-
+            -@app = app
             -if app.api_key == @hive_key
               hv
 
@@ -35,7 +35,7 @@
                 %polygon{:points => "0 0, 1 0, 0 1, 0 1" }
 
         %div{style:'position:relative;float:left;'}
-          .parallelogram.setting
+          .parallelogram.setting{"data-settingid"=>"setting#{@app.id}","data-reveal-id"=>"setting#{@app.id}"}
             =image_tag("hivev2/setting.png")
 
           %br
@@ -100,5 +100,11 @@
       .columns.large-12
         %hr
 
+    .row{style:'margin-top:30px;margin-bottom:30px;'}
+      .columns.large-12{style:"margin-bottom: 30px;"}
+        .reveal-modal{"aria-hidden" => "true", "aria-labelledby" => "modalTitle", "data-reveal" => "", :role => "dialog","id"=>"setting#{@app.id}"}
+          = render 'home/setting'
+
 :javascript
   Hivemaps.init()
+  Devportal.init();

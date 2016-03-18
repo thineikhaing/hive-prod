@@ -304,6 +304,30 @@ class HomeController < ApplicationController
 
    end
 
+   def edit_application
+     if params[:dev_portal].present? && current_user.present?
+     application_id = params[:dev_portal][:application_id]
+     application = HiveApplication.find(application_id)
+
+     #save the updated Application information
+     if application.present?
+       application.app_name = params[:dev_portal][:application_name]
+       application.app_type = params[:dev_portal][:application_type]
+       application.description = params[:dev_portal][:description]
+       application.theme_color = params[:dev_portal][:theme_color]
+
+       if params[:dev_portal][:application_icon].present?
+         application.icon_url = params[:dev_portal][:application_icon]
+       end
+
+       application.save!
+
+       #redirect back to Application List Page
+       redirect_to devapp_list_path
+     end
+     end
+
+   end
    private
 
    def special_layout

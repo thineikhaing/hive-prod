@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   match "get_topic_by_map"  =>  'home#get_topic_by_map'  , via: [:get, :post]
 
-
+  match "home/edit_application"    , path: "edit_application"          , via: [:get, :post]
 
   resources :sg_accident_histories
   resources :privacy_policies

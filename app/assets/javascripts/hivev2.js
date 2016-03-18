@@ -16,6 +16,7 @@
 //= require foundation
 //= require jquery-ui
 //= require hivev2lib/hivev2_map
+//= require spectrum
 //= require jquery/cookie
 //= require markerclusterer
 
@@ -113,11 +114,13 @@ function showtopic(obj){
         $('#wrapper_topic_list').foundation('reveal', 'open');
     }
 
+}
 
-
-
-
+function closeReval(obj){
+    settingid = $(obj).data("settingid")
+    $('#'+settingid).foundation('reveal', 'close');
 }
 
 window.showposts = showposts;
 window.showtopic = showtopic;
+window.closeReval = closeReval;

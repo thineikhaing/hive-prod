@@ -14,7 +14,7 @@
  *= require jquery-ui
  *= require_self
  */
-//@import "settings";
+@import "spectrum";
 @import "foundation";
 @import "hivev2/*";
 
@@ -305,14 +305,31 @@ position:relative;float:left;
   font-size: 18px;
 }
 
-//.footer_app:before {
-//  content: '';
-//  position: absolute;
-//  top: -8px;
-//  right: -8px;
-//  bottom: -8px;
-//  left: -8px;
-//  z-index: -1;
-//  background: rgba(0,0,0,0.08);
-//  border-radius: 4px;
-//}
+.upload-preview {
+  border: solid #FF9B00 2px;
+  background-color: white;
+  height: 120px;
+  margin-left: 10px;
+  width: 120px;
+}
+
+#btn_upload_icon .wrapper {
+opacity: 0;
+cursor: pointer;
+position: absolute;
+height: 50px;
+width: 80px;
+z-index: 2;
+}
+
+.reveal-modal{
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  background: transparent;
+}
+
+#dev_portal_theme_color{
+    width: 200px;
+    padding: 0px;
+    border: 2px orange;
+}

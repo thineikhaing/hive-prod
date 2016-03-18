@@ -1,0 +1,64 @@
+.create_application_form
+  = form_for :dev_portal, url: { controller: "home", action: "edit_application"}, method: "post" do |f|
+    = f.hidden_field :application_id, value: @app.id
+    %table{style: 'margin: 0 auto;width:100%;'}
+
+      %tr{style:"background: #FF9B00"}
+        %td
+          %h4 Setting
+      %tr
+        %td
+          APP NAME
+          %br
+          = f.text_field :application_name, autofocus: true,  required:true, value: @app.app_name
+
+      %tr
+        %td
+          TYPE
+          %br
+          = f.select :application_type, options_for_select(HiveApplication.get_application_type, selected: @app.app_type), { }
+      %tr
+        %td
+          DESCRIPTION
+          -##remain_char_container
+          -#  %label{for: "myalue"}
+          %br
+          = f.text_area  :description, required:true ,cols: "50", rows: "8" , value:@app.description,maxlength: "255"
+
+
+      %tr
+
+        %td
+          APP ICON
+          %br
+          %table{width:"100%"}
+            %tr
+              %td{width: "20%"}
+                .upload-preview
+                  %img{height: "120px", width: "120px",src:@app.icon_url}
+              %td{width: "80%"}
+                #btn_upload_icon
+                  .wrapper
+                    = f.file_field :application_icon
+                  .button.tiny.warning
+                    Choose File
+            %tr
+              %td
+                #text_container
+                  = "THEME COLOR"
+              %td{width: "20%"}
+                = f.text_field :theme_color, class: 'spectrum_color' , value: @app.theme_color , id: "colorsetting#{@app.id}"
+      -#= f.text_area  :color_display, cols: "10", rows: "3", disabled: true
+      %tr
+        %td{colspan: 2}
+          = f.submit "SAVE CHANGES", class:"button tiny warning"
+          %input{type:'button', class: 'button tiny', value:'CANCEL', onclick: 'closeReval(this)',"data-settingid"=>"setting#{@app.id}"}
+
+:javascript
+
+  var app_id = '#{@app.id}'
+  console.log("app id")
+  console.log(app_id)
+  $(".spectrum_color").spectrum({
+        preferredFormat: "rgb",
+    });
