@@ -85,28 +85,36 @@ class Api::UsersController < ApplicationController
 
         app_data = Hash.new
         result = Hash.new
+        p "API KEY FROM APP"
+        p params[:api_key]
 
         if app_key == @carmmunicate_key
           app_data["carmic"] = true
+          p "carmic"
 
         elsif app_key == @favr_key
 
           app_data["favr"] = true
+          p "favr"
 
         elsif app_key == @meal_key
 
           app_data["meal"] = true
+          p "meal"
 
         elsif app_key == @hive_key
 
           app_data["hive"] = true
+          p "hive"
 
         elsif app_key == @round_key
 
           app_data["round"] = true
-          else
-            app_data["socal"] = true
+          p "round"
 
+        elsif app_key == @socal_key
+            app_data["socal"] = true
+            p "socal"
         end
 
         user.app_data = app_data
