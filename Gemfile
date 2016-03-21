@@ -76,6 +76,8 @@ gem 'jquery-ui-rails'
 gem 'rack-jsonp-middleware',
     :require => 'rack/jsonp'
 
+gem 'activerecord-session_store', github: 'rails/activerecord-session_store'
+
 
 gem "hstore_accessor"
 

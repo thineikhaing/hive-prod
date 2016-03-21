@@ -63,9 +63,9 @@ h3{color:orange}
 .parallelogram {
   border:2px solid orange;
   display:inline-block;
-  -webkit-transform: skew(-30deg);
-  -moz-transform: skew(-30deg);
-  -o-transform: skew(-30deg);
+  //-webkit-transform: skew(-30deg);
+  //-moz-transform: skew(-30deg);
+  //-o-transform: skew(-30deg);
   position: relative;
   z-index: 999;
 }
@@ -77,9 +77,9 @@ h3{color:orange}
 .parallelogram input {
   outline: none;
   border: none;
-  -webkit-transform: skew(30deg);
-  -moz-transform: skew(30deg);
-  -o-transform: skew(30deg);
+  //-webkit-transform: skew(30deg);
+  //-moz-transform: skew(30deg);
+  //-o-transform: skew(30deg);
   background: none;
   margin-bottom: 0px;
   box-shadow: none;
@@ -89,9 +89,9 @@ h3{color:orange}
 }
 
 .parallelogram p{
-  -webkit-transform: skew(30deg);
-  -moz-transform: skew(30deg);
-  -o-transform: skew(30deg);
+  //-webkit-transform: skew(30deg);
+  //-moz-transform: skew(30deg);
+  //-o-transform: skew(30deg);
   margin-bottom: 0px;
   white-space: nowrap;
   overflow: hidden;
@@ -106,9 +106,9 @@ h3{color:orange}
 .parallelogram .paralsumbit{
   outline: none;
   border: none;
-  -webkit-transform: skew(30deg);
-  -moz-transform: skew(30deg);
-  -o-transform: skew(30deg);
+  //-webkit-transform: skew(30deg);
+  //-moz-transform: skew(30deg);
+  //-o-transform: skew(30deg);
   background: none;
   margin-bottom: 0px;
   box-shadow: none;
@@ -123,17 +123,18 @@ h3{color:orange}
 
 .inner_circle {
   border:2px solid orange;
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
-  overflow: hidden;
-  position: absolute;
-  -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC); /* this fixes the overflow:hidden in Chrome/Opera */
-  margin-left:-20px;
+  margin-left:5px;
+  //width: 280px;
+  //height: 280px;
+  //border-radius: 50%;
+  //overflow: hidden;
+  //position: absolute;
+  //-webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC); /* this fixes the overflow:hidden in Chrome/Opera */
+  //margin-left:-20px;
 }
 
 #hv_map , #sc_map, #cm_map, #mb_map, #fv_map ,#rt_map{
-  width: 280px;height: 280px;position: relative;margin-left: 0px !important;
+  width: 290px;height: 290px;position: relative;margin-left: 0px !important;
   position: relative;
 
 }
@@ -170,9 +171,9 @@ h3{color:orange}
 }
 
 .status_count, .status_title,.status_country{
-  -webkit-transform: skew(30deg);
-  -moz-transform: skew(30deg);
-  -o-transform: skew(30deg);
+  //-webkit-transform: skew(30deg);
+  //-moz-transform: skew(30deg);
+  //-o-transform: skew(30deg);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -205,7 +206,7 @@ h3{color:orange}
 }
 
 .adddiv{
-  width: 270px;height: 20px;position: relative;top: -6px;left: -16px;background: orange;border-color: orange;
+  width: 300px;height: 20px;position: relative;top: -6px;background: orange;border-color: orange;
 }
 
 .addinfo{
@@ -235,15 +236,15 @@ h3{color:orange}
 }
 
 .user_div_ft{
-  width: 65px;height: 15px;position: relative;top: -11px;left: -16px;background: rgb(75,146,230);border-color: rgb(75,146,230);
+  width: 65px;height: 15px;position: relative;top: -11px;background: rgb(75,146,230);border-color: rgb(75,146,230);
 }
 
 .topic_div{
-  width: 65px;height: 40px;background:orange;margin-top:27px;
+  width: 65px;height: 40px;background:orange;margin-top:30px;
 }
 
 .topic_div_ft{
-  width: 65px;height: 15px;position: relative;top: -11px;left: -16px;background: rgb(125,211,34);border-color: rgb(125,211,34);
+  width: 65px;height: 15px;position: relative;top: -11px;background: rgb(125,211,34);border-color: rgb(125,211,34);
 }
 
 .loc_div{
@@ -269,15 +270,25 @@ position:relative;float:left;
   overflow-y: auto;
 }
 
+.app_logo{
+  width: 55px;
+  height: 52px;
+  margin-bottom: 5px;
+  border: none;
+  text-align: center;
+  line-height: 52px;
+  color: #fff;
+}
+
 .setting{
-  width: 55px;height: 52px;background:orange;;position:relative;margin-left: -5px;z-index:999;
+  width: 55px;height: 52px;background:orange;;position:relative;
+  z-index:999;
 }
 
 .setting > img{
-
-  -webkit-transform: skew(30deg);
-  -moz-transform: skew(30deg);
-  -o-transform: skew(30deg);
+  //-webkit-transform: skew(30deg);
+  //-moz-transform: skew(30deg);
+  //-o-transform: skew(30deg);
   width: 36px;
   margin-left: 5px;
   margin-top: 5px;
@@ -287,7 +298,6 @@ position:relative;float:left;
   width: 55px;
   height: 52px;
   position: relative;
-  margin-left: -40px;
   background: rgb(80,227,194);
   z-index: 999;
   border: none;

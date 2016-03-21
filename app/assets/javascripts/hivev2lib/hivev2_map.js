@@ -26,7 +26,7 @@ var Hivemaps = {
 
         mOptions = {
             gridSize: 50,
-            maxZoom: 15
+            maxZoom: 8
         };
         latitude = '', longitude = '', zoom = 16;
 

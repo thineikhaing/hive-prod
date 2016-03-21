@@ -9,7 +9,7 @@
       .columns.large-5{style:"margin-bottom: 30px;"}
 
         %div{style:'position:relative;width:65px;z-index:111;float:left'}
-          .logo_borders{style:"background-color:#{app.theme_color} !important;background:#{app.theme_color} !important"}
+          .parallelogram.app_logo{style:"background-color:#{app.theme_color} !important;background:#{app.theme_color} !important"}
             -@app = app
             -if app.api_key == @hive_key
               hv
@@ -29,12 +29,12 @@
             -if app.api_key == @round_key
               rt
 
-          %svg.logo_svg
-            %defs
-              %clipPath#logo-clip{:clipPathUnits => "objectBoundingBox"}
-                %polygon{:points => "0 0, 1 0, 0 1, 0 1" }
+          -#%svg.logo_svg
+          -#  %defs
+          -#    %clipPath#logo-clip{:clipPathUnits => "objectBoundingBox"}
+          -#      %polygon{:points => "0 0, 1 0, 0 1, 0 1" }
 
-        %div{style:'position:relative;float:left;'}
+          %br
           .parallelogram.setting{"data-settingid"=>"setting#{@app.id}","data-reveal-id"=>"setting#{@app.id}"}
             =image_tag("hivev2/setting.png")
 
@@ -68,7 +68,7 @@
               #rt_map{"data-apikey"=>"#{app.api_key}"}
 
 
-      .columns.large-6{style:'margin-left:15px;margin-bottom:30px;'}
+      .columns.large-6{style:'margin-bottom:30px;'}
 
         -if app.api_key == @hive_key
           = render 'home/hiveInfo'
