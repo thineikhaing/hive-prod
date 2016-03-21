@@ -316,119 +316,24 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
 
         var url = 'api/hivev2/get_topic_by_latlon';
 
-        $.ajax({
-            dataType: "json",
-            cache: false,
-            url:url,
-            data: data,
-            error: function(XMLHttpRequest, errorTextStatus, error){
-                console.log("Failed to submit : "+ errorTextStatus+" ;"+error);
-            },
-            success: function(data){
-                //
-                //console.log(data.pop_topic)
-                //
-                //console.log(data.activeUsersArray)
+        hiveapp = new Array()
 
-                appname= data.appname
+        hiveapp = gon.hiveapplicaiton
 
-                console.log(appname)
-
-                if (data.usercount > 0) {
-
+        if (api_key){
+            $.ajax({
+                dataType: "json",
+                cache: false,
+                url:url,
+                data: data,
+                error: function(XMLHttpRequest, errorTextStatus, error){
+                    console.log("Failed to submit : "+ errorTextStatus+" ;"+error);
+                },
+                success: function(data){
                     usercount = data.usercount
                     username = data.activename
                     avatar= data.avatar
-
-                    console.log(usercount)
-                    console.log(username)
-                    console.log(avatar)
-
-                    image ='<img src="'+avatar+'"><img/>'
-
-                    if (appname == "carmunicate"){
-
-                        $("#c-usercount").html(usercount)
-                        $("#c-username").html(username)
-                        $("#c-avatar").html(image)
-                    }
-                    else if(appname == "favr"){
-
-                        $("#f-usercount").html(usercount)
-                        $("#f-username").html(username)
-                        $("#f-avatar").html(image)
-
-                    }
-                    else if(appname == "meal"){
-
-                        $("#m-usercount").html(usercount)
-                        $("#m-username").html(username)
-                        $("#m-avatar").html(image)
-                    }
-                    else if(appname == "socal"){
-
-                        $("#s-usercount").html(usercount)
-                        $("#s-username").html(username)
-                        $("#s-avatar").html(image)
-                    }
-                    else if(appname == "round"){
-                        $("#r-usercount").html(usercount)
-                        $("#r-username").html(username)
-                        $("#r-avatar").html(image)
-                    }
-                    else{
-
-                        $("#h-usercount").html(usercount)
-                        $("#h-username").html(username)
-                        $("#h-avatar").html(image)
-                    }
-
-                }else
-                {
-
-                    image ='<img src="assets/Avatars/Chat-Avatar.png"><img/>'
-
-                    if (appname == "carmunicate"){
-
-                        $("#c-usercount").html("0")
-                        $("#c-username").html("no user")
-                        $("#c-avatar").html(image)
-                    }
-                    else if(appname == "favr"){
-
-                        $("#f-usercount").html("0")
-                        $("#f-username").html("no user")
-                        $("#f-avatar").html(image)
-
-                    }
-                    else if(appname == "meal"){
-
-                        $("#m-usercount").html("0")
-                        $("#m-username").html("no user")
-                        $("#m-avatar").html(image)
-                    }
-                    else if(appname == "socal"){
-
-                        $("#s-usercount").html("0")
-                        $("#s-username").html("no user")
-                        $("#s-avatar").html(image)
-                    }
-                    else if(appname == "round"){
-                        $("#r-usercount").html("0")
-                        $("#r-username").html("no user")
-                        $("#r-avatar").html(image)
-                    }
-                    else{
-
-                        $("#h-usercount").html("0")
-                        $("#h-username").html("no user")
-                        $("#h-avatar").html(image)
-                    }
-
-                }
-
-
-                if (data.topic_count > 0){
+                    appname= data.appname
 
                     topic_id = data.pop_topic.id
                     title = data.pop_topic.title
@@ -440,109 +345,72 @@ function MarkerClusterer(map, opt_markers, opt_opts,currentlat,currentlong,api_k
 
                     for (var i = 0, l = data.topics_list.length; i < l; i++) {
                         var obj = data.topics_list[i];
-                        console.log(obj)
                         topic_arr.push(obj)
                     }
 
-                    if (appname == "carmunicate"){
+                    console.log("usercount")
+                    console.log(data.usercount)
+                    console.log(api_key)
 
-                        $("#c-topic-count").html(topic_count)
-                        $("#c-topic-title").html(title)
-                        $("#c-post-count").html(post_count)
-                        $("#c-post-count").attr("data-topicid", topic_id);
-                        $("#c-post-count").attr("data-postcount", post_count);
-                        $("#c-topic-list").attr("data-topiclist", JSON.stringify(topic_arr));
+                    for (var i = 0; i < hiveapp.length; i++){
 
-                    }
-                    else if(appname == "favr"){
 
-                        $("#f-topic-count").html(topic_count)
-                        $("#f-topic-title").html(title)
-                        $("#f-post-count").html(post_count)
-                        $("#f-post-count").attr("data-topicid", topic_id);
-                        $("#f-post-count").attr("data-postcount", post_count);
-                        $("#f-topic-list").attr("data-topiclist", JSON.stringify(topic_arr));
+                        if (api_key == hiveapp[i].api_key){
+                            console.log(hiveapp[i].api_key)
 
-                    }
-                    else if(appname == "meal"){
-                        console.log("meal info")
-                        $("#m-topic-count").html(topic_count)
-                        $("#m-topic-title").html(title)
-                        $("#m-post-count").html(post_count)
-                        $("#m-post-count").attr("data-topicid", topic_id);
-                        $("#m-post-count").attr("data-postcount", post_count);
-                        $("#m-topic-list").attr("data-topiclist", JSON.stringify(topic_arr));
+                            var id=  hiveapp[i].id
 
-                    }
-                    else if(appname == "socal"){
-                        $("#s-topic-count").html(topic_count)
-                        $("#s-topic-title").html(title)
-                        $("#s-post-count").html(post_count)
-                        $("#s-post-count").attr("data-topicid", topic_id);
-                        $("#s-post-count").attr("data-postcount", post_count);
-                        $("#s-topic-list").attr("data-topiclist", JSON.stringify(topic_arr));
+                            if (data.usercount > 0){
+                                image ='<img src="'+avatar+'"><img/>'
+                                $("#usercount"+id).html(usercount)
+                                $("#username"+id).html(username)
+                                $("#avatar"+id).html(image)
 
-                    }
-                    else if(appname == "round"){
-                        $("#r-topic-count").html(topic_count)
-                        $("#r-topic-title").html(title)
-                        $("#r-post-count").html(post_count)
-                        $("#r-post-count").attr("data-topicid", topic_id);
-                        $("#r-post-count").attr("data-postcount", post_count);
-                        $("#r-topic-list").attr("data-topiclist", JSON.stringify(topic_arr));
+                                console.log("usercount"+id+ " : "+ usercount)
+                                console.log("username"+id+ " : "+ username)
+                                console.log("avatar"+id+ " : "+ image)
+                            }
+
+                            if (data.topic_count > 0){
+
+                                $("#topiccount"+id).html(topic_count)
+                                $("#topictitle"+id).html(title)
+                                $("#postcount"+id).html(post_count)
+                                $("#postcount"+id).attr("data-topicid", topic_id);
+                                $("#postcount"+id).attr("data-postcount", post_count);
+                                $("#topiclist"+id).attr("data-topiclist", JSON.stringify(topic_arr));
+                            }
+
+
+                        }
+
 
                     }
-                    else{
-                        $("#h-topic-count").html(topic_count)
-                        $("#h-topic-title").html(title)
-                        $("#h-post-count").html(post_count)
-                        $("#h-post-count").attr("data-topicid", topic_id);
-                        $("#h-post-count").attr("data-postcount", post_count);
-                        $("#h-topic-list").attr("data-topiclist", JSON.stringify(topic_arr));
+
+                    if (data.usercount == 0){
+                        image ='<img src="assets/Avatars/Chat-Avatar.png"><img/>'
+
+                        $("#usercount"+id).html(0)
+                        $("#username"+id).html("no user")
+                        $("#avatar"+id).html(image)
+
+                        console.log("usercount"+id+ " : "+ 0)
+                        console.log("username"+id+ " : "+ "no user")
+                        console.log("avatar"+id+ " : "+ image)
                     }
 
-                }
-                else{
-
-                    if (appname == "carmunicate"){
-
-                        $("#c-topic-count").html("0")
-                        $("#c-topic-title").html("no topic")
-                        $("#c-post-count").html("0")
-                    }
-                    else if(appname == "favr"){
-
-                        $("#f-topic-count").html("0")
-                        $("#f-topic-title").html("no topic")
-                        $("#f-post-count").html("0")
-
-                    }
-                    else if(appname == "meal"){
-                        $("#m-topic-count").html("0")
-                        $("#m-topic-title").html("no topic")
-                        $("#m-post-count").html("0")
-                    }
-                    else if(appname == "socal"){
-                        $("#s-topic-count").html("0")
-                        $("#s-topic-title").html("no topic")
-                        $("#s-post-count").html("0")
-                    }
-                    else if(appname == "round"){
-                        $("#r-topic-count").html("0")
-                        $("#r-topic-title").html("no topic")
-                        $("#r-post-count").html("0")
-                    }
-                    else{
-                        $("#h-topic-count").html("0")
-                        $("#h-topic-title").html("no topic")
-                        $("#h-post-count").html("0")
+                    if (data.topic_count == 0){
+                        $("#topiccount"+id).html(0)
+                        $("#topictitle"+id).html("no topic")
+                        $("#postcount"+id).html(0)
                     }
 
 
                 }
+            });
+        }
 
-            }
-        });
+
 
 
     }

@@ -50,6 +50,7 @@ class HomeController < ApplicationController
       cur_user = Devuser.find(current_user.id)
       @hive_applications = cur_user.hive_applications.order("id ASC")
 
+
       if Rails.env.development?
         @carmmunicate_key = Carmmunicate_key::Development_Key
         @favr_key = Favr_key::Development_Key
@@ -270,6 +271,8 @@ class HomeController < ApplicationController
 
      @placesMap = Place.order("created_at DESC").reload
 
+     gon.places = @placesMap
+
      if Rails.env.development?
        @carmmunicate_key = Carmmunicate_key::Development_Key
        @favr_key = Favr_key::Development_Key
@@ -300,6 +303,9 @@ class HomeController < ApplicationController
      else
        cur_user = Devuser.find(current_user.id)
        @hive_applications = cur_user.hive_applications.order("id ASC")
+       p "hive applicaiton by current user"
+       gon.test = "testing gon from controller"
+       p gon.hiveapplicaiton = @hive_applications
      end
 
    end

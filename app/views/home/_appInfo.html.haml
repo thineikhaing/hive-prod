@@ -1,0 +1,60 @@
+.row
+  .columns.large-12
+    %div.right_div
+
+      %div.wrapper
+        .parallelogram.user_div
+
+        .parallelogram.user_div_ft
+          %p.user_status active
+
+
+      .parallelogram{style:'width: 240px;height: 55px;'}
+
+        .status_count{id: "usercount#{@app.id}"}
+
+
+        .status_title{id: "username#{@app.id}"}
+
+      .picbox{id: "avatar#{@app.id}"}
+        =image_tag("Avatars/Chat-Avatar-Chihuahua.png")
+
+
+.row
+  .columns.large-12
+    %div.right_div
+
+      %div.wrapper
+        .parallelogram.topic_div
+
+        .parallelogram.topic_div_ft
+          %p.topic_status newest
+
+
+      .parallelogram{id: "topiclist#{@app.id}","data-topiclist"=>"", onclick: "showtopic(this)",style:'width: 240px;height: 55px;margin-top: 30px;'}
+        .status_count{id: "topiccount#{@app.id}"}
+
+
+        .status_title{id: "topictitle#{@app.id}"}
+
+
+      .postbox{id: "postcount#{@app.id}","data-topicid"=>'0',"data-postcount"=>'0', onclick: "showposts(this)"}
+
+
+.row
+  .columns.large-12
+    %div.right_div
+
+      %div.wrapper
+        .parallelogram.loc_div
+
+        .parallelogram.adddiv
+          %p.addinfo{id: "address#{@app.id}"} goldhill plaza
+
+      .parallelogram.country_div
+        .status_country{id: "country#{@app.id}"}
+          singapore
+
+
+
+

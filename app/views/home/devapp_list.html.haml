@@ -11,28 +11,7 @@
         %div{style:'position:relative;width:65px;z-index:111;float:left'}
           .parallelogram.app_logo{style:"background-color:#{app.theme_color} !important;background:#{app.theme_color} !important"}
             -@app = app
-            -if app.api_key == @hive_key
-              hv
-
-            -if app.api_key == @socal_key
-              sc
-
-            -if app.api_key == @carmmunicate_key
-              cm
-
-            -if app.api_key == @meal_key
-              mb
-
-            -if app.api_key == @favr_key
-              fv
-
-            -if app.api_key == @round_key
-              rt
-
-          -#%svg.logo_svg
-          -#  %defs
-          -#    %clipPath#logo-clip{:clipPathUnits => "objectBoundingBox"}
-          -#      %polygon{:points => "0 0, 1 0, 0 1, 0 1" }
+            =app.app_name[0..1]
 
           %br
           .parallelogram.setting{"data-settingid"=>"setting#{@app.id}","data-reveal-id"=>"setting#{@app.id}"}
@@ -42,51 +21,13 @@
           .parallelogram.action_alarm
 
         %div{style:'position:relative;float:left;'}
-
-          -if app.api_key == @hive_key
-            .inner_circle
-              #hv_map{"data-apikey"=>"#{app.api_key}"}
-
-          -if app.api_key == @socal_key
-            .inner_circle
-              #sc_map{"data-apikey"=>"#{app.api_key}"}
-
-          -if app.api_key == @carmmunicate_key
-            .inner_circle
-              #cm_map{"data-apikey"=>"#{app.api_key}"}
-
-          -if app.api_key == @meal_key
-            .inner_circle
-              #mb_map{"data-apikey"=>"#{app.api_key}"}
-
-          -if app.api_key == @favr_key
-            .inner_circle
-              #fv_map{"data-apikey"=>"#{app.api_key}"}
-
-          -if app.api_key == @round_key
-            .inner_circle
-              #rt_map{"data-apikey"=>"#{app.api_key}"}
+          .app_map
+            %div{"data-apikey"=>"#{app.api_key}", id: "map_#{@app.id}"}
 
 
       .columns.large-6{style:'margin-bottom:30px;'}
+        = render 'home/appInfo'
 
-        -if app.api_key == @hive_key
-          = render 'home/hiveInfo'
-
-        -if app.api_key == @round_key
-          = render 'home/roundtripInfo'
-
-        -if app.api_key == @carmmunicate_key
-          = render 'home/carmicInfo'
-
-        -if app.api_key == @meal_key
-          = render 'home/mealboxInfo'
-
-        -if app.api_key == @favr_key
-          = render 'home/favarInfo'
-
-        -if app.api_key == @socal_key
-          = render 'home/socalInfo'
       .columns.large-12
         -#.small-6.large-centered.columns
         .footer_app

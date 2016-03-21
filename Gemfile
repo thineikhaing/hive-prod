@@ -24,7 +24,7 @@ gem 'httparty'                    , '~> 0.13.1' # Makes http fun! Also, makes co
 gem 'geocoder'                    , '~> 1.2.0' # Provides object geocoding (by street or IP address), reverse geocoding (coordinates to street address), distance queries for ActiveRecord and Mongoid, result caching, and more. Designed for Rails but works with Sinatra and other Rack frameworks too.
 gem 'pusher'                      , '~> 0.12.0' # Wrapper for pusher.com REST api
 gem 'em-http-request'             , '~> 1.1.2' # EventMachine based, async HTTP Request client
-gem "gon"                         , '~> 5.0.4' # If you need to send some data to your js files and you don't want to do this with long way trough views and parsing - use this force!
+gem 'gon'                         , '~> 6.0', '>= 6.0.1' # If you need to send some data to your js files and you don't want to do this with long way trough views and parsing - use this force!
 gem "cloudfiles"                  , '~> 1.5.0.3' # A Ruby version of the Rackspace Cloud Files API.
 gem "carrierwave"                 , '~> 0.10.0' # Upload files in your Ruby applications, map them to a range of ORMs, store them on different backends.
 gem "fog"                                       # The Ruby cloud services library. Supports all major cloud providers including AWS, Rackspace, Linode, Blue Box, StormOnDemand, and many others. Full support for most AWS services including EC2, S3, CloudWatch, SimpleDB, ELB, and RDS.

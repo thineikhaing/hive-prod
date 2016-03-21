@@ -2,21 +2,8 @@
 var Hivemaps = {
 
     init: function() {
-
-        hv_map = new OpenLayers.Map("hv_map", {controls: [ new OpenLayers.Control.Navigation({documentDrag: true})]});
-
-        mb_map = new OpenLayers.Map("mb_map", {controls: [ new OpenLayers.Control.Navigation({documentDrag: true})]});
-
-        cm_map = new OpenLayers.Map("cm_map", {controls: [ new OpenLayers.Control.Navigation({documentDrag: true})]});
-
-        sc_map = new OpenLayers.Map("sc_map", {controls: [ new OpenLayers.Control.Navigation({documentDrag: true})]});
-
-        fv_map = new OpenLayers.Map("fv_map", {controls: [ new OpenLayers.Control.Navigation({documentDrag: true})]});
-
-        rt_map = new OpenLayers.Map("rt_map", {controls: [ new OpenLayers.Control.Navigation({documentDrag: true})]});
-
-        console.log(hv_map.getSize())
-        console.log(mb_map.getSize())
+        hiveapp = new Array()
+        hiveapp = gon.hiveapplicaiton
 
         fromProjection = new OpenLayers.Projection("EPSG:4326");   // Transform from WGS 1984
         toProjection = new OpenLayers.Projection("EPSG:900913"); // to Spherical Mercator Projection;
@@ -129,460 +116,94 @@ var Hivemaps = {
 
                 });
 
-            var hvmarkers = new OpenLayers.Layer.Markers("Markers");
-            var hvcurrentPosition = new OpenLayers.LonLat(lng,lat).transform( fromProjection, toProjection);
-            var hvcurrentPositionIcon = new OpenLayers.Icon('/assets/hivev2/WebMapMe.png', size, offset);
-            var hvcurrentPositionMarker = new OpenLayers.Marker(hvcurrentPosition, hvcurrentPositionIcon.clone());
-            var hvmapnik = new OpenLayers.Layer.OSM();
+
+            for (var i = 0; i < hiveapp.length; i++){
+
+                var name =  "map_"
+                var id=  hiveapp[i].id
+                var mapidname = name.concat(id)
+
+                console.log(mapidname)
+                map = new OpenLayers.Map(mapidname, {controls: [ new OpenLayers.Control.Navigation({documentDrag: true})]});
 
 
-            hv_map.addLayer(hvmapnik);
-            hv_map.addLayer(hvmarkers);
-            hv_map.setCenter (hvcurrentPosition, zoom);
+                //map = new OpenLayers.Map("hv_map", {controls: [ new OpenLayers.Control.Navigation({documentDrag: true})]});
+                //
+                var markers = new OpenLayers.Layer.Markers("Markers");
+                var currentPosition = new OpenLayers.LonLat(lng,lat).transform( fromProjection, toProjection);
+                var currentPositionIcon = new OpenLayers.Icon('/assets/hivev2/WebMapMe.png', size, offset);
+                var currentPositionMarker = new OpenLayers.Marker(currentPosition, currentPositionIcon.clone());
+                var mapnik = new OpenLayers.Layer.OSM();
 
-            hvmarkers.addMarker(hvcurrentPositionMarker);
 
-            api_key =  $("#hv_map").data("apikey")
-            Hivemaps.addplacemarker(hv_map,lat, lng,api_key)
+                map.addLayer(mapnik);
+                //map.addLayer(markers);
+                map.setCenter (currentPosition, zoom);
+                //map.addMarker(currentPositionMarker);
 
-            hv_map.events.register("moveend", hv_map, function(){
 
-                var mapExtent = hv_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
+                api_key =  $("#"+mapidname).data("apikey")
+                Hivemaps.addplacemarker(map,lat, lng,api_key)
 
-                var xCoord = mapExtent.lat
-                var yCoord = mapExtent.lon
+                map.events.register("moveend", map, function(){
 
-                console.log(xCoord)
-                console.log(yCoord)
+                    var mapExtent = map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
 
-                var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
-                var latlng   = new google.maps.LatLng(xCoord,yCoord);
-                var geocoder = new google.maps.Geocoder();
-                geocoder.geocode({ 'latLng': latlng },
-                    function (results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            if (results[0]) {
+                    var xCoord = mapExtent.lat
+                    var yCoord = mapExtent.lon
 
-                                for (var i = 0; i < results[0].address_components.length; i++) {
-                                    var addr = results[0].address_components[i];
-                                    // check if this entry in address_components has a type of country
-                                    if (addr.types[0] == 'country')
-                                        country = addr.long_name;
-                                    else if (addr.types[0] == 'street_address') // address 1
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'establishment')
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'route')  // address 2
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'postal_code')       // Zip
-                                        zip = addr.short_name;
-                                    else if (addr.types[0] == ['administrative_area_level_1'])       // State
-                                        state = addr.long_name;
-                                    else if (addr.types[0] == ['locality'])       // City
-                                        city = addr.long_name;
+                    console.log(xCoord)
+                    console.log(yCoord)
+
+                    var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
+                    var latlng   = new google.maps.LatLng(xCoord,yCoord);
+                    var geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({ 'latLng': latlng },
+                        function (results, status) {
+                            if (status == google.maps.GeocoderStatus.OK) {
+                                if (results[0]) {
+
+                                    for (var i = 0; i < results[0].address_components.length; i++) {
+                                        var addr = results[0].address_components[i];
+                                        // check if this entry in address_components has a type of country
+                                        if (addr.types[0] == 'country')
+                                            country = addr.long_name;
+                                        else if (addr.types[0] == 'street_address') // address 1
+                                            address = address + addr.long_name;
+                                        else if (addr.types[0] == 'establishment')
+                                            address = address + addr.long_name;
+                                        else if (addr.types[0] == 'route')  // address 2
+                                            address = address + addr.long_name;
+                                        else if (addr.types[0] == 'postal_code')       // Zip
+                                            zip = addr.short_name;
+                                        else if (addr.types[0] == ['administrative_area_level_1'])       // State
+                                            state = addr.long_name;
+                                        else if (addr.types[0] == ['locality'])       // City
+                                            city = addr.long_name;
+                                    }
+
+
+                                    if (results[0].formatted_address != null) {
+                                        formattedAddress = results[0].formatted_address;
+
+                                        $("#address"+id).html(formattedAddress)
+                                        $("#country"+id).html(country)
+                                    }
+
+
+                                    var location = results[0].geometry.location;
+
+
                                 }
-
-
-                                if (results[0].formatted_address != null) {
-                                    formattedAddress = results[0].formatted_address;
-
-                                    $("#hive_address").html(formattedAddress)
-                                    $("#hive_country").html(country)
-                                }
-
-
-                                var location = results[0].geometry.location;
-
 
                             }
 
-                        }
+                        });
 
-                    });
 
+                });
 
-
-
-
-            });
-
-            // setting for hive map
-
-            var mbmarkers = new OpenLayers.Layer.Markers("Markers");
-            var mbcurrentPosition = new OpenLayers.LonLat(lng,lat).transform( fromProjection, toProjection);
-            var mbcurrentPositionIcon = new OpenLayers.Icon('/assets/hivev2/WebMapMe.png', size, offset);
-            var mbcurrentPositionMarker = new OpenLayers.Marker(mbcurrentPosition, mbcurrentPositionIcon.clone());
-            var mbmapnik = new OpenLayers.Layer.OSM();
-
-
-            mb_map.addLayer(mbmapnik);
-            mb_map.addLayer(mbmarkers);
-            mb_map.setCenter (mbcurrentPosition, zoom);
-
-            mbmarkers.addMarker(mbcurrentPositionMarker);
-
-            var api_key=  $("#mb_map").data("apikey");
-            Hivemaps.addplacemarker(mb_map,lat, lng,api_key)
-
-            mb_map.events.register("moveend", mb_map, function(){
-
-                var mapExtent = mb_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
-
-                var xCoord = mapExtent.lat
-                var yCoord = mapExtent.lon
-
-                console.log(xCoord)
-                console.log(yCoord)
-
-                var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
-                var latlng   = new google.maps.LatLng(xCoord,yCoord);
-                var geocoder = new google.maps.Geocoder();
-                geocoder.geocode({ 'latLng': latlng },
-                    function (results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            if (results[0]) {
-
-                                for (var i = 0; i < results[0].address_components.length; i++) {
-                                    var addr = results[0].address_components[i];
-                                    // check if this entry in address_components has a type of country
-                                    if (addr.types[0] == 'country')
-                                        country = addr.long_name;
-                                    else if (addr.types[0] == 'street_address') // address 1
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'establishment')
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'route')  // address 2
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'postal_code')       // Zip
-                                        zip = addr.short_name;
-                                    else if (addr.types[0] == ['administrative_area_level_1'])       // State
-                                        state = addr.long_name;
-                                    else if (addr.types[0] == ['locality'])       // City
-                                        city = addr.long_name;
-                                }
-
-
-                                if (results[0].formatted_address != null) {
-                                    formattedAddress = results[0].formatted_address;
-                                    $("#meal_address").html(formattedAddress)
-                                    $("#meal_country").html(country)
-                                }
-
-
-                                var location = results[0].geometry.location;
-
-
-                            }
-
-                        }
-
-                    });
-
-            });
-
-
-            // setting for mealbox map
-
-            var cmmarkers = new OpenLayers.Layer.Markers("Markers");
-            var cmcurrentPosition = new OpenLayers.LonLat(lng,lat).transform( fromProjection, toProjection);
-            var cmcurrentPositionIcon = new OpenLayers.Icon('/assets/hivev2/WebMapMe.png', size, offset);
-            var cmcurrentPositionMarker = new OpenLayers.Marker(cmcurrentPosition, cmcurrentPositionIcon.clone());
-            var cmmapnik = new OpenLayers.Layer.OSM();
-
-
-            cm_map.addLayer(cmmapnik);
-            cm_map.addLayer(cmmarkers);
-            cm_map.setCenter (cmcurrentPosition, zoom);
-
-            cmmarkers.addMarker(cmcurrentPositionMarker);
-
-            var api_key = $("#cm_map").data("apikey")
-            Hivemaps.addplacemarker(cm_map,lat, lng,api_key)
-
-            cm_map.events.register("moveend", cm_map, function(){
-
-                var mapExtent = cm_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
-
-                var xCoord = mapExtent.lat
-                var yCoord = mapExtent.lon
-
-                console.log(xCoord)
-                console.log(yCoord)
-
-
-
-                data =  {cur_lat: xCoord,
-                    cur_long: yCoord,
-                    api_key: $("#cm_map").data("apikey")};
-
-
-
-                var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
-                var latlng   = new google.maps.LatLng(xCoord,yCoord);
-                var geocoder = new google.maps.Geocoder();
-                geocoder.geocode({ 'latLng': latlng },
-                    function (results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            if (results[0]) {
-
-                                for (var i = 0; i < results[0].address_components.length; i++) {
-                                    var addr = results[0].address_components[i];
-                                    // check if this entry in address_components has a type of country
-                                    if (addr.types[0] == 'country')
-                                        country = addr.long_name;
-                                    else if (addr.types[0] == 'street_address') // address 1
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'establishment')
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'route')  // address 2
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'postal_code')       // Zip
-                                        zip = addr.short_name;
-                                    else if (addr.types[0] == ['administrative_area_level_1'])       // State
-                                        state = addr.long_name;
-                                    else if (addr.types[0] == ['locality'])       // City
-                                        city = addr.long_name;
-                                }
-
-
-                                if (results[0].formatted_address != null) {
-                                    formattedAddress = results[0].formatted_address;
-                                    $("#carmic_address").html(formattedAddress)
-                                    $("#carmic_country").html(country)
-                                }
-
-
-
-                                var location = results[0].geometry.location;
-
-
-                            }
-
-                        }
-
-                    });
-
-            });
-
-            // setting for carmunicate map
-
-            var scmarkers = new OpenLayers.Layer.Markers("Markers");
-            var sccurrentPosition = new OpenLayers.LonLat(lng,lat).transform( fromProjection, toProjection);
-            var sccurrentPositionIcon = new OpenLayers.Icon('/assets/hivev2/WebMapMe.png', size, offset);
-            var sccurrentPositionMarker = new OpenLayers.Marker(sccurrentPosition, sccurrentPositionIcon.clone());
-            var scmapnik = new OpenLayers.Layer.OSM();
-
-
-            sc_map.addLayer(scmapnik);
-            sc_map.addLayer(scmarkers);
-            sc_map.setCenter (sccurrentPosition, zoom);
-
-            scmarkers.addMarker(sccurrentPositionMarker);
-
-            var api_key = $("#sc_map").data("apikey")
-            Hivemaps.addplacemarker(sc_map,lat, lng,api_key)
-
-            sc_map.events.register("moveend", sc_map, function(){
-
-                var mapExtent = sc_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
-
-                var xCoord = mapExtent.lat
-                var yCoord = mapExtent.lon
-
-                console.log(xCoord)
-                console.log(yCoord)
-
-                var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
-                var latlng   = new google.maps.LatLng(xCoord,yCoord);
-                var geocoder = new google.maps.Geocoder();
-                geocoder.geocode({ 'latLng': latlng },
-                    function (results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            if (results[0]) {
-
-                                for (var i = 0; i < results[0].address_components.length; i++) {
-                                    var addr = results[0].address_components[i];
-                                    // check if this entry in address_components has a type of country
-                                    if (addr.types[0] == 'country')
-                                        country = addr.long_name;
-                                    else if (addr.types[0] == 'street_address') // address 1
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'establishment')
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'route')  // address 2
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'postal_code')       // Zip
-                                        zip = addr.short_name;
-                                    else if (addr.types[0] == ['administrative_area_level_1'])       // State
-                                        state = addr.long_name;
-                                    else if (addr.types[0] == ['locality'])       // City
-                                        city = addr.long_name;
-                                }
-
-
-                                if (results[0].formatted_address != null) {
-                                    formattedAddress = results[0].formatted_address;
-                                    $("#socal_address").html(formattedAddress)
-                                    $("#socal_country").html(country)
-                                }
-
-
-                                var location = results[0].geometry.location;
-
-
-                            }
-
-                        }
-
-                    });
-
-            });
-
-            // setting for socal map
-
-            var fvmarkers = new OpenLayers.Layer.Markers("Markers");
-            var fvcurrentPosition = new OpenLayers.LonLat(lng,lat).transform( fromProjection, toProjection);
-            var fvcurrentPositionIcon = new OpenLayers.Icon('/assets/hivev2/WebMapMe.png', size, offset);
-            var fvcurrentPositionMarker = new OpenLayers.Marker(fvcurrentPosition, fvcurrentPositionIcon.clone());
-            var fvmapnik = new OpenLayers.Layer.OSM();
-
-
-            fv_map.addLayer(fvmapnik);
-            fv_map.addLayer(fvmarkers);
-            fv_map.setCenter (fvcurrentPosition, zoom);
-
-            fvmarkers.addMarker(fvcurrentPositionMarker);
-
-            var api_key = $("#fv_map").data("apikey")
-            Hivemaps.addplacemarker(fv_map,lat, lng,api_key);
-
-            fv_map.events.register("moveend", fv_map, function(){
-
-                var mapExtent = fv_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
-
-                var xCoord = mapExtent.lat
-                var yCoord = mapExtent.lon
-
-                var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
-                var latlng   = new google.maps.LatLng(xCoord,yCoord);
-                var geocoder = new google.maps.Geocoder();
-                geocoder.geocode({ 'latLng': latlng },
-                    function (results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            if (results[0]) {
-
-                                for (var i = 0; i < results[0].address_components.length; i++) {
-                                    var addr = results[0].address_components[i];
-                                    // check if this entry in address_components has a type of country
-                                    if (addr.types[0] == 'country')
-                                        country = addr.long_name;
-                                    else if (addr.types[0] == 'street_address') // address 1
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'establishment')
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'route')  // address 2
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'postal_code')       // Zip
-                                        zip = addr.short_name;
-                                    else if (addr.types[0] == ['administrative_area_level_1'])       // State
-                                        state = addr.long_name;
-                                    else if (addr.types[0] == ['locality'])       // City
-                                        city = addr.long_name;
-                                }
-
-
-                                if (results[0].formatted_address != null) {
-                                    formattedAddress = results[0].formatted_address;
-                                    $("#favr_address").html(formattedAddress)
-                                    $("#favr_country").html(country)
-                                }
-
-
-                                var location = results[0].geometry.location;
-
-
-                            }
-
-                        }
-
-                    });
-
-            });
-
-            // setting for favr map
-
-            var rtmarkers = new OpenLayers.Layer.Markers("Markers");
-            var rtcurrentPosition = new OpenLayers.LonLat(lng,lat).transform( fromProjection, toProjection);
-            var rtcurrentPositionIcon = new OpenLayers.Icon('/assets/hivev2/WebMapMe.png', size, offset);
-            var rtcurrentPositionMarker = new OpenLayers.Marker(rtcurrentPosition, rtcurrentPositionIcon.clone());
-            var rtmapnik = new OpenLayers.Layer.OSM();
-
-
-            rt_map.addLayer(rtmapnik);
-            rt_map.addLayer(rtmarkers);
-            rt_map.setCenter (rtcurrentPosition, zoom);
-
-            rtmarkers.addMarker(rtcurrentPositionMarker);
-
-            var api_key = $("#rt_map").data("apikey")
-            Hivemaps.addplacemarker(rt_map,lat, lng,api_key);
-
-            rt_map.events.register("moveend", rt_map, function(){
-
-                var mapExtent = rt_map.getCenter().transform(new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326"));
-
-                var xCoord = mapExtent.lat
-                var yCoord = mapExtent.lon
-
-                console.log(xCoord)
-                console.log(yCoord)
-
-                var address = "", city = "", state = "", zip = "", country = "", formattedAddress = "";
-                var latlng   = new google.maps.LatLng(xCoord,yCoord);
-                var geocoder = new google.maps.Geocoder();
-                geocoder.geocode({ 'latLng': latlng },
-                    function (results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            if (results[0]) {
-
-                                for (var i = 0; i < results[0].address_components.length; i++) {
-                                    var addr = results[0].address_components[i];
-                                    // check if this entry in address_components has a type of country
-                                    if (addr.types[0] == 'country')
-                                        country = addr.long_name;
-                                    else if (addr.types[0] == 'street_address') // address 1
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'establishment')
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'route')  // address 2
-                                        address = address + addr.long_name;
-                                    else if (addr.types[0] == 'postal_code')       // Zip
-                                        zip = addr.short_name;
-                                    else if (addr.types[0] == ['administrative_area_level_1'])       // State
-                                        state = addr.long_name;
-                                    else if (addr.types[0] == ['locality'])       // City
-                                        city = addr.long_name;
-                                }
-
-
-                                if (results[0].formatted_address != null) {
-                                    formattedAddress = results[0].formatted_address;
-                                    $("#round_address").html(formattedAddress)
-                                    $("#round_country").html(country)
-                                }
-
-
-
-                                var location = results[0].geometry.location;
-
-
-                            }
-
-                        }
-
-                    });
-
-            });
+            }
 
             // setting for round trop map
         }
@@ -596,46 +217,37 @@ var Hivemaps = {
         var places = new Array();
         var latestTopicUser = new Array();
 
-        var url = '/api/hivev2/place_for_map_view';
-        $.ajax({
-            url: url,
-            data: {hivvemap: ''},
-            success: function(data) {
+        var places = new Array();
+        places = gon.places;
 
-                places = data.places
+        for (var i = 0; i < places.length; i++)
+        {
+            lat = places[i].latitude;
+            lng = places[i].longitude;
 
-                for (var i = 0; i < places.length; i++)
-                {
-                    lat = places[i].latitude;
-                    lng = places[i].longitude;
-
-                    title = places[i].name;
-                    id = places[i].id;
-                    var placePosition = new OpenLayers.LonLat(lng,lat).transform(fromProjection, toProjection);
-                    var placeMarker;
+            title = places[i].name;
+            id = places[i].id;
+            var placePosition = new OpenLayers.LonLat(lng,lat).transform(fromProjection, toProjection);
+            var placeMarker;
 
 
-                    var icon = new OpenLayers.Icon('/assets/map/SingleMap.png', size, offset);
-                    placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
+            var icon = new OpenLayers.Icon('/assets/map/SingleMap.png', size, offset);
+            placeMarker = new OpenLayers.Marker(placePosition, icon.clone());
 
-                    markerArray.push(placeMarker);
-                    placeMarker.title = places[i].name;
-                    placeMarker.id = places[i].id;
-                    placeMarker.url = null;
+            markerArray.push(placeMarker);
+            placeMarker.title = places[i].name;
+            placeMarker.id = places[i].id;
+            placeMarker.url = null;
 
-                }
+        }
 
-                // Settings for clustering markers
-                mOptions = {
-                    gridSize: 0,
-                    maxZoom: 0
-                };
+        // Settings for clustering markers
+        mOptions = {
+            gridSize: 0,
+            maxZoom: 0
+        };
 
-                var markerCluster = new MarkerClusterer(param_map, markerArray, mOptions,param_lat, param_lng,api_key);
-            }
-        });
-
-
+        var markerCluster = new MarkerClusterer(param_map, markerArray, mOptions,param_lat, param_lng,api_key);
 
 
     },

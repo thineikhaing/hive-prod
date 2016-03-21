@@ -121,9 +121,13 @@ h3{color:orange}
 }
 
 
-.inner_circle {
+.app_map {
   border:2px solid orange;
   margin-left:5px;
+  div{
+    width: 290px;height: 290px;position: relative;margin-left: 0px !important;
+    position: relative;
+  }
   //width: 280px;
   //height: 280px;
   //border-radius: 50%;
@@ -133,11 +137,10 @@ h3{color:orange}
   //margin-left:-20px;
 }
 
-#hv_map , #sc_map, #cm_map, #mb_map, #fv_map ,#rt_map{
-  width: 290px;height: 290px;position: relative;margin-left: 0px !important;
-  position: relative;
-
-}
+//#hv_map , #sc_map, #cm_map, #mb_map, #fv_map ,#rt_map{
+//
+//
+//}
 
 ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
   color:    orange;

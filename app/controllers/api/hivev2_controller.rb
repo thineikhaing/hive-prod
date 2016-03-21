@@ -118,6 +118,7 @@ class Api::Hivev2Controller < ApplicationController
         users = users.where("app_data ->'socal' = 'true'")
       end
 
+
       users.each do |u|
         if u.check_in_time.present?
           time_difference = Time.now - u.check_in_time

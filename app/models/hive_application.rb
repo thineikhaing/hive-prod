@@ -25,9 +25,9 @@ class HiveApplication < ActiveRecord::Base
 
   def as_json(options=nil)
     if options.present?
-      super(only: [:id, :app_name, :app_type, :description, :theme_color, :created_at, :updated_at], methods:[:img_icon_url] )
+      super(only: [:id, :app_name,:api_key, :app_type, :description, :theme_color, :created_at, :updated_at], methods:[:img_icon_url] )
     else
-      super(only: [:id, :app_name, :app_type, :api_key, :description, :theme_color, :devuser_id, :created_at, :updated_at], methods:[:img_icon_url] )
+      super(only: [:id, :app_name,:api_key, :app_type, :api_key, :description, :theme_color, :devuser_id, :created_at, :updated_at], methods:[:img_icon_url] )
     end
 
   end
