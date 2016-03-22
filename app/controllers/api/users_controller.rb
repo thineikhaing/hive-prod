@@ -76,6 +76,8 @@ class Api::UsersController < ApplicationController
 
       app_key = params[:api_key] if params[:api_key].present?
 
+
+
       if User.find_by_device_id(params[:device_id]).present?
         #device_id already existed in system
         render json: { status: false }
@@ -88,33 +90,12 @@ class Api::UsersController < ApplicationController
         p "API KEY FROM APP"
         p params[:api_key]
 
-        if app_key == @carmmunicate_key
-          app_data["carmic"] = true
-          p "carmic"
+        hiveapp = HiveApplication.find_by_api_key(app_key)
 
-        elsif app_key == @favr_key
 
-          app_data["favr"] = true
-          p "favr"
+        if hiveapp.present?
 
-        elsif app_key == @meal_key
-
-          app_data["meal"] = true
-          p "meal"
-
-        elsif app_key == @hive_key
-
-          app_data["hive"] = true
-          p "hive"
-
-        elsif app_key == @round_key
-
-          app_data["round"] = true
-          p "round"
-
-        elsif app_key == @socal_key
-            app_data["socal"] = true
-            p "socal"
+          app_data['app_id'+hiveapp.id.to_s] = app_key
         end
 
         user.app_data = app_data

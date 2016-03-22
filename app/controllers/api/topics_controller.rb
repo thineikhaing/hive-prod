@@ -66,6 +66,7 @@ class Api::TopicsController < ApplicationController
               p result["walk"]= walk
 
               # to retrieve
+              # hash_as_string = "{\"distance\"=>\"onemeter\", \"startpoint\"=>\"novena\", \"endpoint\"=>\"cityhall\"}"
               # JSON.parse hash_as_string.gsub('=>', ':')
             end
 
