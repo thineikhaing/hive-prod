@@ -169,6 +169,7 @@ module PushWoosh_Const
   FV_P_APP_ID = "D37E1-A4130"
 
   API_ACCESS = "y5dMhjeQ1pcAf3SNnMqy4LBexlqTR0d86p2o3c84NhEajv3Mxsffz8QuEVshTklJ6Qn9JpwVPJKjx0bmsCBn"
+
 end
 
 module AWS_Link
@@ -191,4 +192,8 @@ module AWS_Bucket
 
   Image_P = "hiveproductionimages"
   Audio_P = "hiveproductionimages"
+end
+
+module GoogleAPI
+  Google_Key = "AIzaSyCmCjZVJvI5h2Qg7XcdI9jTFjyK-IgzyQk"
 end

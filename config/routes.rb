@@ -211,6 +211,8 @@ Rails.application.routes.draw do
     match "tags/retrieve_meal_tags"                 => "tags#retrieve_meal_tags"                , via: [:get, :post]
 
     match "topics/get_topic_by_image"               => "topics#topic_by_image"                  , via: [:get, :post]
+    match "roundtrip/routetest"                     => "roundtrip#routetest"                            , via: [:get, :post]
+
   end
 
 end

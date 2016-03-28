@@ -15,13 +15,16 @@ gem 'rails-backbone'              , '~> 0.9.10' # Quickly setup backbone.js for 
 
 gem 'pushwoosh'
 
+gem 'google_maps_service'
+gem 'geocoder'                    , '~> 1.2.0' # Provides object geocoding (by street or IP address), reverse geocoding (coordinates to street address), distance queries for ActiveRecord and Mongoid, result caching, and more. Designed for Rails but works with Sinatra and other Rack frameworks too.
+
 # gem 'protected_attributes'        , '~> 1.0.7' # Protect attributes from mass assignment
 gem 'delayed_job'                              # Delayed_job (or DJ) encapsulates the common pattern of asynchronously executing longer tasks in the background. It is a direct extraction from Shopify where the job table is responsible for a multitude of core tasks.
 gem 'delayed_job_active_record'             # ActiveRecord backend for Delayed::Job
 gem "hirefire-resource"           , '~> 0.3.2' # HireFire enables you to auto-scale your dynos, schedule capacity during specific times of the week, and recover crashed processes.
 gem 'devise'                      , '~> 3.4.0' # Flexible authentication solution for Rails with Warden
 gem 'httparty'                    , '~> 0.13.1' # Makes http fun! Also, makes consuming restful web services dead easy.
-gem 'geocoder'                    , '~> 1.2.0' # Provides object geocoding (by street or IP address), reverse geocoding (coordinates to street address), distance queries for ActiveRecord and Mongoid, result caching, and more. Designed for Rails but works with Sinatra and other Rack frameworks too.
+
 gem 'pusher'                      , '~> 0.12.0' # Wrapper for pusher.com REST api
 gem 'em-http-request'             , '~> 1.1.2' # EventMachine based, async HTTP Request client
 gem 'gon'                         , '~> 6.0', '>= 6.0.1' # If you need to send some data to your js files and you don't want to do this with long way trough views and parsing - use this force!
