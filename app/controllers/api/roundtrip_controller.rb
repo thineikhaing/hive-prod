@@ -321,13 +321,13 @@ class Api::RoundtripController < ApplicationController
       p "it's weekdays"
       if today.to_f > morning_t1.to_f and today.to_f < morning_t2.to_f
         p "time is between morning peekhour"
-        @peekhour_charge = net_meterfare * peekhour
+        @peekhour_charge = @net_meterfare * peekhour
       end
     end
 
     if  today.to_f > evening_t1.to_f and today.to_f < evening_t2.to_f
       p "time is between evening peekhour"
-      @peekhour_charge = net_meterfare * peekhour
+      @peekhour_charge = @net_meterfare * peekhour
     end
 
 
@@ -335,7 +335,7 @@ class Api::RoundtripController < ApplicationController
 
     if  today.to_f > late_t1.to_f and today.to_f < late_t2.to_f
       p "time is between evening peekhour"
-      @latehour_charge = net_meterfare * late_night
+      @latehour_charge = @net_meterfare * late_night
     end
 
 
@@ -343,7 +343,7 @@ class Api::RoundtripController < ApplicationController
     publicH = Holidays.on(today, :sg)
 
     if publicH.count == 1
-      pbHoliday_charge = net_meterfare * public_holiday
+      pbHoliday_charge = @net_meterfare * public_holiday
     end
 
     # calculate charge based on location
