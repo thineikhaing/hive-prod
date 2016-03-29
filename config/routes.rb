@@ -211,7 +211,11 @@ Rails.application.routes.draw do
     match "tags/retrieve_meal_tags"                 => "tags#retrieve_meal_tags"                , via: [:get, :post]
 
     match "topics/get_topic_by_image"               => "topics#topic_by_image"                  , via: [:get, :post]
-    match "roundtrip/routetest"                     => "roundtrip#routetest"                            , via: [:get, :post]
+    match "roundtrip/get_route_by_travelMode"       => "roundtrip#get_route_by_travelMode"           , via: [:get, :post]
+    match "roundtrip/driving_route_mode"            => "roundtrip#driving_route_mode"           , via: [:get, :post]
+    match "roundtrip/bicycling_route_mode"          => "roundtrip#bicycling_route_mode"           , via: [:get, :post]
+    match "roundtrip/walking_route_mode"            => "roundtrip#walking_route_mode"           , via: [:get, :post]
+
 
   end
 
