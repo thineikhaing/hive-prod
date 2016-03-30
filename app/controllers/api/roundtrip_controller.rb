@@ -212,8 +212,9 @@ class Api::RoundtripController < ApplicationController
 
         p "total estiamte price"
         p totalestimateprice = total_estimated_fare.round(2)
+        today = Time.new.utc.in_time_zone
 
-        drivingHash = { flate_rate: @flat_rate, net_meter_fare: @net_meterfare,
+        drivingHash = { servertime: today,flate_rate: @flat_rate, net_meter_fare: @net_meterfare,
                         waiting_charge: @waiting_charge, peek_hour_charge: @peekhour_charge,
                         late_hour_charge: @latehour_charge, public_holidy_charge: @pbHoliday_charge ,
                         location_charge: @location_charge}
@@ -312,7 +313,7 @@ class Api::RoundtripController < ApplicationController
     p @net_meterfare = (first_10km + rest_km).round(2)
 
     # calculate charge for waiting time in traffic
-      @waiting_charge = waiting_min * waiting_rate
+      @waiting_charge = (waiting_min * waiting_rate).round(2)
 
 
     # calculate charge for peek hours
