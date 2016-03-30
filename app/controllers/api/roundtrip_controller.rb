@@ -5,7 +5,6 @@ class Api::RoundtripController < ApplicationController
 # Setup API keys
     mode = params[:mode]
     transit_mode = params[:transit_mode]
-
     start_latitude = params[:start_latitude]
     start_longitude = params[:start_longitude]
     end_latitude = params[:end_latitude]
@@ -283,7 +282,7 @@ class Api::RoundtripController < ApplicationController
     expo = 2                              # S$2.00 (Singapore Expo)
     waiting_min = total_distance_km/2       # for 10 km waiting time is 5mins
 
-    today = Time.new
+    today = Time.new.utc
 
     morning_t1 = Time.parse('06:00')
     morning_t2 = Time.parse('09:30')
