@@ -285,12 +285,12 @@ class Api::RoundtripController < ApplicationController
 
     today = Time.new.utc.in_time_zone
 
-    morning_t1 = Time.parse('06:00')
-    morning_t2 = Time.parse('09:30')
-    evening_t1 = Time.parse('18:00')
-    evening_t2 = Time.parse('00:00')
-    late_t1    = Time.parse('00:00')
-    late_t2    = Time.parse('05:59')
+    morning_t1 = Time.parse('06:00').utc.in_time_zone
+    morning_t2 = Time.parse('09:30').utc.in_time_zone
+    evening_t1 = Time.parse('18:00').utc.in_time_zone
+    evening_t2 = Time.parse('00:00').utc.in_time_zone
+    late_t1    = Time.parse('00:00').utc.in_time_zone
+    late_t2    = Time.parse('05:59').utc.in_time_zone
 
     changi_t1 = Time.parse('17:00')
     changi_t2 = Time.parse('00:00')
