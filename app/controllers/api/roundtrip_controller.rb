@@ -282,7 +282,7 @@ class Api::RoundtripController < ApplicationController
     expo = 2                              # S$2.00 (Singapore Expo)
     waiting_min = total_distance_km/2       # for 10 km waiting time is 5mins
 
-    today = Time.new.utc
+    today = Time.new.utc.in_time_zone
 
     morning_t1 = Time.parse('06:00')
     morning_t2 = Time.parse('09:30')
