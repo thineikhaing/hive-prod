@@ -1,9 +1,12 @@
 class Roundtrip  < ActiveRecord::Base
+  def weekday?
+      (1..5).include?(wday)
+  end
 
-    @@NorthSouth = "NS"
-    @@EastWest = "EW"
-    @@NorthEast = "NE"
-    @@Circle = "CC"
-    @@DownTown = "DL"_
+  def is_weekend?(wday)
+    [5, 6, 7].include?(wday)
+  end
+
+
 
 end

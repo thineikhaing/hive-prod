@@ -84,6 +84,8 @@ gem 'activerecord-session_store', github: 'rails/activerecord-session_store'
 
 gem "hstore_accessor"
 
+gem 'holidays', '~> 3.2'
+
 group :development do
   gem 'rails_layout'
 end

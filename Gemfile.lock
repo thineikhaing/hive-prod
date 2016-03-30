@@ -321,6 +321,7 @@ GEM
       railties (>= 4.0.1)
     hike (1.2.3)
     hirefire-resource (0.3.8)
+    holidays (3.2.0)
     hstore_accessor (1.0.3)
       activerecord (>= 4.0.0)
     html2haml (2.0.0)
@@ -571,6 +572,7 @@ DEPENDENCIES
   guard-rspec
   haml-rails
   hirefire-resource (~> 0.3.2)
+  holidays (~> 3.2)
   hstore_accessor
   httparty (~> 0.13.1)
   jbuilder (~> 2.0.6)
