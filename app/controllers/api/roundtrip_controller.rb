@@ -5,13 +5,20 @@ class Api::RoundtripController < ApplicationController
 # Setup API keys
     mode = params[:mode]
     transit_mode = params[:transit_mode]
-    start_address = params[:start_address]
-    end_address = params[:end_address]
+
+    start_latitude = params[:start_latitude]
+    start_longitude = params[:start_longitude]
+    end_latitude = params[:end_latitude]
+    end_longitude = params[:end_longitude]
+
+
 
     price1= 0.0
     price2= 0.0
     price3= 0.0
     gmaps = GoogleMapsService::Client.new(key: GoogleAPI::Google_Key)
+
+    @flat_rate=0.0, @net_meterfare= 0.0,  @waiting_charge= 0.0, @peekhour_charge = 0.0 , @latehour_charge = 0.0 , @pbHoliday_charge= 0.0, @location_charge=0.0
 
     # Simple directions
 
@@ -26,16 +33,16 @@ class Api::RoundtripController < ApplicationController
 
     if params[:transit_mode]
       routes = gmaps.directions(
-          start_address,
-          end_address,
+          "#{start_latitude},#{start_longitude}",
+          "#{end_latitude},#{end_longitude}",
           transit_mode: transit_mode,
           mode: mode,
           alternatives: true)
     else
 
       routes = gmaps.directions(
-          start_address,
-          end_address,
+          "#{start_latitude},#{start_longitude}",
+          "#{end_latitude},#{end_longitude}",
           mode: mode,
           alternatives: true)
     end
@@ -180,20 +187,44 @@ class Api::RoundtripController < ApplicationController
 
       if mode = "driving"
 
+        drivingHash = Hash.new
+
         p "DRIVING"
         p total_distance_km =  (route[:legs][0][:distance][:value]* 0.001).round(1)
         p total_duration_min =  route[:legs][0][:duration][:value] / 60
         p total_estimated_fare = calculate_taxi_rate(depature_address ,total_distance_km, total_duration_min)
 
+        p "calculate_taxi_rate"
+        p "flat down rate"
+        p @flat_rate
+        p "net meter fare"
+        p @net_meterfare
+        p "waiting charge"
+        p @waiting_charge
+        p "peek hour charge"
+        p @peekhour_charge
+        p "late hour charge"
+        p @latehour_charge
+        p "public holiday charge"
+        p @pbHoliday_charge
+        p "location charge"
+        p @location_charge
+
+
         p "total estiamte price"
         p totalestimateprice = total_estimated_fare.round(2)
+
+        drivingHash = { flate_rate: @flat_rate, net_meter_fare: @net_meterfare,
+                        waiting_charge: @waiting_charge, peek_hour_charge: @peekhour_charge,
+                        late_hour_charge: @latehour_charge, public_holidy_charge: @pbHoliday_charge ,
+                        location_charge: @location_charge}
 
 
       end
 
       tempHash[:total_estimate_price] = totalestimateprice
-
       route.merge!(tempHash)
+      route.merge!(drivingHash)
       p "+++++++++++++"
 
     end
@@ -236,7 +267,7 @@ class Api::RoundtripController < ApplicationController
     distance = total_distance_km - 1
     total_time = total_duration_min
 
-    flat_rate = 3.2
+    @flat_rate = 3.2
     firstmeter =  0.55                # (0.22 for every 400 m | 0.55 per km thereafter or less > 1 km and ≤ 10 km)
     secondmeter = 0.63                # (0.22 for every 350 m | 0.63 per km thereafter or less > 10 km)
     waiting_rate = 0.30               # (0.22 every 45 seconds or less | 0.30 per min)
@@ -264,7 +295,9 @@ class Api::RoundtripController < ApplicationController
     changi_t1 = Time.parse('17:00')
     changi_t2 = Time.parse('00:00')
 
-    first_10km = 0.0,rest_km =0.0,net_meterfare =0.0 ,peekhour_charge=0.0 ,latehour_charge=0.0, pbHoliday_charge=0.0 , location_charge= 0.0
+    first_10km = 0.0,rest_km =0.0
+
+     @net_meterfare= 0.0,  @waiting_charge= 0.0, @peekhour_charge = 0.0 , @latehour_charge = 0.0 , @pbHoliday_charge= 0.0, @location_charge=0.0
 
     if (distance - 10) != 0 || distance < 10
       p "first 10 km"
@@ -277,10 +310,10 @@ class Api::RoundtripController < ApplicationController
 
     # sum of the first 10 km and rest km for net meter fare
     p "net meter fare"
-    p net_meterfare = first_10km + rest_km
+    p @net_meterfare = (first_10km + rest_km).round(2)
 
     # calculate charge for waiting time in traffic
-    waiting_charge = waiting_min * waiting_rate
+      @waiting_charge = waiting_min * waiting_rate
 
 
     # calculate charge for peek hours
@@ -288,13 +321,13 @@ class Api::RoundtripController < ApplicationController
       p "it's weekdays"
       if today.to_f > morning_t1.to_f and today.to_f < morning_t2.to_f
         p "time is between morning peekhour"
-        peekhour_charge = net_meterfare * peekhour
+        @peekhour_charge = net_meterfare * peekhour
       end
     end
 
     if  today.to_f > evening_t1.to_f and today.to_f < evening_t2.to_f
       p "time is between evening peekhour"
-      peekhour_charge = net_meterfare * peekhour
+      @peekhour_charge = net_meterfare * peekhour
     end
 
 
@@ -302,7 +335,7 @@ class Api::RoundtripController < ApplicationController
 
     if  today.to_f > late_t1.to_f and today.to_f < late_t2.to_f
       p "time is between evening peekhour"
-      latehour_charge = net_meterfare * late_night
+      @latehour_charge = net_meterfare * late_night
     end
 
 
@@ -315,40 +348,26 @@ class Api::RoundtripController < ApplicationController
 
     # calculate charge based on location
     if depature.include?('seletar') ||  depature.include?('sentosa') ||  depature.include?('resorts world')
-      location_charge = 3
+      @location_charge = 3
     end
 
     if depature_address.include?('expo')
-      location_charge = 2
+      @location_charge = 2
     end
 
     if depature.include?('changi') ||  depature.include?('terminal') ||  depature.include?('airport')
       if today.friday? || today.saturday? || today.sunday?
         p "today is friday to sunday"
-        location_charge = 5
+        @location_charge = 5
       else
         p "not friday nor sunday"
-        p location_charge = 3
+        p @location_charge = 3
       end
     end
 
-      p "calculate_taxi_rate"
-      p "flat down rate"
-      p flat_rate
-      p "net meter fare"
-      p net_meterfare
-      p "waiting charge"
-      p waiting_charge
-      p "peek hour charge"
-      p peekhour_charge
-      p "late hour charge"
-      p latehour_charge
-      p "public holiday charge"
-      p pbHoliday_charge
-      p "location charge"
-      p location_charge
 
-    p total_estimated_fare = flat_rate + net_meterfare + waiting_charge +  peekhour_charge + latehour_charge + pbHoliday_charge + location_charge
+
+    p total_estimated_fare = @flat_rate + @net_meterfare + @waiting_charge +  @peekhour_charge + @latehour_charge + @pbHoliday_charge + @location_charge
 
 
     return total_estimated_fare
