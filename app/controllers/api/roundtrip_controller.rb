@@ -283,17 +283,17 @@ class Api::RoundtripController < ApplicationController
     expo = 2                              # S$2.00 (Singapore Expo)
     waiting_min = total_distance_km/2       # for 10 km waiting time is 5mins
 
-    today = Time.new.utc.in_time_zone
+    p today = Time.new.utc.in_time_zone
 
-    morning_t1 = Time.parse('06:00').utc.in_time_zone
-    morning_t2 = Time.parse('09:30').utc.in_time_zone
-    evening_t1 = Time.parse('18:00').utc.in_time_zone
-    evening_t2 = Time.parse('00:00').utc.in_time_zone
-    late_t1    = Time.parse('00:00').utc.in_time_zone
-    late_t2    = Time.parse('05:59').utc.in_time_zone
+    p morning_t1 = Time.parse('06:00').utc.in_time_zone
+    p morning_t2 = Time.parse('09:30').utc.in_time_zone
+    p evening_t1 = Time.parse('18:00').utc.in_time_zone
+    p evening_t2 = Time.parse('00:00').utc.in_time_zone
+    p late_t1    = Time.parse('00:00').utc.in_time_zone
+    p late_t2    = Time.parse('05:59').utc.in_time_zone
 
-    changi_t1 = Time.parse('17:00')
-    changi_t2 = Time.parse('00:00')
+    p changi_t1 = Time.parse('17:00').utc.in_time_zone
+    p changi_t2 = Time.parse('00:00').utc.in_time_zone
 
     first_10km = 0.0,rest_km =0.0
 
@@ -321,13 +321,13 @@ class Api::RoundtripController < ApplicationController
       p "it's weekdays"
       if today.to_f > morning_t1.to_f and today.to_f < morning_t2.to_f
         p "time is between morning peekhour"
-        @peekhour_charge = @net_meterfare * peekhour
+        p @peekhour_charge = @net_meterfare * peekhour
       end
     end
 
     if  today.to_f > evening_t1.to_f and today.to_f < evening_t2.to_f
       p "time is between evening peekhour"
-      @peekhour_charge = @net_meterfare * peekhour
+      p @peekhour_charge = @net_meterfare * peekhour
     end
 
 
@@ -356,9 +356,15 @@ class Api::RoundtripController < ApplicationController
     end
 
     if depature.include?('changi') ||  depature.include?('terminal') ||  depature.include?('airport')
+
       if today.friday? || today.saturday? || today.sunday?
         p "today is friday to sunday"
-        @location_charge = 5
+        if  today.to_f > changi_t1.to_f and today.to_f < changi_t2.to_f
+          @location_charge = 5
+        else
+          @location_charge = 3
+        end
+
       else
         p "not friday nor sunday"
         p @location_charge = 3
