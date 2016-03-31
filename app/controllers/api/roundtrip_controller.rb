@@ -10,7 +10,8 @@ class Api::RoundtripController < ApplicationController
     end_latitude = params[:end_latitude]
     end_longitude = params[:end_longitude]
 
-
+    start_address = params[:start_address]
+    end_address = params[:end_address]
 
     price1= 0.0
     price2= 0.0
@@ -30,20 +31,39 @@ class Api::RoundtripController < ApplicationController
 
     end
 
-    if params[:transit_mode]
-      routes = gmaps.directions(
-          "#{start_latitude},#{start_longitude}",
-          "#{end_latitude},#{end_longitude}",
-          transit_mode: transit_mode,
-          mode: mode,
-          alternatives: true)
-    else
 
-      routes = gmaps.directions(
-          "#{start_latitude},#{start_longitude}",
-          "#{end_latitude},#{end_longitude}",
-          mode: mode,
-          alternatives: true)
+    if params[:transit_mode]
+      if start_address.present?
+        routes = gmaps.directions(
+            start_address,
+            end_address,
+            transit_mode: transit_mode,
+            mode: mode,
+            alternatives: true)
+      else
+        routes = gmaps.directions(
+            "#{start_latitude},#{start_longitude}",
+            "#{end_latitude},#{end_longitude}",
+            transit_mode: transit_mode,
+            mode: mode,
+            alternatives: true)
+      end
+
+    else
+      if start_address.present?
+        routes = gmaps.directions(
+            start_address,
+            end_address,
+            mode: mode,
+            alternatives: true)
+      else
+        routes = gmaps.directions(
+            "#{start_latitude},#{start_longitude}",
+            "#{end_latitude},#{end_longitude}",
+            mode: mode,
+            alternatives: true)
+      end
+
     end
 
 
@@ -179,52 +199,52 @@ class Api::RoundtripController < ApplicationController
           p "total estiamte price"
           totalestimateprice = price1 + price2 + price3
           p totalestimateprice = totalestimateprice.round(2)
+          tempHash[:total_estimate_price] = totalestimateprice
+          route.merge!(tempHash)
+
+        elsif step[:travel_mode] == "DRIVING"
+
+          drivingHash = Hash.new
+
+          p "DRIVING"
+          p total_distance_km =  (route[:legs][0][:distance][:value]* 0.001).round(1)
+          p total_duration_min =  route[:legs][0][:duration][:value] / 60
+          p total_estimated_fare = calculate_taxi_rate(depature_address ,total_distance_km, total_duration_min)
+
+          p "calculate_taxi_rate"
+          p "flat down rate"
+          p @flat_rate
+          p "net meter fare"
+          p @net_meterfare
+          p "waiting charge"
+          p @waiting_charge
+          p "peek hour charge"
+          p @peekhour_charge
+          p "late hour charge"
+          p @latehour_charge
+          p "public holiday charge"
+          p @pbHoliday_charge
+          p "location charge"
+          p @location_charge
+
+
+          p "total estiamte price"
+          p totalestimateprice = total_estimated_fare.round(2)
+          today = Time.new.utc.in_time_zone
+
+          drivingHash = { servertime: today,flate_rate: @flat_rate, net_meter_fare: @net_meterfare,
+                          waiting_charge: @waiting_charge, peek_hour_charge: @peekhour_charge,
+                          late_hour_charge: @latehour_charge, public_holidy_charge: @pbHoliday_charge ,
+                          location_charge: @location_charge}
+          tempHash[:total_estimate_price] = totalestimateprice
+
+          route.merge!(tempHash)
+          route.merge!(drivingHash)
 
         end
 
       end
 
-      if mode = "driving"
-
-        drivingHash = Hash.new
-
-        p "DRIVING"
-        p total_distance_km =  (route[:legs][0][:distance][:value]* 0.001).round(1)
-        p total_duration_min =  route[:legs][0][:duration][:value] / 60
-        p total_estimated_fare = calculate_taxi_rate(depature_address ,total_distance_km, total_duration_min)
-
-        p "calculate_taxi_rate"
-        p "flat down rate"
-        p @flat_rate
-        p "net meter fare"
-        p @net_meterfare
-        p "waiting charge"
-        p @waiting_charge
-        p "peek hour charge"
-        p @peekhour_charge
-        p "late hour charge"
-        p @latehour_charge
-        p "public holiday charge"
-        p @pbHoliday_charge
-        p "location charge"
-        p @location_charge
-
-
-        p "total estiamte price"
-        p totalestimateprice = total_estimated_fare.round(2)
-        today = Time.new.utc.in_time_zone
-
-        drivingHash = { servertime: today,flate_rate: @flat_rate, net_meter_fare: @net_meterfare,
-                        waiting_charge: @waiting_charge, peek_hour_charge: @peekhour_charge,
-                        late_hour_charge: @latehour_charge, public_holidy_charge: @pbHoliday_charge ,
-                        location_charge: @location_charge}
-
-
-      end
-
-      tempHash[:total_estimate_price] = totalestimateprice
-      route.merge!(tempHash)
-      route.merge!(drivingHash)
       p "+++++++++++++"
 
     end
@@ -285,15 +305,15 @@ class Api::RoundtripController < ApplicationController
 
     p today = Time.new.utc.in_time_zone
 
-    p morning_t1 = Time.zone.parse('06:00')
-    p morning_t2 = Time.zone.parse('09:30')
-    p evening_t1 = Time.zone.parse('18:00')
-    p evening_t2 = Time.zone.parse('00:00')
-    p late_t1    = Time.zone.parse('00:00')
-    p late_t2    = Time.zone.parse('05:59')
+    morning_t1 = Time.zone.parse('06:00')
+    morning_t2 = Time.zone.parse('09:30')
+    evening_t1 = Time.zone.parse('18:00')
+    evening_t2 = Time.zone.parse('00:00')
+    late_t1    = Time.zone.parse('00:00')
+    late_t2    = Time.zone.parse('05:59')
 
-    p changi_t1 = Time.zone.parse('17:00')
-    p changi_t2 = Time.zone.parse('00:00')
+    changi_t1 = Time.zone.parse('17:00')
+    changi_t2 = Time.zone.parse('00:00')
 
     first_10km = 0.0,rest_km =0.0
 
