@@ -22,11 +22,11 @@ class Api::RoundtripController < ApplicationController
 
     # Simple directions
 
-    if mode.downcase! == "taxi"
+    if mode == "taxi"
 
       mode = "driving"
 
-    elsif mode.downcase! == "bicycling"
+    elsif mode == "bicycling"
       mode = "walking"
 
     end
@@ -37,15 +37,15 @@ class Api::RoundtripController < ApplicationController
         routes = gmaps.directions(
             start_address,
             end_address,
-            transit_mode: transit_mode.downcase!,
-            mode: mode.downcase!,
+            transit_mode: transit_mode,
+            mode: mode,
             alternatives: true)
       else
         routes = gmaps.directions(
             "#{start_latitude},#{start_longitude}",
             "#{end_latitude},#{end_longitude}",
-            transit_mode: transit_mode.downcase!,
-            mode: mode.downcase!,
+            transit_mode: transit_mode,
+            mode: mode,
             alternatives: true)
       end
 
@@ -54,13 +54,13 @@ class Api::RoundtripController < ApplicationController
         routes = gmaps.directions(
             start_address,
             end_address,
-            mode: mode.downcase!,
+            mode: mode,
             alternatives: true)
       else
         routes = gmaps.directions(
             "#{start_latitude},#{start_longitude}",
             "#{end_latitude},#{end_longitude}",
-            mode: mode.downcase!,
+            mode: mode,
             alternatives: true)
       end
 
