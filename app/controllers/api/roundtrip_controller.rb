@@ -67,8 +67,6 @@ class Api::RoundtripController < ApplicationController
     end
 
 
-    p "total raw number of routes"
-    p routes.count
     totalestimateprice = 0.0
     fastest_route = Hash.new
     cheapest_route =Hash.new
@@ -76,6 +74,8 @@ class Api::RoundtripController < ApplicationController
     tempPrice1 = Hash.new
     tempPrice2 = Hash.new
     tempPrice3 = Hash.new
+
+
     #bubble sort by distance to get the fastest route
     routes =  routes if routes.size <= 1 # already sorted
 
@@ -98,31 +98,30 @@ class Api::RoundtripController < ApplicationController
 
     end
     fastest_route  = routes
-    p "fasted number of routes"
-    p routes.count
-
 
     # @estimate_price = 0.0
 
-    fastest_route.each do |route|
-      p "+++++++++++++"
-      p legs = route[:legs][0][:distance][:value]
-      steps = route[:legs][0][:steps]
-      p "depature_address"
-      p depature_address =  route[:legs][0][:start_address]
+    total_walking_distance = 0.0
 
-      steps.each do |step|
+    fastest_route.each_with_index do |route, r_index|
+      p "+++++++++++++"
+      legs = route[:legs][0][:distance][:value]
+      steps = route[:legs][0][:steps]
+      #depature_address
+      depature_address =  route[:legs][0][:start_address]
+
+      steps.each_with_index do |step,s_index|
         if step[:travel_mode] == "TRANSIT"
           vehicle = step[:transit_details][:line][:vehicle]
           station = step[:transit_details][:line][:short_name]
           step_distance = (step[:distance][:value]* 0.001).round(1)
 
           if vehicle[:type] == "SUBWAY"
-            p "station"
-            p station
+            # p "station"
+            # p station
               if station ==  "NE" || station == "CC" || station == "DT"
-                p "calculate price based on NE CC DT"
-                if step_distance > 40.2
+                # p "calculate price based on NE CC DT"
+                if step_distance >= 40.2
                   price1 =  2.28
                 else
 
@@ -145,8 +144,8 @@ class Api::RoundtripController < ApplicationController
                 p price1
 
               else
-                p "calculate price based on NS EW BPLRT SPLRT"
-                if step_distance > 40.2
+                # p "calculate price based on NS EW BPLRT SPLRT"
+                if step_distance >= 40.2
                   price2 =  2.03
 
                 else
@@ -170,10 +169,10 @@ class Api::RoundtripController < ApplicationController
 
               end
           else
-            p "bus number"
-            p station
-            p "calculate price based on buses"
-            if step_distance > 40.2
+            # p "bus number"
+            # p station
+            # p "calculate price based on buses"
+            if step_distance >= 40.2
               price3 =  2.03
             else
 
@@ -196,7 +195,7 @@ class Api::RoundtripController < ApplicationController
             p price3
           end
 
-          p "total estiamte price"
+          # p "total estiamte price"
           totalestimateprice = price1 + price2 + price3
           p totalestimateprice = totalestimateprice.round(2)
           tempHash[:total_estimate_price] = totalestimateprice
@@ -241,13 +240,96 @@ class Api::RoundtripController < ApplicationController
           route.merge!(tempHash)
           route.merge!(drivingHash)
 
+        elsif step[:travel_mode] == "WALKING"
+
+          step_distance = (step[:distance][:value]* 0.001).round(1)
+          total_walking_distance = total_walking_distance + step_distance
+
+          total_frist_walking_and_transit = 0.0
+
+          if s_index == 0
+            puts "current index...#{r_index},#{s_index}"
+
+
+            # p "check walking and  transit mode"
+            first_walking = steps[s_index]
+            first_distance = (steps[s_index][:distance][:value]* 0.001).round(1)
+
+            start_location_lat = steps[s_index][:start_location][:lat]
+            start_location_lng = steps[s_index][:start_location][:lng]
+
+            # p "second transit"
+            second_transit = steps[s_index+1]
+            second_distance = (steps[s_index+1][:distance][:value]* 0.001).round(1)
+
+            end_location_lat = steps[s_index+1][:end_location][:lat]
+            end_location_lng = steps[s_index+1][:end_location][:lng]
+
+            sub_route = Hash.new
+
+            if start_address.present?
+              walking_route = gmaps.directions(
+                  start_address,
+                  "#{end_location_lat},#{end_location_lng}",
+                  mode: "walking",
+                  alternatives: false)
+
+              transit_route = gmaps.directions(
+                  "#{end_location_lat},#{end_location_lng}",
+                  end_address,
+                  mode: mode,
+                  alternatives: false)
+
+            else
+              walking_route = gmaps.directions(
+                  "#{start_latitude},#{start_longitude}",
+                  "#{end_location_lat},#{end_location_lng}",
+                  mode: "walking",
+                  alternatives: false)
+
+              transit_route = gmaps.directions(
+                  "#{end_location_lat},#{end_location_lng}",
+                  "#{end_latitude},#{end_longitude}",
+                  mode: mode,
+                  alternatives: false)
+            end
+
+            transit_route
+
+            p "walking_route"
+
+
+            p "total_frist_walking_and_transit"
+            p total_frist_walking_and_transit = first_distance + second_distance
+
+            tempHash = Hash.new
+            if total_frist_walking_and_transit <= 2
+              p "calculate route for green options"
+              p walking_route = walking_route.first
+              p transit_route = transit_route.first
+              tempHash[:have_green_option] = "yes"
+              sub_route[:sub_walking_route] = walking_route
+              sub_route[:sub_transit_route] = transit_route
+
+
+            else
+              tempHash[:have_green_option] = "no"
+
+            end
+            route.merge!(tempHash)
+            route.merge!(sub_route)
+          end
+
         end
 
       end
 
+      p "total walking distance"
+      p total_walking_distance.round(1)
       p "+++++++++++++"
 
     end
+
 
 
     cheapest_route =  routes if routes.size <= 1 # already sorted
