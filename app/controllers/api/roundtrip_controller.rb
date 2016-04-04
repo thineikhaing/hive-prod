@@ -250,20 +250,29 @@ class Api::RoundtripController < ApplicationController
           if s_index == 0
             puts "current index...#{r_index},#{s_index}"
 
-
+            p "first walking distance"
             # p "check walking and  transit mode"
             first_walking = steps[s_index]
-            first_distance = (steps[s_index][:distance][:value]* 0.001).round(1)
-
-            start_location_lat = steps[s_index][:start_location][:lat]
-            start_location_lng = steps[s_index][:start_location][:lng]
+            p first_distance = (steps[s_index][:distance][:value]* 0.001).round(1)
 
             # p "second transit"
             second_transit = steps[s_index+1]
-            second_distance = (steps[s_index+1][:distance][:value]* 0.001).round(1)
+            # second_distance = (steps[s_index+1][:distance][:value]* 0.001).round(1)
 
+            start_location_lat = steps[s_index+1][:start_location][:lat]
+            start_location_lng = steps[s_index+1][:start_location][:lng]
             end_location_lat = steps[s_index+1][:end_location][:lat]
             end_location_lng = steps[s_index+1][:end_location][:lng]
+
+            p "second walking distance"
+            second_route = gmaps.directions(
+                "#{start_location_lat},#{start_location_lng}",
+                "#{end_location_lat},#{end_location_lng}",
+                mode: "walking",
+                alternatives: false)
+
+            p second_distance = (second_route.first[:legs][0][:distance][:value]* 0.001).round(1)
+
 
             sub_route = Hash.new
 
