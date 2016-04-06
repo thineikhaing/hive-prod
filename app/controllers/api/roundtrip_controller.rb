@@ -318,6 +318,81 @@ class Api::RoundtripController < ApplicationController
               p transit_route = transit_route.first
               tempHash[:have_green_option] = "yes"
               sub_route[:sub_walking_route] = walking_route
+
+              transit_route.each do |route, r_index|
+
+                steps = route[:legs][0][:steps]
+
+                steps.each do |step, s_index|
+                  if step[:travel_mode] == "TRANSIT"
+
+                    vehicle = step[:transit_details][:line][:vehicle]
+                    station = step[:transit_details][:line][:short_name]
+                    step_distance = (step[:distance][:value]* 0.001).round(1)
+
+                    if vehicle[:type] == "SUBWAY"
+                      if station ==  "NE" || station == "CC" || station == "DT"
+                        # p "calculate price based on NE CC DT"
+                        if step_distance >= 40.2
+                          price1 =  2.28
+                        else
+
+                          CSV.foreach("db/NE-CC-DT.csv") do |row|
+                            range = row[0]
+                            num1= range.match(",").pre_match.to_f
+                            num2= range.match(",").post_match.to_f
+
+                            if step_distance.between?(num1,num2)
+                              price1 =  (row[1].to_i* 0.01)
+                              price1 =   price1.round(2)
+                            end
+
+                          end
+
+                        end
+
+                        tempPrice1[:estimate_price] = price1
+                        step[:distance].merge!(tempPrice1)
+                        p price1
+
+                      else
+                        # p "calculate price based on NS EW BPLRT SPLRT"
+                        if step_distance >= 40.2
+                          price2 =  2.03
+
+                        else
+                          CSV.foreach("db/NS-EW-LRT.csv") do |row|
+                            range = row[0]
+                            num1= range.match(",").pre_match.to_f
+                            num2= range.match(",").post_match.to_f
+
+                            if step_distance.between?(num1,num2)
+
+                              price2 =  (row[1].to_i* 0.01)
+                              price2=  price2.round(2)
+                            end
+
+                          end
+
+                        end
+                        tempPrice2[:estimate_price] = price2
+                        step[:distance].merge!(tempPrice2)
+                        p price2
+
+                      end
+
+                    else
+
+                      bus
+
+                    end
+
+                  end
+                end
+
+              end
+
+
               sub_route[:sub_transit_route] = transit_route
 
 

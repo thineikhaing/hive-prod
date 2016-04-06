@@ -58,6 +58,14 @@ class User < ActiveRecord::Base
     UserMailer.carmic_password_reset(self).deliver
   end
 
+  def send_password_reset_to_app
+    p generate_token(:reset_password_token)
+    self.reset_password_sent_at = Time.zone.now
+    p self.reset_password_token =  SecureRandom.urlsafe_base64
+    save!
+    UserMailer.password_reset_to_app(self).deliver
+  end
+
   def generate_token(column)
     begin
       self[column] = SecureRandom.urlsafe_base64

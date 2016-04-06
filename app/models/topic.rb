@@ -59,9 +59,13 @@ class Topic < ActiveRecord::Base
 
   def as_json(options=nil)
     if options[:content].present?      #return topic json with content information
-      super(only: [:id, :state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username,:avatar_url, :place_information, :tag_information, :content])
+      super(only: [:id, :state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
+                   :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
+                   :special_type, :created_at], methods: [:username,:avatar_url, :place_information, :tag_information, :content])
     else
-      super(only: [:id,:state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range, :special_type, :created_at], methods: [:username, :avatar_url, :place_information, :tag_information, :content])
+      super(only: [:id,:state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
+                   :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
+                   :special_type, :created_at], methods: [:username, :avatar_url, :place_information, :tag_information, :content])
     end
   end
 

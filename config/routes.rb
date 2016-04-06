@@ -137,6 +137,9 @@ Rails.application.routes.draw do
     match "users/sign_in"                           => "users#sign_in"                          , via: [:get, :post]
     match "users/juice_sign_in"                     => "users#juice_sign_in"                    , via: [:get, :post]
     match "users/facebook_login"                    => "users#facebook_login"                   , via: [:get, :post]
+    match "users/forget_password"                   => "users#forget_password"                  , via: [:get, :post]
+    match "users/update_password"                   => "users#update_password"                  , via: [:get, :post]
+
     match "users/verify_user_account"               => "users#verify_user_account"              , via: [:get, :post]
     match "users/user_info"                         => "users#user_info"                        , via: [:get, :post]
     match "users/favourite_user"                    => "users#favourite_user"                   , via: [:get, :post]

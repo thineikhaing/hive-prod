@@ -477,6 +477,44 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def forget_password
+    # Sends email for user to change PASSWORD
+    if params[:email].present?
+      user = User.find_by_email(params[:email])
+      if user.present?
+        user.send_password_reset_to_app
+        render json:{ message: "Email sent with password reset instructions."}, status: 200
+      else
+        render json:{ message: "Email address does not exist."}, status: 400
+      end
+    end
+  end
+
+
+  def update_password
+    # Updates PASSWORD
+    @user = User.find_by_reset_password_token!(params[:token])
+
+    if @user.present?
+      if @user.reset_password_sent_at < 2.hours.ago
+
+        render json:{ message: "Password reset has expired."}, status: 400
+
+      else
+        @user.password = params[:password]
+        @user.password_confirmation = params[:password_confirmation]
+        @user.save
+
+        render json:{ message: "Password has been reset!"}, status: 200
+      end
+
+    else
+      render  json:{ message: "token invalid"}, status: 400  #err in saving password, show on reset_password page
+    end
+
+
+  end
+
   def edit_profile
     if current_user.present?
       user = User.find_by_id(current_user.id)

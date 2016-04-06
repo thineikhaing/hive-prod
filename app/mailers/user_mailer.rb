@@ -37,6 +37,13 @@ class UserMailer < ActionMailer::Base
     mail :to => user.email, :subject => "Password Reset"
   end
 
+  def password_reset_to_app(user)
+
+    @reset_pwd_token = user.reset_password_token
+
+    mail :to => user.email, :subject => "Password Reset token"
+  end
+
   def report_offensive_topic(user, topic)
     @user = user
     @topic = topic
