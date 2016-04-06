@@ -102,13 +102,13 @@ class Api::UsersController < ApplicationController
         if params[:app_name]
           result[:device_id] = params[:device_id]
           user.data = result
-          avatar = Topic.get_avatar(user.username)
         end
 
+        avatar = Topic.get_avatar(user.username)
         user.save!
 
 
-        render json: { :user => user, :success => 20 , avatar: avatar, daily_point: user.daily_points}, status: 200
+        render json: { :user => user, :success => 20 , local_avatar: avatar, daily_point: user.daily_points}, status: 200
       end
 
 
