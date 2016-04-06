@@ -80,7 +80,7 @@ class Api::UsersController < ApplicationController
 
       if User.find_by_device_id(params[:device_id]).present?
         #device_id already existed in system
-        render json: { status: false }
+        render json: { message: "device_id already existed in system", status: false }
       else
         user = User.create!(device_id: params[:device_id], password: Devise.friendly_token)
         user.token_expiry_date= Date.today + 6.months
