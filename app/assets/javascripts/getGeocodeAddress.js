@@ -11,7 +11,7 @@ function getLatLongDetail(myLatlng) {
                     var lng;
 
                     for (var i = 0; i < results[0].address_components.length; i++) {
-                        var addr = results[0].address_components[i];
+                            var addr = results[0].address_components[i];
                         // check if this entry in address_components has a type of country
                         if (addr.types[0] == 'country')
                             country = addr.long_name;

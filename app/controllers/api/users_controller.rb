@@ -485,7 +485,7 @@ class Api::UsersController < ApplicationController
         user.send_password_reset_to_app
         render json:{ message: "Email sent with password reset instructions."}, status: 200
       else
-        render json:{ message: "Email address does not exist."}, status: 400
+        render json:{ message: "There is no user with this email."}, status: 400
       end
     end
   end
