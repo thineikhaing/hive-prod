@@ -223,7 +223,7 @@ class Api::UsersController < ApplicationController
       
     else
       
-      render json: { error_msg: "Param application key must be presented" }, status: 400
+      render json: { error_msg: "Param user id, authentication token must be presented" }, status: 400
     end
   end
 
