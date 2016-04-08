@@ -158,7 +158,9 @@ Rails.application.routes.draw do
     match "users/get_user_avatar"                   => "users#get_user_avatar"                  , via: [:get, :post]
     match "users/save_user_fav_location"            => "users#save_user_fav_location"           , via: [:get, :post]
     match "users/get_user_fav_location"             => "users#get_user_fav_location"           , via: [:get, :post]
-
+    match "users/save_user_friend_list"             => "users#save_user_friend_list"           , via: [:get, :post]
+    match "users/delete_user_friend_list"           => "users#delete_user_friend_list"           , via: [:get, :post]
+    match "users/get_user_friend_list"              => "users#get_user_friend_list"           , via: [:get, :post]
 
 
     match "topics/create"                           => "topics#create"                          , via: [:get, :post]

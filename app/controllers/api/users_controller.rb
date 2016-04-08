@@ -193,7 +193,7 @@ class Api::UsersController < ApplicationController
 
           else
             var.push(11)
-            render json: { :error => var }, status: 400 # Email already exist
+            render json: { :error => var , :error_msg => "Email already exist!"}, status: 400 # Email already exist
           end
           
         end
@@ -976,6 +976,75 @@ class Api::UsersController < ApplicationController
       render json: { userfavlocation: @userFav}
     else
       render json:{error_msg: "Params app_key must be presented"} , status: 400
+    end
+  end
+
+  def get_user_friend_list
+    if current_user.present?
+      friend_lists = UserFriendList.where(user_id: current_user.id)
+      usersArray = [ ]
+      activeUsersArray = [ ]
+      friend_lists.each do |data|
+        p data
+        user = User.find(data.friend_id)
+        usersArray= {id: user.id, username: user.username,last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,avatar_url:user.avatar_url,local_avatar: Topic.get_avatar(user.username)}
+        activeUsersArray.push(usersArray)
+      end
+      render json: {message: "User's friend list", friend_list: activeUsersArray}  , status: 200
+    else
+      render json:{error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
+    end
+  end
+
+  def save_user_friend_list
+    if current_user.present?
+       friend = User.find(params[:friend_id])
+       if friend.present?
+         UserFriendList.create(user_id: current_user.id,friend_id: params[:friend_id])
+         friend_lists = UserFriendList.where(user_id: current_user.id)
+         usersArray = [ ]
+         activeUsersArray = [ ]
+         friend_lists.each do |data|
+           p data
+           user = User.find(data.friend_id)
+           usersArray= {id: user.id, username: user.username,last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,avatar_url:user.avatar_url,local_avatar: Topic.get_avatar(user.username)}
+           activeUsersArray.push(usersArray)
+         end
+         render json: {message: "Saved user's friend list", friend_list: activeUsersArray}  , status: 200
+       else
+         render json: {message: "There is no user to saved", friend_list: activeUsersArray}  , status: 200
+       end
+
+    else
+      render json:{error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
+    end
+  end
+
+  def delete_user_friend_list
+    if current_user.present?
+
+      user_to_delete = UserFriendList.find_by(friend_id: params[:friend_id])
+      if user_to_delete.present?
+        user_to_delete.destroy
+
+        friend_lists = UserFriendList.where(user_id: current_user.id)
+
+        usersArray = [ ]
+        activeUsersArray = [ ]
+        friend_lists.each do |data|
+          p data
+          user = User.find(data.friend_id)
+          usersArray= {id: user.id, username: user.username,last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,avatar_url:user.avatar_url,local_avatar: Topic.get_avatar(user.username)}
+          activeUsersArray.push(usersArray)
+        end
+        render json: {message: "Deleted user's friend list", friend_list: activeUsersArray}  , status: 200
+
+      else
+        render json: {message: "There is no user to delete"}  , status: 200
+      end
+
+    else
+      render json:{error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
     end
   end
 
