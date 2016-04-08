@@ -391,11 +391,7 @@ class Api::RoundtripController < ApplicationController
               #   end
               #
               # end
-
-
               sub_route[:sub_transit_route] = transit_route
-
-
             else
               tempHash[:have_green_option] = "no"
 

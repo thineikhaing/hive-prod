@@ -173,13 +173,11 @@ class Api::UsersController < ApplicationController
           var = [ ]
 
           if checkEmail.nil?
-
+            user.email = params[:username]
             user.email = params[:email]
             user.password = params[:password]
             user.password_confirmation = params[:password]
             user.token_expiry_date= Date.today + 6.months
-
-
             user.save!
 
             if params[:app_key]
@@ -494,6 +492,8 @@ class Api::UsersController < ApplicationController
   def update_password
     # Updates PASSWORD
     @user = User.find_by_reset_password_token!(params[:token])
+    p "password status"
+    p status =  @user.valid_password?(params[:password])
 
     if @user.present?
       if @user.reset_password_sent_at < 2.hours.ago

@@ -205,7 +205,7 @@ class HiveapplicationController < ApplicationController
 
     if !params[:password].blank?
       if HiveApplication.is_a_valid_password(params[:password])  == false
-        @err_password = "PASSWORDS MUST BE AT LEAST A CHARACTERS LONG AND INCLUDE A NUMBER"
+        @err_password = "PASSWORDS MUST BE AT LEAST 8 CHARACTERS LONG AND INCLUDE A NUMBER"
         @flag = false
       else
         @password = params[:password]

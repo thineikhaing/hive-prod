@@ -61,7 +61,7 @@ class User < ActiveRecord::Base
   def send_password_reset_to_app
     p generate_token(:reset_password_token)
     self.reset_password_sent_at = Time.zone.now
-    p self.reset_password_token =  SecureRandom.urlsafe_base64
+    p self.reset_password_token =  [*('A'..'Z'),*('0'..'9')].shuffle[0,6].join
     save!
     UserMailer.password_reset_to_app(self).deliver
   end
@@ -72,6 +72,16 @@ class User < ActiveRecord::Base
     end while User.exists?(column => self[column])
   end
 
+  # def self.generate_invitation_code(contact = "")
+  #   #a = rand(10)
+  #   #b = rand(10)
+  #   #c = rand(10)
+  #   #d = rand(10)
+  #   #
+  #   #a.to_s + b.to_s + Time.now.to_formatted_s(:number) + c.to_s + d.to_s
+  #
+  #   [*('A'..'Z'),*('0'..'9')].shuffle[0,6].join
+  # end
   def self.search_data(search)
     where("lower(username) like ?", "%#{search.downcase}%")
   end
