@@ -1,10 +1,6 @@
 // Place all the styles related to the carmic controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
-//
-
-
-
 
 /* Smartphones ----------- */
 //@media only screen and (max-width: 760px) {
@@ -365,8 +361,6 @@ $background-color: white;
 
 }
 
-
-
 #map_wrapper{
   width: 450px;
   height:450px;
@@ -383,6 +377,7 @@ $background-color: white;
     0 0 0 24px rgb(7,165,179) ;
   margin-top: 50px;
 }
+
 .carmic_map{
   width: 100%;
   height: 100%;
@@ -393,8 +388,6 @@ $background-color: white;
   position: absolute; /* this breaks the overflow:hidden in Chrome/Opera */
   -webkit-mask-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAA5JREFUeNpiYGBgAAgwAAAEAAGbA+oJAAAAAElFTkSuQmCC); /* this fixes the overflow:hidden in Chrome/Opera */
 }
-
-
 
 .topic_tbl{
   border-collapse:separate;

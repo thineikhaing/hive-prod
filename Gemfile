@@ -1,9 +1,7 @@
 source 'https://rubygems.org'
 
 ruby '2.2.3'
-
 #gem 'rails', :git => 'git://github.com/rails/rails.git', :tag => 'v4.1.0.beta1'
-
 gem 'rails', '~> 4.2', '>= 4.2.4' # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 #gem 'rails', '5.0.0.beta1'
 gem 'thin'                        , '~> 1.5.0'
@@ -12,7 +10,6 @@ gem 'haml-rails'                  # Haml-rails provides Haml generators for Rail
 gem 'rails-backbone'              , '~> 0.9.10' # Quickly setup backbone.js for use with rails 3.1. Generators are provided to quickly get started.
 
 #gem 'urbanairship'                , '~> 2.3.3' # Urbanairship is a Ruby library for interacting with the Urban Airship (http://urbanairship.com) API.
-
 gem 'pushwoosh'
 
 gem 'google_maps_service'
