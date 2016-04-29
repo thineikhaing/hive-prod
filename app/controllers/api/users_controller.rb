@@ -376,8 +376,7 @@ class Api::UsersController < ApplicationController
   #   else
   #     render json:{error_msg: "Params authentication token and pusher token must be presented"} , status: 400
   #   end
-
-  end
+  # end
 
   def create_car_action_logs(user_id, lat, lng, speed, direction, activity, heartrate)
     old_log = CarActionLog.last

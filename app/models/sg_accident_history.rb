@@ -61,7 +61,6 @@ class SgAccidentHistory < ActiveRecord::Base
 
 
     @users_to_push = []
-
     @users = User.all
     time_allowance = Time.now - 10.minutes.ago
     @users.each do |u|
