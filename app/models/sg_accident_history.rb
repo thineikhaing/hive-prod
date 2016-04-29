@@ -66,7 +66,7 @@ class SgAccidentHistory < ActiveRecord::Base
     time_allowance = Time.now - 10.minutes.ago
     @users.each do |u|
       if u.check_in_time.present?
-        p time_difference = Time.now - u.check_in_time
+        time_difference = Time.now - u.check_in_time
         unless time_difference.to_i > time_allowance.to_i
           users_to_push.push(u)
         end
