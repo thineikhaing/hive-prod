@@ -59,32 +59,30 @@ class SgAccidentHistory < ActiveRecord::Base
 
     @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
-    accident = Accident.where(notify: false).take
 
-    users_to_push = []
+    @users_to_push = []
+
     @users = User.all
     time_allowance = Time.now - 10.minutes.ago
     @users.each do |u|
       if u.check_in_time.present?
         time_difference = Time.now - u.check_in_time
         unless time_difference.to_i > time_allowance.to_i
-          users_to_push.push(u)
+          @users_to_push.push(u)
         end
       end
     end
 
+    accident = Accident.where(notify: false).take
     if accident.present?
      # users_to_push = get_active_users_to_push(accident.latitude, accident.longitude, 50)
 
      to_device_id = []
-
-     users_to_push.each do |u|
-       user= User.find_by_id(u)
-       if user.data.present?
-         hash_array = user.data
-         device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-         to_device_id.push(device_id)
-       end
+     p "user to push"
+     @users_to_push
+     @users_to_push.each do |u|
+       user= UserPushToken.find_by_user_id(u.id)
+       p to_device_id.push(user.push_token)
      end
 
      p "device_id"
@@ -131,14 +129,19 @@ class SgAccidentHistory < ActiveRecord::Base
      # users_to_push = get_active_users_to_push(vehicleBreakdown.latitude, vehicleBreakdown.longitude, 50)
      to_device_id = []
 
-     users_to_push.each do |u|
-       user= User.find_by_id(u)
-       if user.data.present?
-         hash_array = user.data
-         device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-         to_device_id.push(device_id)
-       end
+     @users_to_push.each do |u|
+       user= UserPushToken.find_by_user_id(u.id)
+       to_device_id.push(user.push_token)
      end
+
+     # users_to_push.each do |u|
+     #   user= User.find_by_id(u)
+     #   if user.data.present?
+     #     hash_array = user.data
+     #     device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+     #     to_device_id.push(device_id)
+     #   end
+     # end
 
 
      p "device_id"

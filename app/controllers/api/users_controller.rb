@@ -235,7 +235,7 @@ class Api::UsersController < ApplicationController
 
     usersArray = [ ]
     activeUsersArray = [ ]
-    p params
+
     if current_user.present? && params[:latitude].present? && params[:longitude].present?
 
       # current_user.update_attributes(last_known_latitude: params[:latitude], last_known_longitude: params[:longitude])
@@ -357,6 +357,28 @@ class Api::UsersController < ApplicationController
     end
   end
 
+
+  # def register_apn
+  #   if params[:auth_token].present? and params[:push_token].present?
+  #     user = User.find_by_authentication_token(params[:auth_token])
+  #     if user.present? & current_user.present?
+  #       if user.id == current_user.id
+  #         user_pusher =  UserPushToken.find_by(:user_id => user.id, :push_token => params[:push_token])
+  #         if user_pusher.present?
+  #           render json: { :user => user, :user_push_token => user_pusher}
+  #         else
+  #           render json:{:status=> false}
+  #         end
+  #       end
+  #     else
+  #       render json:{error_msg: "Invalid user id/ authentication token"}, status: 400
+  #     end
+  #   else
+  #     render json:{error_msg: "Params authentication token and pusher token must be presented"} , status: 400
+  #   end
+
+  end
+
   def create_car_action_logs(user_id, lat, lng, speed, direction, activity, heartrate)
     old_log = CarActionLog.last
 
@@ -376,26 +398,7 @@ class Api::UsersController < ApplicationController
 
 
 
-  def verify_user_account
-    if params[:auth_token].present? and params[:push_token].present?
-      user = User.find_by_authentication_token(params[:auth_token])
-      if user.present? & current_user.present?
-        if user.id == current_user.id
-          user_pusher =  UserPushToken.find_by(:user_id => user.id, :push_token => params[:push_token])
-          if user_pusher.present?
-            render json: { :user => user, :user_push_token => user_pusher}
-          else
-            render json:{:status=> false}
-          end
-        end
-      else
-        render json:{error_msg: "Invalid user id/ authentication token"}, status: 400
-      end
-    else
-      render json:{error_msg: "Params authentication token and pusher token must be presented"} , status: 400
-    end
 
-  end
 
   def sign_in
     params[:bt_mac_address].present? ? bt_mac_address = params[:bt_mac_address] : bt_mac_address = ""
