@@ -305,7 +305,7 @@ class Api::UsersController < ApplicationController
 
       @users.each do |u|
         if u.check_in_time.present?
-          p time_difference = Time.now - u.check_in_time
+          time_difference = Time.now - u.check_in_time
           unless time_difference.to_i > time_allowance.to_i
             @usersArray.push(u)
           end
