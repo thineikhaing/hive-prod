@@ -50,11 +50,11 @@ class SgAccidentHistory < ActiveRecord::Base
 
     p "Push Woosh Authentication"
     if Rails.env.production?
-      appID = PushWoosh_Const::CM_P_APP_ID
+      appID = PushWoosh_Const::RT_D_APP_ID
     elsif Rails.env.staging?
-      appID = PushWoosh_Const::CM_S_APP_ID
+      appID = PushWoosh_Const::RT_D_APP_ID
     else
-      appID = PushWoosh_Const::CM_D_APP_ID
+      appID = PushWoosh_Const::RT_D_APP_ID
     end
 
     @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
@@ -116,7 +116,21 @@ class SgAccidentHistory < ActiveRecord::Base
 
     vehicleBreakdown = VehicleBreakdown.where(notify: false).take
     if vehicleBreakdown.present?
-     users_to_push = get_active_users_to_push(vehicleBreakdown.latitude, vehicleBreakdown.longitude, 50)
+     # users_to_push = get_active_users_to_push(vehicleBreakdown.latitude, vehicleBreakdown.longitude, 50)
+     #
+     time_allowance = Time.now - 10.minutes.ago
+
+     users_to_push = []
+     @users = User.all
+
+     @users.each do |u|
+       if u.check_in_time.present?
+         p time_difference = Time.now - u.check_in_time
+         unless time_difference.to_i > time_allowance.to_i
+           users_to_push.push(u)
+         end
+       end
+     end
 
      to_device_id = []
 

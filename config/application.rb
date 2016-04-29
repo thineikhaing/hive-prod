@@ -168,6 +168,8 @@ module PushWoosh_Const
   FV_S_APP_ID = "66A47-0C7EE"
   FV_P_APP_ID = "D37E1-A4130"
 
+  RT_D_APP_ID = "0698F-FEC84"
+
   API_ACCESS = "y5dMhjeQ1pcAf3SNnMqy4LBexlqTR0d86p2o3c84NhEajv3Mxsffz8QuEVshTklJ6Qn9JpwVPJKjx0bmsCBn"
 
 end
