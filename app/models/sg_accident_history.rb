@@ -132,7 +132,9 @@ class SgAccidentHistory < ActiveRecord::Base
 
         @users_to_push.each do |u|
           user= UserPushToken.find_by_user_id(u.id)
-          to_device_id.push(user.push_token)
+          if !user.nil?
+            to_device_id.push(user.push_token)
+          end
         end
 
         # users_to_push.each do |u|
@@ -143,7 +145,6 @@ class SgAccidentHistory < ActiveRecord::Base
         #     to_device_id.push(device_id)
         #   end
         # end
-
 
         p "device_id"
         p to_device_id
