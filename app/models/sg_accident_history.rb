@@ -61,6 +61,7 @@ class SgAccidentHistory < ActiveRecord::Base
 
 
     @users_to_push = []
+    to_device_id = []
     @users = User.all
     time_allowance = Time.now - 10.minutes.ago
     @users.each do |u|
@@ -72,10 +73,6 @@ class SgAccidentHistory < ActiveRecord::Base
       end
     end
 
-
-    to_device_id = []
-    p "user to push"
-    @users_to_push = []
     @users_to_push.each do |u|
       user= UserPushToken.find_by_user_id(u.id)
       if !user.nil?
