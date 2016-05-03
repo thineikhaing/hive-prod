@@ -335,11 +335,23 @@ class Api::UsersController < ApplicationController
 
       push_user = UserPushToken.create(user_id: current_user.id,push_token: params[:push_token])   unless user_token.present?
 
+      if user_token.nil?
+        user = User.find_by_authentication_token(params[:auth_token])
+        if user.present?
+          result = Hash.new
+          result[:device_id] = params[:push_token]
+          user.data = result
+          user.save!
+        end
+      end
+
+
       if push_user.present?  or user_token.present?
         render json: { status: true }
       else
         render json: { error_msg: "There is no pusher token for the user" }, status: 400
       end
+
     elsif params[:device_token].present?
       user = User.find_by_authentication_token(params[:auth_token])
       if user.present?
