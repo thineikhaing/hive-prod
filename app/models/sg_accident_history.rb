@@ -71,6 +71,18 @@ class SgAccidentHistory < ActiveRecord::Base
         end
       end
     end
+
+
+    to_device_id = []
+    p "user to push"
+    @users_to_push = []
+    @users_to_push.each do |u|
+      user= UserPushToken.find_by_user_id(u.id)
+      if !user.nil?
+        p to_device_id.push(user.push_token)
+      end
+    end
+
     vehicleBreakdown = VehicleBreakdown.where(notify: false).take
     accident = Accident.where(notify: false).take
 
@@ -78,17 +90,6 @@ class SgAccidentHistory < ActiveRecord::Base
 
       if accident.present?
         # users_to_push = get_active_users_to_push(accident.latitude, accident.longitude, 50)
-
-        to_device_id = []
-        p "user to push"
-        @users_to_push
-        @users_to_push.each do |u|
-          user= UserPushToken.find_by_user_id(u.id)
-          if !user.nil?
-            p to_device_id.push(user.push_token)
-          end
-
-        end
 
         p "device_id"
         p to_device_id
@@ -131,15 +132,6 @@ class SgAccidentHistory < ActiveRecord::Base
 
       if vehicleBreakdown.present?
         # users_to_push = get_active_users_to_push(vehicleBreakdown.latitude, vehicleBreakdown.longitude, 50)
-        to_device_id = []
-
-        @users_to_push.each do |u|
-          user= UserPushToken.find_by_user_id(u.id)
-          if !user.nil?
-            to_device_id.push(user.push_token)
-          end
-        end
-
         # users_to_push.each do |u|
         #   user= User.find_by_id(u)
         #   if user.data.present?
@@ -186,16 +178,6 @@ class SgAccidentHistory < ActiveRecord::Base
       end
     else
 
-      to_device_id = []
-      p "user to push"
-      @users_to_push
-      @users_to_push.each do |u|
-        user= UserPushToken.find_by_user_id(u.id)
-        if !user.nil?
-          p to_device_id.push(user.push_token)
-        end
-
-      end
 
       p "device_id"
       p to_device_id
