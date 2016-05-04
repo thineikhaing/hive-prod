@@ -41,7 +41,7 @@ gem 'coffee-rails'                , '~> 4.1.0' # Use CoffeeScript for .js.coffee
 gem 'jquery-rails'               # Use jquery as the JavaScript library
 gem 'turbolinks'                  , '~> 2.5.3' # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'jbuilder'                    , '~> 2.0.6' # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem "rmagick"                     , :require => 'RMagick' #gem to resize the image
+gem "rmagick"                     #, :require => 'RMagick' #gem to resize the image
 gem 'browser'                     , '~> 0.5.0' # Do some browser detection with Ruby.
 gem 'clockwork'                   , :git => "https://github.com/tomykaira/clockwork.git"
 gem 'aws-sdk'
