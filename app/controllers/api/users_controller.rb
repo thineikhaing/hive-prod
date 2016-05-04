@@ -273,6 +273,7 @@ class Api::UsersController < ApplicationController
               data["activity"].present? ? activity = data["activity"] : activity=""
               data["heartrate"].present? ? heartrate = data["heartrate"] : heartrate=""
               user.update_user_peerdrivedata(speed,direction,activity,heartrate)
+              CarActionLog.create(user_id:  user.id,latitude: params[:latitude], longitude: params[:longitude], speed: speed, direction: direction,activity: activity, heartrate: heartrate)
             end
           else
             time_allowance = Time.now - 10.minutes.ago
@@ -284,8 +285,6 @@ class Api::UsersController < ApplicationController
       else
         time_allowance = Time.now - 10.minutes.ago
       end
-
-      CarActionLog.create(user_id:  user.id,latitude: params[:latitude], longitude: params[:longitude], speed: speed, direction: direction,activity: activity, heartrate: heartrate)
 
       #create_car_action_logs(user.id, params[:latitude], params[:longitude], speed, direction, activity, heartrate)
 

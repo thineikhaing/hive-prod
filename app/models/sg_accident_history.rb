@@ -19,8 +19,7 @@ class SgAccidentHistory < ActiveRecord::Base
         if type == "Vehicle Breakdown"
           type = "VehicleBreakdown"
         elsif type == "Heavy Traffic"
-          string = "HeavyTraffic"
-          type = string
+          type = "HeavyTraffic"
         end
 
         message  = data["Message"]  # "(2/2)11:24 Vehicle breakdown on KJE (towards BKE) before Sungei Tengah Exit."
@@ -83,112 +82,36 @@ class SgAccidentHistory < ActiveRecord::Base
     end
 
 
-    # @users_to_push.each do |u|
-    #   user= UserPushToken.find_by_user_id(u.id)
-    #   if !user.present?
-    #     p @to_device_id.push(user.push_token)
-    #   end
-    # end
+    p "device_id"
+    p @to_device_id
 
-    vehicleBreakdown = VehicleBreakdown.where(notify: false).take
-    accident = Accident.where(notify: false).take
+    sg_accident = SgAccidentHistory.where(notify: false).take
 
-    if accident.present? || vehicleBreakdown.present?
+    if sg_accident.present?
 
-      if accident.present?
-        # users_to_push = get_active_users_to_push(accident.latitude, accident.longitude, 50)
+      p sg_accident.message
 
-        p "device_id"
-        p @to_device_id
+      notification_options = {
+          send_date: "now",
+          badge: "1",
+          sound: "default",
+          content:{
+              fr:sg_accident.message,
+              en:sg_accident.message
+          },
+          data:{
+              accident_datetime: sg_accident.accident_datetime,
+              latitude: sg_accident.latitude,
+              longitude: sg_accident.longitude,
+              type: sg_accident.type
+          },
+          devices: @to_device_id
+      }
 
-        notification_options = {
-            send_date: "now",
-            badge: "1",
-            sound: "default",
-            content:{
-                fr:accident.message,
-                en:accident.message
-            },
-            data:{
-                accident_datetime: accident.accident_datetime,
-                latitude: accident.latitude,
-                longitude: accident.longitude
-            },
-            devices: @to_device_id
-        }
-
-        options = @auth.merge({:notifications  => [notification_options]})
-        options = {:request  => options}
-
-        full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-        url = URI.parse(full_path)
-        req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-        req.body = options.to_json
-        con = Net::HTTP.new(url.host, url.port)
-        con.use_ssl = true
-
-        r = con.start {|http| http.request(req)}
-
-        p "pushwoosh"
-
-        accident.notify = true
-        accident.save
-
-
-      end
-
-      if vehicleBreakdown.present?
-        # users_to_push = get_active_users_to_push(vehicleBreakdown.latitude, vehicleBreakdown.longitude, 50)
-        # users_to_push.each do |u|
-        #   user= User.find_by_id(u)
-        #   if user.data.present?
-        #     hash_array = user.data
-        #     device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-        #     @to_device_id.push(device_id)
-        #   end
-        # end
-
-        p "device_id"
-        p @to_device_id
-        notification_options = {
-            send_date: "now",
-            badge: "1",
-            sound: "default",
-            content:{
-                fr:vehicleBreakdown.message,
-                en:vehicleBreakdown.message
-            },
-            data:{
-                accident_datetime: vehicleBreakdown.accident_datetime,
-                latitude: vehicleBreakdown.latitude,
-                longitude: vehicleBreakdown.longitude
-            },
-            devices: @to_device_id
-        }
-
-        options = @auth.merge({:notifications  => [notification_options]})
-        options = {:request  => options}
-
-        full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-        url = URI.parse(full_path)
-        req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-        req.body = options.to_json
-        con = Net::HTTP.new(url.host, url.port)
-        con.use_ssl = true
-
-        r = con.start {|http| http.request(req)}
-
-        p "pushwoosh"
-
-        vehicleBreakdown.notify = true
-        vehicleBreakdown.save
-      end
+      sg_accident.notify = true
+      sg_accident.save
     else
-
-
-      p "device_id"
-      p @to_device_id
-
+      p "There is no accident or vehicle breakdown yet"
       notification_options = {
           send_date: "now",
           badge: "1",
@@ -198,162 +121,35 @@ class SgAccidentHistory < ActiveRecord::Base
               en:"There is no accident or vehicle breakdown yet"
           },
           data:{
-              accident_datetime: "",
+              accident_datetime: Time.now,
               latitude: "",
-              longitude: ""
+              longitude: "",
+              type: ""
           },
           devices: @to_device_id
       }
 
-      options = @auth.merge({:notifications  => [notification_options]})
-      options = {:request  => options}
-
-      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-      url = URI.parse(full_path)
-      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-      req.body = options.to_json
-      con = Net::HTTP.new(url.host, url.port)
-      con.use_ssl = true
-
-      r = con.start {|http| http.request(req)}
-
-      p "pushwoosh"
-
-
     end
 
+    options = @auth.merge({:notifications  => [notification_options]})
+    options = {:request  => options}
+    full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+    url = URI.parse(full_path)
+    req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+    req.body = options.to_json
+    con = Net::HTTP.new(url.host, url.port)
+    con.use_ssl = true
+    r = con.start {|http| http.request(req)}
+    p "pushwoosh"
 
-    #
-    #
+
+    #vehicleBreakdown = VehicleBreakdown.where(notify: false).take
+    #accident = Accident.where(notify: false).take
     #weather = Weather.where(notify: false).take
-    #if weather.present?
-    #  users_to_push = get_active_users_to_push(weather.latitude, weather.longitude, 50)
-    #
-    #  @to_device_id = []
-    #
-    #  users_to_push.each do |u|
-    #    user= User.find_by_id(u)
-    #    if user.data.present?
-    #      hash_array = user.data
-    #      device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-    #      @to_device_id.push(device_id)
-    #    end
-    #  end
-    #
-    #
-    #  p "device_id"
-    #  p @to_device_id
-    #
-    #  notification_options = {
-    #      send_date: "now",
-    #      badge: "1",
-    #      sound: "default",
-    #      content:{
-    #          fr:weather.message,
-    #          en:weather.message
-    #      },
-    #      data:{
-    #          accident_datetime: weather.accident_datetime,
-    #          latitude: weather.latitude,
-    #          longitude: weather.longitude
-    #      },
-    #      devices: @to_device_id
-    #  }
-    #
-    #  options = @auth.merge({:notifications  => [notification_options]})
-    #  options = {:request  => options}
-    #
-    #  full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-    #  url = URI.parse(full_path)
-    #  req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-    #  req.body = options.to_json
-    #  con = Net::HTTP.new(url.host, url.port)
-    #  con.use_ssl = true
-    #
-    #  r = con.start {|http| http.request(req)}
-    #
-    #  p "pushwoosh"
-    #
-    #  weather.notify = true
-    #  weather.save
-    #end
-    #
     #heavyTraffic = HeavyTraffic.where(notify: false).take
-    #if heavyTraffic.present?
-    #  users_to_push = get_active_users_to_push(heavyTraffic.latitude, heavyTraffic.longitude, 50)
-    #
-    #  @to_device_id = []
-    #
-    #  users_to_push.each do |u|
-    #    user= User.find_by_id(u)
-    #    if user.data.present?
-    #      hash_array = user.data
-    #      device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-    #      @to_device_id.push(device_id)
-    #    end
-    #  end
-    #
-    #
-    #  p "device_id"
-    #  p @to_device_id
-    #
-    #
-    #  notification_options = {
-    #      send_date: "now",
-    #      badge: "1",
-    #      sound: "default",
-    #      content:{
-    #          fr:heavyTraffic.message,
-    #          en:heavyTraffic.message
-    #      },
-    #      data:{
-    #          accident_datetime: heavyTraffic.accident_datetime,
-    #          latitude: heavyTraffic.latitude,
-    #          longitude: heavyTraffic.longitude
-    #      },
-    #      devices: @to_device_id
-    #  }
-    #
-    #  options = @auth.merge({:notifications  => [notification_options]})
-    #  options = {:request  => options}
-    #
-    #  full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-    #  url = URI.parse(full_path)
-    #  req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-    #  req.body = options.to_json
-    #  con = Net::HTTP.new(url.host, url.port)
-    #  con.use_ssl = true
-    #
-    #  r = con.start {|http| http.request(req)}
-    #
-    #  p "pushwoosh"
-    #
-    #  heavyTraffic.notify = true
-    #  heavyTraffic.save
-    #
-    #end
 
   end
 
 
-  def self.get_active_users_to_push(current_lat, current_lng, raydius)
-    usersArray = [ ]
-    activeUsersArray = []
-
-    users = User.nearest(current_lat, current_lng, raydius)
-    p users.count
-    time_allowance = Time.now - 10.minutes.ago
-
-
-    users.each do |u|
-      usersArray.push(u)
-      #if u.check_in_time.present?
-      #  time_difference = Time.now - u.check_in_time
-      #  unless time_difference.to_i > time_allowance.to_i
-      #    usersArray.push(u)
-      #  end
-      #end
-    end
-  end
 
 end
