@@ -14,7 +14,7 @@ class SgAccidentHistory < ActiveRecord::Base
     @request_payload = JSON.parse r.body
     @request_payload["d"].each do |data|
       type = data["Type"]
-      if type == "Accident" || type == "Weather" || type == "Heavy Traffic"
+      if type == "Accident" || type == "Vehicle Breakdown" || type == "Heavy Traffic"
 
         if type == "Vehicle Breakdown"
           type = "VehicleBreakdown"
