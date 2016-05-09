@@ -9,6 +9,12 @@ scheduler = Rufus::Scheduler.new
 scheduler.cron '05 00 * * mon' do
   CarActionLog.delete_all
   SgAccidentHistory.delete_all
+
+  ActiveRecord::Base.connection.execute("TRUNCATE TABLE car_action_logs
+ RESTART IDENTITY")
+
+  ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_accident_histories
+ RESTART IDENTITY")
 end
 
 scheduler.cron '05 00 * * *' do
