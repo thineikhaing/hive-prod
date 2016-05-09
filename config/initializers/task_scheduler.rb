@@ -8,6 +8,7 @@ scheduler = Rufus::Scheduler.new
 
 scheduler.cron '05 00 * * mon' do
   CarActionLog.delete_all
+  SgAccidentHistory.delete_all
 end
 
 scheduler.cron '05 00 * * *' do
