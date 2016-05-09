@@ -122,8 +122,8 @@ class SgAccidentHistory < ActiveRecord::Base
           },
           data:{
               accident_datetime: Time.now,
-              latitude: "",
-              longitude: "",
+              latitude: 0,
+              longitude: 0,
               type: ""
           },
           devices: @to_device_id
