@@ -302,13 +302,20 @@ class Api::PlacesController < ApplicationController
   end
 
   data = [ ]
+  fdata=  [ ]
+
   def within_location
     data = [ ]
+    fdata=  []
+    factual_data_array = [ ]
     if params[:latitude].present? and params[:longitude].present? and params[:radius].present? and params[:keyword].present?
 
       factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
       p "factual data"
-      query = factual.table("global").geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]}).search(params[:keyword])
+
+      query = factual.table("global").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
+
+      read_query = factual.table("places-sg").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
 
       #testquery = factual.table("places-us").geo("$circle" => {"$center" => [34.058583, -118.416582], "$meters" => 50}).rows
       box = Geocoder::Calculations.bounding_box("#{params[:latitude]},#{params[:longitude]}", params[:radius], {units: :km})
@@ -319,14 +326,22 @@ class Api::PlacesController < ApplicationController
           data.push(place)
         end
       end
-      p "local data"
-      p data
-      p data.count
-      p "factual data"
-      p query
-      p query.count
 
-      render json: { database: data, factual: query }
+      query.each do |q|
+        fdata = { name: q["name"], latitude: q["latitude"], longitude: q["longitude"], address: q["address"], source: 3, user_id: nil, username: nil, source_id: q["factual_id"] }
+        factual_data_array.push(fdata)
+      end
+
+      data.each do |da|
+        factual_data_array.each do |fda|
+          p da[:name]
+          p fda[:name]
+          factual_data_array.delete(fda) if da[:name] == fda[:name]
+        end
+      end
+
+
+      render json: { database: data, factual: query ,factual_formated_data: factual_data_array}
     else
       render json: { status: false }
     end
