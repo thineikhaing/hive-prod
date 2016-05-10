@@ -307,6 +307,7 @@ class Api::PlacesController < ApplicationController
   def within_location
     data = [ ]
     fdata=  []
+    data_array = []
     factual_data_array = [ ]
     if params[:latitude].present? and params[:longitude].present? and params[:radius].present? and params[:keyword].present?
 
@@ -340,8 +341,9 @@ class Api::PlacesController < ApplicationController
         end
       end
 
+      data_array = data + factual_data_array
 
-      render json: { database: data, factual: query ,factual_formated_data: factual_data_array}
+      render json: {local_and_factual_data: data_array, database: data, factual: query}
     else
       render json: { status: false }
     end
