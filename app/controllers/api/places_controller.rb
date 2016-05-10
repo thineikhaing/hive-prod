@@ -321,8 +321,10 @@ class Api::PlacesController < ApplicationController
       end
       p "local data"
       p data
+      p data.count
       p "factual data"
       p query
+      p query.count
 
       render json: { database: data, factual: query }
     else
