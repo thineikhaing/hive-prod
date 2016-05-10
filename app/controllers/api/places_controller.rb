@@ -333,15 +333,17 @@ class Api::PlacesController < ApplicationController
         factual_data_array.push(fdata)
       end
 
-      data.each do |da|
-        factual_data_array.each do |fda|
-          p da[:name]
-          p fda[:name]
-          factual_data_array.delete(fda) if da[:name] == fda[:name]
-        end
-      end
+      # data.each do |da|
+      #   factual_data_array.each do |fda|
+      #     p da[:name]
+      #     p fda[:name]
+      #     factual_data_array.delete(fda) if da[:name] == fda[:name]
+      #   end
+      # end
 
       data_array = data + factual_data_array
+      p "local and factual data count"
+      p data_array.count
 
       render json: {local_and_factual_data: data_array, database: data, factual: query}
     else
