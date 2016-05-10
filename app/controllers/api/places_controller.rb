@@ -319,6 +319,10 @@ class Api::PlacesController < ApplicationController
           data.push(place)
         end
       end
+      p "local data"
+      p data
+      p "factual data"
+      p query
 
       render json: { database: data, factual: query }
     else
