@@ -87,7 +87,8 @@ class SgAccidentHistory < ActiveRecord::Base
     p "device count"
     p @to_device_id.count
 
-    sg_accident = SgAccidentHistory.where(notify: false).take
+    # sg_accident = SgAccidentHistory.where(notify: false).take
+    sg_accident = SgAccidentHistory.last
 
     if sg_accident.present?
 
@@ -145,8 +146,6 @@ class SgAccidentHistory < ActiveRecord::Base
       r = con.start {|http| http.request(req)}
       p "pushwoosh"
     end
-
-
 
     #vehicleBreakdown = VehicleBreakdown.where(notify: false).take
     #accident = Accident.where(notify: false).take
