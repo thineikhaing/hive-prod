@@ -87,8 +87,8 @@ class SgAccidentHistory < ActiveRecord::Base
     p "device count"
     p @to_device_id.count
 
-    # sg_accident = SgAccidentHistory.where(notify: false).take
-    sg_accident = SgAccidentHistory.last
+    sg_accident = SgAccidentHistory.where(notify: false).take
+    # sg_accident = SgAccidentHistory.last
 
     if sg_accident.present?
 
