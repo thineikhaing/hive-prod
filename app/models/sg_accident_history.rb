@@ -84,6 +84,8 @@ class SgAccidentHistory < ActiveRecord::Base
 
     p "device_id"
     p @to_device_id
+    p "device count"
+    p @to_device_id.count
 
     sg_accident = SgAccidentHistory.where(notify: false).take
 
@@ -131,16 +133,19 @@ class SgAccidentHistory < ActiveRecord::Base
 
     end
 
-    options = @auth.merge({:notifications  => [notification_options]})
-    options = {:request  => options}
-    full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-    url = URI.parse(full_path)
-    req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-    req.body = options.to_json
-    con = Net::HTTP.new(url.host, url.port)
-    con.use_ssl = true
-    r = con.start {|http| http.request(req)}
-    p "pushwoosh"
+    if @to_device_id.count > 0
+      options = @auth.merge({:notifications  => [notification_options]})
+      options = {:request  => options}
+      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+      url = URI.parse(full_path)
+      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+      req.body = options.to_json
+      con = Net::HTTP.new(url.host, url.port)
+      con.use_ssl = true
+      r = con.start {|http| http.request(req)}
+      p "pushwoosh"
+    end
+
 
 
     #vehicleBreakdown = VehicleBreakdown.where(notify: false).take
