@@ -76,7 +76,9 @@ class Api::UsersController < ApplicationController
 
       app_key = params[:api_key] if params[:api_key].present?
 
-
+      if params[:app_key]
+        app_key = params[:app_key]
+      end
 
       if User.find_by_device_id(params[:device_id]).present?
         #device_id already existed in system
@@ -94,9 +96,11 @@ class Api::UsersController < ApplicationController
 
 
         if hiveapp.present?
-
           app_data['app_id'+hiveapp.id.to_s] = app_key
         end
+
+        # p "user by app_key"
+        # p users = users.where("app_data ->'app_id#{app.id}' = '#{app.api_key}'")
 
         user.app_data = app_data
         if params[:app_name]
