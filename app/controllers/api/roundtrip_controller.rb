@@ -109,7 +109,9 @@ class Api::RoundtripController < ApplicationController
       steps = route[:legs][0][:steps]
       #depature_address
       depature_address =  route[:legs][0][:start_address]
-
+      p " steps"
+      p steps.count
+      if steps.count >  1
       steps.each_with_index do |step,s_index|
         if step[:travel_mode] == "TRANSIT"
           vehicle = step[:transit_details][:line][:vehicle]
@@ -404,6 +406,7 @@ class Api::RoundtripController < ApplicationController
 
       end
 
+      end
       p "total walking distance"
       p total_walking_distance.round(1)
       p "+++++++++++++"
