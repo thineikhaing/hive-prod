@@ -805,56 +805,7 @@ class Api::TopicsController < ApplicationController
     end
   end
 
-  def honor_to_owner
-    if params[:action_id].present? && params[:auth_token] && params[:honor]
-      lat = params[:latitude]
-      lng = params[:longitude]
-      temp_id = params[:temp_id]
-      doer_user = User.find_by_authentication_token(params[:auth_token])
-      last_favr_action = Favraction.find(params[:action_id].to_i)
-      post_special_type = 0
-      if last_favr_action.present?
-        action_topic = Topic.find(last_favr_action.topic_id)
-        last_favr_action.honor_to_owner =   params[:honor].to_i
-        if last_favr_action.status == Favraction::OWNER_REJECTED
-          last_favr_action.status= Favraction::DOER_RESPONDED_REJ
-          post_special_type = Post::DOER_RESPONDED_REJ
-        elsif last_favr_action.status== Favraction::OWNER_ACKNOWLEDGED
-          last_favr_action.status=Favraction::DOER_RESPONDED_ACK                   x
-          post_special_type = Post::DOER_RESPONDED_ACK
-        end
-        last_favr_action.save!
-        if action_topic.present?
-          owner_user = User.find(action_topic.user_id)
-          if (params[:honor].to_i >0)
-            owner_user.positive_honor += params[:honor].to_i
-          else
-            owner_user.negative_honor += (params[:honor].to_i * -1)
-          end
-          owner_user.honored_times +=1
-          owner_user.save!
 
-          ranking = get_honor_rank(params[:honor].to_i)
-          title = doer_user.username + " has rated " + owner_user.username.to_s  + " * " + ranking + " * "
-          create_user = User.find_by_username("FavrBot")
-          p "before post"
-          post = Post.new
-          p action_topic
-          post = post.create_post(title, action_topic.id, create_user.id, Post::TEXT.to_s, lat, lng,temp_id,0,0,true,last_favr_action.id,post_special_type)
-          p post
-        end
-        doer_name = doer_user.username
-        unless last_favr_action.post_id.nil?
-          post= Post.find(last_favr_action.post_id)
-          post_id = post.id
-          post_content = post.content
-          post_created_at = post.created_at
-        end
-        action = {action_id: last_favr_action.id,topic_id:last_favr_action.topic_id,status: last_favr_action.status,doer_id:last_favr_action.doer_user_id,doer_name: doer_name,post_id: post_id, post_content: post_content, post_created_at: post_created_at, honor_to_doer: last_favr_action.honor_to_doer, honor_to_owner: last_favr_action.honor_to_owner,user_id: last_favr_action.user_id,created_at:last_favr_action.created_at,updated_at:last_favr_action.updated_at}
-        render json: {topic: action_topic , action: action}
-      end
-    end
-  end
 
   def user_rating
     if params[:user_id].present? and params[:topic_id].present?

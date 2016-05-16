@@ -193,7 +193,15 @@ class Api::UsersController < ApplicationController
 
             end
 
-            render json: { :user => user, :user_account => user_account, :success => 10 }, status: 200
+
+
+            name = user.username
+            id = user.id
+            avatar = Topic.get_avatar(user.username)
+
+            render json: {:user => user, user_accounts: user_account,:name => name, :id => id, avatar_url: avatar , :success => 20 }, status: 200
+            # render json: { :user => user, :user_account => user_account, :success => 10 }, status: 200
+
 
           else
             var.push(11)
@@ -436,10 +444,11 @@ class Api::UsersController < ApplicationController
 
           user_accounts = UserAccount.where(:user_id => user.id)
 
-          p name = user.username
-          p id = user.id
+          name = user.username
+          id = user.id
+          avatar = Topic.get_avatar(user.username)
 
-            render json: {:name => name, :id => id, :user => user, user_accounts: user_accounts, :success => 20 }, status: 200
+          render json: {:user => user, user_accounts: user_accounts,:name => name, :id => id, avatar_url: avatar , :success => 20 }, status: 200
         else
           var.push(22)
           render json: { :error => var }, status: 400 # User password wrong
