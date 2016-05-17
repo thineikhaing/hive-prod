@@ -326,15 +326,27 @@ class Api::PlacesController < ApplicationController
 
       @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
 
-      google_places = @client.spots(params[:latitude], params[:longitude], :name => params[:keyword], :radius => 5000)
+      begin
+        # Exceptions raised by this code will
+        # be caught by the following rescue clause
+        google_places = @client.spots(params[:latitude], params[:longitude], :name => params[:keyword], :radius => 10000)
+      rescue GooglePlaces::OverQueryLimitError
+        p "GooglePlaces OverQueryLimitError"
+        # raise
+      end
 
-      google_places.each do |data|
-        if data.photos[0].present?
-          url = data.photos[0].fetch_url(800)
-        else
-          url = ""
+      if !google_places.nil?
+
+        google_places.each do |data|
+          if data.photos[0].present?
+            url = ''
+            # url = data.photos[0].fetch_url(800)
+          else
+            url = ""
+          end
+          google_data_array.push({name: data.name ,address: data.vicinity, latitude: data.lat,longitude: data.lng,img_url: url, source: 7, user_id: nil, username: nil, source_id: data.place_id, status:'google'})
         end
-        google_data_array.push({name: data.name ,address: data.vicinity, latitude: data.lat,longitude: data.lng,img_url: url, source: 7, user_id: nil, username: nil, source_id: data.place_id, status:'google'})
+
       end
 
       places.each do |place|
@@ -348,6 +360,7 @@ class Api::PlacesController < ApplicationController
 
         end
       end
+
 
       query.each do |q|
         fdata = { name: q["name"], address: q["address"], latitude: q["latitude"], longitude: q["longitude"], source: 3, user_id: nil, username: nil, source_id: q["factual_id"], status:'factual' }
@@ -402,7 +415,8 @@ class Api::PlacesController < ApplicationController
         gothere_data.push({ name: name , address: add, latitude: lat,longitude: lng,img_url: "", status:'gothere'})
         uniq_array =  gothere_data
       end
-
+      p "uniq count"
+      p uniq_array.count
       render json: {local_and_factual_data: uniq_array, database: data, factual: query}
     else
       render json: { status: false }

@@ -215,18 +215,11 @@ end
 #     'bugis',
 #     lat: 1.3181786,
 #     lng: 103.8433952,
-#     radius: 1000,
+#     radius: 50000,
 #     types: 'geocode',
 #     language: I18n.locale,
 # )
 
-# @client.predictions_by_input(
-#     'bugis singapore',
-#     lat: 0.0,
-#     lng: 0.0,
-#     radius: 100,
-#     types: 'geocode',
-#     language: I18n.locale,
-# )
+
 #
 # @client.spots(1.3181786, 103.8433952, :name => 'toa payoh', :radius => 5000)
