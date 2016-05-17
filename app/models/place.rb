@@ -1,6 +1,7 @@
 class Place < ActiveRecord::Base
   has_many :topics
   has_many :user_fav_locations
+  belongs_to :user
 
   # Setup hstore
   store_accessor :data

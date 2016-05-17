@@ -338,28 +338,39 @@ class Api::PlacesController < ApplicationController
       if !google_places.nil?
 
         google_places.each do |data|
-          if data.photos[0].present?
-            url = ''
-            # url = data.photos[0].fetch_url(800)
-          else
-            url = ""
-          end
-          google_data_array.push({name: data.name ,address: data.vicinity, latitude: data.lat,longitude: data.lng,img_url: url, source: 7, user_id: nil, username: nil, source_id: data.place_id, status:'google'})
+          # if data.photos[0].present?
+          #   url = ''
+          #   url = data.photos[0].fetch_url(800)
+          # else
+          #   url = ""
+          # end
+          google_data_array.push({name: data.name ,address: data.vicinity, latitude: data.lat,longitude: data.lng,img_url: "", source: 7, user_id: nil, username: nil, source_id: data.place_id, status:'google'})
         end
 
       end
 
       places.each do |place|
-        if place.name.downcase.include?(params[:keyword])
-          unless place.name.downcase.include?("MRT") do
-            address = place.address rescue place.name
-            hive_data_array.push({id:place.id, name: place.name , address: address, latitude: place.latitude,longitude: place.longitude,img_url: place.img_url, status:'hive'})
-            data.push(place)
-            end
-          end
+
+        if place.name.downcase.include?(params[:keyword].downcase)
+          p "found keyword"
+          p hive_data_array.push({id:place.id, name: place.name , address: place.address, latitude: place.latitude,longitude: place.longitude,img_url: place.img_url,source: place.source, user_id: place.user_id, username: nil , source_id: place.source_id, status:'hive'})
+          data.push(place)
 
         end
       end
+
+      # places.each do |place|
+      #   if place.name.downcase.include?(params[:keyword])
+      #     # unless place.name.downcase.include?("MRT") do
+      #     #   address = place.address rescue place.name
+      #
+      #       # end
+      #     # end
+      #   else
+      #     p "not found"
+      #     p place.name
+      #   end
+      # end
 
 
       query.each do |q|
@@ -371,11 +382,15 @@ class Api::PlacesController < ApplicationController
       # p factual_data_array
       # p "google"
       # p google_data_array
-      # p "hive"
-      # p hive_data_array
+      p "hive"
+      p hive_data_array
+      p "hivedata"
+      p data
+      p "places"
+      p places
       # p "data array"
 
-      p data_array = google_data_array + hive_data_array + factual_data_array
+      data_array = google_data_array + hive_data_array + factual_data_array
 
 
       uniq_array = data_array.uniq! {|p| p[:name]}         #remove duplicate item in hash array
