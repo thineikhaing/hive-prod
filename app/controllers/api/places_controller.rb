@@ -308,7 +308,10 @@ class Api::PlacesController < ApplicationController
     data = [ ]
     fdata=  []
     data_array = []
+    hive_data_array = [ ]
     factual_data_array = [ ]
+    google_data_array = []
+    gothere_data = []
     if params[:latitude].present? and params[:longitude].present? and params[:radius].present? and params[:keyword].present?
 
       factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
@@ -316,36 +319,91 @@ class Api::PlacesController < ApplicationController
 
       query = factual.table("global").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
 
-      read_query = factual.table("places-sg").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
+      # read_query = factual.table("places-sg").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
 
-      #testquery = factual.table("places-us").geo("$circle" => {"$center" => [34.058583, -118.416582], "$meters" => 50}).rows
       box = Geocoder::Calculations.bounding_box("#{params[:latitude]},#{params[:longitude]}", params[:radius], {units: :km})
       places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
 
+      @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
+
+      google_places = @client.spots(params[:latitude], params[:longitude], :name => params[:keyword], :radius => 5000)
+
+      google_places.each do |data|
+        if data.photos[0].present?
+          url = data.photos[0].fetch_url(800)
+        else
+          url = ""
+        end
+        google_data_array.push({name: data.name ,address: data.vicinity, latitude: data.lat,longitude: data.lng,img_url: url, source: 7, user_id: nil, username: nil, source_id: data.place_id, status:'google'})
+      end
+
       places.each do |place|
         if place.name.downcase.include?(params[:keyword])
-          data.push(place)
+          unless place.name.downcase.include?("MRT") do
+            address = place.address rescue place.name
+            hive_data_array.push({id:place.id, name: place.name , address: address, latitude: place.latitude,longitude: place.longitude,img_url: place.img_url, status:'hive'})
+            data.push(place)
+            end
+          end
+
         end
       end
 
       query.each do |q|
-        fdata = { name: q["name"], latitude: q["latitude"], longitude: q["longitude"], address: q["address"], source: 3, user_id: nil, username: nil, source_id: q["factual_id"] }
+        fdata = { name: q["name"], address: q["address"], latitude: q["latitude"], longitude: q["longitude"], source: 3, user_id: nil, username: nil, source_id: q["factual_id"], status:'factual' }
         factual_data_array.push(fdata)
       end
 
-      # data.each do |da|
-      #   factual_data_array.each do |fda|
-      #     p da[:name]
-      #     p fda[:name]
-      #     factual_data_array.delete(fda) if da[:name] == fda[:name]
-      #   end
-      # end
+      # p "factual"
+      # p factual_data_array
+      # p "google"
+      # p google_data_array
+      # p "hive"
+      # p hive_data_array
+      # p "data array"
 
-      data_array = data + factual_data_array
-      p "local and factual data count"
-      p data_array.count
+      p data_array = google_data_array + hive_data_array + factual_data_array
 
-      render json: {local_and_factual_data: data_array, database: data, factual: query}
+
+      uniq_array = data_array.uniq! {|p| p[:name]}         #remove duplicate item in hash array
+
+      if uniq_array.nil?
+        uniq_array = data_array
+      end
+      p "uniq array"
+      p uniq_array.count
+
+      if uniq_array.present?
+        uniq_array.each do |data|
+          p data[:name]
+        end
+      end
+
+      if params[:keyword].is_integer?
+        p params[:keyword].length
+        p "check reverse geo code"
+        code = params[:keyword]
+
+
+        uri = URI.parse('http://gothere.sg/maps/geo')
+        params ={output: '',q: code,client: '',sensor: false,callback:''}
+        # Add params to URI
+        uri.query = URI.encode_www_form( params )
+        p response = JSON.parse(Net::HTTP.get(uri))
+
+
+        place= response["Placemark"][0]
+        add_detail = place["AddressDetails"]["Country"]
+
+        lat  = place["Point"]["coordinates"][0]
+        lng = place["Point"]["coordinates"][1]
+        name = add_detail["Thoroughfare"]["ThoroughfareName"]
+        add = place["address"]
+        gothere_data.push({ name: name , address: add, latitude: lat,longitude: lng,img_url: "", status:'gothere'})
+        uniq_array =  gothere_data
+      end
+
+      render json: {local_and_factual_data: uniq_array, database: data, factual: query}
     else
       render json: { status: false }
     end
@@ -497,4 +555,10 @@ class Api::PlacesController < ApplicationController
   end
 
 
+end
+
+class String
+  def is_integer?
+    self.to_i.to_s == self
+  end
 end

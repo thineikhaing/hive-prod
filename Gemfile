@@ -13,6 +13,7 @@ gem 'rails-backbone'              , '~> 0.9.10' # Quickly setup backbone.js for 
 gem 'pushwoosh'
 
 gem 'google_maps_service'
+gem 'google_places'
 gem 'geocoder'                    , '~> 1.2.0' # Provides object geocoding (by street or IP address), reverse geocoding (coordinates to street address), distance queries for ActiveRecord and Mongoid, result caching, and more. Designed for Rails but works with Sinatra and other Rack frameworks too.
 
 # gem 'protected_attributes'        , '~> 1.0.7' # Protect attributes from mass assignment

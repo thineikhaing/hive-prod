@@ -7,7 +7,7 @@ class Place < ActiveRecord::Base
 
   #attr_accessible :name, :category, :address, :locality, :region, :neighbourhood, :chain_name, :country, :postal_code, :website_url, :contact_number, :img_url, :source, :source_id, :latitude, :longitude, :user_id
 
-  enums %w(HERENOW USER VENDOR FACTUAL MRT UNKNOWN PRIVATE)
+  enums %w(HERENOW USER VENDOR FACTUAL MRT UNKNOWN PRIVATE GOOGLE)
 
 
   # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)

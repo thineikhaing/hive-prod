@@ -433,11 +433,8 @@ class Api::DownloaddataController < ApplicationController
     full_path = 'http://datamall.mytransport.sg/ltaodataservice.svc/IncidentSet'
     url = URI.parse(full_path)
     req = Net::HTTP::Get.new(url.path, initheader = {"accept" =>"application/json", "AccountKey"=>"4G40nh9gmUGe8L2GTNWbgg==", "UniqueUserID"=>"d52627a6-4bde-4fa1-bd48-c6270b02ffc0"})
-
-
     con = Net::HTTP.new(url.host, url.port)
     #con.use_ssl = true
-
     r = con.start {|http| http.request(req)}
 
     p "get incident list"

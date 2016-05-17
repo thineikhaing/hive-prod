@@ -297,6 +297,8 @@ GEM
       hurley (~> 0.1)
       multi_json (~> 1.11)
       retriable (~> 2.0)
+    google_places (0.32.0)
+      httparty (~> 0.13.1)
     guard (2.13.0)
       formatador (>= 0.2.4)
       listen (>= 2.7, <= 4.0)
@@ -569,6 +571,7 @@ DEPENDENCIES
   gmaps4rails
   gon (~> 6.0, >= 6.0.1)
   google_maps_service
+  google_places
   guard-rspec
   haml-rails
   hirefire-resource (~> 0.3.2)
