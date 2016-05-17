@@ -352,8 +352,8 @@ class Api::PlacesController < ApplicationController
       places.each do |place|
 
         if place.name.downcase.include?(params[:keyword].downcase)
-          p "found keyword"
-          p hive_data_array.push({id:place.id, name: place.name , address: place.address, latitude: place.latitude,longitude: place.longitude,img_url: place.img_url,source: place.source, user_id: place.user_id, username: nil , source_id: place.source_id, status:'hive'})
+
+          hive_data_array.push({id:place.id, name: place.name , address: place.address, latitude: place.latitude,longitude: place.longitude,img_url: place.img_url,source: place.source, user_id: place.user_id, username: nil , source_id: place.source_id, status:'hive'})
           data.push(place)
 
         end
@@ -390,7 +390,7 @@ class Api::PlacesController < ApplicationController
       p places
       # p "data array"
 
-      data_array = google_data_array + hive_data_array + factual_data_array
+      data_array =   hive_data_array + google_data_array + factual_data_array
 
 
       uniq_array = data_array.uniq! {|p| p[:name]}         #remove duplicate item in hash array
@@ -423,8 +423,9 @@ class Api::PlacesController < ApplicationController
         place= response["Placemark"][0]
         add_detail = place["AddressDetails"]["Country"]
 
-        lat  = place["Point"]["coordinates"][0]
-        lng = place["Point"]["coordinates"][1]
+        lng  = place["Point"]["coordinates"][0]
+        lat= place["Point"]["coordinates"][1]
+
         name = add_detail["Thoroughfare"]["ThoroughfareName"]
         add = place["address"]
         gothere_data.push({ name: name , address: add, latitude: lat,longitude: lng,img_url: "", status:'gothere'})
