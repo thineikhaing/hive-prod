@@ -325,11 +325,13 @@ class Api::PlacesController < ApplicationController
       places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
 
       @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
-
+      lat = params[:latitude]
+      lng = params[:longitude]
+      keyword = params[:keyword]
       begin
         # Exceptions raised by this code will
         # be caught by the following rescue clause
-        google_places = @client.spots(params[:latitude], params[:longitude], :name => params[:keyword], :radius => 10000)
+        google_places = @client.spots(lat, lng, :name => keyword, :radius => 10000)
       rescue GooglePlaces::OverQueryLimitError
         p "GooglePlaces OverQueryLimitError"
         # raise
@@ -349,6 +351,13 @@ class Api::PlacesController < ApplicationController
 
       end
 
+      # google_places = @client.spots(lat, lng, :name => keyword, :radius => 10000)
+      # google_places.each do |data|
+      #   p data.name
+      #   p data.vicinity
+      #   p "+++++++++++++"
+      # end
+
       places.each do |place|
 
         if place.name.downcase.include?(params[:keyword].downcase)
@@ -358,19 +367,6 @@ class Api::PlacesController < ApplicationController
 
         end
       end
-
-      # places.each do |place|
-      #   if place.name.downcase.include?(params[:keyword])
-      #     # unless place.name.downcase.include?("MRT") do
-      #     #   address = place.address rescue place.name
-      #
-      #       # end
-      #     # end
-      #   else
-      #     p "not found"
-      #     p place.name
-      #   end
-      # end
 
 
       query.each do |q|
@@ -390,7 +386,7 @@ class Api::PlacesController < ApplicationController
       p places
       # p "data array"
 
-      data_array =   hive_data_array + google_data_array + factual_data_array
+      data_array =  hive_data_array + google_data_array + factual_data_array
 
 
       uniq_array = data_array.uniq! {|p| p[:name]}         #remove duplicate item in hash array

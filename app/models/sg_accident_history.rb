@@ -60,6 +60,7 @@ class SgAccidentHistory < ActiveRecord::Base
 
 
     @users_to_push = []
+    user_ids []
     @to_device_id = []
     @users = User.all
     time_allowance = Time.now - 10.minutes.ago
@@ -78,6 +79,7 @@ class SgAccidentHistory < ActiveRecord::Base
         hash_array = user.data
         device_id = hash_array["device_id"] if  hash_array["device_id"].present?
         @to_device_id.push(device_id)
+        user_ids.push(u.id)
       end
     end
 
@@ -86,6 +88,8 @@ class SgAccidentHistory < ActiveRecord::Base
     p @to_device_id
     p "device count"
     p @to_device_id.count
+    p "user ids"
+    p user_ids
 
     sg_accident = SgAccidentHistory.where(notify: false).take
     # sg_accident = SgAccidentHistory.last
