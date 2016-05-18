@@ -363,6 +363,7 @@ class Api::UsersController < ApplicationController
       if push_user.present?  or user_token.present?
         render json: { status: true }
       else
+        p 'There is no pusher token for the user'
         render json: { error_msg: "There is no pusher token for the user" }, status: 400
       end
 
@@ -379,6 +380,7 @@ class Api::UsersController < ApplicationController
         render json: { status: true, daily_points: user.daily_points}
       end
     else
+      p 'Param user id, authentication token, pusher token must be presented'
       render json: { error_msg: "Param user id, authentication token, pusher token must be presented" }, status: 400
     end
   end
