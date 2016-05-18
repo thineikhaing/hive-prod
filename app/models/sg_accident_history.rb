@@ -60,7 +60,7 @@ class SgAccidentHistory < ActiveRecord::Base
 
 
     @users_to_push = []
-    user_ids []
+    user_ids = []
     @to_device_id = []
     @users = User.all
     time_allowance = Time.now - 10.minutes.ago
