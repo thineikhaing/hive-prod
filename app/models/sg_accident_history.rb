@@ -138,7 +138,7 @@ class SgAccidentHistory < ActiveRecord::Base
 
     end
 
-    if @to_device_id.count > 0
+    if @to_device_id.count > 0 && sg_accident.present?
       options = @auth.merge({:notifications  => [notification_options]})
       options = {:request  => options}
       full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
