@@ -159,6 +159,21 @@ end
 #  FV_D_Master_Secret="1EXyDmHxTNSZRV0raeCthA"
 #end
 
+module SMRT_Const
+  Sengkang_East_Loop  = "SE"
+  Sengkang_West_Loop  = "SW"
+  Punggol_East_Loop   = "PE"
+  Sengkang_West_Loop  = "SW"
+  Bukit_Pangjang_Line = "BP"
+
+  North_South_Line    = "NS"
+  Northeast_Line      = "NE"
+  Downtown_Line       = "DT"
+  East_West_Line      = "EW"
+  Circle_Line         = "CC"
+
+end
+
 module PushWoosh_Const
   CM_D_APP_ID = "B48C7-FE962"
   CM_S_APP_ID = "82255-61ADD"

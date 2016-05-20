@@ -378,22 +378,46 @@ class Api::PlacesController < ApplicationController
       # p factual_data_array
       # p "google"
       # p google_data_array
-      p "hive"
-      p hive_data_array
-      p "hivedata"
-      p data
-      p "places"
-      p places
+      # p "hive"
+      # p hive_data_array
+      # p "hivedata"
+      # p data
+      # p "places"
+      # p places
       # p "data array"
 
-      data_array =  hive_data_array + google_data_array + factual_data_array
+      # if params[:keyword].is_integer?
+      # p params[:keyword].length
+      # p "check reverse geo code"
 
+      code = params[:keyword]
+
+      uri = URI.parse('http://gothere.sg/maps/geo')
+      params ={output: '',q: code,client: '',sensor: false,callback:''}
+      # Add params to URI
+      uri.query = URI.encode_www_form( params )
+      p response = JSON.parse(Net::HTTP.get(uri))
+
+
+      place= response["Placemark"][0]
+      add_detail = place["AddressDetails"]["Country"]
+
+      lng  = place["Point"]["coordinates"][0]
+      lat= place["Point"]["coordinates"][1]
+
+      name = add_detail["Thoroughfare"]["ThoroughfareName"]
+      add = place["address"]
+      gothere_data.push({ name: name , address: add, latitude: lat,longitude: lng,img_url: "", status:'gothere'})
+
+        # uniq_array =  uniq_array + gothere_data
+      # end
+
+
+      data_array =   hive_data_array + google_data_array + factual_data_array  + gothere_data
 
       uniq_array = data_array.uniq! {|p| p[:name]}         #remove duplicate item in hash array
 
-      if uniq_array.nil?
-        uniq_array = data_array
-      end
+
       p "uniq array"
       p uniq_array.count
 
@@ -403,32 +427,10 @@ class Api::PlacesController < ApplicationController
         end
       end
 
-      if params[:keyword].is_integer?
-        p params[:keyword].length
-        p "check reverse geo code"
-        code = params[:keyword]
-
-
-        uri = URI.parse('http://gothere.sg/maps/geo')
-        params ={output: '',q: code,client: '',sensor: false,callback:''}
-        # Add params to URI
-        uri.query = URI.encode_www_form( params )
-        p response = JSON.parse(Net::HTTP.get(uri))
-
-
-        place= response["Placemark"][0]
-        add_detail = place["AddressDetails"]["Country"]
-
-        lng  = place["Point"]["coordinates"][0]
-        lat= place["Point"]["coordinates"][1]
-
-        name = add_detail["Thoroughfare"]["ThoroughfareName"]
-        add = place["address"]
-        gothere_data.push({ name: name , address: add, latitude: lat,longitude: lng,img_url: "", status:'gothere'})
+      if code.is_integer? && code.length == 6
         uniq_array =  gothere_data
       end
-      p "uniq count"
-      p uniq_array.count
+
       render json: {local_and_factual_data: uniq_array, database: data, factual: query}
     else
       render json: { status: false }

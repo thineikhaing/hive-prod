@@ -260,7 +260,19 @@ class Api::UsersController < ApplicationController
       current_user.save
 
       user = User.find(current_user.id)
-      user.check_in_time = Time.now
+
+      if params[:peersition].present?
+
+          if params[:peersition] == 0
+            user.check_in_time = Time.now - 20.minutes
+          else
+            user.check_in_time = Time.now
+          end
+
+      else
+        user.check_in_time = Time.now
+      end
+
       user.last_known_latitude = params[:latitude]
       user.last_known_longitude= params[:longitude]
       user.save!

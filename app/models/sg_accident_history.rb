@@ -118,7 +118,9 @@ class SgAccidentHistory < ActiveRecord::Base
       sg_accident.notify = true
       sg_accident.save
     else
+
       p "There is no accident or vehicle breakdown yet"
+
       notification_options = {
           send_date: "now",
           badge: "1",
@@ -157,6 +159,92 @@ class SgAccidentHistory < ActiveRecord::Base
     #heavyTraffic = HeavyTraffic.where(notify: false).take
 
   end
+
+  def self.broadcast_trainfault(name, short_name, message)
+    p "Push Woosh Authentication"
+    if Rails.env.production?
+      appID = PushWoosh_Const::RT_D_APP_ID
+    elsif Rails.env.staging?
+      appID = PushWoosh_Const::RT_D_APP_ID
+    else
+      appID = PushWoosh_Const::RT_D_APP_ID
+    end
+
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+
+
+    @users_to_push = []
+    user_ids = []
+    @to_device_id = []
+
+    @users = User.all
+
+    time_allowance = Time.now - 10.minutes.ago
+    @users.each do |u|
+      if u.check_in_time.present?
+        time_difference = Time.now - u.check_in_time
+        unless time_difference.to_i > time_allowance.to_i
+          @users_to_push.push(u)
+        end
+      end
+    end
+
+    @users_to_push.each do |u|
+      user= User.find_by_id(u)
+      if user.data.present?
+        hash_array = user.data
+        device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+        @to_device_id.push(device_id)
+        user_ids.push(u.id)
+      end
+    end
+
+    p "device_id"
+    p @to_device_id
+    p "device count"
+    p @to_device_id.count
+    p "user ids"
+    p user_ids
+
+    notification_options = {
+        send_date: "now",
+        badge: "1",
+        sound: "default",
+        content:{
+            fr:message,
+            en:message
+        },
+        data:{
+            trainfault_datetime: Time.now,
+            latitude: 0,
+            longitude: 0,
+            mrt_name: name,
+            mrt_shortname: short_name,
+            type: "train fault"
+        },
+        devices: @to_device_id
+    }
+
+    if @to_device_id.count > 0 && sg_accident.present?
+      options = @auth.merge({:notifications  => [notification_options]})
+      options = {:request  => options}
+      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+      url = URI.parse(full_path)
+      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+      req.body = options.to_json
+      con = Net::HTTP.new(url.host, url.port)
+      con.use_ssl = true
+      r = con.start {|http| http.request(req)}
+      p "pushwoosh"
+    end
+
+    #vehicleBreakdown = VehicleBreakdown.where(notify: false).take
+    #accident = Accident.where(notify: false).take
+    #weather = Weather.where(notify: false).take
+    #heavyTraffic = HeavyTraffic.where(notify: false).take
+
+  end
+
 
 
 
