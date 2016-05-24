@@ -620,13 +620,15 @@ class Api::RoundtripController < ApplicationController
 
     message = ""
     if station1.present? && station2.present?
+      message = "[#{name}]"+reason +", between "+station1+" and "+station2
 
-      p message = "[#{name}]"+reason +", there is no train service between "+station1+" and "+station2+" towards "+towards
     elsif station1.present? && station2.blank?
-
-      p message =  "[#{name}]"+reason +" from "+station1+" towards "+towards
+      message =  "[#{name}]"+reason +" from "+station1
     end
 
+    if towards.present?
+      message += " towards "+towards
+    end
 
 
     notification_options = {
@@ -641,7 +643,6 @@ class Api::RoundtripController < ApplicationController
             trainfault_datetime: Time.now,
             latitude: 0,
             longitude: 0,
-            station: "",
             smrtline: name,
             station1: station1,
             station2: station2,

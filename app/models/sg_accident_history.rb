@@ -209,10 +209,14 @@ class SgAccidentHistory < ActiveRecord::Base
     message = ""
     if station1.present? && station2.present?
 
-      p message = "[#{name}]"+reason +", there is no train service between "+station1+" and "+station2+" towards "+towards
+      p message = "[#{name}]"+reason +", between "+station1+" and "+station2+" towards "+towards
     elsif station1.present? && station2.blank?
 
       p message =  "[#{name}]"+reason +" from "+station1+" towards "+towards
+    end
+
+    if towards.present?
+      message += " towards"+towards
     end
 
     notification_options = {
