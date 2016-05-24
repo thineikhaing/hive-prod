@@ -140,9 +140,17 @@ class Place < ActiveRecord::Base
     topics_array
   end
 
+  # add_record("name", "latitude", "longitude", "address", "", "", 163, 333, "y-cZXxwrSXvtiyTGBzpf", "choice","img_url",category="",locality="",country="",postcode="")
+
   def add_record(name, latitude, longitude, address, source, source_id, place_id, user_id, auth_token, choice,img_url,category="",locality="",country="",postcode="")
     factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
     user = User.find(user_id)
+
+    p user.username
+    p source
+    p source_id
+    p place_id
+    p "++++"
 
     neighborhood = ""
     website = ""
@@ -150,6 +158,7 @@ class Place < ActiveRecord::Base
     category = "" unless category.present?
     if auth_token.present?
       if place_id.present?
+        p "exciting record"
         place = Place.find(place_id)
         Checkinplace.create(place_id: place.id, user_id: user_id)
         user.last_known_latitude =  place.latitude
@@ -175,7 +184,8 @@ class Place < ActiveRecord::Base
         Userpreviouslocation.create(latitude: place.latitude, longitude: place.longitude, radius: 1, user_id: user_id)
 
         return { place: place, status: 70 }
-      elsif source_id.present?
+      elsif source_id.present? && source.to_i == Place::FACTUAL
+        p "add record from factual"
         factual_result = factual.table("places").filters("factual_id" => source_id.to_s).first
         p factual_result
         if factual_result["category_labels"].present?
@@ -218,7 +228,32 @@ class Place < ActiveRecord::Base
         Userpreviouslocation.create(latitude: place.latitude, longitude: place.longitude, radius: 1, user_id: user_id)
 
         return { place: place, status: 70 }
+
+      elsif source_id.present? && source.to_i == Place::GOOGLE
+        p "add record from google"
+        @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
+        @spot = @client.spot(source_id.to_s)
+
+        if @spot.photos[0].present?
+          url = ''
+          url = @spot.photos[0].fetch_url(800)
+        else
+          url = ""
+        end
+
+        place = Place.create(name: @spot.name, latitude: @spot.lat, longitude: @spot.lng, address: @spot.formatted_address, source: Place::GOOGLE, user_id: user_id, img_url: url,category: category,country: @spot.country,postal_code: @spot.postal_code,locality: locality) unless place.present?
+
+        Checkinplace.create(place_id: place.id, user_id: user_id)
+        user.last_known_latitude =  place.latitude
+        user.last_known_longitude = place.longitude
+        user.check_in_time = Time.now
+        user.save!
+        Userpreviouslocation.create(latitude: place.latitude, longitude: place.longitude, radius: 1, user_id: user_id)
+
+        return { place: place, status: 70 }
+
       else
+        p "add user custom record"
         place = ""
         private_place = ""
         check_records = Place.nearest(latitude, longitude, 0.5)

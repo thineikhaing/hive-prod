@@ -156,9 +156,13 @@ Rails.application.routes.draw do
     match "users/create_incident_history"           => "users#create_incident_history"          , via: [:get, :post]
     match "users/check_hive_user"                   => "users#check_hive_user"                  , via: [:get, :post]
     match "users/get_user_avatar"                   => "users#get_user_avatar"                  , via: [:get, :post]
+
     match "users/save_user_fav_location"            => "users#save_user_fav_location"           , via: [:get, :post]
     match "users/get_user_fav_location"             => "users#get_user_fav_location"            , via: [:get, :post]
     match "users/delete_user_fav_location"          => "users#delete_user_fav_location"         , via: [:get, :post]
+    match "users/update_user_fav_location"          => "users#update_user_fav_location"         , via: [:get, :post]
+
+
     match "users/save_user_friend_list"             => "users#save_user_friend_list"            , via: [:get, :post]
     match "users/delete_user_friend_list"           => "users#delete_user_friend_list"          , via: [:get, :post]
     match "users/get_user_friend_list"              => "users#get_user_friend_list"             , via: [:get, :post]
@@ -203,7 +207,7 @@ Rails.application.routes.draw do
     match "places/within_location"                  => "places#within_location"                 , via: [:get, :post]
     match "places/within_locality"                  => "places#within_locality"                 , via: [:get, :post]
     match "places/getlatlngbyname"                  => "places#getlatlngbyname"                 , via: [:get, :post]
-    match "places/get_meal_suggestion"              => "places#get_meal_suggestion"          , via: [:get, :post]
+    match "places/get_meal_suggestion"              => "places#get_meal_suggestion"             , via: [:get, :post]
 
     match "demo/test"                               => "demo#test"                              , via: [:get, :post]
     match "demo/test2"                              => "demo#test2"                             , via: [:get, :post]

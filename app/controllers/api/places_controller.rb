@@ -22,6 +22,8 @@ class Api::PlacesController < ApplicationController
       params[:chain_name].present? ? chain_name = params[:chain_name] : chain_name = ""
       params[:contact_number].present? ? contact_number= params[:contact_number] : contact_number = ""
 
+      params[:status].present? ? status= params[:status] : status = ""
+
       choice="others"
       if app_key.present?
         mealbox_key = ""
@@ -41,7 +43,6 @@ class Api::PlacesController < ApplicationController
       render json: place
     elsif params[:place_id] || params[:source]  || params[:source_id]
       place = Place.new
-
       params[:name].present? ? name = params[:name] : name = nil
       params[:latitude].present? ? latitude = params[:latitude] : latitude = nil
       params[:longitude].present? ? longitude = params[:longitude] : longitude = nil
@@ -57,7 +58,7 @@ class Api::PlacesController < ApplicationController
       params[:postcode].present? ? postcode = params[:postcode] : postcode=""
 
       currentuser = User.find_by_authentication_token(params[:auth_token])
-      place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, currentuser.id, params[:auth_token], choice,img_url,place_type,locality,country,postcode )
+      place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, currentuser.id, params[:auth_token], choice,img_url,place_type,locality,country,postcode)
 
       render json: place
 
@@ -346,7 +347,16 @@ class Api::PlacesController < ApplicationController
           # else
           #   url = ""
           # end
-          google_data_array.push({name: data.name ,address: data.vicinity, latitude: data.lat,longitude: data.lng,img_url: "", source: 7, user_id: nil, username: nil, source_id: data.place_id, status:'google'})
+          google_data_array.push({name: data.name ,
+                                  address: data.vicinity,
+                                  latitude: data.lat,
+                                  longitude: data.lng,
+                                  img_url: "",
+                                  user_id: nil,
+                                  username: nil,
+                                  source: Place::GOOGLE,
+                                  source_id: data.place_id,
+                                  status:'google'})
         end
 
       end
@@ -362,7 +372,16 @@ class Api::PlacesController < ApplicationController
 
         if place.name.downcase.include?(params[:keyword].downcase)
 
-          hive_data_array.push({id:place.id, name: place.name , address: place.address, latitude: place.latitude,longitude: place.longitude,img_url: place.img_url,source: place.source, user_id: place.user_id, username: nil , source_id: place.source_id, status:'hive'})
+          hive_data_array.push({name: place.name,
+                                address: place.address,
+                                latitude: place.latitude,
+                                longitude: place.longitude,
+                                img_url: place.img_url,
+                                user_id: place.user_id,
+                                username: nil,
+                                source: Place::HERENOW,
+                                place_id: place.id,
+                                status:'hive'})
           data.push(place)
 
         end
@@ -370,7 +389,17 @@ class Api::PlacesController < ApplicationController
 
 
       query.each do |q|
-        fdata = { name: q["name"], address: q["address"], latitude: q["latitude"], longitude: q["longitude"], source: 3, user_id: nil, username: nil, source_id: q["factual_id"], status:'factual' }
+        fdata = { name: q["name"],
+                  address: q["address"],
+                  latitude: q["latitude"],
+                  longitude: q["longitude"],
+                  img_url: "",
+                  user_id: nil,
+                  username: nil,
+                  source: Place::FACTUAL,
+                  source_id: q["factual_id"],
+                  status:'factual' }
+
         factual_data_array.push(fdata)
       end
 
@@ -397,27 +426,34 @@ class Api::PlacesController < ApplicationController
       # Add params to URI
       uri.query = URI.encode_www_form( params )
       p response = JSON.parse(Net::HTTP.get(uri))
+      p response
 
+      p "response from gothere"
+      status = response["Status"]["code"]
 
-      place= response["Placemark"][0]
-      add_detail = place["AddressDetails"]["Country"]
+      if status == 200
+        place= response["Placemark"][0]
+        add_detail = place["AddressDetails"]["Country"]
 
-      lng  = place["Point"]["coordinates"][0]
-      lat= place["Point"]["coordinates"][1]
+        lng  = place["Point"]["coordinates"][0]
+        lat= place["Point"]["coordinates"][1]
 
-      name = add_detail["Thoroughfare"]["ThoroughfareName"]
-      add = place["address"]
-      gothere_data.push({ name: name , address: add, latitude: lat,longitude: lng,img_url: "", status:'gothere'})
+        name = add_detail["Thoroughfare"]["ThoroughfareName"]
+        add = place["address"]
+        gothere_data.push({ name: name , address: add, latitude: lat,longitude: lng,img_url: "", status:'gothere'})
 
-        # uniq_array =  uniq_array + gothere_data
-      # end
+        data_array =   hive_data_array + google_data_array + factual_data_array  + gothere_data
+      else
+        data_array =   hive_data_array + google_data_array + factual_data_array
+      end
 
-
-      data_array =   hive_data_array + google_data_array + factual_data_array  + gothere_data
 
       uniq_array = data_array.uniq! {|p| p[:name]}         #remove duplicate item in hash array
 
 
+      if uniq_array.nil?
+        uniq_array = data_array
+      end
       p "uniq array"
       p uniq_array.count
 

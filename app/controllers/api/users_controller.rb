@@ -437,10 +437,6 @@ class Api::UsersController < ApplicationController
 
   end
 
-
-
-
-
   def sign_in
     params[:bt_mac_address].present? ? bt_mac_address = params[:bt_mac_address] : bt_mac_address = ""
 
@@ -998,16 +994,35 @@ class Api::UsersController < ApplicationController
   def save_user_fav_location
     place_id = nil
     #check the place_id presents
-    if params[:app_key].present?
+    if current_user.present?
 
-      if params[:place_id]
-        place_id = params[:place_id].to_i
-      else
-        #create place first if the place_id is null
-        place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
-        place_id = place.id
+      # if params[:place_id]
+      #   place_id = params[:place_id].to_i
+      # else
+      #   #create place first if the place_id is null
+      #   place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
+      #   place_id = place.id
+      #
+      # end
 
-      end
+      place = Place.new
+      params[:name].present? ? name = params[:name] : name = nil
+      params[:latitude].present? ? latitude = params[:latitude] : latitude = nil
+      params[:longitude].present? ? longitude = params[:longitude] : longitude = nil
+      params[:address].present? ? address = params[:address] : address = nil
+      params[:source].present? ? source = params[:source] : source = nil
+      params[:source_id].present? ? source_id = params[:source_id] : source_id = nil
+      params[:place_id].present? ? place_id = params[:place_id] : place_id = nil
+      params[:choice].present? ? choice = params[:choice] : choice = nil
+      params[:img_url].present? ? img_url = params[:img_url] : img_url = nil
+      params[:place_type].present? ? place_type = params[:place_type] : place_type = nil
+      params[:locality].present? ? locality = params[:locality] : locality=""
+      params[:country].present? ? country = params[:country] : country=""
+      params[:postcode].present? ? postcode = params[:postcode] : postcode=""
+
+      place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, current_user.id, current_user.authentication_token, choice,img_url,place_type,locality,country,postcode)
+
+      place_id = place.id
 
       user = User.find_by_authentication_token (params[:auth_token]) if params[:auth_token].present?
 
@@ -1028,6 +1043,57 @@ class Api::UsersController < ApplicationController
       render json:{error_msg: "Params app_key must be presented"} , status: 400
     end
 
+  end
+
+  def update_user_fav_location
+    place_id = nil
+    #check the place_id presents
+    if current_user.present?
+      # if params[:place_id]
+      #   place_id = params[:place_id].to_i
+      # else
+      #   #create place first if the place_id is null
+      #   place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
+      #   place_id = place.id
+      #
+      # end
+      p "update id"
+      p update_id = params[:id]
+
+      place = Place.new
+      params[:name].present? ? name = params[:name] : name = nil
+      params[:latitude].present? ? latitude = params[:latitude] : latitude = nil
+      params[:longitude].present? ? longitude = params[:longitude] : longitude = nil
+      params[:address].present? ? address = params[:address] : address = nil
+      params[:source].present? ? source = params[:source] : source = nil
+      params[:source_id].present? ? source_id = params[:source_id] : source_id = nil
+      params[:place_id].present? ? place_id = params[:place_id] : place_id = nil
+      params[:choice].present? ? choice = params[:choice] : choice = nil
+      params[:img_url].present? ? img_url = params[:img_url] : img_url = nil
+      params[:place_type].present? ? place_type = params[:place_type] : place_type = nil
+      params[:locality].present? ? locality = params[:locality] : locality=""
+      params[:country].present? ? country = params[:country] : country=""
+      params[:postcode].present? ? postcode = params[:postcode] : postcode=""
+
+      p place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, current_user.id, current_user.authentication_token, choice,img_url,place_type,locality,country,postcode)
+      p "place id"
+      p place[:place].id
+
+      userfav = UserFavLocation.find(update_id).update(place_id: place[:place].id)
+
+
+      if userfav.present?
+
+        @fav_locations = UserFavLocation.where(user_id: current_user.id)
+        render json:{ userfavlocation: @fav_locations, status: 'user fav location successfully added.'}
+
+      else
+        render json:{status: 'location already exit!'}
+      end
+
+    else
+      render json:{error_msg: "Params app_key must be presented"} , status: 400
+    end
 
   end
 

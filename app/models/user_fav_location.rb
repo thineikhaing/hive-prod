@@ -28,5 +28,4 @@ class UserFavLocation < ActiveRecord::Base
     end
   end
 
-
 end
