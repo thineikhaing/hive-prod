@@ -1022,7 +1022,7 @@ class Api::UsersController < ApplicationController
 
       place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, current_user.id, current_user.authentication_token, choice,img_url,place_type,locality,country,postcode)
 
-      place_id = place.id
+      place_id = place[:place].id
 
       user = User.find_by_authentication_token (params[:auth_token]) if params[:auth_token].present?
 

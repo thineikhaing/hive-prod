@@ -234,12 +234,20 @@ class Place < ActiveRecord::Base
         @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
         @spot = @client.spot(source_id.to_s)
 
-        if @spot.photos[0].present?
-          url = ''
-          url = @spot.photos[0].fetch_url(800)
+        url = ""
+
+        if img_url.present?
+          url = img_url
         else
-          url = ""
+
+          if @spot.photos[0].present?
+            url = @spot.photos[0].fetch_url(800)
+          else
+            url = ""
+          end
+
         end
+
 
         place = Place.create(name: @spot.name, latitude: @spot.lat, longitude: @spot.lng, address: @spot.formatted_address, source: Place::GOOGLE, user_id: user_id, img_url: url,category: category,country: @spot.country,postal_code: @spot.postal_code,locality: locality) unless place.present?
 
