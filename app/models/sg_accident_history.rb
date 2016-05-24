@@ -160,7 +160,7 @@ class SgAccidentHistory < ActiveRecord::Base
 
   end
 
-  def self.broadcast_trainfault(name, short_name, message)
+  def self.broadcast_trainfault( name , station1 , station2 , towards , reason)
     p "Push Woosh Authentication"
     if Rails.env.production?
       appID = PushWoosh_Const::RT_D_APP_ID
@@ -206,6 +206,15 @@ class SgAccidentHistory < ActiveRecord::Base
     p "user ids"
     p user_ids
 
+    message = ""
+    if station1.present? && station2.present?
+
+      p message = "[#{name}]"+reason +", there is no train service between "+station1+" and "+station2+" towards "+towards
+    elsif station1.present? && station2.blank?
+
+      p message =  "[#{name}]"+reason +" from "+station1+" towards "+towards
+    end
+
     notification_options = {
         send_date: "now",
         badge: "1",
@@ -218,8 +227,11 @@ class SgAccidentHistory < ActiveRecord::Base
             trainfault_datetime: Time.now,
             latitude: 0,
             longitude: 0,
-            mrt_name: name,
-            mrt_shortname: short_name,
+            station: "",
+            smrtline: name,
+            station1: station1,
+            station2: station2,
+            towards: towards,
             type: "train fault"
         },
         devices: @to_device_id

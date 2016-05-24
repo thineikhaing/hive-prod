@@ -263,9 +263,11 @@ class Api::UsersController < ApplicationController
 
       if params[:peersition].present?
 
-          if params[:peersition] == 0
+          if params[:peersition] == "0"
+            p "reduce checkin time"
             user.check_in_time = Time.now - 20.minutes
           else
+            p "update checkin time"
             user.check_in_time = Time.now
           end
 
