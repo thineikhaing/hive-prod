@@ -1126,9 +1126,13 @@ class Topic < ActiveRecord::Base
         url_two = url_one[0].split('-')
         user_names = username.split (" ")
         last_index = user_names.length
-        if user_names[Integer(last_index)-1] == url_two[Integer(url_two.length)-1]
+        last_name = user_names[Integer(last_index)-1]
+        last_name = last_name.gsub(/[^a-zA-Z ]/,'').gsub(/ +/,' ')
+
+        if last_name == url_two[Integer(url_two.length)-1]
           avatar_url = url
         end
+
       end
     end
 
