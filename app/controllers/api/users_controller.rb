@@ -47,30 +47,6 @@ class Api::UsersController < ApplicationController
 
   def create_anonymous_user
 
-    if Rails.env.development?
-      @carmmunicate_key = Carmmunicate_key::Development_Key
-      @favr_key = Favr_key::Development_Key
-      @meal_key = Mealbox_key::Development_Key
-      @socal_key = Socal_key::Development_Key
-      @hive_key = Hive_key::Development_Key
-      @round_key = RoundTrip_key::Development_Key
-
-    elsif Rails.env.staging?
-      @carmmunicate_key = Carmmunicate_key::Staging_Key
-      @favr_key = Favr_key::Staging_Key
-      @meal_key = Mealbox_key::Staging_Key
-      @socal_key = Socal_key::Staging_Key
-      @hive_key = Hive_key::Staging_Key
-      @round_key = RoundTrip_key::Staging_Key
-
-    else
-      @carmmunicate_key = Carmmunicate_key::Production_Key
-      @favr_key = Favr_key::Production_Key
-      @meal_key = Mealbox_key::Production_Key
-      @socal_key = Socal_key::Production_Key
-      @hive_key = Hive_key::Production_Key
-      @round_key = RoundTrip_key::Production_Key
-    end
 
     if params[:device_id].present?
 
@@ -89,11 +65,10 @@ class Api::UsersController < ApplicationController
 
         app_data = Hash.new
         result = Hash.new
-        p "API KEY FROM APP"
-        p params[:api_key]
+        # p "API KEY FROM APP"
+        # p params[:api_key]
 
         hiveapp = HiveApplication.find_by_api_key(app_key)
-
 
         if hiveapp.present?
           app_data['app_id'+hiveapp.id.to_s] = app_key
@@ -108,9 +83,8 @@ class Api::UsersController < ApplicationController
           user.data = result
         end
 
-        avatar = Topic.get_avatar(user.username)
+        p avatar = Topic.get_avatar(user.username)
         user.save!
-
 
         render json: { :user => user, :success => 20 , local_avatar: avatar, daily_point: user.daily_points}, status: 200
       end
@@ -202,7 +176,7 @@ class Api::UsersController < ApplicationController
             friend_lists = UserFriendList.where(user_id: user.id)
 
 
-            render json: {:user => user, user_accounts: user_account,userfavlocation: userFav,friend_list: friend_lists,:name => name, :id => id, avatar_url: avatar , :success => 20 }, status: 200
+            render json: {:user => user, user_accounts: user_account,userfavlocation: userFav,friend_list: friend_lists,:name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
             # render json: { :user => user, :user_account => user_account, :success => 10 }, status: 200
 
 
@@ -467,7 +441,7 @@ class Api::UsersController < ApplicationController
 
           friend_lists = UserFriendList.where(user_id: user.id)
 
-          render json: {:user => user, user_accounts: user_accounts,userfavlocation: userFav,friend_list: friend_lists, :name => name, :id => id, avatar_url: avatar , :success => 20 }, status: 200
+          render json: {:user => user, user_accounts: user_accounts,userfavlocation: userFav,friend_list: friend_lists, :name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
         else
           var.push(22)
           render json: { :error => var }, status: 400 # User password wrong
