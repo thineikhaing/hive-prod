@@ -18,16 +18,16 @@ class Api::UsersController < ApplicationController
 
       if pp.present?
         avatar = pp
-        render json: { avatar: avatar , status: 's3 pic'}
+        render json: { avatar_url: avatar , status: 's3 pic'}
 
       elsif params[:username] == "FavrBot"
         avatar = "assets/Avatars/Chat-Avatar-Admin.png"
-        render json: { avatar: avatar , status: 'local pic'}
+        render json: { local_avatar: avatar , status: 'local pic'}
 
       else
 
         avatar = Topic.get_avatar(params[:username])
-        render json: { avatar: avatar , status: 'local pic'}
+        render json: { local_avatar: avatar , status: 'local pic'}
 
       end
 
@@ -584,6 +584,10 @@ class Api::UsersController < ApplicationController
 
         if params[:email].present?
           user.email = params[:email]
+        end
+
+        if params[:avatar_url].present?
+          user.avatar_url = params[:avatar_url]
         end
 
         user.save!
