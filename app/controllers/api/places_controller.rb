@@ -365,12 +365,6 @@ class Api::PlacesController < ApplicationController
 
       end
 
-      # google_places = @client.spots(lat, lng, :name => keyword, :radius => 10000)
-      # google_places.each do |data|
-      #   p data.name
-      #   p data.vicinity
-      #   p "+++++++++++++"
-      # end
 
       places.each do |place|
 
@@ -391,21 +385,24 @@ class Api::PlacesController < ApplicationController
         end
       end
 
+      if !query.nil?
+        query.each do |q|
+          fdata = { name: q["name"],
+                    address: q["address"],
+                    latitude: q["latitude"],
+                    longitude: q["longitude"],
+                    img_url: "",
+                    user_id: nil,
+                    username: nil,
+                    source: Place::FACTUAL,
+                    source_id: q["factual_id"],
+                    status:'factual' }
 
-      query.each do |q|
-        fdata = { name: q["name"],
-                  address: q["address"],
-                  latitude: q["latitude"],
-                  longitude: q["longitude"],
-                  img_url: "",
-                  user_id: nil,
-                  username: nil,
-                  source: Place::FACTUAL,
-                  source_id: q["factual_id"],
-                  status:'factual' }
+          factual_data_array.push(fdata)
+        end
 
-        factual_data_array.push(fdata)
       end
+
 
       # p "factual"
       # p factual_data_array
