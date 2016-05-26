@@ -641,8 +641,6 @@ class Api::RoundtripController < ApplicationController
         },
         data:{
             trainfault_datetime: Time.now,
-            latitude: 0,
-            longitude: 0,
             smrtline: name,
             station1: station1,
             station2: station2,

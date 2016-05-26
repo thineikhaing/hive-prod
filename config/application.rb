@@ -166,11 +166,11 @@ module SMRT_Const
   Sengkang_West_Loop  = "SW"
   Bukit_Pangjang_Line = "BP"
 
-  North_South_Line    = "NS"
-  Northeast_Line      = "NE"
-  Downtown_Line       = "DT"
-  East_West_Line      = "EW"
-  Circle_Line         = "CC"
+  North_South_Line    = "NSL"
+  Northeast_Line      = "NEL"
+  Downtown_Line       = "DTL"
+  East_West_Line      = "EWL"
+  Circle_Line         = "CCL"
 
 end
 

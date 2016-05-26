@@ -548,19 +548,21 @@ class Api::UsersController < ApplicationController
   def edit_profile
     if current_user.present?
       user = User.find_by_id(current_user.id)
-      checkUsername = User.search_data(params[:username])
-      checkEmail = User.find_by_email(params[:email])
+
+
 
       var = [ ]
       #history = Historychange.new
 
       if params[:username].present?
+        checkUsername = User.search_data(params[:username])
         var.push(33) if Obscenity.profane?(params["username"]) == true
         #checkName.map { |cN| var.push(33) unless var.include?(33) if cN.downcase == "cunt" or cN.downcase == "shit" or cN.downcase == "cocksucker" or cN.downcase == "piss" or cN.downcase == "tits" or cN.downcase == "fuck" or cN.downcase == "motherfucker" or cN.downcase == "suck" or cN.downcase == "cheebye" }
         var.push(32) if checkUsername.present?
       end
 
       if params[:email].present?
+        checkEmail = User.find_by_email(params[:email])
         if checkEmail != nil
           var.push(31)
         end
