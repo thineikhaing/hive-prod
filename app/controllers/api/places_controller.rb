@@ -381,7 +381,7 @@ class Api::PlacesController < ApplicationController
                                 source: Place::HERENOW,
                                 place_id: place.id,
                                 status:'hive'})
-          data.push(place)                                                                      u
+          data.push(place)
 
         end
       end

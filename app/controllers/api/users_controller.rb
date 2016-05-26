@@ -548,12 +548,8 @@ class Api::UsersController < ApplicationController
   def edit_profile
     if current_user.present?
       user = User.find_by_id(current_user.id)
-
-
-
       var = [ ]
       #history = Historychange.new
-
       if params[:username].present?
         checkUsername = User.search_data(params[:username])
         var.push(33) if Obscenity.profane?(params["username"]) == true
