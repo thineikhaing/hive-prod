@@ -414,7 +414,11 @@ class Api::UsersController < ApplicationController
 
     if params[:email].present? and params[:password].present?
       var = [ ]
+      p "find user by email"
       user = User.find_by_email(params[:email])
+      p user.id
+      p user.username
+
       if user.present?
         p "present?"
         if user.valid_password?(params[:password])
@@ -431,6 +435,7 @@ class Api::UsersController < ApplicationController
 
           user_accounts = UserAccount.where(:user_id => user.id)
 
+
           name = user.username
           id = user.id
           avatar = Topic.get_avatar(user.username)
@@ -446,6 +451,9 @@ class Api::UsersController < ApplicationController
             usersArray= {id: user.id, username: user.username,last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,avatar_url:user.avatar_url,local_avatar: Topic.get_avatar(user.username)}
             activeUsersArray.push(usersArray)
           end
+           p "return user"
+           p user.id
+          p user.username
 
           render json: {:user => user, user_accounts: user_accounts,userfavlocation: userFav,friend_list: activeUsersArray, :name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
         else
