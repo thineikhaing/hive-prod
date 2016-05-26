@@ -589,7 +589,7 @@ class Api::UsersController < ApplicationController
         end
 
         user.save!
-        render json: { :user => user, :success => 30 }, status: 200
+        render json: { :user => user, local_avatar: Topic.get_avatar(user.username), :success => 30 }, status: 200
       else
         render json: { :error => var, message: 'Duplicate username!' }, status: 400
       end

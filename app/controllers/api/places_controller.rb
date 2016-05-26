@@ -351,6 +351,7 @@ class Api::PlacesController < ApplicationController
           # else
           #   url = ""
           # end
+
           google_data_array.push({name: data.name ,
                                   address: data.vicinity,
                                   latitude: data.lat,
@@ -380,7 +381,7 @@ class Api::PlacesController < ApplicationController
                                 source: Place::HERENOW,
                                 place_id: place.id,
                                 status:'hive'})
-          data.push(place)
+          data.push(place)                                                                      u
 
         end
       end
