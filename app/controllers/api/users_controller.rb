@@ -439,7 +439,15 @@ class Api::UsersController < ApplicationController
 
           friend_lists = UserFriendList.where(user_id: user.id)
 
-          render json: {:user => user, user_accounts: user_accounts,userfavlocation: userFav,friend_list: friend_lists, :name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
+          activeUsersArray = [ ]
+          friend_lists.each do |data|
+            p data
+            user = User.find(data.friend_id)
+            usersArray= {id: user.id, username: user.username,last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,avatar_url:user.avatar_url,local_avatar: Topic.get_avatar(user.username)}
+            activeUsersArray.push(usersArray)
+          end
+
+          render json: {:user => user, user_accounts: user_accounts,userfavlocation: userFav,friend_list: activeUsersArray, :name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
         else
           var.push(22)
           render json: { :error => var }, status: 400 # User password wrong
@@ -1100,7 +1108,7 @@ class Api::UsersController < ApplicationController
   def get_user_friend_list
     if current_user.present?
       friend_lists = UserFriendList.where(user_id: current_user.id)
-      usersArray = [ ]
+
       activeUsersArray = [ ]
       friend_lists.each do |data|
         p data
