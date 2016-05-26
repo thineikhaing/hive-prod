@@ -42,11 +42,9 @@ class Api::UsersController < ApplicationController
 
     end
 
-
   end
 
   def create_anonymous_user
-
 
     if params[:device_id].present?
 

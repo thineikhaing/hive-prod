@@ -318,7 +318,11 @@ class Api::PlacesController < ApplicationController
       factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
       p "factual data"
 
-      query = factual.table("global").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
+      begin
+        query = factual.table("global").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
+      rescue Geocoder::OverQueryLimitError
+        p "****** gecoder limit hit ******"
+      end
 
       # read_query = factual.table("places-sg").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
 
