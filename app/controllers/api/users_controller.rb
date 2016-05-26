@@ -447,8 +447,8 @@ class Api::UsersController < ApplicationController
           activeUsersArray = [ ]
           friend_lists.each do |data|
             p data
-            user = User.find(data.friend_id)
-            usersArray= {id: user.id, username: user.username,last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,avatar_url:user.avatar_url,local_avatar: Topic.get_avatar(user.username)}
+            activeuser = User.find(data.friend_id)
+            usersArray= {id: user.id, username: activeuser.username,last_known_latitude:activeuser.last_known_latitude,last_known_longitude:activeuser.last_known_longitude,avatar_url:activeuser.avatar_url,local_avatar: Topic.get_avatar(activeuser.username)}
             activeUsersArray.push(usersArray)
           end
            p "return user"
