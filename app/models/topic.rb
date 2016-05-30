@@ -1214,6 +1214,12 @@ class Topic < ActiveRecord::Base
 
     p "notification options"
 
+    p "device id::::"
+    p @to_device_id
+
+    p "title:::"
+    p self.title
+
     notification_options = {
         send_date: "now",
         badge: "1",
@@ -1233,6 +1239,8 @@ class Topic < ActiveRecord::Base
         devices: @to_device_id
     }
 
+    p "after noti options"
+
     if @to_device_id.count > 0
       options = @auth.merge({:notifications  => [notification_options]})
       options = {:request  => options}
@@ -1245,6 +1253,8 @@ class Topic < ActiveRecord::Base
       r = con.start {|http| http.request(req)}
       p "pushwoosh"
     end
+
+    p "end pushwoosh"
 
   end
 
