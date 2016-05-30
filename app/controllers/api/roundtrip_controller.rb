@@ -665,10 +665,6 @@ class Api::RoundtripController < ApplicationController
 
     render json:  {message: message}
 
-    #vehicleBreakdown = VehicleBreakdown.where(notify: false).take
-    #accident = Accident.where(notify: false).take
-    #weather = Weather.where(notify: false).take
-    #heavyTraffic = HeavyTraffic.where(notify: false).take
 
   end
 

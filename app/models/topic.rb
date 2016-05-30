@@ -31,7 +31,7 @@ class Topic < ActiveRecord::Base
   #
   #enums for topic type
 
-  enums %w(NORMAL IMAGE AUDIO VIDEO RPSGAME WEB POLL LUNCHEON FAVR CARMMUNICATE)
+  enums %w(NORMAL IMAGE AUDIO VIDEO RPSGAME WEB POLL LUNCHEON FAVR CARMMUNICATE TRAINFAULT)
 
   enums %w(NONE FLARE BEACON STICKY PROMO COSHOOT QUESTION ERRAND)
 
@@ -61,7 +61,7 @@ class Topic < ActiveRecord::Base
     if options[:content].present?      #return topic json with content information
       super(only: [:id, :state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
-                   :special_type, :created_at], methods: [:username,:avatar_url, :place_information, :tag_information, :content])
+                   :special_type, :created_at], methods: [:username,:avatar_url,:local_avatar, :place_information, :tag_information, :content])
     else
       super(only: [:id,:state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
@@ -75,6 +75,7 @@ class Topic < ActiveRecord::Base
 
   def avatar_url
     avatar = User.find_by_id(self.user_id).avatar_url
+
     if avatar.nil?
       username = User.find_by_id(self.user_id).username
 
@@ -83,7 +84,24 @@ class Topic < ActiveRecord::Base
       else
       avatar = Topic.get_avatar(username)
       end
+    end
 
+    return avatar
+  end
+
+
+  def local_avatar
+    avatar = User.find_by_id(self.user_id).avatar_url
+    if avatar.nil?
+      username = User.find_by_id(self.user_id).username
+      if username  == "FavrBot"
+        avatar = "assets/Avatars/Chat-Avatar-Admin.png"
+        else
+        avatar = Topic.get_avatar(username)
+      end
+
+    else
+      avatar = nil
     end
 
     return avatar
@@ -1163,6 +1181,69 @@ class Topic < ActiveRecord::Base
         notify_carmmunicate_msg_to_selected_users(users_to_push, false)
 
     end
+  end
+
+
+  def notify_train_fault_to_roundtrip_users(name, station1, station2, towards)
+
+    @users_to_push = []
+    @to_device_id = []
+
+    @users = User.all
+
+    time_allowance = Time.now - 10.minutes.ago
+    @users.each do |u|
+      if u.check_in_time.present?
+        time_difference = Time.now - u.check_in_time
+        unless time_difference.to_i > time_allowance.to_i
+          @users_to_push.push(u)
+        end
+      end
+    end
+
+    @users_to_push.each do |u|
+      user= User.find_by_id(u)
+      if user.data.present?
+        hash_array = user.data
+        device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+        @to_device_id.push(device_id)
+      end
+    end
+
+    notification_options = {
+        send_date: "now",
+        badge: "1",
+        sound: "default",
+        content:{
+            fr:self.title,
+            en:self.title
+        },
+        data:{
+            trainfault_datetime: Time.now,
+            smrtline: name,
+            station1: station1,
+            station2: station2,
+            towards: towards,
+            type: "train fault"
+        },
+        devices: @to_device_id
+    }
+
+    if @to_device_id.count > 0
+      options = @auth.merge({:notifications  => [notification_options]})
+      options = {:request  => options}
+      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+      url = URI.parse(full_path)
+      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+      req.body = options.to_json
+      con = Net::HTTP.new(url.host, url.port)
+      con.use_ssl = true
+      r = con.start {|http| http.request(req)}
+      p "pushwoosh"
+    end
+
+
+
   end
 
   def get_active_users_to_push(current_lat, current_lng, raydius, current_user_id)

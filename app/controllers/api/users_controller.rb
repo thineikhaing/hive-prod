@@ -371,7 +371,6 @@ class Api::UsersController < ApplicationController
     end
   end
 
-
   # def register_apn
   #   if params[:auth_token].present? and params[:push_token].present?
   #     user = User.find_by_authentication_token(params[:auth_token])
@@ -533,7 +532,6 @@ class Api::UsersController < ApplicationController
       end
     end
   end
-
 
   def update_password
     # Updates PASSWORD
@@ -868,7 +866,6 @@ class Api::UsersController < ApplicationController
     render json: { username: User.generate_new_username }
   end
 
-
   def create_incident_history
     host_id = params[:host_id]
     peer_id = params[:peer_id]
@@ -979,7 +976,6 @@ class Api::UsersController < ApplicationController
 
 
   end
-
 
   def save_user_fav_location
     place_id = nil

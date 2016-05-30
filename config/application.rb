@@ -163,7 +163,6 @@ module SMRT_Const
   Sengkang_East_Loop  = "SE"
   Sengkang_West_Loop  = "SW"
   Punggol_East_Loop   = "PE"
-  Sengkang_West_Loop  = "SW"
   Bukit_Pangjang_Line = "BP"
 
   North_South_Line    = "NSL"
@@ -190,25 +189,33 @@ module PushWoosh_Const
 end
 
 module AWS_Link
+
+ AWS_Avatar_D_Link = "http://hivedevavatars.s3.amazonaws.com/"
  AWS_Image_D_Link = "https://hivedevimages.s3.amazonaws.com/"
  AWS_Audio_D_Link = "https://hivedevaudioclips.s3.amazonaws.com/"
 
+ AWS_Avatar_S_Link = "http://hivestagingavatars.s3.amazonaws.com/"
  AWS_Image_S_Link = "https://hivestagingimages.s3.amazonaws.com/"
  AWS_Audio_S_Link = "https://hivestagingaudioclips.s3.amazonaws.com/"
 
- AWS_Image_P_Link= "https://hiveproductionimages.s3.amazonaws.com/"
+ AWS_Avatar_P_Link = "http://hiveproductionavatars.s3.amazonaws.com/"
+ AWS_Image_P_Link = "https://hiveproductionimages.s3.amazonaws.com/"
  AWS_Audio_P_Link = "https://hiveproductionaudioclips.s3.amazonaws.com/"
 end
 
 module AWS_Bucket
   Image_D = "hivedevimages"
   Audio_D = "hivedevaudioclips"
+  Avatar_D = "hivedevavatars"
 
   Image_S = "hivestagingimages"
   Audio_S = "hivestagingaudioclipss"
+  Avatar_S = "hivestagingavatars"
 
   Image_P = "hiveproductionimages"
   Audio_P = "hiveproductionimages"
+  Avatar_P = "hiveproductionavatars"
+
 end
 
 module GoogleAPI

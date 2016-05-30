@@ -4,6 +4,8 @@ class Api::TopicsController < ApplicationController
   def create
     if params[:app_key].present?
       p hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+      title = params[:title]
+
       tag = Tag.new
       if hiveapplication.present?
 
@@ -94,15 +96,38 @@ class Api::TopicsController < ApplicationController
           params[:special_type].present? ? special_type = params[:special_type] : special_type = 0
           #check the profanity
 
+          name = params[:name]
+          station1 = params[:station1]
+          station2 = params[:station2]
+          towards = params[:towards]
+          reason = params[:reason]
+
+
+
+          if params[:reason].present?
+
+            if station1.present? && station2.present?
+              title = "[#{name}]"+reason +", between "+station1+" and "+station2
+
+            elsif station1.present? && station2.blank?
+              title =  "[#{name}]"+reason +" from "+station1
+            end
+
+          end
+
+          if towards.present?
+            title += " towards "+towards
+          end
+
           if params[:image_url].present?
-            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type],
+            topic = Topic.create(title:title, user_id: current_user.id, topic_type: params[:topic_type],
                                  topic_sub_type:topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit],
                                  value: params[:value],place_id: place_id, data: result, image_url: params[:image_url],
                                  width: params[:width], height: params[:height], special_type: special_type,likes: likes, dislikes: dislikes)
 
             topic.delay.topic_image_upload_job  if params[:topic_type]== Topic::IMAGE.to_s
           else
-            topic = Topic.create(title: params[:title], user_id: current_user.id, topic_type: params[:topic_type],
+            topic = Topic.create(title:title, user_id: current_user.id, topic_type: params[:topic_type],
                                  topic_sub_type: topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit],
                                  value: params[:value], place_id: place_id, data: result, special_type: special_type,likes: likes, dislikes: dislikes)
           end
@@ -120,13 +145,16 @@ class Api::TopicsController < ApplicationController
 
           if Rails.env.development?
             carmmunicate_key = Carmmunicate_key::Development_Key
-            p favr_key = Favr_key::Development_Key
+            favr_key = Favr_key::Development_Key
+            round_key = RoundTrip_key::Development_Key
           elsif Rails.env.staging?
             carmmunicate_key = Carmmunicate_key::Staging_Key
-            p favr_key = Favr_key::Staging_Key
+            favr_key = Favr_key::Staging_Key
+            round_key = RoundTrip_key::Staging_Key
           else
             carmmunicate_key = Carmmunicate_key::Production_Key
-            p favr_key = Favr_key::Production_Key
+            favr_key = Favr_key::Production_Key
+            round_key = RoundTrip_key::Production_Key
           end
 
           if hiveapplication.api_key == carmmunicate_key  and topic.present?
@@ -139,6 +167,19 @@ class Api::TopicsController < ApplicationController
               topic.notify_carmmunicate_msg_to_nearby_users
             end
           end
+
+          if hiveapplication.api_key == round_key  and topic.present?
+            p "notify to carmic user"
+            if params[:users_to_push].present?
+              #broadcast to selected user group
+              # topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true)
+            else
+              #broadcast users within 5km/10km
+              topic.notify_train_fault_to_roundtrip_users(name, station1, station2, towards)
+            end
+          end
+
+
           #increase like and dislike count
 
           if likes > 0
@@ -804,8 +845,6 @@ class Api::TopicsController < ApplicationController
 
     end
   end
-
-
 
   def user_rating
     if params[:user_id].present? and params[:topic_id].present?
