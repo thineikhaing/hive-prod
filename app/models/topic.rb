@@ -1186,6 +1186,8 @@ class Topic < ActiveRecord::Base
 
   def notify_train_fault_to_roundtrip_users(name, station1, station2, towards)
 
+    p "start added active users"
+
     @users_to_push = []
     @to_device_id = []
 
@@ -1209,6 +1211,8 @@ class Topic < ActiveRecord::Base
         @to_device_id.push(device_id)
       end
     end
+
+    p "notification options"
 
     notification_options = {
         send_date: "now",
@@ -1241,8 +1245,6 @@ class Topic < ActiveRecord::Base
       r = con.start {|http| http.request(req)}
       p "pushwoosh"
     end
-
-
 
   end
 

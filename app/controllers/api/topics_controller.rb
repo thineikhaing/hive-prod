@@ -169,14 +169,9 @@ class Api::TopicsController < ApplicationController
           end
 
           if hiveapplication.api_key == round_key  and topic.present?
-            p "notify to carmic user"
-            if params[:users_to_push].present?
-              #broadcast to selected user group
-              # topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true)
-            else
-              #broadcast users within 5km/10km
-              topic.notify_train_fault_to_roundtrip_users(name, station1, station2, towards)
-            end
+            p "notify to round trip user"
+
+            topic.notify_train_fault_to_roundtrip_users(name, station1, station2, towards)
           end
 
 
