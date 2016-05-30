@@ -1241,6 +1241,9 @@ class Topic < ActiveRecord::Base
 
     p "after noti options"
 
+    appID = PushWoosh_Const::RT_D_APP_ID
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+
     if @to_device_id.count > 0
       options = @auth.merge({:notifications  => [notification_options]})
       options = {:request  => options}
