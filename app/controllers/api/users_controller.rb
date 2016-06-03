@@ -279,7 +279,6 @@ class Api::UsersController < ApplicationController
             time_allowance = Time.now - 20.seconds.ago
             if params[:data].present?
               p "get data from app"
-
               data = getHashValuefromString(params[:data])
               data["speed"].present? ? speed = data["speed"]  : speed = "-1"
               data ["direction"].present? ? direction = data["direction"]  : direction= "-1"
@@ -289,6 +288,8 @@ class Api::UsersController < ApplicationController
               p "update user data when check in"
               user.update_user_peerdrivedata(speed,direction,activity,heartrate)
               CarActionLog.create(user_id:  user.id,latitude: params[:latitude], longitude: params[:longitude], speed: speed, direction: direction,activity: activity, heartrate: heartrate)
+            else
+              user.update_user_peerdrivedata(" "," "," "," ")
             end
           else
             time_allowance = Time.now - 10.minutes.ago
