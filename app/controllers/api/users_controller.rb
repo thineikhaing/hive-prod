@@ -274,7 +274,7 @@ class Api::UsersController < ApplicationController
           p hive_application.api_key.to_s
           p carmmunicate_key.to_s
 
-          if hive_application.api_key.to_s == carmmunicate_key.to_s
+          if hive_application.api_key == carmmunicate_key
 
             time_allowance = Time.now - 20.seconds.ago
             if params[:data].present?
@@ -288,8 +288,7 @@ class Api::UsersController < ApplicationController
               p "update user data when check in"
               user.update_user_peerdrivedata(speed,direction,activity,heartrate)
               CarActionLog.create(user_id:  user.id,latitude: params[:latitude], longitude: params[:longitude], speed: speed, direction: direction,activity: activity, heartrate: heartrate)
-            else
-              user.update_user_peerdrivedata(" "," "," "," ")
+
             end
           else
             time_allowance = Time.now - 10.minutes.ago
@@ -303,30 +302,41 @@ class Api::UsersController < ApplicationController
       end
 
       #create_car_action_logs(user.id, params[:latitude], params[:longitude], speed, direction, activity, heartrate)
-
       users = User.nearest(params[:latitude], params[:longitude], radius)
 
-      users.each do |u|
-        if u.check_in_time.present?
-          time_difference = Time.now - u.check_in_time
-          unless time_difference.to_i > time_allowance.to_i
-            usersArray.push(u)
+      if hive_application.api_key == carmmunicate_key
+        users.each do |u|
+          if u.check_in_time.present? && u.data["plate_number"].present?
+            time_difference = Time.now - u.check_in_time
+            unless time_difference.to_i > time_allowance.to_i
+              usersArray.push(u)
+            end
           end
         end
-      end
 
-      @usersArray = []
-      @users = User.all
-
-      @users.each do |u|
-        if u.check_in_time.present?
-          time_difference = Time.now - u.check_in_time
-          unless time_difference.to_i > time_allowance.to_i
-            @usersArray.push(u)
+      else
+        users.each do |u|
+          if u.check_in_time.present?
+            time_difference = Time.now - u.check_in_time
+            unless time_difference.to_i > time_allowance.to_i
+              usersArray.push(u)
+            end
           end
         end
+
       end
 
+      # @usersArray = []
+      # @users = User.all
+      #
+      # @users.each do |u|
+      #   if u.check_in_time.present?
+      #     time_difference = Time.now - u.check_in_time
+      #     unless time_difference.to_i > time_allowance.to_i
+      #       @usersArray.push(u)
+      #     end
+      #   end
+      # end
 
       usersArray.each do |ua|
         unless ua.id == current_user.id
