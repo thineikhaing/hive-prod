@@ -254,6 +254,8 @@ class Api::UsersController < ApplicationController
 
       Userpreviouslocation.create(latitude: params[:latitude], longitude: params[:longitude], radius: radius, user_id: current_user.id) if params[:save] == "true"
 
+      p "app key for user check in"
+      p params[:app_key]
 
       if params[:app_key].present?
         hive_application = HiveApplication.find_by_api_key(params[:app_key])
@@ -264,8 +266,10 @@ class Api::UsersController < ApplicationController
         else
           carmmunicate_key = Carmmunicate_key::Production_Key
         end
+        p carmmunicate_key
+
         if hive_application.present?
-          if hive_application.api_key ==carmmunicate_key
+          if hive_application.api_key == carmmunicate_key
             time_allowance = Time.now - 20.seconds.ago
             if params[:data].present?
               data = getHashValuefromString(params[:data])
@@ -273,6 +277,8 @@ class Api::UsersController < ApplicationController
               data ["direction"].present? ? direction = data["direction"]  : direction= "-1"
               data["activity"].present? ? activity = data["activity"] : activity=""
               data["heartrate"].present? ? heartrate = data["heartrate"] : heartrate=""
+
+              p "update user data when check in"
               user.update_user_peerdrivedata(speed,direction,activity,heartrate)
               CarActionLog.create(user_id:  user.id,latitude: params[:latitude], longitude: params[:longitude], speed: speed, direction: direction,activity: activity, heartrate: heartrate)
             end
