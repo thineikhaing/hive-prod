@@ -266,12 +266,20 @@ class Api::UsersController < ApplicationController
         else
           carmmunicate_key = Carmmunicate_key::Production_Key
         end
+        p "carmic key"
         p carmmunicate_key
 
         if hive_application.present?
-          if hive_application.api_key == carmmunicate_key
+          p "if hive app present?"
+          p hive_application.api_key.to_s
+          p carmmunicate_key.to_s
+
+          if hive_application.api_key.to_s == carmmunicate_key.to_s
+
             time_allowance = Time.now - 20.seconds.ago
             if params[:data].present?
+              p "get data from app"
+
               data = getHashValuefromString(params[:data])
               data["speed"].present? ? speed = data["speed"]  : speed = "-1"
               data ["direction"].present? ? direction = data["direction"]  : direction= "-1"
