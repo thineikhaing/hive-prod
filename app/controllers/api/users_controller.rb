@@ -303,7 +303,7 @@ class Api::UsersController < ApplicationController
 
       #create_car_action_logs(user.id, params[:latitude], params[:longitude], speed, direction, activity, heartrate)
       users = User.nearest(params[:latitude], params[:longitude], radius)
-
+      @usersArray = []
       if hive_application.api_key == carmmunicate_key
         users.each do |u|
           if u.check_in_time.present? && u.data["plate_number"].present?
