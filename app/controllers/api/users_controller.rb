@@ -312,10 +312,12 @@ class Api::UsersController < ApplicationController
         end
       end
 
+
       usersArray.each do |ua|
         unless ua.id == current_user.id
           user = User.find(ua.id)
           avatar = Topic.get_avatar(user.username)
+          avatar_url = ua.avatar_url rescue ""
           active_users = { id: ua.id, username: ua.username, avatar_url: ua.avatar_url,local_avatar: avatar, last_known_latitude: ua.last_known_latitude, last_known_longitude: ua.last_known_longitude , data: ua.data, updated_at: ua.updated_at}
           activeUsersArray.push(active_users)
         end

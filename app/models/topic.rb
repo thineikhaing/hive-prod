@@ -61,7 +61,7 @@ class Topic < ActiveRecord::Base
     if options[:content].present?      #return topic json with content information
       super(only: [:id, :state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
-                   :special_type, :created_at], methods: [:username,:avatar_url,:local_avatar, :place_information, :tag_information, :content])
+                   :special_type, :created_at], methods: [:username,:avatar_url, :place_information, :tag_information, :content])
     else
       super(only: [:id,:state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
@@ -769,7 +769,7 @@ class Topic < ActiveRecord::Base
         user_id: self.user_id,
         topic_type: self.topic_type,
         state: self.state,
-        topic_sub_type: self.topic_sub_type,
+        topic_sub_type: self.topic_sub_type,                                                                                                                                                                                            user
         place_id: self.place_id,
         image_url: self.image_url,
         width:  self.width,
