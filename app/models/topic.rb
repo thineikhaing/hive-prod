@@ -769,7 +769,7 @@ class Topic < ActiveRecord::Base
         user_id: self.user_id,
         topic_type: self.topic_type,
         state: self.state,
-        topic_sub_type: self.topic_sub_type,                                                                                                                                                                                            user
+        topic_sub_type: self.topic_sub_type,
         place_id: self.place_id,
         image_url: self.image_url,
         width:  self.width,
