@@ -258,6 +258,7 @@ class Api::UsersController < ApplicationController
 
       if params[:app_key].present?
         hive_application = HiveApplication.find_by_api_key(params[:app_key])
+
         users = users.where("app_data ->'app_id#{hive_application.id}' = '#{hive_application.api_key}'")
 
         if Rails.env.development?

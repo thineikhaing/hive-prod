@@ -323,6 +323,7 @@ class Api::PlacesController < ApplicationController
       rescue Geocoder::OverQueryLimitError
         p "****** gecoder limit hit ******"
       end
+      #Google Geocoding API error: over query limit.
 
       # read_query = factual.table("places-sg").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
 
@@ -341,6 +342,7 @@ class Api::PlacesController < ApplicationController
         p "GooglePlaces OverQueryLimitError"
         # raise
       end
+
 
       if !google_places.nil?
 
