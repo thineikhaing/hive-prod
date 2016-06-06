@@ -333,17 +333,17 @@ class Api::UsersController < ApplicationController
 
       end
 
-      # @usersArray = []
-      # @users = User.all
-      #
-      # @users.each do |u|
-      #   if u.check_in_time.present?
-      #     time_difference = Time.now - u.check_in_time
-      #     unless time_difference.to_i > time_allowance.to_i
-      #       @usersArray.push(u)
-      #     end
-      #   end
-      # end
+      testusersArray = []
+      testusers = users
+
+      testusers.each do |u|
+        if u.check_in_time.present?
+          time_difference = Time.now - u.check_in_time
+          unless time_difference.to_i > time_allowance.to_i
+            testusersArray.push(u)
+          end
+        end
+      end
 
       usersArray.each do |ua|
         unless ua.id == current_user.id
@@ -358,7 +358,7 @@ class Api::UsersController < ApplicationController
         end
       end
 
-      render json: { users: activeUsersArray }
+      render json: { users: activeUsersArray ,testusers: testusersArray}
     else
       render json: { error_msg: "Param user id, authentication token, latitude and longitude must be presented"}, status: 400
     end
