@@ -307,12 +307,20 @@ class Api::UsersController < ApplicationController
       # p "user by app_key"
       # p users = users.where("app_data ->'app_id#{app.id}' = '#{app.api_key}'")
 
-      "user by app_key"
 
-      users = users.where("app_data ->'app_id#{hive_application.id}' = '#{hive_application.api_key}'")
 
       usersArray = []
       if hive_application.api_key == carmmunicate_key
+        users.each do |u|
+          if u.check_in_time.present? && u.data["plate_number"].present?
+            time_difference = Time.now - u.check_in_time
+            unless time_difference.to_i > time_allowance.to_i
+              usersArray.push(u)
+            end
+          end
+        end
+
+      else
         users.each do |u|
           if u.check_in_time.present?
             time_difference = Time.now - u.check_in_time
