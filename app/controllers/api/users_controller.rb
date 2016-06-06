@@ -303,18 +303,16 @@ class Api::UsersController < ApplicationController
 
       #create_car_action_logs(user.id, params[:latitude], params[:longitude], speed, direction, activity, heartrate)
       users = User.nearest(params[:latitude], params[:longitude], radius)
+
+      # p "user by app_key"
+      # p users = users.where("app_data ->'app_id#{app.id}' = '#{app.api_key}'")
+
+      "user by app_key"
+
+      users = users.where("app_data ->'app_id#{hive_application.id}' = '#{hive_application.api_key}'")
+
       usersArray = []
       if hive_application.api_key == carmmunicate_key
-        users.each do |u|
-          if u.check_in_time.present? && u.data["plate_number"].present?
-            time_difference = Time.now - u.check_in_time
-            unless time_difference.to_i > time_allowance.to_i
-              usersArray.push(u)
-            end
-          end
-        end
-
-      else
         users.each do |u|
           if u.check_in_time.present?
             time_difference = Time.now - u.check_in_time
@@ -1020,7 +1018,6 @@ class Api::UsersController < ApplicationController
       #   place_id = place.id
       #
       # end
-
       place = Place.new
       params[:name].present? ? name = params[:name] : name = nil
       params[:latitude].present? ? latitude = params[:latitude] : latitude = nil
