@@ -254,11 +254,12 @@ class Api::UsersController < ApplicationController
 
       Userpreviouslocation.create(latitude: params[:latitude], longitude: params[:longitude], radius: radius, user_id: current_user.id) if params[:save] == "true"
 
-      p "app key for user check in"
-      p params[:app_key]
+      users = User.nearest(params[:latitude], params[:longitude], radius)
 
       if params[:app_key].present?
         hive_application = HiveApplication.find_by_api_key(params[:app_key])
+        users = users.where("app_data ->'app_id#{hive_application.id}' = '#{hive_application.api_key}'")
+
         if Rails.env.development?
           carmmunicate_key = Carmmunicate_key::Development_Key
         elsif Rails.env.staging?
@@ -266,26 +267,20 @@ class Api::UsersController < ApplicationController
         else
           carmmunicate_key = Carmmunicate_key::Production_Key
         end
-        p "carmic key"
-        p carmmunicate_key
 
         if hive_application.present?
-          p "if hive app present?"
-          p hive_application.api_key.to_s
-          p carmmunicate_key.to_s
 
           if hive_application.api_key == carmmunicate_key
 
             time_allowance = Time.now - 20.seconds.ago
             if params[:data].present?
-              p "get data from app"
+
               data = getHashValuefromString(params[:data])
               data["speed"].present? ? speed = data["speed"]  : speed = "-1"
               data ["direction"].present? ? direction = data["direction"]  : direction= "-1"
               data["activity"].present? ? activity = data["activity"] : activity=""
               data["heartrate"].present? ? heartrate = data["heartrate"] : heartrate=""
 
-              p "update user data when check in"
               user.update_user_peerdrivedata(speed,direction,activity,heartrate)
               CarActionLog.create(user_id:  user.id,latitude: params[:latitude], longitude: params[:longitude], speed: speed, direction: direction,activity: activity, heartrate: heartrate)
 
@@ -302,45 +297,14 @@ class Api::UsersController < ApplicationController
       end
 
       #create_car_action_logs(user.id, params[:latitude], params[:longitude], speed, direction, activity, heartrate)
-      users = User.nearest(params[:latitude], params[:longitude], radius)
-
-      p "user by app_key"
-      p hive_application.api_key
-      users = users.where("app_data ->'app_id#{hive_application.id}' = '#{hive_application.api_key}'")
-      p users.count
-
 
       usersArray = []
-      if hive_application.api_key == carmmunicate_key
-        users.each do |u|
-          if u.check_in_time.present? && u.data["plate_number"].present?
-            time_difference = Time.now - u.check_in_time
-            unless time_difference.to_i > time_allowance.to_i
-              usersArray.push(u)
-            end
-          end
-        end
 
-      else
-        users.each do |u|
-          if u.check_in_time.present?
-            time_difference = Time.now - u.check_in_time
-            unless time_difference.to_i > time_allowance.to_i
-              usersArray.push(u)
-            end
-          end
-        end
-
-      end
-
-      testusersArray = []
-      testusers = users
-
-      testusers.each do |u|
+      users.each do |u|
         if u.check_in_time.present?
           time_difference = Time.now - u.check_in_time
           unless time_difference.to_i > time_allowance.to_i
-            testusersArray.push(u)
+            usersArray.push(u)
           end
         end
       end
@@ -358,7 +322,7 @@ class Api::UsersController < ApplicationController
         end
       end
 
-      render json: { users: activeUsersArray ,testusers: testusersArray}
+      render json: { users: activeUsersArray}
     else
       render json: { error_msg: "Param user id, authentication token, latitude and longitude must be presented"}, status: 400
     end
