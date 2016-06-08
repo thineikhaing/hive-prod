@@ -9,7 +9,7 @@
           %th id
           %th User Name
           %th email
-          %th Action
+          %th auth
       %tbody
         -count = 0
         -@users.each do |user|
@@ -17,5 +17,5 @@
             %td=user.id
             %td=link_to user.username, user_accounts_path(user.id)
             %td=user.email rescue ''
-            %td
+            %td=user.authentication_token
     = paginate @users

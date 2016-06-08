@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160408035353) do
+ActiveRecord::Schema.define(version: 20160608053352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -341,6 +341,8 @@ ActiveRecord::Schema.define(version: 20160408035353) do
     t.string   "title_indexes",      limit: 255
     t.integer  "checker"
     t.integer  "given_time"
+    t.integer  "start_place_id",                 default: 0
+    t.integer  "end_place_id",                   default: 0
   end
 
   create_table "user_accounts", force: :cascade do |t|

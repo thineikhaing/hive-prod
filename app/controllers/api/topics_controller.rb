@@ -31,15 +31,55 @@ class Api::TopicsController < ApplicationController
 
         end
 
+        params[:start_name].present? ? start_name = params[:start_name] : start_name = nil
+        params[:start_address].present? ? start_address = params[:start_address] : start_address = ""
+        params[:start_latitude].present? ? start_latitude = params[:start_latitude] : start_latitude = nil
+        params[:start_longitude].present? ? start_longitude = params[:start_longitude] : start_longitude = nil
+        params[:start_place_id].present? ? start_place_id = params[:start_place_id] : start_place_id = nil
+        params[:start_source].present? ? start_source = params[:start_source] : start_source = ""
+        params[:start_source_id].present? ? start_source_id = params[:start_source_id] : start_source_id = nil
+
+
+        params[:end_name].present? ? end_name = params[:end_name] : end_name = nil
+        params[:end_address].present? ? end_address = params[:end_address] : end_address = ""
+        params[:end_latitude].present? ? end_latitude = params[:end_latitude] : end_latitude = nil
+        params[:end_longitude].present? ? end_longitude = params[:end_longitude] : end_longitude = nil
+        params[:end_place_id].present? ? end_place_id = params[:end_place_id] : end_place_id = nil
+        params[:end_source].present? ? end_source = params[:end_source] : end_source = ""
+        params[:end_source_id].present? ? end_source_id = params[:end_source_id] : end_source_id = nil
+
+        category = ""
+        locality=""
+        country=""
+        postcode=""
+        img_url = nil
+        choice="others"
+
+        start_id = 0
+        end_id = 0
+
+        if params[:start_name]
+          place = Place.new
+          start_place = place.add_record(start_name, start_latitude, start_longitude, start_address, start_source, start_source_id, start_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
+          p "start place info::::"
+          p start_id = start_place[:place].id
+          p start_place[:place].name
+
+          end_place = place.add_record(end_name, end_latitude, end_longitude, end_address, end_source, end_source_id, end_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
+          p "end place info::::"
+          p end_id = end_place[:place].id
+          p end_place[:place].name
+
+        end
 
 
         p "get data value"
         if current_user.present?
           data = getHashValuefromString(params[:data]) if params[:data].present?
 
-          p walk = getHashValuefromString(params[:walk]) if params[:walk].present?
-
-          p train = getHashValuefromString(params[:train]) if params[:train].present?
+          # p walk = getHashValuefromString(params[:walk]) if params[:walk].present?
+          #
+          # p train = getHashValuefromString(params[:train]) if params[:train].present?
 
           #get all extra columns that define in app setting
           appAdditionalField = AppAdditionalField.where(:app_id => hiveapplication.id, :table_name => "Topic")
@@ -64,21 +104,21 @@ class Api::TopicsController < ApplicationController
               result = defined_Fields
             end
 
-            if walk.present?
-
-              p "merge with walk"
-              p result["walk"]= walk
-
-              # to retrieve
-              # hash_as_string = "{\"distance\"=>\"onemeter\", \"startpoint\"=>\"novena\", \"endpoint\"=>\"cityhall\"}"
-              # JSON.parse hash_as_string.gsub('=>', ':')
-            end
-
-            if train.present?
-
-              p "merge with train"
-              p result["train"]= train
-            end
+            # if walk.present?
+            #
+            #   p "merge with walk"
+            #   p result["walk"]= walk
+            #
+            #   # to retrieve
+            #   # hash_as_string = "{\"distance\"=>\"onemeter\", \"startpoint\"=>\"novena\", \"endpoint\"=>\"cityhall\"}"
+            #   # JSON.parse hash_as_string.gsub('=>', ':')
+            # end
+            #
+            # if train.present?
+            #
+            #   p "merge with train"
+            #   p result["train"]= train
+            # end
 
             if params[:depature_time].present?
               result["depature_time"]= params[:depature_time]
@@ -98,7 +138,7 @@ class Api::TopicsController < ApplicationController
           params[:special_type].present? ? special_type = params[:special_type] : special_type = 0
           #check the profanity
 
-          name = params[:name]
+          name = params[:smrt_name]
           station1 = params[:station1]
           station2 = params[:station2]
           towards = params[:towards]
@@ -121,14 +161,14 @@ class Api::TopicsController < ApplicationController
           end
 
           if params[:image_url].present?
-            topic = Topic.create(title:title, user_id: current_user.id, topic_type: params[:topic_type],
+            topic = Topic.create(title:title, user_id: current_user.id, topic_type: params[:topic_type],start_place_id: start_id, end_place_id: end_id,
                                  topic_sub_type:topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit],
                                  value: params[:value],place_id: place_id, data: result, image_url: params[:image_url],
                                  width: params[:width], height: params[:height], special_type: special_type,likes: likes, dislikes: dislikes)
 
             topic.delay.topic_image_upload_job  if params[:topic_type]== Topic::IMAGE.to_s
           else
-            topic = Topic.create(title:title, user_id: current_user.id, topic_type: params[:topic_type],
+            topic = Topic.create(title:title, user_id: current_user.id, topic_type: params[:topic_type] ,start_place_id: start_id , end_place_id: end_id,
                                  topic_sub_type: topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit],
                                  value: params[:value], place_id: place_id, data: result, special_type: special_type,likes: likes, dislikes: dislikes)
           end

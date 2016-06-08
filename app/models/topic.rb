@@ -61,11 +61,11 @@ class Topic < ActiveRecord::Base
     if options[:content].present?      #return topic json with content information
       super(only: [:id, :state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
-                   :special_type, :created_at], methods: [:username,:avatar_url, :place_information, :tag_information, :content])
+                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username,:avatar_url, :place_information, :tag_information, :rtplaces_information, :content])
     else
       super(only: [:id,:state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
-                   :special_type, :created_at], methods: [:username, :avatar_url, :place_information, :tag_information, :content])
+                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username, :avatar_url, :place_information, :tag_information,:rtplaces_information, :content])
     end
   end
 
@@ -116,7 +116,28 @@ class Topic < ActiveRecord::Base
     end
   end
 
+  def rtplaces_information
 
+    places = {}
+    if self.start_place_id.present? and self.start_place_id > 0
+      place = Place.find(self.start_place_id)
+      start_place = { id: place.id, name: place.name, latitude: place.latitude, longitude: place.longitude, address: place.address, category: place.category, source: place.source, source_id: place.source_id, user_id: place.user_id, country: place.country, postal_code: place.postal_code, chain_name: place.chain_name, contact_number: place.contact_number, img_url: place.img_url,locality: place.locality, region: place.region, neighbourhood: place.neighbourhood, data: place.data }
+    else
+      { id: nil, name: nil, latitude: nil, longitude: nil, address: nil , custom_pin_url: nil, source: nil, user_id: nil, popular: nil }
+    end
+
+    if self.end_place_id.present? and self.end_place_id > 0
+      place = Place.find(self.end_place_id)
+      end_place = { id: place.id, name: place.name, latitude: place.latitude, longitude: place.longitude, address: place.address, category: place.category, source: place.source, source_id: place.source_id, user_id: place.user_id, country: place.country, postal_code: place.postal_code, chain_name: place.chain_name, contact_number: place.contact_number, img_url: place.img_url,locality: place.locality, region: place.region, neighbourhood: place.neighbourhood, data: place.data }
+    else
+      { id: nil, name: nil, latitude: nil, longitude: nil, address: nil , custom_pin_url: nil, source: nil, user_id: nil, popular: nil }
+    end
+
+
+    { start_place: start_place, end_place: end_place}
+
+
+  end
 
   #
   #
