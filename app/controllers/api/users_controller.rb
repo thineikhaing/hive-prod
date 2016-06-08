@@ -39,9 +39,7 @@ class Api::UsersController < ApplicationController
         user.save
         render json: { status: "save user profile picture" }
       end
-
     end
-
   end
 
   def create_anonymous_user
@@ -225,11 +223,7 @@ class Api::UsersController < ApplicationController
 
     if current_user.present? && params[:latitude].present? && params[:longitude].present?
 
-      # current_user.update_attributes(last_known_latitude: params[:latitude], last_known_longitude: params[:longitude])
-
-      current_user.last_known_latitude = params[:latitude]
-      current_user.last_known_longitude= params[:longitude]
-      current_user.save
+      current_user.update(last_known_latitude: params[:latitude], last_known_longitude: params[:longitude])
 
       user = User.find(current_user.id)
 
@@ -246,10 +240,10 @@ class Api::UsersController < ApplicationController
       else
         user.check_in_time = Time.now
       end
-
-      user.last_known_latitude = params[:latitude]
-      user.last_known_longitude= params[:longitude]
       user.save!
+
+      # user.update(last_known_latitude: params[:latitude],last_known_longitude: params[:longitude])
+
       params[:radius].present? ? radius = params[:radius].to_i : radius = 1
 
       Userpreviouslocation.create(latitude: params[:latitude], longitude: params[:longitude], radius: radius, user_id: current_user.id) if params[:save] == "true"
@@ -925,7 +919,6 @@ class Api::UsersController < ApplicationController
 
         if (time_diff_min < 30)
           p "time is less than 30"
-
           if (old_host.to_i != peer_id.to_i && old_host.to_s != host_id.to_i)
             p "not equal record within 30s"
             incident_hostory = IncidentHistory.create(host_id: host_id,

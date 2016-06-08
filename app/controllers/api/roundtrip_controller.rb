@@ -461,7 +461,7 @@ class Api::RoundtripController < ApplicationController
     late_night = 0.5                  # 50% of metered fare (0000 – 0559 hours)
 
     # location
-    changi_airport_friday_to_Sunday = 5 # (Singapore Changi Airport: Friday - Sunday from 1700 to 0000 hours)
+    changi_airport_friday_to_Sunday = 5   # (Singapore Changi Airport: Friday - Sunday from 1700 to 0000 hours)
     changi_airport = 3
     seletar_airport = 3                   # (Seletar Airport)
     sentosa = 3                           # S$3.00 (Resorts World Sentosa)
@@ -555,8 +555,6 @@ class Api::RoundtripController < ApplicationController
         p @location_charge = 3
       end
     end
-
-
 
     p total_estimated_fare = @flat_rate + @net_meterfare + @waiting_charge +  @peekhour_charge + @latehour_charge + @pbHoliday_charge + @location_charge
 

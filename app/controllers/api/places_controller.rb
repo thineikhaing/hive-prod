@@ -334,6 +334,7 @@ class Api::PlacesController < ApplicationController
       lat = params[:latitude]
       lng = params[:longitude]
       keyword = params[:keyword]
+
       begin
         # Exceptions raised by this code will
         # be caught by the following rescue clause

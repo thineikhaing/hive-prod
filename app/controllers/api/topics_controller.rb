@@ -31,6 +31,8 @@ class Api::TopicsController < ApplicationController
 
         end
 
+
+
         p "get data value"
         if current_user.present?
           data = getHashValuefromString(params[:data]) if params[:data].present?
@@ -103,7 +105,6 @@ class Api::TopicsController < ApplicationController
           reason = params[:reason]
 
 
-
           if params[:reason].present?
 
             if station1.present? && station2.present?
@@ -170,7 +171,6 @@ class Api::TopicsController < ApplicationController
 
           if hiveapplication.api_key == round_key  and topic.present?
             p "notify to round trip user"
-
             topic.notify_train_fault_to_roundtrip_users(name, station1, station2, towards)
           end
 
