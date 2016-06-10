@@ -684,7 +684,7 @@ class Api::RoundtripController < ApplicationController
       taxi_list.push([place.latitude,place.longitude])
     end
     p "taxi list"
-    p  render json:  {taxi_list: taxi_list}
+    p  render json:  {taxi_list: taxi_list, taxi_count: taxi_list.count}
 
   end
 
