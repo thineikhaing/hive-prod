@@ -58,6 +58,7 @@ gem 'rack-timeout'
 
 gem 'kaminari'
 
+gem "svy21", "~> 1.0.1"
 
 gem 'rufus-scheduler'  , '< 3.0.0'
 

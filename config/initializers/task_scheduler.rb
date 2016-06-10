@@ -32,6 +32,10 @@ scheduler.every 3.minutes do
 end
 
 
+scheduler.every 2.minutes do
+  TaxiAvailability.fetch_nearby_taxi
+end
+
 #scheduler.every '2s' do
 #  puts 'check blood pressure'
 #end

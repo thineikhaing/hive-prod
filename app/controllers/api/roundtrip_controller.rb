@@ -666,5 +666,28 @@ class Api::RoundtripController < ApplicationController
 
   end
 
+
+  def get_nearby_taxi
+
+    latitude = params[:latitude]
+    longitude = params[:longitude]
+    radius = params[:radius]
+
+    radius = 1 if radius.nil?
+    center_point = [latitude.to_f, longitude.to_f]
+    box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
+    p places = TaxiAvailability.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
+    p places.count
+
+    taxi_list = []
+    places.each do |place|
+      taxi_list.push([place.latitude,place.longitude])
+    end
+    p "taxi list"
+    p  render json:  {taxi_list: taxi_list}
+
+  end
+
+
 end
 
