@@ -4,7 +4,6 @@ class TaxiAvailability < ActiveRecord::Base
 
 
   def self.fetch_nearby_taxi
-
     t=Time.now
     t= t.strftime("%Y-%m-%dT%H:%M%S")
     full_path = 'https://api.data.gov.sg/v1/transport/taxi-availability?date_time='+t
@@ -17,9 +16,6 @@ class TaxiAvailability < ActiveRecord::Base
     p req
     r = con.start {|http| http.request(req)}
     p "get taxi list"
-
-    ActiveRecord::Base.connection.execute("TRUNCATE TABLE taxi_availabilities
- RESTART IDENTITY")
 
     @request_payload = JSON.parse r.body
     @request_payload["features"].each do |data|
