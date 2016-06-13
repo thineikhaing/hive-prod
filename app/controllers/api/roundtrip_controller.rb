@@ -668,7 +668,6 @@ class Api::RoundtripController < ApplicationController
 
 
   def get_nearby_taxi
-
     latitude = params[:latitude]
     longitude = params[:longitude]
     radius = params[:radius]

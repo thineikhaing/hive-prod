@@ -18,23 +18,19 @@ class TaxiAvailability < ActiveRecord::Base
     r = con.start {|http| http.request(req)}
     p "get taxi list"
 
+    ActiveRecord::Base.connection.execute("TRUNCATE TABLE taxi_availabilities
+ RESTART IDENTITY")
+
     @request_payload = JSON.parse r.body
     @request_payload["features"].each do |data|
       p "get data"
-
-      ActiveRecord::Base.connection.execute("TRUNCATE TABLE taxi_availabilities
- RESTART IDENTITY")
-
       data["geometry"]["coordinates"].each do |coor|
         x = coor[1]
         y = coor[0]
         taxi = TaxiAvailability.new(latitude: x, longitude: y, date_time: Time.now)
         taxi.save
-
       end
-
     end
-
   end
 
 end
