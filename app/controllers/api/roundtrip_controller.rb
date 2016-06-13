@@ -32,6 +32,8 @@ class Api::RoundtripController < ApplicationController
     end
 
 
+
+
     if params[:transit_mode]
       if start_address.present?
         routes = gmaps.directions(
@@ -675,11 +677,29 @@ class Api::RoundtripController < ApplicationController
     radius = 1 if radius.nil?
     center_point = [latitude.to_f, longitude.to_f]
     box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
-    places = TaxiAvailability.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
+    places = TaxiAvailability.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3]).limit(5)
 
+
+    gmaps = GoogleMapsService::Client.new(key: GoogleAPI::Google_Key)
+
+
+    duration = "0 min"
     taxi_list = []
     places.each do |place|
-      taxi_list.push([place.latitude,place.longitude])
+
+
+      routes = gmaps.directions(
+          "#{latitude},#{longitude}",
+          "#{place.latitude},#{place.longitude}",
+          transit_mode: "driving",
+          alternatives: false)
+
+      routes.each_with_index do |route|
+        p "+++++++++++++"
+        p duration = route[:legs][0][:duration][:text]
+      end
+
+      taxi_list.push([place.latitude,place.longitude, duration])
     end
     p "taxi list"
     p  render json:  {taxi_list: taxi_list, taxi_count: taxi_list.count}
