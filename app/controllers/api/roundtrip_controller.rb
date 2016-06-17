@@ -684,8 +684,79 @@ class Api::RoundtripController < ApplicationController
     end
     p "taxi list"
     p  render json:  {taxi_list: taxi_list, taxi_count: taxi_list.count}
+  end
+
+  def broadcast_roundtrip_users
+    p "Push Woosh Authentication"
+    if Rails.env.production?
+      appID = PushWoosh_Const::RT_D_APP_ID
+    elsif Rails.env.staging?
+      appID = PushWoosh_Const::RT_D_APP_ID
+    else
+      appID = PushWoosh_Const::RT_D_APP_ID
+    end
+
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+
+
+    @users_to_push = []
+    @to_device_id = []
+    @users = User.all
+
+    time_allowance = Time.now - 10.minutes.ago
+    @users.each do |u|
+      if u.check_in_time.present?
+        time_difference = Time.now - u.check_in_time
+        unless time_difference.to_i > time_allowance.to_i
+          @users_to_push.push(u)
+        end
+      end
+    end
+
+    @users_to_push.each do |u|
+      user= User.find_by_id(u)
+      if user.data.present?
+        hash_array = user.data
+        device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+        @to_device_id.push(device_id)
+      end
+    end
+
+    message = params[:message]
+
+    notification_options = {
+        send_date: "now",
+        badge: "1",
+        sound: "default",
+        content:{
+            fr:message,
+            en:message
+        },
+        data:{
+            broadcast_user: current_user,
+            message: message
+        },
+        devices: @to_device_id
+    }
+
+    if @to_device_id.count > 0
+      options = @auth.merge({:notifications  => [notification_options]})
+      options = {:request  => options}
+      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+      url = URI.parse(full_path)
+      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+      req.body = options.to_json
+      con = Net::HTTP.new(url.host, url.port)
+      con.use_ssl = true
+      r = con.start {|http| http.request(req)}
+      p "pushwoosh"
+      render json:{status: 200, message: "broadcast sucessfully!"}
+    else
+      render json:{status: 200, message: "There is no active roundtrip users"}
+    end
 
   end
+
 
 
 end

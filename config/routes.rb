@@ -228,6 +228,7 @@ Rails.application.routes.draw do
     match "roundtrip/walking_route_mode"            => "roundtrip#walking_route_mode"           , via: [:get, :post]
     match "roundtrip/broadcast_trainfault"          => "roundtrip#broadcast_trainfault"           , via: [:get, :post]
     match "roundtrip/get_nearby_taxi"               => "roundtrip#get_nearby_taxi"           , via: [:get, :post]
+    match "roundtrip/broadcast_roundtrip_users"     => "roundtrip#broadcast_roundtrip_users"           , via: [:get, :post]
 
 
 
