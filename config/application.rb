@@ -185,7 +185,6 @@ module PushWoosh_Const
   RT_D_APP_ID = "0698F-FEC84"
 
   API_ACCESS = "y5dMhjeQ1pcAf3SNnMqy4LBexlqTR0d86p2o3c84NhEajv3Mxsffz8QuEVshTklJ6Qn9JpwVPJKjx0bmsCBn"
-
 end
 
 module AWS_Link

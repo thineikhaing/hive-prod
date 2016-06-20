@@ -732,12 +732,14 @@ class Api::RoundtripController < ApplicationController
       end
     end
 
+
     @users_to_push.each do |u|
-      user= User.find_by_id(u)
-      if user.data.present?
-        hash_array = user.data
-        device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-        @to_device_id.push(device_id)
+      unless u.id == current_user.id
+        if u.data.present?
+          hash_array = u.data
+          device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+          @to_device_id.push(device_id)
+        end
       end
     end
 
@@ -752,8 +754,9 @@ class Api::RoundtripController < ApplicationController
             en:message
         },
         data:{
-            broadcast_user: current_user,
-            message: message
+            broadcast_user: current_user.id,
+            message: message,
+            shared: true
         },
         devices: @to_device_id
     }

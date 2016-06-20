@@ -31,6 +31,9 @@ class Createdata < ActiveRecord::Migration
     api_key = SecureRandom.hex
     HiveApplication.create(devuser_id: 1, app_name: "Favr",app_type: "social",description: "Favr",api_key: api_key )
 
+    api_key = SecureRandom.hex
+    HiveApplication.create(devuser_id: 1, app_name: "RoundTrip",app_type: "social",description: "RoundTrip",api_key: api_key )
+
     hive_app = HiveApplication.find_by_app_name('Favr')
     AppAdditionalField.create(app_id: hive_app.id,table_name: "User", additional_column_name: "device_id")
 
