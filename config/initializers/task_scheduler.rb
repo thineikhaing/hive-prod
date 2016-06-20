@@ -32,7 +32,7 @@ scheduler.every 3.minutes do
 end
 
 
-scheduler.every 5.minutes do
+scheduler.every 15.minutes do
   ActiveRecord::Base.connection.execute("TRUNCATE TABLE taxi_availabilities
  RESTART IDENTITY")
 

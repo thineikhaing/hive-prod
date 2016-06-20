@@ -85,37 +85,37 @@ end
 
 module RoundTrip_key
   Development_Key = "6743376735558ee9794f3222a526dbec"
-  Staging_Key= "8a626e7fac0f8f91c67b6a3e0cc0dd8b"
+  Staging_Key= "800d7dc5f6d074c679375801086d2f0f"
   Production_Key = "95a729b4ba7f45bbf386d1639af342e5"
 end
 
 module Hive_key
   Development_Key = "d4090b8abdc4986d9e83af9b6306a2af"
-  Staging_Key= "2fe8f008a7cbfeaccdb8a69c7a061d7a"
+  Staging_Key= "f110b28e25cf0ffb5b71256ee008ef9f"
   Production_Key = "12166309abc609c6a8ffe1fc1d9ba9e4"
 end
 
 module Mealbox_key
   Development_Key = "5eaf74ea85990fd832dcb7fd7e6dc5f9"
-  Staging_Key= "e3dd4f777bf0a84f8ae47a10cfd6072a"
+  Staging_Key= "5a6ef1c1d6fcbcee7bf3b34f7134ee32"
   Production_Key = "d80eab337c8eeba960ecf65772e1f2af"
 end
 
 module Carmmunicate_key
   Development_Key = "20d4adee284d4a844e8cc223874fee8d"
-  Staging_Key= "fd4e10a082395e85ab1d7791fb41e1e7"
+  Staging_Key= "46b5b66a429edda36cb43b133529bc70"
   Production_Key = "05c4919a87614b59e5b6814b02ceff07"
 end
 
 module Favr_key
   Development_Key = "078f3652092c754d6199065153d95e64"
-  Staging_Key= "8d73deb6463856fea2b0c1c513d87f44"
+  Staging_Key= "c60add1c53241d32bdd69956bcad9f28"
   Production_Key = "582045053ce9f2310ee9ab0d2a7217d6"
 end
 
 module Socal_key
   Development_Key = "db6f9de70998d2e590884b39ac6809e8"
-  Staging_Key = "9c1c1f541c66d52d63f3efd22340c044"
+  Staging_Key = "2ccf78d8a6fd929a48ea6cf6fe033c18"
   Production_Key = "89433f46a2f596f3f1c8259e8f262c3e"
 end
 
