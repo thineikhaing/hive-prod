@@ -74,19 +74,19 @@ class Topic < ActiveRecord::Base
   end
 
   def avatar_url
-    avatar = User.find_by_id(self.user_id).avatar_url
+    User.find_by_id(self.user_id).avatar_url
 
-    if avatar.nil?
-      username = User.find_by_id(self.user_id).username
+    # if avatar.nil?
+    #   username = User.find_by_id(self.user_id).username
+    #
+    #   if username  == "FavrBot"
+    #     avatar = "assets/Avatars/Chat-Avatar-Admin.png"
+    #   else
+    #   avatar = Topic.get_avatar(username)
+    #   end
+    # end
 
-      if username  == "FavrBot"
-        avatar = "assets/Avatars/Chat-Avatar-Admin.png"
-      else
-      avatar = Topic.get_avatar(username)
-      end
-    end
-
-    return avatar
+    # return avatar
   end
 
 
@@ -228,6 +228,8 @@ class Topic < ActiveRecord::Base
     }
     channel_name = hiveapplication.api_key+ "_channel"
     Pusher[channel_name].trigger_async("new_topic", data)
+
+    p "trigger new topic pusher"
   end
 
   def app_broadcast_with_content

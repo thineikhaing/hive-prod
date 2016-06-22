@@ -378,7 +378,7 @@ class Place < ActiveRecord::Base
 
       check.present? ? place = check : place = Place.create(name: geocoder.address, latitude: latitude, longitude: longitude,
                                                             address: geocoder.address,country: geocoder.country,
-                                                            source: Place::UNKNOWN, user_id: current_user.id,postal_code: geocoder.postal_code)
+                                                           source: Place::UNKNOWN, user_id: current_user.id,postal_code: geocoder.postal_code)
     else
       check2.present? ? place = check2 : place = Place.create(name: "Somewhere in the world", latitude: latitude, longitude: longitude, address: "Somewhere in the world", source: Place::UNKNOWN, user_id: current_user.id)
     end
