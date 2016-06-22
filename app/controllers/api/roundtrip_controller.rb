@@ -709,6 +709,9 @@ class Api::RoundtripController < ApplicationController
     hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
     place = Place.create_place_by_lat_lng(current_user.last_known_latitude, current_user.last_known_longitude,current_user)
 
+    # place = Place.new
+    # place = place.add_record("", current_user.last_known_latitude, current_user.last_known_longitude, "", 0,nil, nil, current_user.id, current_user.authentication_token,"","","","","","")
+
     p "Push Woosh Authentication"
     if Rails.env.production?
       appID = PushWoosh_Const::RT_D_APP_ID
@@ -781,7 +784,7 @@ class Api::RoundtripController < ApplicationController
     topic.hive_broadcast
     topic.app_broadcast
 
-    render json:{status: 200, message: "broadcast topic create sucessfully!"}
+    render json:{status: 200, topic:topic, message: "broadcast topic create sucessfully!"}
 
   end
 

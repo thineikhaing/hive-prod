@@ -269,12 +269,15 @@ class Place < ActiveRecord::Base
           place = cr if cr.name.downcase == name.downcase
         end
 
+
         if private_place.present?
           return { place: private_place, status: 71 }
         else
           if choice == "luncheon"
             place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, category: "Food and Dining",img_url: img_url,country: country,postal_code: postcode,locality: locality) unless place.present?
           else
+
+
             place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, img_url: img_url,category: category,country: country,postal_code: postcode,locality: locality) unless place.present?
           end
 
@@ -337,29 +340,49 @@ class Place < ActiveRecord::Base
   end
 
   def self.create_place_by_lat_lng(latitude, longitude,current_user)
-    factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
-    query = factual.geocode(latitude,longitude).first
+    # factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+    # query = factual.geo(latitude,longitude).first
+    #
+    # if query.present?
+    #   if query["address"].present?
+    #     check = Place.find_by_address(query["address"])
+    #     check.present? ? place = check : place = Place.create(name: query["address"], latitude:latitude, longitude: longitude, address: query["address"], postal_code: query["postcode"], locality: query["locality"], country: query["country"], source: Place::UNKNOWN, user_id: current_user.id)
+    #   elsif query["locality"].present?
+    #     check = Place.find_by_address("Somewhere in #{query["locality"]}")
+    #     check.present? ? place = check : place = Place.create(name: "Somewhere in #{query["locality"]}", latitude: latitude, longitude: longitude, address: "Somewhere in #{query["locality"]}", postal_code: query["postcode"], locality: query["locality"], country: query["country"], source: Place::UNKNOWN, user_id: current_user.id)
+    #   end
+    # else
+    #   geocoder = Geocoder.search("#{latitude},#{longitude}").first
+    #
+    #
+    #
+    #   if geocoder.present? and geocoder.address.present?
+    #     check = Place.find_by_address(geocoder.address)
+    #     check2 = Place.find_by_address("Somewhere in the world")
+    #
+    #     check.present? ? place = check : place = Place.create(name: geocoder.address, latitude: latitude, longitude: longitude,
+    #                                                           address: geocoder.address,country: geocoder.country,
+    #                                                           source: Place::UNKNOWN, user_id: current_user.id,postal_code: geocoder.postal_code)
+    #   else
+    #     check2.present? ? place = check2 : place = Place.create(name: "Somewhere in the world", latitude: latitude, longitude: longitude, address: "Somewhere in the world", source: Place::UNKNOWN, user_id: current_user.id)
+    #   end
+    #
+    #
+    # end
 
-    if query.present?
-      if query["address"].present?
-        check = Place.find_by_address(query["address"])
-        check.present? ? place = check : place = Place.create(name: query["address"], latitude:latitude, longitude: longitude, address: query["address"], postal_code: query["postcode"], locality: query["locality"], country: query["country"], source: Place::UNKNOWN, user_id: current_user.id)
-      elsif query["locality"].present?
-        check = Place.find_by_address("Somewhere in #{query["locality"]}")
-        check.present? ? place = check : place = Place.create(name: "Somewhere in #{query["locality"]}", latitude: latitude, longitude: longitude, address: "Somewhere in #{query["locality"]}", postal_code: query["postcode"], locality: query["locality"], country: query["country"], source: Place::UNKNOWN, user_id: current_user.id)
-      end
+    geocoder = Geocoder.search("#{latitude},#{longitude}").first
+
+    if geocoder.present? and geocoder.address.present?
+      check = Place.find_by_address(geocoder.address)
+      check2 = Place.find_by_address("Somewhere in the world")
+
+      check.present? ? place = check : place = Place.create(name: geocoder.address, latitude: latitude, longitude: longitude,
+                                                            address: geocoder.address,country: geocoder.country,
+                                                            source: Place::UNKNOWN, user_id: current_user.id,postal_code: geocoder.postal_code)
     else
-      geocoder = Geocoder.search("#{latitude},#{longitude}").first
-
-      if geocoder.present? and geocoder.country.present?
-        check = Place.find_by_address("Somewhere in #{geocoder.country}")
-        check2 = Place.find_by_address("Somewhere in the world")
-
-        check.present? ? place = check : place = Place.create(name: "Somewhere in #{geocoder.country}", latitude: latitude, longitude: longitude, address: "Somewhere in #{geocoder.country}", source: Place::UNKNOWN, user_id: current_user.id)
-      else
-        check2.present? ? place = check2 : place = Place.create(name: "Somewhere in the world", latitude: latitude, longitude: longitude, address: "Somewhere in the world", source: Place::UNKNOWN, user_id: current_user.id)
-      end
+      check2.present? ? place = check2 : place = Place.create(name: "Somewhere in the world", latitude: latitude, longitude: longitude, address: "Somewhere in the world", source: Place::UNKNOWN, user_id: current_user.id)
     end
+
   end
 
 end
