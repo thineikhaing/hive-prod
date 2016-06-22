@@ -707,7 +707,7 @@ class Api::RoundtripController < ApplicationController
 
   def broadcast_roundtrip_users
     hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
-    # place = Place.create_place_by_lat_lng(current_user.last_known_latitude, current_user.last_known_longitude,current_user)
+    place = Place.create_place_by_lat_lng(current_user.last_known_latitude, current_user.last_known_longitude,current_user)
 
     p "Push Woosh Authentication"
     if Rails.env.production?
@@ -777,8 +777,7 @@ class Api::RoundtripController < ApplicationController
       p "pushwoosh"
     end
 
-
-    topic = Topic.create(title:message, user_id: current_user.id, topic_type: 0, hiveapplication_id: hiveapplication.id, place_id: 1)
+    topic = Topic.create(title:message, user_id: current_user.id, topic_type: 0, hiveapplication_id: hiveapplication.id, place_id: place.id)
     topic.hive_broadcast
     topic.app_broadcast
 
