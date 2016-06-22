@@ -43,18 +43,26 @@ class SgAccidentHistory < ActiveRecord::Base
         if sg_accident.nil?
           p "add new record"
           SgAccidentHistory.create(type:type,message: message, accident_datetime: accidentDateTIme, latitude:latitude, longitude:longitude, summary:summary )
-          data = {
-              title: message,
-              type: type,
-              latitude: latitude,
-              longitude: longitude,
-              accident_datetime: accidentDateTIme
-
-          }
-          Pusher["hive_channel"].trigger_async("train_fault", data)
         end
       end
 
+    end
+
+    sg_accident = SgAccidentHistory.where(notify: false).take
+    if sg_accident.present?
+
+      data = {
+          title: sg_accident.message,
+          type: sg_accident.type,
+          latitude: sg_accident.latitude,
+          longitude: sg_accident.longitude,
+          accident_datetime: sg_accident.accident_datetime
+
+      }
+      Pusher["hive_channel"].trigger_async("train_fault", data)
+
+      sg_accident.notify = true
+      sg_accident.save
     end
 
     # p "Push Woosh Authentication"
