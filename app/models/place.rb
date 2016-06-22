@@ -109,9 +109,7 @@ class Place < ActiveRecord::Base
           end
         end
       end
-
     else
-
       s_center_point = [s_latitude.to_f, s_longitude.to_f]
       s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
       s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])

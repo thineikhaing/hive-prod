@@ -706,6 +706,9 @@ class Api::RoundtripController < ApplicationController
   end
 
   def broadcast_roundtrip_users
+    hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+    # place = Place.create_place_by_lat_lng(current_user.last_known_latitude, current_user.last_known_longitude,current_user)
+
     p "Push Woosh Authentication"
     if Rails.env.production?
       appID = PushWoosh_Const::RT_D_APP_ID
@@ -772,10 +775,14 @@ class Api::RoundtripController < ApplicationController
       con.use_ssl = true
       r = con.start {|http| http.request(req)}
       p "pushwoosh"
-      render json:{status: 200, message: "broadcast sucessfully!"}
-    else
-      render json:{status: 200, message: "There is no active roundtrip users"}
     end
+
+
+    topic = Topic.create(title:message, user_id: current_user.id, topic_type: 0, hiveapplication_id: hiveapplication.id, place_id: 1)
+    topic.hive_broadcast
+    topic.app_broadcast
+
+    render json:{status: 200, message: "broadcast topic create sucessfully!"}
 
   end
 
