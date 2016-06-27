@@ -305,7 +305,7 @@ class Api::PlacesController < ApplicationController
   data = [ ]
   fdata=  [ ]
 
-  def within_location
+  def within_location_1
     data = [ ]
     fdata=  []
     data_array = []
@@ -408,22 +408,6 @@ class Api::PlacesController < ApplicationController
       end
 
 
-      # p "factual"
-      # p factual_data_array
-      # p "google"
-      # p google_data_array
-      # p "hive"
-      # p hive_data_array
-      # p "hivedata"
-      # p data
-      # p "places"
-      # p places
-      # p "data array"
-
-      # if params[:keyword].is_integer?
-      # p params[:keyword].length
-      # p "check reverse geo code"
-
       code = params[:keyword]
 
       uri = URI.parse('http://gothere.sg/maps/geo')
@@ -477,6 +461,101 @@ class Api::PlacesController < ApplicationController
       render json: { status: false }
     end
   end
+
+
+  def within_location
+    if params[:latitude].present? and params[:longitude].present? and params[:radius].present? and params[:keyword].present?
+
+      data = [ ]
+      hive_data_array = [ ]
+      factual_data_array = [ ]
+      google_data_array = [ ]
+      factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+      query = factual.table("global").geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]}).search(params[:keyword])
+      box = Geocoder::Calculations.bounding_box("#{params[:latitude]},#{params[:longitude]}", params[:radius], {units: :km})
+      places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
+
+      places.each do |place|
+        if place.name.downcase.include?(params[:keyword])
+          hive_data_array.push({name: place.name,
+                                address: place.address,
+                                latitude: place.latitude,
+                                longitude: place.longitude,
+                                img_url: place.img_url,
+                                user_id: place.user_id,
+                                username: nil,
+                                source: Place::HERENOW,
+                                place_id: place.id,
+                                status:'hive'})
+          data.push(place)
+        end
+      end
+
+      factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+      begin
+        query = factual.table("global").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
+      rescue Geocoder::OverQueryLimitError
+        p "****** gecoder limit hit ******"
+      end
+      if !query.nil?
+        query.each do |q|
+          factual_data_array.push({ name: q["name"],
+                                    address: q["address"],
+                                    latitude: q["latitude"],
+                                    longitude: q["longitude"],
+                                    img_url: "",
+                                    user_id: nil,
+                                    username: nil,
+                                    source: Place::FACTUAL,
+                                    source_id: q["factual_id"],
+                                    status:'factual' })
+        end
+      end
+
+      @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
+      lat = params[:latitude]
+      lng = params[:longitude]
+      keyword = params[:keyword]
+
+      begin
+        google_places = @client.spots(lat, lng, :name => keyword, :radius => 10000)
+      rescue GooglePlaces::OverQueryLimitError
+        p "GooglePlaces OverQueryLimitError"
+      end
+
+      if !google_places.nil?
+        google_places.each do |data|
+          google_data_array.push({name: data.name ,
+                                  address: data.vicinity,
+                                  latitude: data.lat,
+                                  longitude: data.lng,
+                                  img_url: "",
+                                  user_id: nil,
+                                  username: nil,
+                                  source: Place::GOOGLE,
+                                  source_id: data.place_id,
+                                  status:'google'})
+        end
+      end
+
+      data_array =   hive_data_array + google_data_array + factual_data_array
+
+      uniq_array = data_array.uniq! {|p| p[:name]}         #remove duplicate item in hash array
+
+
+      if uniq_array.nil?
+        uniq_array = data_array
+      end
+      p "uniq array"
+      p uniq_array.count
+
+      render json: {local_and_factual_data: uniq_array, database: data, factual: query}
+
+    else
+      render json: { status: false }
+    end
+  end
+
 
   def within_locality
     if params[:locality].present? and params[:keyword].present?
