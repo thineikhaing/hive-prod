@@ -30,16 +30,16 @@ class Post < ActiveRecord::Base
 
   def avatar_url
     avatar = User.find_by_id(self.user_id).avatar_url
-    if avatar.nil?
-      username = User.find_by_id(self.user_id).username
-
-      if username  == "FavrBot"
-        avatar = "assets/Avatars/Chat-Avatar-Admin.png"
-      else
-        avatar = Topic.get_avatar(username)
-      end
-
-    end
+    # if avatar.nil?
+    #   username = User.find_by_id(self.user_id).username
+    #
+    #   if username  == "FavrBot"
+    #     avatar = "assets/Avatars/Chat-Avatar-Admin.png"
+    #   else
+    #     avatar = Topic.get_avatar(username)
+    #   end
+    #
+    # end
 
     return avatar
   end
@@ -193,6 +193,7 @@ class Post < ActiveRecord::Base
         created_at: self.created_at,
         user_id: self.user_id,
         username: self.username,
+        avatar_url: avatar_url,
         post_type: self.post_type,
         place_id: self.place_id,
         likes: self.likes,

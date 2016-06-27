@@ -61,11 +61,11 @@ class Topic < ActiveRecord::Base
     if options[:content].present?      #return topic json with content information
       super(only: [:id, :state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
-                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username,:avatar_url, :place_information, :tag_information, :rtplaces_information, :content])
+                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username,:avatar_url, :place_information, :tag_information, :rtplaces_information, :content, :active_user])
     else
       super(only: [:id,:state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
-                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username, :avatar_url, :place_information, :tag_information,:rtplaces_information, :content])
+                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username, :avatar_url, :place_information, :tag_information,:rtplaces_information, :content,:active_user])
     end
   end
 
@@ -139,6 +139,37 @@ class Topic < ActiveRecord::Base
 
   end
 
+  def active_user
+    place = Place.find(self.place_id)
+    users = User.nearest(place.latitude, place.longitude, 1)
+    usersArray = []
+    activeUsersArray = []
+    time_allowance = Time.now - 10.minutes.ago
+    users.each do |u|
+      if u.check_in_time.present?
+        time_difference = Time.now - u.check_in_time
+        unless time_difference.to_i > time_allowance.to_i
+          usersArray.push(u)
+        end
+      end
+    end
+
+    users.each do |ua|
+        user = User.find(ua.id)
+        avatar = Topic.get_avatar(user.username)
+        avatar_url = ua.avatar_url
+        if avatar_url.nil?
+          avatar_url = ""
+        end
+        active_users = { id: ua.id, username: ua.username, avatar_url: avatar_url,local_avatar: avatar, last_known_latitude: ua.last_known_latitude, last_known_longitude: ua.last_known_longitude , data: ua.data, updated_at: ua.updated_at}
+        activeUsersArray.push(active_users)
+
+    end
+
+    p users.count
+    return users.count
+  end
+
   #
   #
   #  p "topic content ::::: *****"
@@ -170,6 +201,8 @@ class Topic < ActiveRecord::Base
         state: self.state,
         topic_sub_type: self.topic_sub_type,
         place_id: self.place_id,
+        start_place_id:self.start_place_id,
+        end_place_id: self.end_place_id,
         image_url: self.image_url,
         width:  self.width,
         height: self.height,
@@ -205,6 +238,8 @@ class Topic < ActiveRecord::Base
         state: self.state,
         topic_sub_type: self.topic_sub_type,
         place_id: self.place_id,
+        start_place_id:self.start_place_id,
+        end_place_id: self.end_place_id,
         image_url: self.image_url,
         width:  self.width,
         height: self.height,
@@ -222,8 +257,10 @@ class Topic < ActiveRecord::Base
         free_points:self.free_points,
         methods: {
             username: username,
+            avatar_url: avatar_url,
             place_information: self.place_information,
-            tag_information: self.tag_information
+            tag_information: self.tag_information,
+            rtplaces_information:rtplaces_information
         }
     }
     channel_name = hiveapplication.api_key+ "_channel"
