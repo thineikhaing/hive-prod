@@ -141,34 +141,37 @@ class Topic < ActiveRecord::Base
 
   def active_user
     place = Place.find(self.place_id)
+    posts = self.posts
     users = User.nearest(place.latitude, place.longitude, 1)
+
     usersArray = []
-    activeUsersArray = []
-    time_allowance = Time.now - 10.minutes.ago
+    active_users = []
+    post_users = []
+
+    posts.each do |post|
+      post_users.push(post.user_id)
+    end
+
+    time_allowance = Time.now - 2.weeks.ago
     users.each do |u|
       if u.check_in_time.present?
         time_difference = Time.now - u.check_in_time
         unless time_difference.to_i > time_allowance.to_i
           usersArray.push(u)
+          active_users.push(u.id)
         end
       end
     end
+    p "post user and active users"
+    p post_users
+    p active_users
 
-    usersArray.each do |ua|
-        user = User.find(ua.id)
-        avatar = Topic.get_avatar(user.username)
-        avatar_url = ua.avatar_url
-        if avatar_url.nil?
-          avatar_url = ""
-        end
-        active_users = { id: ua.id, username: ua.username, avatar_url: avatar_url,local_avatar: avatar, last_known_latitude: ua.last_known_latitude, last_known_longitude: ua.last_known_longitude , data: ua.data, updated_at: ua.updated_at}
-        activeUsersArray.push(active_users)
+    active_post_user = post_users & active_users
 
-    end
-
-    p activeUsersArray.count
-    return activeUsersArray.count
+    return active_post_user.count
   end
+
+
 
   #
   #
