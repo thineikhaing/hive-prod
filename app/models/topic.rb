@@ -168,19 +168,11 @@ class Topic < ActiveRecord::Base
     p post_users
     p active_users
 
-    active_post_user = post_users & active_users
+    active_post_user = post_users
 
     return active_post_user.count
   end
 
-
-
-  #
-  #
-  #  p "topic content ::::: *****"
-  #  testDataArray = [ ]
-  #
-  #end
 
   # Check for special type for topic creation
 
