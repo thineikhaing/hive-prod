@@ -166,8 +166,8 @@ class Topic < ActiveRecord::Base
 
     end
 
-    p users.count
-    return users.count
+    p activeUsersArray.count
+    return activeUsersArray.count
   end
 
   #
