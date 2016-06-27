@@ -154,13 +154,15 @@ class Topic < ActiveRecord::Base
 
     time_allowance = Time.now - 2.weeks.ago
     users.each do |u|
-      if u.check_in_time.present?
-        time_difference = Time.now - u.check_in_time
-        unless time_difference.to_i > time_allowance.to_i
-          usersArray.push(u)
-          active_users.push(u.id)
-        end
-      end
+      usersArray.push(u)
+      active_users.push(u.id)
+      # if u.check_in_time.present?
+      #   time_difference = Time.now - u.check_in_time
+      #   unless time_difference.to_i > time_allowance.to_i
+      #     usersArray.push(u)
+      #     active_users.push(u.id)
+      #   end
+      # end
     end
     p "post user and active users"
     p post_users
