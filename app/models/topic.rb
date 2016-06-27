@@ -154,7 +154,7 @@ class Topic < ActiveRecord::Base
       end
     end
 
-    users.each do |ua|
+    usersArray.each do |ua|
         user = User.find(ua.id)
         avatar = Topic.get_avatar(user.username)
         avatar_url = ua.avatar_url
