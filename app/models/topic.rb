@@ -61,13 +61,14 @@ class Topic < ActiveRecord::Base
     if options[:content].present?      #return topic json with content information
       super(only: [:id, :state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
-                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username,:avatar_url, :place_information, :tag_information, :rtplaces_information, :content, :active_user])
+                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username,:avatar_url, :place_information, :tag_information, :post_information, :rtplaces_information, :content, :active_user])
     else
       super(only: [:id,:state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
-                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username, :avatar_url, :place_information, :tag_information,:rtplaces_information, :content,:active_user])
+                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username, :avatar_url, :place_information, :tag_information,:post_information,:rtplaces_information, :content,:active_user])
     end
   end
+
 
   def username
     User.find_by_id(self.user_id).username
@@ -75,7 +76,6 @@ class Topic < ActiveRecord::Base
 
   def avatar_url
     User.find_by_id(self.user_id).avatar_url
-
     # if avatar.nil?
     #   username = User.find_by_id(self.user_id).username
     #
@@ -103,7 +103,6 @@ class Topic < ActiveRecord::Base
     else
       avatar = nil
     end
-
     return avatar
   end
 
@@ -114,6 +113,11 @@ class Topic < ActiveRecord::Base
     else
       { id: nil, name: nil, latitude: nil, longitude: nil, address: nil , custom_pin_url: nil, source: nil, user_id: nil, popular: nil }
     end
+  end
+
+  def post_information
+    first_post = Post.where(topic_id: self.id).last
+
   end
 
   def rtplaces_information
@@ -164,9 +168,9 @@ class Topic < ActiveRecord::Base
       #   end
       # end
     end
-    p "post user and active users"
-    p post_users
-    p active_users
+    # p "post user and active users"
+    # p post_users
+    # p active_users
 
     active_post_user = post_users
 
@@ -175,7 +179,6 @@ class Topic < ActiveRecord::Base
 
 
   # Check for special type for topic creation
-
 
   def self.check_special_type(flare, beacon, sticky, promo, coshoot,question,errand)
     special_type = ""

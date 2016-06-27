@@ -32,8 +32,6 @@ class Api::RoundtripController < ApplicationController
     end
 
 
-
-
     if params[:transit_mode]
       if start_address.present?
         routes = gmaps.directions(
