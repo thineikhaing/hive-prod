@@ -496,13 +496,16 @@ class Api::UsersController < ApplicationController
         if fb_account.present?
           #user_accounts = UserAccount.where(:user_id => user.id)
           #render json: { :user => user,  :user_accounts => user_accounts, :success => 40 }, status: 200
-          if fb_account.user_id == user.id
-            user_accounts = UserAccount.where(:user_id => user.id)
-            render json: { :user => user,  :fb_exists => true, :user_accounts => user_accounts, :success => 40 }, status: 200
-          else
-            var.push (41)
-            render json: { :error => var }, status: 400
-          end
+          user_accounts = UserAccount.where(:user_id => user.id)
+          render json: { :user => user,  :fb_exists => true, :user_accounts => user_accounts, :success => 40 }, status: 200
+
+          # if fb_account.user_id == user.id
+          #   user_accounts = UserAccount.where(:user_id => user.id)
+          #   render json: { :user => user,  :fb_exists => true, :user_accounts => user_accounts, :success => 40 }, status: 200
+          # else
+          #   var.push (41)
+          #   render json: { :error => var }, status: 400
+          # end
         else
           account = UserAccount.new
           new_account = UserAccount.create(user_id: user.id,account_type: "facebook", priority: 0, linked_account_id: params[:fb_id])

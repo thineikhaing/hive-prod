@@ -85,10 +85,9 @@ class Place < ActiveRecord::Base
           place.topics.each do |topic|
             if hive_id==1
               topics_array.push(topic)
-            else
-              if topic.hiveapplication_id == hive_id
-                topics_array.push(topic)
-              end
+            elsif topic.hiveapplication_id == hive_id
+              topics_array.push(topic)
+
             end
 
           end
@@ -100,15 +99,13 @@ class Place < ActiveRecord::Base
           place.topics.each do |topic|
             if hive_id==1
               topics_array.push(topic)
-            else
-              if topic.hiveapplication_id == hive_id
-                topics_array.push(topic)
-              end
+            elsif topic.hiveapplication_id == hive_id
+              topics_array.push(topic)
             end
-
           end
         end
       end
+
     else
       s_center_point = [s_latitude.to_f, s_longitude.to_f]
       s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
