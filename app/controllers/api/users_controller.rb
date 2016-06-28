@@ -453,13 +453,13 @@ class Api::UsersController < ApplicationController
           render json: {:user => user, user_accounts: user_accounts,userfavlocation: userFav,friend_list: activeUsersArray, :name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
         else
           var.push(22)
-          render json: { :error => var , :error_msg => "User password wrong"}, status: 400 # User password wrong
+          render json: { :error => var}, status: 400 # User password wrong
         end
 
 
       else
         var.push(21)
-        render json: { :error => var , :error_msg => "User email doesn't exist"}, status: 400 # User email doesn't exist
+        render json: { :error => var}, status: 400 # User email doesn't exist
       end
 
     elsif params[:app_name]
