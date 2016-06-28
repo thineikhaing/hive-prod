@@ -124,8 +124,6 @@ class Api::TopicsController < ApplicationController
               result["depature_time"]= params[:depature_time]
               result["arrival_time"]= params[:arrival_time]
             end
-
-
           end
 
           p "after merge all data"
@@ -209,7 +207,7 @@ class Api::TopicsController < ApplicationController
             end
           end
 
-          if hiveapplication.api_key == round_key  and topic.present?
+          if hiveapplication.api_key == round_key  and topic.present? and station1.present?
             p "notify to round trip user"
             topic.notify_train_fault_to_roundtrip_users(name, station1, station2, towards)
           end

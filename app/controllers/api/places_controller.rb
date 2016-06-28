@@ -305,7 +305,7 @@ class Api::PlacesController < ApplicationController
   data = [ ]
   fdata=  [ ]
 
-  def within_location_1
+  def within_location
     data = [ ]
     fdata=  []
     data_array = []
@@ -334,6 +334,16 @@ class Api::PlacesController < ApplicationController
       lat = params[:latitude]
       lng = params[:longitude]
       keyword = params[:keyword]
+
+
+      @client.predictions_by_input(
+          '310',
+          lat: 1.3181786,
+          lng: 103.8433952,
+          radius: 50000,
+          types: 'geocode',
+          language: I18n.locale,
+      )
 
       begin
         # Exceptions raised by this code will
@@ -463,7 +473,7 @@ class Api::PlacesController < ApplicationController
   end
 
 
-  def within_location
+  def within_location_11
     if params[:latitude].present? and params[:longitude].present? and params[:radius].present? and params[:keyword].present?
 
       data = [ ]
