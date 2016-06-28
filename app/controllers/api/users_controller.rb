@@ -487,7 +487,7 @@ class Api::UsersController < ApplicationController
   def facebook_login
     if params[:fb_id].present? and current_user.present?
       var = [ ]
-      # user = User.find (current_user.id)
+      user = User.find (current_user.id)
       # fb_account = UserAccount.find_all_by_account_type_and_linked_account_id("facebook",params[:fb_id])
 
       fb_account = UserAccount.where(account_type: "facebook", linked_account_id: params[:fb_id]).take
