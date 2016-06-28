@@ -487,7 +487,7 @@ class Api::UsersController < ApplicationController
   def facebook_login
     if params[:fb_id].present? and current_user.present?
       var = [ ]
-      user = User.find (current_user.id)
+      # user = User.find (current_user.id)
       # fb_account = UserAccount.find_all_by_account_type_and_linked_account_id("facebook",params[:fb_id])
 
       fb_account = UserAccount.where(account_type: "facebook", linked_account_id: params[:fb_id]).take
@@ -496,8 +496,26 @@ class Api::UsersController < ApplicationController
         if fb_account.present?
           #user_accounts = UserAccount.where(:user_id => user.id)
           #render json: { :user => user,  :user_accounts => user_accounts, :success => 40 }, status: 200
+          user = User.find (fb_account.user_id)
           user_accounts = UserAccount.where(:user_id => user.id)
-          render json: { :user => user,  :fb_exists => true, :user_accounts => user_accounts, :success => 40 }, status: 200
+
+          name = user.username
+          id = user.id
+          avatar = Topic.get_avatar(user.username)
+
+          userFav = UserFavLocation.where(user_id: user.id)
+
+          friend_lists = UserFriendList.where(user_id: user.id)
+
+          activeUsersArray = [ ]
+          friend_lists.each do |data|
+            activeuser = User.find(data.friend_id)
+            usersArray= {id: user.id, username: activeuser.username,last_known_latitude:activeuser.last_known_latitude,last_known_longitude:activeuser.last_known_longitude,avatar_url:activeuser.avatar_url,local_avatar: Topic.get_avatar(activeuser.username)}
+            activeUsersArray.push(usersArray)
+          end
+
+          # render json: { :user => user,  :fb_exists => true, :user_accounts => user_accounts, :success => 40 }, status: 200
+          render json: { :user => user,  :fb_exists => true, user_accounts: user_accounts,userfavlocation: userFav,friend_list: activeUsersArray, :name => name, :id => id, local_avatar: avatar , :success => 40 }, status: 200
 
           # if fb_account.user_id == user.id
           #   user_accounts = UserAccount.where(:user_id => user.id)
