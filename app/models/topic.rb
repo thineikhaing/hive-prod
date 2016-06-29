@@ -156,6 +156,8 @@ class Topic < ActiveRecord::Base
       post_users.push(post.user_id)
     end
 
+    post_users = post_users & post_users
+
     time_allowance = Time.now - 2.weeks.ago
     users.each do |u|
       usersArray.push(u)

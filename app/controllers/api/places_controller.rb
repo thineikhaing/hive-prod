@@ -383,7 +383,6 @@ class Api::PlacesController < ApplicationController
       places.each do |place|
         if place.name.present?
           if place.name.downcase.include?(params[:keyword].downcase)
-
             hive_data_array.push({name: place.name,
                                   address: place.address,
                                   latitude: place.latitude,
@@ -395,10 +394,8 @@ class Api::PlacesController < ApplicationController
                                   place_id: place.id,
                                   status:'hive'})
             data.push(place)
-
           end
         end
-
       end
 
       if !query.nil?

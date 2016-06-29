@@ -242,5 +242,4 @@ end
 # )
 
 
-#
 # @client.spots(1.3181786, 103.8433952, :name => 'toa payoh', :radius => 5000)
