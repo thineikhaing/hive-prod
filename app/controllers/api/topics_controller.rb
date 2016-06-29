@@ -658,7 +658,7 @@ class Api::TopicsController < ApplicationController
 
      topics = Place.nearest_topics_within_start_and_end(s_latitude, s_longitude, e_latitude,e_longitude , nil, hive_app.id)
 
-     render json: {topics:topics, status: "nearest topics within start and end"}
+     render json: {topics:topics, topic_count: topics.count, status: "nearest topics within start and end"}
     else
       render json: {status: "Params app_key must be presented"}
 
