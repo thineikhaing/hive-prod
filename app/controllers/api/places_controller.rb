@@ -381,22 +381,24 @@ class Api::PlacesController < ApplicationController
 
 
       places.each do |place|
+        if place.name.present?
+          if place.name.downcase.include?(params[:keyword].downcase)
 
-        if place.name.downcase.include?(params[:keyword].downcase)
+            hive_data_array.push({name: place.name,
+                                  address: place.address,
+                                  latitude: place.latitude,
+                                  longitude: place.longitude,
+                                  img_url: place.img_url,
+                                  user_id: place.user_id,
+                                  username: nil,
+                                  source: Place::HERENOW,
+                                  place_id: place.id,
+                                  status:'hive'})
+            data.push(place)
 
-          hive_data_array.push({name: place.name,
-                                address: place.address,
-                                latitude: place.latitude,
-                                longitude: place.longitude,
-                                img_url: place.img_url,
-                                user_id: place.user_id,
-                                username: nil,
-                                source: Place::HERENOW,
-                                place_id: place.id,
-                                status:'hive'})
-          data.push(place)
-
+          end
         end
+
       end
 
       if !query.nil?
