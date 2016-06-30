@@ -419,7 +419,7 @@ class Api::PlacesController < ApplicationController
 
       code = params[:keyword]
 
-
+      data_array =   hive_data_array + google_data_array + factual_data_array
 
       if code.to_i.is_a?Integer
 
@@ -435,8 +435,8 @@ class Api::PlacesController < ApplicationController
         p "response from gothere"
         p status = response["Status"]["code"]
 
-        p response
-        p status
+        # p response
+        # p status
 
         if status == 200
           place= response["Placemark"][0]
@@ -454,11 +454,11 @@ class Api::PlacesController < ApplicationController
                               source_id: code, status:'gothere'})
 
           data_array =  gothere_data+ hive_data_array + google_data_array + factual_data_array
+        else
 
+          data_array =  gothere_data+ hive_data_array + google_data_array + factual_data_array
         end
 
-      else
-        data_array =   hive_data_array + google_data_array + factual_data_array
 
       end
 
