@@ -419,32 +419,36 @@ class Api::PlacesController < ApplicationController
 
       code = params[:keyword]
 
-      uri = URI.parse('http://gothere.sg/maps/geo')
-      params ={output: '',q: code,client: '',sensor: false,callback:''}
-      # Add params to URI
-      uri.query = URI.encode_www_form( params )
-      p response = JSON.parse(Net::HTTP.get(uri))
-      p response
+      if code.is_a? Integer and code.length == 6
 
-      p "response from gothere"
-      status = response["Status"]["code"]
+        uri = URI.parse('http://gothere.sg/maps/geo')
+        params ={output: '',q: code,client: '',sensor: false,callback:''}
+        # Add params to URI
+        uri.query = URI.encode_www_form( params )
+        p response = JSON.parse(Net::HTTP.get(uri))
+        p response
 
-      if status == 200
-        place= response["Placemark"][0]
-        add_detail = place["AddressDetails"]["Country"]
+        p "response from gothere"
+        status = response["Status"]["code"]
 
-        lng  = place["Point"]["coordinates"][0]
-        lat= place["Point"]["coordinates"][1]
+        if status == 200
+          place= response["Placemark"][0]
+          add_detail = place["AddressDetails"]["Country"]
 
-        name = add_detail["Thoroughfare"]["ThoroughfareName"]
-        add = place["address"]
-        gothere_data.push({ name: name , address: add, latitude: lat,longitude: lng,img_url: "", status:'gothere'})
+          lng  = place["Point"]["coordinates"][0]
+          lat= place["Point"]["coordinates"][1]
 
-        data_array =   hive_data_array + google_data_array + factual_data_array  + gothere_data
+          name = add_detail["Thoroughfare"]["ThoroughfareName"]
+          add = place["address"]
+          gothere_data.push({ name: name , address: add, latitude: lat,longitude: lng,img_url: "", status:'gothere'})
+
+          data_array =   hive_data_array + google_data_array + factual_data_array  + gothere_data
+
+        end
+
       else
         data_array =   hive_data_array + google_data_array + factual_data_array
       end
-
 
       uniq_array = data_array.uniq! {|p| p[:name]}         #remove duplicate item in hash array
 
