@@ -421,46 +421,46 @@ class Api::PlacesController < ApplicationController
 
       data_array =   hive_data_array + google_data_array + factual_data_array
 
-      if code.to_i.is_a?Integer
-
-        uri = URI.parse('https://gothere.sg/maps/geo')
-        params ={output: '',q: code,client: '',sensor: false,callback:''}
-        # Add params to URI
-        uri.query = URI.encode_www_form( params )
-        p response = JSON.parse(Net::HTTP.get(uri))
-        p response
-
-        response = Net::HTTP.get_response(URI("https://gothere.sg/maps/geo?output=&q='#{code}'&client=&sensor=false&callback=")).body
-        response = JSON.parse(response)
-        p "response from gothere"
-        p status = response["Status"]["code"]
-
-        # p response
-        # p status
-
-        if status == 200
-          place= response["Placemark"][0]
-          add_detail = place["AddressDetails"]["Country"]
-
-          lng  = place["Point"]["coordinates"][0]
-          lat= place["Point"]["coordinates"][1]
-
-          name = add_detail["Thoroughfare"]["ThoroughfareName"]
-          add = place["address"]
-          gothere_data.push({ name: name , address: add, latitude: lat,longitude: lng,img_url: "",
-                              user_id: nil,
-                              username: nil,
-                              source: Place::GOTHERE,
-                              source_id: code, status:'gothere'})
-
-          data_array =  gothere_data+ hive_data_array + google_data_array + factual_data_array
-        else
-
-          data_array =  gothere_data+ hive_data_array + google_data_array + factual_data_array
-        end
-
-
-      end
+      # if code.to_i.is_a?Integer
+      #
+      #   uri = URI.parse('https://gothere.sg/maps/geo')
+      #   params ={output: '',q: code,client: '',sensor: false,callback:''}
+      #   # Add params to URI
+      #   uri.query = URI.encode_www_form( params )
+      #   p response = JSON.parse(Net::HTTP.get(uri))
+      #   p response
+      #
+      #   response = Net::HTTP.get_response(URI("https://gothere.sg/maps/geo?output=&q='#{code}'&client=&sensor=false&callback=")).body
+      #   response = JSON.parse(response)
+      #   p "response from gothere"
+      #   p status = response["Status"]["code"]
+      #
+      #   # p response
+      #   # p status
+      #
+      #   if status == 200
+      #     place= response["Placemark"][0]
+      #     add_detail = place["AddressDetails"]["Country"]
+      #
+      #     lng  = place["Point"]["coordinates"][0]
+      #     lat= place["Point"]["coordinates"][1]
+      #
+      #     name = add_detail["Thoroughfare"]["ThoroughfareName"]
+      #     add = place["address"]
+      #     gothere_data.push({ name: name , address: add, latitude: lat,longitude: lng,img_url: "",
+      #                         user_id: nil,
+      #                         username: nil,
+      #                         source: Place::GOTHERE,
+      #                         source_id: code, status:'gothere'})
+      #
+      #     data_array =  gothere_data+ hive_data_array + google_data_array + factual_data_array
+      #   else
+      #
+      #     data_array = hive_data_array + google_data_array + factual_data_array
+      #   end
+      #
+      #
+      # end
 
       # data_array =   hive_data_array + google_data_array + factual_data_array
       uniq_array = data_array.uniq! {|p| p[:name]}         #remove duplicate item in hash array
