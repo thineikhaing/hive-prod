@@ -744,7 +744,7 @@ class Api::TopicsController < ApplicationController
   def topics_by_user
     hive = HiveApplication.find_by_api_key(params[:app_key])
     if hive.present?
-      topics = Topic.where(hiveapplication_id: hive.id)
+      topics = Topic.where(hiveapplication_id: hive.id, user_id: current_user.id)
       user_friend_list = UserFriendList.where(user_id: current_user.id)
 
       render json: {topics: topics, topic_count: topics.count, user_friend_list: user_friend_list, friend_count: user_friend_list.count}, status: 200
