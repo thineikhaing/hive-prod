@@ -693,14 +693,13 @@ class Api::RoundtripController < ApplicationController
           alternatives: false)
 
       routes.each_with_index do |route|
-        p "+++++++++++++"
-        p duration = route[:legs][0][:duration][:text]
+        duration = route[:legs][0][:duration][:text]
       end
 
       taxi_list.push([place.latitude,place.longitude, duration])
     end
-    p "taxi list"
-    p  render json:  {taxi_list: taxi_list, taxi_count: taxi_list.count}
+
+    render json:  {taxi_list: taxi_list, taxi_count: taxi_list.count}
   end
 
   def broadcast_roundtrip_users
