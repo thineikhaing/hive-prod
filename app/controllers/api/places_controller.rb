@@ -419,17 +419,24 @@ class Api::PlacesController < ApplicationController
 
       code = params[:keyword]
 
-      if code.is_a? Integer and code.length == 6
 
-        uri = URI.parse('http://gothere.sg/maps/geo')
+
+      if code.to_i.is_a?Integer
+
+        uri = URI.parse('https://gothere.sg/maps/geo')
         params ={output: '',q: code,client: '',sensor: false,callback:''}
         # Add params to URI
         uri.query = URI.encode_www_form( params )
         p response = JSON.parse(Net::HTTP.get(uri))
         p response
 
+        response = Net::HTTP.get_response(URI("https://gothere.sg/maps/geo?output=&q='#{code}'&client=&sensor=false&callback=")).body
+        response = JSON.parse(response)
         p "response from gothere"
-        status = response["Status"]["code"]
+        p status = response["Status"]["code"]
+
+        p response
+        p status
 
         if status == 200
           place= response["Placemark"][0]
@@ -440,16 +447,22 @@ class Api::PlacesController < ApplicationController
 
           name = add_detail["Thoroughfare"]["ThoroughfareName"]
           add = place["address"]
-          gothere_data.push({ name: name , address: add, latitude: lat,longitude: lng,img_url: "", status:'gothere'})
+          gothere_data.push({ name: name , address: add, latitude: lat,longitude: lng,img_url: "",
+                              user_id: nil,
+                              username: nil,
+                              source: Place::GOTHERE,
+                              source_id: code, status:'gothere'})
 
-          data_array =   hive_data_array + google_data_array + factual_data_array  + gothere_data
+          data_array =  gothere_data+ hive_data_array + google_data_array + factual_data_array
 
         end
 
       else
         data_array =   hive_data_array + google_data_array + factual_data_array
+
       end
 
+      # data_array =   hive_data_array + google_data_array + factual_data_array
       uniq_array = data_array.uniq! {|p| p[:name]}         #remove duplicate item in hash array
 
 
@@ -465,9 +478,9 @@ class Api::PlacesController < ApplicationController
         end
       end
 
-      if code.is_integer? && code.length == 6
-        uniq_array =  gothere_data
-      end
+      # if code.is_integer? && code.length == 6
+      #   uniq_array =  gothere_data
+      # end
 
       render json: {local_and_factual_data: uniq_array, database: data, factual: query}
     else

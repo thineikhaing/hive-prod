@@ -8,7 +8,7 @@ class Place < ActiveRecord::Base
 
   #attr_accessible :name, :category, :address, :locality, :region, :neighbourhood, :chain_name, :country, :postal_code, :website_url, :contact_number, :img_url, :source, :source_id, :latitude, :longitude, :user_id
 
-  enums %w(HERENOW USER VENDOR FACTUAL MRT UNKNOWN PRIVATE GOOGLE)
+  enums %w(HERENOW USER VENDOR FACTUAL MRT UNKNOWN PRIVATE GOOGLE GOTHERE)
 
 
   # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)
@@ -179,6 +179,37 @@ class Place < ActiveRecord::Base
         Userpreviouslocation.create(latitude: place.latitude, longitude: place.longitude, radius: 1, user_id: user_id)
 
         return { place: place, status: 70 }
+      elsif source_id.present? && source.to_i == Place::GOTHERE
+
+        check_record = Place.find_by_postal_code(source_id)
+
+        if check_record.present?
+          place = check_record
+        else
+
+          response = Net::HTTP.get_response(URI("https://gothere.sg/maps/geo?output=&q='#{source_id}'&client=&sensor=false&callback=")).body
+          response = JSON.parse(response)
+          status = response["Status"]["code"]
+          if status == 200
+            place= response["Placemark"][0]
+            add_detail = place["AddressDetails"]["Country"]
+
+            lng  = place["Point"]["coordinates"][0]
+            lat= place["Point"]["coordinates"][1]
+
+            name = add_detail["Thoroughfare"]["ThoroughfareName"]
+            country_name = add_detail["Thoroughfare"]["CountryName"]
+            add = place["address"]
+
+            place = Place.create(name: name, latitude: lat, longitude: lng, address: add, country: country_name,
+                                 category: category, locality: locality, postal_code: source_id,
+                                 source: Place::GOTHERE, source_id: source_id, user_id: user_id,img_url: img_url)
+          end
+
+        end
+
+        return { place: place, status: 70 }
+
       elsif source_id.present? && source.to_i == Place::FACTUAL
         p "add record from factual"
         factual_result = factual.table("places").filters("factual_id" => source_id.to_s).first
