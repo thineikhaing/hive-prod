@@ -55,7 +55,7 @@ class Place < ActiveRecord::Base
 
     p "radius between two points"
     p radius_between = Geocoder::Calculations.distance_between([s_latitude,s_longitude], [e_latitude,e_longitude], {units: :km})
-    radius_between = radius_between.round
+    radius_between = radius_between.ceil
 
     # radius = 1
     #
@@ -85,7 +85,7 @@ class Place < ActiveRecord::Base
 
     start_center_points = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], center_points])
 
-    radius = (radius_between/2)/2
+    radius = (radius_between/2)/2.ceil
 
 
     s_box = Geocoder::Calculations.bounding_box(start_center_points, radius, {units: :km})
@@ -114,6 +114,11 @@ class Place < ActiveRecord::Base
       end
     end
 
+    # topics_array.each do |t|
+    #   p t.title
+    #   p t.start_place.name rescue '++'
+    #   p t.end_place.name rescue '++'
+    # end
     # if radius_between > 2
     #
     #   s_center_point = [s_latitude.to_f, s_longitude.to_f]
@@ -160,8 +165,6 @@ class Place < ActiveRecord::Base
     #   end
     #
     # end
-
-
 
     topics_array
   end
