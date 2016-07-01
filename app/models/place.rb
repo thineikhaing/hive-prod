@@ -53,83 +53,98 @@ class Place < ActiveRecord::Base
   # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)
   def self.nearest_topics_within_start_and_end(s_latitude, s_longitude,e_latitude, e_longitude, radius, hive_id)
 
-
-    topics_array = [ ]
     p "radius between two points"
     p radius_between = Geocoder::Calculations.distance_between([s_latitude,s_longitude], [e_latitude,e_longitude], {units: :km})
-    radius_between = radius_between.ceil
+    radius_between = radius_between.round
 
-    center_points = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], [e_latitude, e_longitude]])
+    radius = 1
 
-    end_center_points = Geocoder::Calculations.geographic_center([center_points, [e_latitude, e_longitude]])
+    if radius_between <= 0.5
+      radius = 0.5
+      p "counting from start point with radius 500m"
 
-    start_center_points = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], center_points])
+    elsif radius_between.between?(0.5, 1)
 
-    radius = ((radius_between * 0.5) * 0.5).ceil
+      radius = 1
+      p "counting from start point with radius 1km"
 
-    radius = (radius * 0.5).ceil
+    elsif radius_between.between?(1, 2)
 
-    s_sc = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], start_center_points])
-    sc_cp = Geocoder::Calculations.geographic_center([start_center_points, center_points])
+      radius =  radius_between
+      p "topic list distance between two points unit in km"
 
-    cp_ec = Geocoder::Calculations.geographic_center([center_points, end_center_points])
-    ec_e = Geocoder::Calculations.geographic_center([end_center_points, [e_latitude, e_longitude]])
+    elsif radius_between > 2
 
-
-    s_sc_box = Geocoder::Calculations.bounding_box(s_sc, radius, {units: :km})
-    s_sc_places = Place.where(latitude: s_sc_box[0] .. s_sc_box[2], longitude: s_sc_box[1] .. s_sc_box[3])
-
-    sc_cp_box = Geocoder::Calculations.bounding_box(sc_cp, radius, {units: :km})
-    sc_cp_places = Place.where(latitude: sc_cp_box[0] .. sc_cp_box[2], longitude: sc_cp_box[1] .. sc_cp_box[3])
-
-    cp_ec_box = Geocoder::Calculations.bounding_box(cp_ec, radius, {units: :km})
-    cp_ec_places = Place.where(latitude: cp_ec_box[0] .. cp_ec_box[2], longitude: cp_ec_box[1] .. cp_ec_box[3])
-
-    ec_e_box = Geocoder::Calculations.bounding_box(ec_e, radius, {units: :km})
-    ec_e_places = Place.where(latitude: ec_e_box[0] .. ec_e_box[2], longitude: ec_e_box[1] .. ec_e_box[3])
-
-
-    s_sc_places.each do |place|
-      if place.start_places.present?
-        place.start_places.each do |topic|
-          topics_array.push(topic)
-        end
-      end
-    end
-
-    sc_cp_places.each do |place|
-      if place.start_places.present?
-        place.start_places.each do |topic|
-          topics_array.push(topic)
-        end
-      end
-    end
-
-    cp_ec_places.each do |place|
-      if place.end_places.present?
-        place.end_places.each do |topic|
-          topics_array.push(topic)
-        end
-      end
-    end
-
-    ec_e_places.each do |place|
-      if place.end_places.present?
-        place.end_places.each do |topic|
-          topics_array.push(topic)
-        end
-      end
+      radius = 1
+      p "topic list within 1km of each points"
     end
 
 
-    # topics_array.each do |t|
-    #   p t.title
-    #   p t.start_place.name rescue '++'
-    #   p t.end_place.name rescue '++'
-    # end
+    if radius_between > 2
+
+      s_center_point = [s_latitude.to_f, s_longitude.to_f]
+      s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
+      s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
+
+      e_center_point = [e_latitude.to_f, e_longitude.to_f]
+      e_box = Geocoder::Calculations.bounding_box(e_center_point, radius, {units: :km})
+      e_places = Place.where(latitude: e_box[0] .. e_box[2], longitude: e_box[1] .. e_box[3])
+
+      topics_array = [ ]
+
+      s_places.each do |place|
+        if place.start_places.present?
+          place.start_places.each do |topic|
+            if hive_id==1
+              topics_array.push(topic)
+            elsif topic.hiveapplication_id == hive_id
+              topics_array.push(topic)
+
+            end
+
+          end
+        end
+      end
+
+      e_places.each do |place|
+        if place.end_places.present?
+          place.end_places.each do |topic|
+            if hive_id==1
+              topics_array.push(topic)
+            elsif topic.hiveapplication_id == hive_id
+              topics_array.push(topic)
+            end
+          end
+        end
+      end
+
+    else
+      s_center_point = [s_latitude.to_f, s_longitude.to_f]
+      s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
+      s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
+
+      topics_array = [ ]
+
+      s_places.each do |place|
+        if place.start_places.present?
+          place.start_places.each do |topic|
+            if hive_id==1
+              topics_array.push(topic)
+            else
+              if topic.hiveapplication_id == hive_id
+                topics_array.push(topic)
+              end
+            end
+
+          end
+        end
+      end
+
+    end
+
+
 
     topics_array
-
   end
 
   # add_record("name", "latitude", "longitude", "address", "", "", 163, 333, "y-cZXxwrSXvtiyTGBzpf", "choice","img_url",category="",locality="",country="",postcode="")
