@@ -3,12 +3,24 @@ class Place < ActiveRecord::Base
   has_many :user_fav_locations
   belongs_to :user
 
+  has_many :start_places , class_name: "Topic", foreign_key: "start_place_id",primary_key: :id
+  has_many :end_places , class_name: "Topic", foreign_key: "end_place_id",primary_key: :id
+
   # Setup hstore
   store_accessor :data
 
   #attr_accessible :name, :category, :address, :locality, :region, :neighbourhood, :chain_name, :country, :postal_code, :website_url, :contact_number, :img_url, :source, :source_id, :latitude, :longitude, :user_id
 
   enums %w(HERENOW USER VENDOR FACTUAL MRT UNKNOWN PRIVATE GOOGLE GOTHERE)
+
+  # def self.start_places
+  #   Topic.where(start_place_id: self.id)
+  # end
+  #
+  # def self.end_places
+  #   Topic.where(end_place_id: self.id)
+  # end
+
 
 
   # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)
@@ -63,7 +75,7 @@ class Place < ActiveRecord::Base
 
     elsif radius_between > 2
 
-      radius = 1
+      radius = radius_between/2
       p "topic list within 1km of each points"
     end
 
@@ -81,22 +93,20 @@ class Place < ActiveRecord::Base
       topics_array = [ ]
 
       s_places.each do |place|
-        if place.topics.present?
-          place.topics.each do |topic|
+        if place.start_places.present?
+          place.start_places.each do |topic|
             if hive_id==1
               topics_array.push(topic)
             elsif topic.hiveapplication_id == hive_id
               topics_array.push(topic)
-
             end
-
           end
         end
       end
 
       e_places.each do |place|
-        if place.topics.present?
-          place.topics.each do |topic|
+        if place.end_places.present?
+          place.end_places.each do |topic|
             if hive_id==1
               topics_array.push(topic)
             elsif topic.hiveapplication_id == hive_id

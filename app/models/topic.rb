@@ -4,6 +4,9 @@ class Topic < ActiveRecord::Base
   belongs_to :user
   belongs_to :place
 
+  belongs_to :start_place, class_name: "Place", foreign_key: "start_place_id",primary_key: :id
+  belongs_to :end_place, class_name: "Place", foreign_key: "end_place_id",primary_key: :id
+
   has_many :topic_with_tags
 
   has_many  :posts, :dependent => :destroy
