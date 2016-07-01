@@ -98,16 +98,16 @@ class Place < ActiveRecord::Base
     end
 
     sc_cp_places.each do |place|
-      if place.end_places.present?
-        place.end_places.each do |topic|
+      if place.start_places.present?
+        place.start_places.each do |topic|
           topics_array.push(topic)
         end
       end
     end
 
     cp_ec_places.each do |place|
-      if place.start_places.present?
-        place.start_places.each do |topic|
+      if place.end_places.present?
+        place.end_places.each do |topic|
           topics_array.push(topic)
         end
       end
@@ -122,11 +122,11 @@ class Place < ActiveRecord::Base
     end
 
 
-    topics_array.each do |t|
-      p t.title
-      p t.start_place.name rescue '++'
-      p t.end_place.name rescue '++'
-    end
+    # topics_array.each do |t|
+    #   p t.title
+    #   p t.start_place.name rescue '++'
+    #   p t.end_place.name rescue '++'
+    # end
 
     topics_array
 
