@@ -53,9 +53,7 @@ class Place < ActiveRecord::Base
   # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)
   def self.nearest_topics_within_start_and_end(s_latitude, s_longitude,e_latitude, e_longitude, radius, hive_id)
 
-    p "radius between two points"
-    p radius_between = Geocoder::Calculations.distance_between([s_latitude,s_longitude], [e_latitude,e_longitude], {units: :km})
-    radius_between = radius_between.ceil
+
 
     # radius = 1
     #
@@ -78,6 +76,10 @@ class Place < ActiveRecord::Base
     #   radius = 1.5
     #   p "topic list within 1km of each points"
     # end
+    topics_array = [ ]
+    p "radius between two points"
+    p radius_between = Geocoder::Calculations.distance_between([s_latitude,s_longitude], [e_latitude,e_longitude], {units: :km})
+    radius_between = radius_between.ceil
 
     center_points = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], [e_latitude, e_longitude]])
 
@@ -85,7 +87,7 @@ class Place < ActiveRecord::Base
 
     start_center_points = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], center_points])
 
-    radius = (radius_between/2)/2.ceil
+    radius = ((radius_between * 0.5) * 0.5).ceil
 
 
     s_box = Geocoder::Calculations.bounding_box(start_center_points, radius, {units: :km})
@@ -94,8 +96,6 @@ class Place < ActiveRecord::Base
 
     e_box = Geocoder::Calculations.bounding_box(end_center_points, radius, {units: :km})
     e_places = Place.where(latitude: e_box[0] .. e_box[2], longitude: e_box[1] .. e_box[3])
-
-    topics_array = [ ]
 
     s_places.each do |place|
       if place.start_places.present?
@@ -114,11 +114,15 @@ class Place < ActiveRecord::Base
       end
     end
 
-    # topics_array.each do |t|
-    #   p t.title
-    #   p t.start_place.name rescue '++'
-    #   p t.end_place.name rescue '++'
-    # end
+
+    topics_array.each do |t|
+      p t.title
+      p t.start_place.name rescue '++'
+      p t.end_place.name rescue '++'
+    end
+
+    topics_array
+
     # if radius_between > 2
     #
     #   s_center_point = [s_latitude.to_f, s_longitude.to_f]
@@ -166,7 +170,7 @@ class Place < ActiveRecord::Base
     #
     # end
 
-    topics_array
+
   end
 
   # add_record("name", "latitude", "longitude", "address", "", "", 163, 333, "y-cZXxwrSXvtiyTGBzpf", "choice","img_url",category="",locality="",country="",postcode="")
