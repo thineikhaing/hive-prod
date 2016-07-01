@@ -75,8 +75,8 @@ class Place < ActiveRecord::Base
 
     elsif radius_between > 2
 
-      radius = 2
-      p "topic list within 2km of each points"
+      radius = 1.5
+      p "topic list within 1km of each points"
     end
 
 
@@ -95,11 +95,8 @@ class Place < ActiveRecord::Base
       s_places.each do |place|
         if place.start_places.present?
           place.start_places.each do |topic|
-            if hive_id==1
+
               topics_array.push(topic)
-            elsif topic.hiveapplication_id == hive_id
-              topics_array.push(topic)
-            end
           end
         end
       end
@@ -107,11 +104,7 @@ class Place < ActiveRecord::Base
       e_places.each do |place|
         if place.end_places.present?
           place.end_places.each do |topic|
-            if hive_id==1
               topics_array.push(topic)
-            elsif topic.hiveapplication_id == hive_id
-              topics_array.push(topic)
-            end
           end
         end
       end
@@ -124,16 +117,10 @@ class Place < ActiveRecord::Base
       topics_array = [ ]
 
       s_places.each do |place|
-        if place.topics.present?
-          place.topics.each do |topic|
-            if hive_id==1
-              topics_array.push(topic)
-            else
-              if topic.hiveapplication_id == hive_id
-                topics_array.push(topic)
-              end
-            end
+        if place.start_places.present?
+          place.start_places.each do |topic|
 
+            topics_array.push(topic)
           end
         end
       end

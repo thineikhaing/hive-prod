@@ -777,7 +777,49 @@ class Api::RoundtripController < ApplicationController
       p "pushwoosh"
     end
 
-    topic = Topic.create(title:message, user_id: current_user.id, topic_type: 0, hiveapplication_id: hiveapplication.id, place_id: place.id)
+    params[:start_name].present? ? start_name = params[:start_name] : start_name = nil
+    params[:start_address].present? ? start_address = params[:start_address] : start_address = ""
+    params[:start_latitude].present? ? start_latitude = params[:start_latitude] : start_latitude = nil
+    params[:start_longitude].present? ? start_longitude = params[:start_longitude] : start_longitude = nil
+    params[:start_place_id].present? ? start_place_id = params[:start_place_id] : start_place_id = nil
+    params[:start_source].present? ? start_source = params[:start_source] : start_source = ""
+    params[:start_source_id].present? ? start_source_id = params[:start_source_id] : start_source_id = nil
+
+
+    params[:end_name].present? ? end_name = params[:end_name] : end_name = nil
+    params[:end_address].present? ? end_address = params[:end_address] : end_address = ""
+    params[:end_latitude].present? ? end_latitude = params[:end_latitude] : end_latitude = nil
+    params[:end_longitude].present? ? end_longitude = params[:end_longitude] : end_longitude = nil
+    params[:end_place_id].present? ? end_place_id = params[:end_place_id] : end_place_id = nil
+    params[:end_source].present? ? end_source = params[:end_source] : end_source = ""
+    params[:end_source_id].present? ? end_source_id = params[:end_source_id] : end_source_id = nil
+
+    category = ""
+    locality=""
+    country=""
+    postcode=""
+    img_url = nil
+    choice="others"
+
+    start_id = 0
+    end_id = 0
+
+    if params[:start_place_id] || params[:start_longitude]  || params[:start_longitude]  || params[:start_source_id]
+      place = Place.new
+      start_place = place.add_record(start_name, start_latitude, start_longitude, start_address, start_source, start_source_id, start_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
+      p "start place info::::"
+      p start_id = start_place[:place].id
+      p start_place[:place].name
+
+      end_place = place.add_record(end_name, end_latitude, end_longitude, end_address, end_source, end_source_id, end_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
+      p "end place info::::"
+      p end_id = end_place[:place].id
+      p end_place[:place].name
+
+    end
+
+    topic = Topic.create(title:message, user_id: current_user.id, topic_type: 0, hiveapplication_id: hiveapplication.id,
+                         place_id: place.id, start_place_id: start_id, end_place_id: end_id)
     topic.hive_broadcast
     topic.app_broadcast
 
