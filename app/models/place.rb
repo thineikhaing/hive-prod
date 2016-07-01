@@ -75,8 +75,8 @@ class Place < ActiveRecord::Base
 
     elsif radius_between > 2
 
-      radius = radius_between/2
-      p "topic list within 1km of each points"
+      radius = 2
+      p "topic list within 2km of each points"
     end
 
 
