@@ -300,10 +300,11 @@ class Topic < ActiveRecord::Base
         points: self.points,
         free_points:self.free_points,
         methods: {
+            content: self.content,
             username: username,
             place_information: self.place_information,
             tag_information: self.tag_information,
-            content: self.content
+            rtplaces_information:rtplaces_information
         }
     }
     channel_name = hiveapplication.api_key+ "_channel"
