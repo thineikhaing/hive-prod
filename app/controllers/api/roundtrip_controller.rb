@@ -784,7 +784,6 @@ class Api::RoundtripController < ApplicationController
     params[:start_source].present? ? start_source = params[:start_source] : start_source = ""
     params[:start_source_id].present? ? start_source_id = params[:start_source_id] : start_source_id = nil
 
-
     params[:end_name].present? ? end_name = params[:end_name] : end_name = nil
     params[:end_address].present? ? end_address = params[:end_address] : end_address = ""
     params[:end_latitude].present? ? end_latitude = params[:end_latitude] : end_latitude = nil
@@ -799,7 +798,6 @@ class Api::RoundtripController < ApplicationController
     postcode=""
     img_url = nil
     choice="others"
-
     start_id = 0
     end_id = 0
 

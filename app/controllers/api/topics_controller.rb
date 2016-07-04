@@ -4,6 +4,7 @@ class Api::TopicsController < ApplicationController
   def create
     if params[:app_key].present?
       p hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+
       title = params[:title]
 
       tag = Tag.new

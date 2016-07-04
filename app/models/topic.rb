@@ -226,7 +226,8 @@ class Topic < ActiveRecord::Base
         methods: {
             username: username,
             place_information: self.place_information,
-            tag_information: self.tag_information
+            tag_information: self.tag_information,
+            rtplaces_information:rtplaces_information
         }
     }
 
