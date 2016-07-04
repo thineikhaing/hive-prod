@@ -79,6 +79,11 @@ class Place < ActiveRecord::Base
       p "topic list within 1km of each points"
     end
 
+    if radius_between > 4
+      p "topic list within 1km of each points and 1 km of center point"
+      centerpoint = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], [e_latitude,e_longitude]])
+    end
+
 
     if radius_between > 2
 
@@ -95,13 +100,7 @@ class Place < ActiveRecord::Base
       s_places.each do |place|
         if place.start_places.present?
           place.start_places.each do |topic|
-            if hive_id==1
-              topics_array.push(topic)
-            elsif topic.hiveapplication_id == hive_id
-              topics_array.push(topic)
-
-            end
-
+            topics_array.push(topic)
           end
         end
       end
@@ -109,11 +108,18 @@ class Place < ActiveRecord::Base
       e_places.each do |place|
         if place.end_places.present?
           place.end_places.each do |topic|
-            if hive_id==1
-              topics_array.push(topic)
-            elsif topic.hiveapplication_id == hive_id
-              topics_array.push(topic)
-            end
+            topics_array.push(topic)
+          end
+        end
+      end
+    elsif radius_between > 4
+      center_box = Geocoder::Calculations.bounding_box(centerpoint, radius, {units: :km})
+      center_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
+
+      center_places.each do |place|
+        if place.start_places.present?
+          place.start_places.each do |topic|
+            topics_array.push(topic)
           end
         end
       end
@@ -128,23 +134,15 @@ class Place < ActiveRecord::Base
       s_places.each do |place|
         if place.start_places.present?
           place.start_places.each do |topic|
-            if hive_id==1
-              topics_array.push(topic)
-            else
-              if topic.hiveapplication_id == hive_id
-                topics_array.push(topic)
-              end
-            end
-
+            topics_array.push(topic)
           end
         end
       end
-
     end
 
-
-
+    topics_array = topics_array.uniq! {|p| p[:id]}
     topics_array
+
   end
 
   # add_record("name", "latitude", "longitude", "address", "", "", 163, 333, "y-cZXxwrSXvtiyTGBzpf", "choice","img_url",category="",locality="",country="",postcode="")
