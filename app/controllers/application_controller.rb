@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
 
   def check_banned_profanity(content)
     contentArray = [ ]
-    content = content.downcase!
+    content.downcase!
     profanity_filter = YAML.load_file("config/banned_profanity.yml") # From file
     profanity_filter.each do |profanity|
 
