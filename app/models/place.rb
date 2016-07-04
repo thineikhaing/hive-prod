@@ -160,12 +160,6 @@ class Place < ActiveRecord::Base
     factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
     user = User.find(user_id)
 
-    p user.username
-    p source
-    p source_id
-    p place_id
-    p "++++"
-
     neighborhood = ""
     website = ""
     tel = ""

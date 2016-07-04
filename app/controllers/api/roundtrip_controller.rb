@@ -817,6 +817,9 @@ class Api::RoundtripController < ApplicationController
 
     user_place = Place.create_place_by_lat_lng(current_user.last_known_latitude, current_user.last_known_longitude,current_user)
 
+    if user_place.nil?
+      user_place = Place.first
+    end
 
     topic = Topic.create(title:message, user_id: current_user.id, topic_type: 0, hiveapplication_id: hiveapplication.id,
                          place_id: user_place.id, start_place_id: start_id, end_place_id: end_id)

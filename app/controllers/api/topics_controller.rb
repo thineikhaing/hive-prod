@@ -4,18 +4,9 @@ class Api::TopicsController < ApplicationController
   def create
     if params[:app_key].present?
       p hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
-
       title = params[:title]
-
       tag = Tag.new
       if hiveapplication.present?
-
-        if check_banned_profanity(params[:title])
-          user = User.find(current_user.id)
-          user.profanity_counter += 1
-          user.offence_date = Time.now
-          user.save!
-        end
 
         place_id = nil
         #check the place_id presents
@@ -62,19 +53,16 @@ class Api::TopicsController < ApplicationController
         if params[:start_place_id] || params[:start_longitude]  || params[:start_longitude]  || params[:start_source_id]
           place = Place.new
           start_place = place.add_record(start_name, start_latitude, start_longitude, start_address, start_source, start_source_id, start_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
-          p "start place info::::"
-          p start_id = start_place[:place].id
-          p start_place[:place].name
+          # p "start place info::::"
+          start_id = start_place[:place].id
+          start_place[:place].name
 
           end_place = place.add_record(end_name, end_latitude, end_longitude, end_address, end_source, end_source_id, end_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
-          p "end place info::::"
-          p end_id = end_place[:place].id
-          p end_place[:place].name
-
+          # p "end place info::::"
+          end_id = end_place[:place].id
+          end_place[:place].name
         end
 
-
-        p "get data value"
         if current_user.present?
           data = getHashValuefromString(params[:data]) if params[:data].present?
 
@@ -85,7 +73,6 @@ class Api::TopicsController < ApplicationController
           #get all extra columns that define in app setting
           appAdditionalField = AppAdditionalField.where(:app_id => hiveapplication.id, :table_name => "Topic")
           if appAdditionalField.present?
-            p "defined field"
             defined_Fields = Hash.new
             appAdditionalField.each do |field|
               defined_Fields[field.additional_column_name] = nil
@@ -97,29 +84,13 @@ class Api::TopicsController < ApplicationController
               result = Hash.new
 
               defined_Fields.keys.each do |key|
-
-                p result.merge!(data.extract! (key))
+                result.merge!(data.extract! (key))
               end
 
             else
               result = defined_Fields
             end
 
-            # if walk.present?
-            #
-            #   p "merge with walk"
-            #   p result["walk"]= walk
-            #
-            #   # to retrieve
-            #   # hash_as_string = "{\"distance\"=>\"onemeter\", \"startpoint\"=>\"novena\", \"endpoint\"=>\"cityhall\"}"
-            #   # JSON.parse hash_as_string.gsub('=>', ':')
-            # end
-            #
-            # if train.present?
-            #
-            #   p "merge with train"
-            #   p result["train"]= train
-            # end
 
             if params[:depature_time].present?
               result["depature_time"]= params[:depature_time]
@@ -127,8 +98,6 @@ class Api::TopicsController < ApplicationController
             end
           end
 
-          p "after merge all data"
-          p result
 
           result = nil unless result.present?
           params[:likes].present? ? likes = params[:likes].to_i : likes = 0
@@ -153,11 +122,14 @@ class Api::TopicsController < ApplicationController
               title =  "[#{name}]"+reason +" from "+station1
             end
 
+            if towards.present?
+              title += " towards "+towards
+            end
+          else
+            p "title before create"
+            p title = params[:title]
           end
 
-          if towards.present?
-            title += " towards "+towards
-          end
 
           if params[:image_url].present?
             topic = Topic.create(title:title, user_id: current_user.id, topic_type: params[:topic_type],start_place_id: start_id, end_place_id: end_id,
@@ -170,6 +142,14 @@ class Api::TopicsController < ApplicationController
             topic = Topic.create(title:title, user_id: current_user.id, topic_type: params[:topic_type] ,start_place_id: start_id , end_place_id: end_id,
                                  topic_sub_type: topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit],
                                  value: params[:value], place_id: place_id, data: result, special_type: special_type,likes: likes, dislikes: dislikes)
+          end
+
+
+          if check_banned_profanity(title)
+            user = User.find(current_user.id)
+            user.profanity_counter += 1
+            user.offence_date = Time.now
+            user.save!
           end
 
           #create post if param post_content is passed
