@@ -80,7 +80,7 @@ class Place < ActiveRecord::Base
     end
 
     if radius_between > 4
-      p "topic list within 1km of each points and 1 km of center point"
+      p "topic list within center point"
       centerpoint = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], [e_latitude,e_longitude]])
     end
 
@@ -112,9 +112,12 @@ class Place < ActiveRecord::Base
           end
         end
       end
-    elsif radius_between > 4
+
+    end
+
+    if radius_between > 4
       center_box = Geocoder::Calculations.bounding_box(centerpoint, radius, {units: :km})
-      center_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
+      center_places = Place.where(latitude: center_box[0] .. center_box[2], longitude: center_box[1] .. center_box[3])
 
       center_places.each do |place|
         if place.start_places.present?
@@ -123,8 +126,9 @@ class Place < ActiveRecord::Base
           end
         end
       end
+    end
 
-    else
+    if radius_between < 2
       s_center_point = [s_latitude.to_f, s_longitude.to_f]
       s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
       s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
