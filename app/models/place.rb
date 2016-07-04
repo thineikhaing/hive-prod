@@ -103,6 +103,13 @@ class Place < ActiveRecord::Base
             topics_array.push(topic)
           end
         end
+
+        if place.end_places.present?
+          place.end_places.each do |topic|
+            topics_array.push(topic)
+          end
+        end
+
       end
 
       e_places.each do |place|
@@ -111,6 +118,13 @@ class Place < ActiveRecord::Base
             topics_array.push(topic)
           end
         end
+
+        if place.end_places.present?
+          place.end_places.each do |topic|
+            topics_array.push(topic)
+          end
+        end
+
       end
 
     end
@@ -125,6 +139,13 @@ class Place < ActiveRecord::Base
             topics_array.push(topic)
           end
         end
+
+        if place.end_places.present?
+          place.end_places.each do |topic|
+            topics_array.push(topic)
+          end
+        end
+
       end
     end
 
@@ -144,20 +165,7 @@ class Place < ActiveRecord::Base
       end
     end
 
-    topics_array.each do |topic|
-      p topic.id
-    end
-
-    # topics_array = topics_array.uniq! {|p| p["id"]}
-
-   # p topics_array
-
-    topics_array.uniq{ |topic|
-      [
-          topic[:id],
-          topic[:title]
-
-      ]}
+    topics_array.uniq{ |topic| [topic[:id],topic[:title]]}
 
   end
 
