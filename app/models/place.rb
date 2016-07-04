@@ -150,7 +150,14 @@ class Place < ActiveRecord::Base
 
     # topics_array = topics_array.uniq! {|p| p["id"]}
 
-    topics_array
+   # p topics_array
+
+    topics_array.uniq{ |topic|
+      [
+          topic[:id],
+          topic[:title]
+
+      ]}
 
   end
 
