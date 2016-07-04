@@ -704,7 +704,6 @@ class Api::RoundtripController < ApplicationController
 
   def broadcast_roundtrip_users
     hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
-    place = Place.create_place_by_lat_lng(current_user.last_known_latitude, current_user.last_known_longitude,current_user)
 
     # place = Place.new
     # place = place.add_record("", current_user.last_known_latitude, current_user.last_known_longitude, "", 0,nil, nil, current_user.id, current_user.authentication_token,"","","","","","")
@@ -818,8 +817,11 @@ class Api::RoundtripController < ApplicationController
 
     end
 
+    user_place = Place.create_place_by_lat_lng(current_user.last_known_latitude, current_user.last_known_longitude,current_user)
+
+
     topic = Topic.create(title:message, user_id: current_user.id, topic_type: 0, hiveapplication_id: hiveapplication.id,
-                         place_id: place.id, start_place_id: start_id, end_place_id: end_id)
+                         place_id: user_place.id, start_place_id: start_id, end_place_id: end_id)
     topic.hive_broadcast
     topic.app_broadcast
 
