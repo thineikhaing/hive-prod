@@ -25,6 +25,18 @@ class Place < ActiveRecord::Base
 
   # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)
   def self.nearest_topics_within(latitude, longitude, radius, hive_id)
+
+    if Rails.env.development?
+      round_key = RoundTrip_key::Staging_Key
+    elsif Rails.env.staging?
+      round_key = RoundTrip_key::Staging_Key
+    else
+      round_key = RoundTrip_key::Production_Key
+    end
+
+    hive = HiveApplication.find(hive_id)
+
+
     radius = 1 if radius.nil?
     center_point = [latitude.to_f, longitude.to_f]
     box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
@@ -32,22 +44,65 @@ class Place < ActiveRecord::Base
 
     topics_array = [ ]
 
-    places.each do |place|
-      if place.topics.present?
-        place.topics.each do |topic|
-          if hive_id==1
-            topics_array.push(topic)
-          else
-            if topic.hiveapplication_id == hive_id
-              topics_array.push(topic)
-            end
-          end
 
+    if hive.api_key == round_key
+
+      places.each do |place|
+        if place.start_places.present?
+          place.start_places.each do |topic|
+            if hive_id==1
+              topics_array.push(topic)
+            else
+              if topic.hiveapplication_id == hive_id
+                topics_array.push(topic)
+              end
+            end
+
+          end
         end
       end
+
+      places.each do |place|
+        if place.end_places.present?
+          place.end_places.each do |topic|
+            if hive_id==1
+              topics_array.push(topic)
+            else
+              if topic.hiveapplication_id == hive_id
+                topics_array.push(topic)
+              end
+            end
+
+          end
+        end
+      end
+
+    else
+      places.each do |place|
+        if place.topics.present?
+          place.topics.each do |topic|
+            if hive_id==1
+              topics_array.push(topic)
+            else
+              if topic.hiveapplication_id == hive_id
+                topics_array.push(topic)
+              end
+            end
+
+          end
+        end
+      end
+
     end
+
     topics_array
+    topics_array
+    if topics_array.present?
+      topics_array.uniq{ |topic| [topic[:id],topic[:title]]}
+    end
+
   end
+
 
 
   # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)
@@ -164,8 +219,11 @@ class Place < ActiveRecord::Base
         end
       end
     end
+    p topics_array
+    if topics_array.present?
+      topics_array.uniq{ |topic| [topic[:id],topic[:title]]}
+    end
 
-    topics_array.uniq{ |topic| [topic[:id],topic[:title]]}
 
   end
 
