@@ -44,7 +44,6 @@ class Place < ActiveRecord::Base
 
     topics_array = [ ]
 
-
     if hive.api_key == round_key
 
       places.each do |place|
@@ -95,12 +94,13 @@ class Place < ActiveRecord::Base
 
     end
 
-    topics_array
-    topics_array
+
     if topics_array.present?
       topics_array.uniq{ |topic| [topic[:id],topic[:title]]}
+    else
+      topics_array = [ ]
     end
-
+    topics_array
   end
 
 
@@ -109,8 +109,8 @@ class Place < ActiveRecord::Base
   def self.nearest_topics_within_start_and_end(s_latitude, s_longitude,e_latitude, e_longitude, radius, hive_id)
 
     p "radius between two points"
-    p radius_between = Geocoder::Calculations.distance_between([s_latitude,s_longitude], [e_latitude,e_longitude], {units: :km})
-    radius_between = radius_between.round
+    radius_between = Geocoder::Calculations.distance_between([s_latitude,s_longitude], [e_latitude,e_longitude], {units: :km})
+    p radius_between = radius_between.round
 
     radius = 1
 
@@ -200,7 +200,7 @@ class Place < ActiveRecord::Base
         end
       end
 
-    elsif radius_between > 4
+    elsif radius_between >= 4
       p "radius is greater than 4 km"
       p radius_between
       center_box = Geocoder::Calculations.bounding_box(centerpoint, radius, {units: :km})
@@ -220,14 +220,16 @@ class Place < ActiveRecord::Base
         end
 
       end
+    end
 
+
+    if topics_array.present?
+      topics_array.uniq{ |topic| [topic[:id],topic[:title]]}
+    else
+      topics_array = [ ]
     end
 
     p topics_array
-    if topics_array.present?
-      topics_array.uniq{ |topic| [topic[:id],topic[:title]]}
-    end
-
 
   end
 
