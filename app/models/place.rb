@@ -135,12 +135,13 @@ class Place < ActiveRecord::Base
     end
 
     if radius_between > 4
-      p "topic list within center point"
       centerpoint = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], [e_latitude,e_longitude]])
     end
 
 
-    if radius_between > 2
+    if radius_between > 2 and radius_between < 4
+      p "radius is greater than 2 km"
+      p radius_between
 
       s_center_point = [s_latitude.to_f, s_longitude.to_f]
       s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
@@ -182,9 +183,26 @@ class Place < ActiveRecord::Base
 
       end
 
-    end
+    elsif radius_between <= 2
+      p "radius is less than 2 km"
+      p radius_between
+      s_center_point = [s_latitude.to_f, s_longitude.to_f]
+      s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
+      s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
 
-    if radius_between > 4
+      topics_array = [ ]
+
+      s_places.each do |place|
+        if place.start_places.present?
+          place.start_places.each do |topic|
+            topics_array.push(topic)
+          end
+        end
+      end
+
+    elsif radius_between > 4
+      p "radius is greater than 4 km"
+      p radius_between
       center_box = Geocoder::Calculations.bounding_box(centerpoint, radius, {units: :km})
       center_places = Place.where(latitude: center_box[0] .. center_box[2], longitude: center_box[1] .. center_box[3])
 
@@ -202,23 +220,9 @@ class Place < ActiveRecord::Base
         end
 
       end
+
     end
 
-    if radius_between < 2
-      s_center_point = [s_latitude.to_f, s_longitude.to_f]
-      s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
-      s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
-
-      topics_array = [ ]
-
-      s_places.each do |place|
-        if place.start_places.present?
-          place.start_places.each do |topic|
-            topics_array.push(topic)
-          end
-        end
-      end
-    end
     p topics_array
     if topics_array.present?
       topics_array.uniq{ |topic| [topic[:id],topic[:title]]}
