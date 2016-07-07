@@ -70,7 +70,7 @@ gem 'gmaps4rails'
 gem 'sass'
 gem 'sass-rails', '>=3.1.0.rc.4'
 gem 'compass-rails', '~> 2.0.alpha.0'
-gem 'foundation-rails'
+gem 'foundation-rails', '5.5.3.2'
 
 
 gem 'jquery-ui-rails'
