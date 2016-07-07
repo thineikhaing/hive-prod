@@ -96,7 +96,8 @@ class Place < ActiveRecord::Base
 
 
     if topics_array.present?
-      topics_array.uniq{ |topic| [topic[:id],topic[:title]]}
+      p "uniq array"
+      topics_array = topics_array.uniq{ |topic| [topic["id"]]}
     else
       topics_array = [ ]
     end
@@ -224,12 +225,11 @@ class Place < ActiveRecord::Base
 
 
     if topics_array.present?
-      topics_array.uniq{ |topic| [topic[:id],topic[:title]]}
+      topics_array = topics_array.uniq{ |topic| [topic[:id]]}
     else
       topics_array = [ ]
     end
-
-    p topics_array
+    topics_array
 
   end
 
