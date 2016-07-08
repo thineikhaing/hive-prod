@@ -38,7 +38,6 @@ Rails.application.routes.draw do
   match "hiveapplication/delete_application"  , path: "delete_application"        , via: [:get, :post]
   match "hiveapplication/edit_application"    , path: "edit_application"          , via: [:get, :post]
   match "hiveapplication/add_application"     , path: "add_application"           , via: [:get, :post]
-  match "hiveapplication/sign_up"             , path: "sign_up"                   , via: [:get, :post]
 
   match "hiveapplication/verify_signup"       , path: "verify_signup"             , via: [:get, :post]
 
