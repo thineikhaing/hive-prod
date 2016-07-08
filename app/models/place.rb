@@ -140,7 +140,7 @@ class Place < ActiveRecord::Base
     end
 
 
-    if radius_between > 2 and radius_between < 4
+    if radius_between >= 2
       p "radius is greater than 2 km"
       p radius_between
 
@@ -200,8 +200,8 @@ class Place < ActiveRecord::Base
           end
         end
       end
-
-    elsif radius_between >= 4
+    end
+    if radius_between >= 4
       p "radius is greater than 4 km"
       p radius_between
       center_box = Geocoder::Calculations.bounding_box(centerpoint, radius, {units: :km})
