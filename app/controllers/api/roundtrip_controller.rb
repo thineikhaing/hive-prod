@@ -573,9 +573,9 @@ class Api::RoundtripController < ApplicationController
 
     p "Push Woosh Authentication"
     if Rails.env.production?
-      appID = PushWoosh_Const::RT_D_APP_ID
+      appID = PushWoosh_Const::RT_P_APP_ID
     elsif Rails.env.staging?
-      appID = PushWoosh_Const::RT_D_APP_ID
+      appID = PushWoosh_Const::RT_S_APP_ID
     else
       appID = PushWoosh_Const::RT_D_APP_ID
     end
@@ -710,9 +710,9 @@ class Api::RoundtripController < ApplicationController
 
     p "Push Woosh Authentication"
     if Rails.env.production?
-      appID = PushWoosh_Const::RT_D_APP_ID
+      appID = PushWoosh_Const::RT_P_APP_ID
     elsif Rails.env.staging?
-      appID = PushWoosh_Const::RT_D_APP_ID
+      appID = PushWoosh_Const::RT_S_APP_ID
     else
       appID = PushWoosh_Const::RT_D_APP_ID
     end

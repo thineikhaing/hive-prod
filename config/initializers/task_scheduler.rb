@@ -26,18 +26,18 @@ scheduler.cron '05 00 * * *' do
   end
 end
 
-# scheduler.every 3.minutes do
-#  p "check accident!"
-#  SgAccidentHistory.get_incident_and_breakdown
-# end
-#
-#
-# scheduler.every 15.minutes do
-#   ActiveRecord::Base.connection.execute("TRUNCATE TABLE taxi_availabilities
-#  RESTART IDENTITY")
-#
-#   TaxiAvailability.fetch_nearby_taxi
-# end
+scheduler.every 3.minutes do
+ p "check accident!"
+ SgAccidentHistory.get_incident_and_breakdown
+end
+
+
+scheduler.every 15.minutes do
+  ActiveRecord::Base.connection.execute("TRUNCATE TABLE taxi_availabilities
+ RESTART IDENTITY")
+
+  TaxiAvailability.fetch_nearby_taxi
+end
 
 #scheduler.every '2s' do
 #  puts 'check blood pressure'
