@@ -66,9 +66,9 @@ module Hive
     config.assets.precompile += %w(web.css web.js mobile.css mobile.js)
 
     config.action_dispatch.default_headers.merge!({
-        'Access-Control-Allow-Origin' => '*',
-        'Access-Control-Request-Method' => '*'
-    })
+                                                      'Access-Control-Allow-Origin' => '*',
+                                                      'Access-Control-Request-Method' => '*'
+                                                  })
 
     config.middleware.use Rack::JSONP
 
@@ -170,7 +170,6 @@ module SMRT_Const
   Downtown_Line       = "DTL"
   East_West_Line      = "EWL"
   Circle_Line         = "CCL"
-
 end
 
 module PushWoosh_Const
@@ -191,17 +190,17 @@ end
 
 module AWS_Link
 
- AWS_Avatar_D_Link = "http://hivedevavatars.s3.amazonaws.com/"
- AWS_Image_D_Link = "https://hivedevimages.s3.amazonaws.com/"
- AWS_Audio_D_Link = "https://hivedevaudioclips.s3.amazonaws.com/"
+  AWS_Avatar_D_Link = "http://hivedevavatars.s3.amazonaws.com/"
+  AWS_Image_D_Link = "https://hivedevimages.s3.amazonaws.com/"
+  AWS_Audio_D_Link = "https://hivedevaudioclips.s3.amazonaws.com/"
 
- AWS_Avatar_S_Link = "http://hivestagingavatars.s3.amazonaws.com/"
- AWS_Image_S_Link = "https://hivestagingimages.s3.amazonaws.com/"
- AWS_Audio_S_Link = "https://hivestagingaudioclips.s3.amazonaws.com/"
+  AWS_Avatar_S_Link = "http://hivestagingavatars.s3.amazonaws.com/"
+  AWS_Image_S_Link = "https://hivestagingimages.s3.amazonaws.com/"
+  AWS_Audio_S_Link = "https://hivestagingaudioclips.s3.amazonaws.com/"
 
- AWS_Avatar_P_Link = "http://hiveproductionavatars.s3.amazonaws.com/"
- AWS_Image_P_Link = "https://hiveproductionimages.s3.amazonaws.com/"
- AWS_Audio_P_Link = "https://hiveproductionaudioclips.s3.amazonaws.com/"
+  AWS_Avatar_P_Link = "http://hiveproductionavatars.s3.amazonaws.com/"
+  AWS_Image_P_Link = "https://hiveproductionimages.s3.amazonaws.com/"
+  AWS_Audio_P_Link = "https://hiveproductionaudioclips.s3.amazonaws.com/"
 end
 
 module AWS_Bucket
@@ -222,7 +221,7 @@ end
 module GoogleAPI
   Google_Key = "AIzaSyCmCjZVJvI5h2Qg7XcdI9jTFjyK-IgzyQk"
 end
-#
+
 # @client.predictions_by_input(
 #     'Thomson plaza',
 #     lat: 1.3181786,
@@ -233,7 +232,6 @@ end
 #     language: I18n.locale,
 #     country: 'sg'
 # )
-#
 # @client.predictions_by_input(
 #     'bugis',
 #     lat: 1.3181786,
@@ -242,6 +240,4 @@ end
 #     types: 'geocode',
 #     language: I18n.locale,
 # )
-
-
 # @client.spots(1.3181786, 103.8433952, :name => 'toa payoh', :radius => 5000)

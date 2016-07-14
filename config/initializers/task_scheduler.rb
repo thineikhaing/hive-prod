@@ -17,6 +17,7 @@ scheduler.cron '05 00 * * mon' do
  RESTART IDENTITY")
 end
 
+
 scheduler.cron '05 00 * * *' do
   p "update user daily points"
   users = User.all
@@ -30,7 +31,6 @@ scheduler.every 3.minutes do
  p "check accident!"
  SgAccidentHistory.get_incident_and_breakdown
 end
-
 
 # scheduler.every 15.minutes do
 #   ActiveRecord::Base.connection.execute("TRUNCATE TABLE taxi_availabilities

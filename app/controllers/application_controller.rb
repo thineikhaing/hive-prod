@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
 
   include UserHelper, AuthenticationHelper, UtilityHelper
 
-  before_filter :current_browser
+  before_action :current_browser
 
   # This token check if the client device is login and has a valid token.
   # Token is generate from Application API token has encryption key.

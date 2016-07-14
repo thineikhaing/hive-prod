@@ -1006,7 +1006,7 @@ $header-border: $table-cell-border) {
   height: 366px;
   display: block;
   position: relative;
-  margin-left: 330px;
+  margin-left: 250px;
   margin-top: 67px;
 
   div{
@@ -1020,7 +1020,7 @@ $header-border: $table-cell-border) {
   height: 365px;
   display: block;
   position: relative;
-  margin-left: -100px;
+  margin-left: -20px;
   margin-top: 67px;
   div{
     overflow:auto;
@@ -1049,9 +1049,6 @@ $header-border: $table-cell-border) {
     }
   }
 }
-
-
-
 
 .mapcontrols{
   min-width: 320px;

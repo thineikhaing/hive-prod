@@ -1,87 +1,69 @@
 Rails.application.routes.draw do
 
   root to: 'home#index'
-  post "dev_sign_in"  =>  'home#dev_sign_in'  , via: [:get, :post]
-
-  match "home/application_portal"  , path: "application_portal"      , via: [:get, :post]
-
-  match "devapp_list"  =>  'home#devapp_list'   , via: [:get, :post]
-
-  match "get_topic_by_map"  =>  'home#get_topic_by_map'  , via: [:get, :post]
-
-  match "home/edit_application"    =>  'home#edit_application'          , via: [:get, :post]
+  post "dev_sign_in"              =>  'home#dev_sign_in'        , via: [:get, :post]
+  # match "application_portal"      => "home#application_portal"  , as: "home/application_portal", via: [:get, :post]
+  match "devapp_list"             =>  'home#devapp_list'        , via: [:get, :post]
+  match "get_topic_by_map"        =>  'home#get_topic_by_map'   , via: [:get, :post]
+  match "home/edit_application"   =>  'home#edit_application'   , via: [:get, :post]
+  get 'carmic' => 'carmic#index', as: 'carmic'
+  get   'user_accounts/:id' => 'hiveapplication#user_accounts', :as => :user_accounts
+  devise_for :users
+  devise_for :devusers
 
   resources :sg_accident_histories
   resources :privacy_policies
   resources :user_fav_locations
   resources :lookups
-  #resources :place_types
   resources :route_logs
-  get 'carmic' => 'carmic#index', as: 'carmic'
-
-
-  devise_for :users
-  devise_for :devusers
-  # root to: "hiveapplication#login_page"
-
   resources :hiveapplication
   resources :car_action_logs
-  post "hiveapplication/sign_in"              , path: "sign_in"
-  get "hiveapplication/verify"                , path: "verify"
-
-  match "hiveapplication/login_page"          , path: "login_page"                , via: [:get, :post]
-  match "hiveapplication/index"               , path: "index"                     , via: [:get, :post]
-  match "hiveapplication/dev_portal"          , path: "dev_portal"                , via: [:get, :post]
-  match "hiveapplication/application_list"    , path: "dev_portal"                , via: [:get, :post]
-  match "hiveapplication/sign_up"             , path: "sign_up"                   , via: [:get, :post]
-  match "hiveapplication/regenerate_api_key"  , path: "regenerate_api_key"        , via: [:get, :post]
-  match "hiveapplication/delete_application"  , path: "delete_application"        , via: [:get, :post]
-  match "hiveapplication/edit_application"    , path: "edit_application"          , via: [:get, :post]
-  match "hiveapplication/add_application"     , path: "add_application"           , via: [:get, :post]
-
-  match "hiveapplication/verify_signup"       , path: "verify_signup"             , via: [:get, :post]
-
-  match "hiveapplication/forget_password"     , path: "forget_password"           , via: [:get, :post]
-  match "hiveapplication/reset_password"      , path: "reset_password"          , via: [:get, :post]
-  match "hiveapplication/update_password"     , path: "update_password"         , via: [:get, :post]
-  match "hiveapplication/edit_column"         , path:"edit_column"              , via: [:get, :post]
-  match "hiveapplication/delete_additional_column", path:"delete_additional_column" , via: [:get, :post]
-  match "hiveapplication/update_additional_column", path:"update_additional_column" , via: [:get, :post]
-  match "hiveapplication/edit_additional_column",path:"edit_additional_column"  , via: [:get, :post]
-  match "hiveapplication/create_additional_field",path:"create_additional_field", via: [:get,:post]
-  match "hiveapplication/clear_columns_changes", path:"clear_columns_changes"   , via: [:get,:post]
-  match "hiveapplication/save_columns_changes" , path:"save_columns_changes"    , via: [:get,:post]
-  match "hiveapplication/edit_topic_post"      , path:"edit_topic_post"         , via: [:get,:post]
-  match "hiveapplication/delete_topic"         , path:"delete_topic"            , via: [:get,:post]
-  match "hiveapplication/delete_post"          , path:"delete_post"              , via: [:get,:post]
-  match "hiveapplication/edit_topic"           , path:"edit_topic"              , via: [:get,:post]
-  match "hiveapplication/edit_post"            , path:"edit_post"               , via: [:get,:post]
-  match "hiveapplication/users"               , path:"users"               , via: [:get,:post]
-  get 'hiveapplication/user_accounts/:id' => 'hiveapplication#user_accounts', :as => :user_accounts
-
-  match "carmic/create_post"                   , path:"create_post"             , via: [:get,:post]
-  match "carmic/singup"                       , path:"singup"                    , via: [:get,:post]
-  match "carmic/login"                        , path:"login"                    , via: [:get,:post]
-  match "carmic/camic_reset_pwd"               , path:"camic_reset_pwd"                  , via: [:get,:post]
-  get "carmic/logout"                , path: "logout"
-
-  match "carmic/create_post"        , path:  "create_post"     , via: [:get,:post]
-
-  #get "hiveapplication/sign_up", path: "sign_up"
-  #post "hiveapplication/sign_up", path: "sign_up"
   resources :places
-  #resources :topics
-  #resources :posts
-  #resources :users
-  #resources :dev_users
 
-  #get "sign_in", to: "hiveapplication#sign_in"
+
+  post  "sign_in"                  => 'hiveapplication#sign_in'          , as: "hiveapplication/sign_in"
+  get   "verify"                   => 'hiveapplication#verify'           , as: 'hiveapplication/verify'
+  match "login_page"               => 'hiveapplication#login_page'       , as: "hiveapplication/login_page"   , via: [:get, :post]
+
+  match "/index"    => 'hiveapplication#index'         , via: [:get, :post]
+
+  match "dev_portal"               => 'hiveapplication#dev_portal'       , as: "hiveapplication/dev_portal"   , via: [:get, :post]
+  match "application_list"         => 'hiveapplication#dev_portal'       , as: "hiveapplication/application_list", via: [:get, :post]
+  match "sign_up"                  => 'hiveapplication#sign_up'          , as: "hiveapplication/sign_up"      , via: [:get, :post]
+  match "regenerate_api_key"       => 'hiveapplication#regenerate_api_key' , as: "hiveapplication/regenerate_api_key"  , via: [:get, :post]
+  match "delete_application"       => 'hiveapplication#delete_application' , as: "hiveapplication/delete_application" , via: [:get, :post]
+  match "edit_application"         => 'hiveapplication#edit_application'  , as: "hiveapplication/edit_application"       , via: [:get, :post]
+  match "add_application"          => 'hiveapplication#add_application' , as: "hiveapplication/add_application"           , via: [:get, :post]
+  match "verify_signup"            => 'hiveapplication#verify_signup'  , as: "hiveapplication/verify_signup" , via: [:get, :post]
+  match "forget_password"          => 'hiveapplication#forget_password' , as: "hiveapplication/forget_password"           , via: [:get, :post]
+  match "reset_password"           => 'hiveapplication#reset_password'    , as: "hiveapplication/reset_password"          , via: [:get, :post]
+  match "update_password"          => 'hiveapplication#update_password'   , as: "hiveapplication/update_password"         , via: [:get, :post]
+  match "edit_column"              => 'hiveapplication#edit_column'          , as:"hiveapplication/edit_column"              , via: [:get, :post]
+  match "delete_additional_column" => 'hiveapplication#delete_additional_column', as:"hiveapplication/delete_additional_column" , via: [:get, :post]
+  match "update_additional_column" => 'hiveapplication#update_additional_column', as:"hiveapplication/update_additional_column" , via: [:get, :post]
+  match "edit_additional_column"   => "hiveapplication#edit_additional_column" , as:"hiveapplication/edit_additional_column" , via: [:get, :post]
+  match "create_additional_field"  => "hiveapplication#create_additional_field" , as:"hiveapplication/create_additional_field" , via: [:get, :post]
+  match "clear_columns_changes"    => "hiveapplication#clear_columns_changes" , as:"hiveapplication/clear_columns_changes" , via: [:get, :post]
+  match "save_columns_changes"     => "hiveapplication#save_columns_changes" , as:"hiveapplication/save_columns_changes" , via: [:get, :post]
+  match "edit_topic_post"          => "hiveapplication#edit_topic_post" , as:"hiveapplication/edit_topic_post" , via: [:get, :post]
+  match "delete_topic"             => "hiveapplication#delete_topic" , as:"hiveapplication/delete_topic" , via: [:get, :post]
+  match "delete_post"              => "hiveapplication#delete_post" , as:"hiveapplication/delete_post" , via: [:get, :post]
+  match "edit_topic"               => "hiveapplication#edit_topic" , as:"hiveapplication/edit_topic" , via: [:get, :post]
+  match "edit_post"                => "hiveapplication#edit_post" , as:"hiveapplication/edit_post" , via: [:get, :post]
+  match "users"                    => "hiveapplication#users"      , as:"hiveapplication/users" , via: [:get, :post]
+  match "carmic/create_post"      => 'carmic#create_post'              , via: [:get,:post]
+  match "carmic/singup"           => 'carmic#singup'                   , via: [:get,:post]
+  match "carmic/login"            => 'carmic#login'                    , via: [:get,:post]
+  match "carmic/camic_reset_pwd"  => "carmic#camic_reset_pwd"          , via: [:get,:post]
+  match "carmic/create_post"      => 'carmic#create_post'              , via: [:get,:post]
+  get "carmic/logout"             => 'carmic#logout'
+
 
   namespace :api do
 
-    match "hivev2/get_topic_by_latlon"              => "hivev2#get_topic_by_latlon"                     , via: [:get, :post]
-    match "hivev2/place_for_map_view"               => "hivev2#place_for_map_view"                     , via: [:get, :post]
-    match "hivev2/get_posts_by_topicid"             => "hivev2#get_posts_by_topicid"                     , via: [:get, :post]
+    match "hivev2/get_topic_by_latlon"              => "hivev2#get_topic_by_latlon"            , via: [:get, :post]
+    match "hivev2/place_for_map_view"               => "hivev2#place_for_map_view"             , via: [:get, :post]
+    match "hivev2/get_posts_by_topicid"             => "hivev2#get_posts_by_topicid"           , via: [:get, :post]
 
     match "socal/create_event"                      => "socal#create_event"                     , via: [:get, :post]
     match "socal/retrieve_invitation_code"          => "socal#retrieve_invitation_code"         , via: [:get, :post]
@@ -173,8 +155,8 @@ Rails.application.routes.draw do
     match "topics/favr_action"                      => "topics#favr_action"                     , via: [:get, :post]
     match "topics/honor_to_owner"                   => "topics#honor_to_owner"                  , via: [:get, :post]
     match "topics/user_rating"                      => "topics#user_rating"                     , via: [:get, :post]
-    match "topics/topics_within_two_points"         => "topics#topics_within_two_points"    , via: [:get, :post]
-    match "topics/topics_by_user"                   => "topics#topics_by_user"    , via: [:get, :post]
+    match "topics/topics_within_two_points"         => "topics#topics_within_two_points"        , via: [:get, :post]
+    match "topics/topics_by_user"                   => "topics#topics_by_user"                  , via: [:get, :post]
 
 
     match "topics/topic_liked"                      => "topics#topic_liked"                     , via: [:get, :post]
@@ -222,16 +204,13 @@ Rails.application.routes.draw do
 
     match "topics/get_topic_by_image"               => "topics#topic_by_image"                  , via: [:get, :post]
 
-    match "roundtrip/get_route_by_travelMode"       => "roundtrip#get_route_by_travelMode"           , via: [:get, :post]
+    match "roundtrip/get_route_by_travelMode"       => "roundtrip#get_route_by_travelMode"      , via: [:get, :post]
     match "roundtrip/driving_route_mode"            => "roundtrip#driving_route_mode"           , via: [:get, :post]
-    match "roundtrip/bicycling_route_mode"          => "roundtrip#bicycling_route_mode"           , via: [:get, :post]
+    match "roundtrip/bicycling_route_mode"          => "roundtrip#bicycling_route_mode"         , via: [:get, :post]
     match "roundtrip/walking_route_mode"            => "roundtrip#walking_route_mode"           , via: [:get, :post]
-    match "roundtrip/broadcast_trainfault"          => "roundtrip#broadcast_trainfault"           , via: [:get, :post]
-    match "roundtrip/get_nearby_taxi"               => "roundtrip#get_nearby_taxi"           , via: [:get, :post]
-    match "roundtrip/broadcast_roundtrip_users"     => "roundtrip#broadcast_roundtrip_users"           , via: [:get, :post]
-
-
-
+    match "roundtrip/broadcast_trainfault"          => "roundtrip#broadcast_trainfault"         , via: [:get, :post]
+    match "roundtrip/get_nearby_taxi"               => "roundtrip#get_nearby_taxi"              , via: [:get, :post]
+    match "roundtrip/broadcast_roundtrip_users"     => "roundtrip#broadcast_roundtrip_users"    , via: [:get, :post]
   end
 
 end

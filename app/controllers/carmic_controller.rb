@@ -130,9 +130,9 @@ class CarmicController < ApplicationController
       places.each do |p|
         places_id.push p.id
       end
-      @topics_list = Topic.where(:place_id => places_id).order("id desc")
+      # @topics_list = Topic.where(place_id:places_id, hiveapplication_id: 3).order("id desc")
 
-      @total_topic_count = @topics_list = Topic.where(:place_id => places_id).order("id desc")
+      @total_topic_count = @topics_list = Topic.where(place_id:places_id, hiveapplication_id: 3).order("id desc")
 
       @inc_list = IncidentHistory.first
       if not @topics_list.nil?

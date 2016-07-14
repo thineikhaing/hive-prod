@@ -199,15 +199,16 @@
             %input{type:'hidden', value:"#{@incidents.count rescue '0'}", id:'hid_inc_count'}
             %ul{:id => "nav"}
               -#=@topics_list.count
-              =@topics_list
+
               - if !@topics_list.nil?
                 -#-@topics_list = @topics_list.first(5)
+
                 - @topics_list.each do |sTopic|
                   -string =   @topic_avatar_url[sTopic.id].to_s
                   -substring = "carmic"
                   -string.slice! substring
                   -title = sTopic.title.split(':')
-                  -car_color = sTopic.user.data["color"]
+                  -car_color = sTopic.user.data["color"] rescue "0000"
                   -inc_car = title.first.split("to ")
                   -inc_car = inc_car.last
                   -inc_user = User.where("data -> 'plate_number' = ?",inc_car).take
@@ -220,6 +221,7 @@
                           %tr
                             %td{width:"30%"}
                               %span
+                                -car_color = "0000"
                                 .car_no{style:"background:#"+car_color+" !important"}
                                   =sTopic.user.data["plate_number"]
                               %span

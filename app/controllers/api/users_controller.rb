@@ -4,7 +4,7 @@ class Api::UsersController < ApplicationController
 
   respond_to :json
 
-  skip_before_filter :verify_authenticity_token
+  skip_before_action :verify_authenticity_token
 
   def ssl_configured?
     !Rails.env.development?
@@ -214,7 +214,7 @@ class Api::UsersController < ApplicationController
 
   def check_in
     # Authentication method that checks against database (taken from Devise)
-    # We are not using the before_filter with :authenticate_user! here because
+    # We are not using the before_action with :authenticate_user! here because
     # We want to handle the error ourselves, and not let Devise display a sign in box
     warden.authenticate(:scope => :user, :auth_token => params[:auth_token])
 

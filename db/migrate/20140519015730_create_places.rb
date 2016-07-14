@@ -20,7 +20,6 @@ class CreatePlaces < ActiveRecord::Migration
 
       t.float :latitude, null: false, default: 0
       t.float :longitude, null: false, default: 0
-
       t.timestamps
     end
   end
