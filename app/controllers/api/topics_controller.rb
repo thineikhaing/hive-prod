@@ -129,7 +129,8 @@ class Api::TopicsController < ApplicationController
             end
 
             if towards.present?
-              title += " towards "+towards
+              p "title before create"
+              p title += " towards "+towards
             end
           else
             p "title before create"
@@ -193,7 +194,9 @@ class Api::TopicsController < ApplicationController
               topic.notify_carmmunicate_msg_to_nearby_users
             end
           end
-
+          p "check"
+          p hiveapplication.api_key
+          p round_key
           if hiveapplication.api_key == round_key  and topic.present? and station1.present?
             p "notify to round trip user"
             topic.notify_train_fault_to_roundtrip_users(name, station1, station2, towards)

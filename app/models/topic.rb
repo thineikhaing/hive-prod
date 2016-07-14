@@ -1255,8 +1255,7 @@ class Topic < ActiveRecord::Base
 
     p "start added active users"
 
-    @users_to_push = []
-    @to_device_id = []
+    to_device_id = []
 
     @users = User.all
 
@@ -1265,27 +1264,13 @@ class Topic < ActiveRecord::Base
       if u.check_in_time.present?
         time_difference = Time.now - u.check_in_time
         unless time_difference.to_i > time_allowance.to_i
-          @users_to_push.push(u)
+          hash_array = u.data
+          device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+          to_device_id.push(device_id)
         end
       end
     end
 
-    @users_to_push.each do |u|
-      user= User.find_by_id(u)
-      if user.data.present?
-        hash_array = user.data
-        device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-        @to_device_id.push(device_id)
-      end
-    end
-
-    p "notification options"
-
-    p "device id::::"
-    p @to_device_id
-
-    p "title:::"
-    p self.title
 
     notification_options = {
         send_date: "now",
@@ -1303,7 +1288,7 @@ class Topic < ActiveRecord::Base
             towards: towards,
             type: "train fault"
         },
-        devices: @to_device_id
+        devices: to_device_id
     }
 
     p "after noti options"
@@ -1311,7 +1296,7 @@ class Topic < ActiveRecord::Base
     appID = PushWoosh_Const::RT_D_APP_ID
     @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
-    if @to_device_id.count > 0
+    if to_device_id.count > 0
       options = @auth.merge({:notifications  => [notification_options]})
       options = {:request  => options}
       full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
