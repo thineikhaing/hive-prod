@@ -583,25 +583,28 @@ class Api::RoundtripController < ApplicationController
     @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
 
-    @users_to_push = []
+    users_to_push = []
     user_ids = []
-    @to_device_id = []
+    to_device_id = []
 
-    @users = User.all
+
+    hive_application = HiveApplication.find_by_api_key(params[:app_key])
+    users = User.where("app_data ->'app_id#{hive_application.id}' = '#{hive_application.api_key}'")
 
     time_allowance = Time.now - 10.minutes.ago
-    @users.each do |u|
+    users.each do |u|
       if u.check_in_time.present?
         time_difference = Time.now - u.check_in_time
         unless time_difference.to_i > time_allowance.to_i
-          @users_to_push.push(u)
+          users_to_push.push(u)
         end
       end
     end
 
-    @users_to_push.each do |u|
-      user= User.find_by_id(u)
-      if user.data.present?
+    users_to_push.each do |u|
+      p "push user"
+      p user= User.find_by_id(u)
+      if user.present? and user.data.present?
         hash_array = user.data
         device_id = hash_array["device_id"] if  hash_array["device_id"].present?
         @to_device_id.push(device_id)
@@ -610,9 +613,9 @@ class Api::RoundtripController < ApplicationController
     end
 
     p "device_id"
-    p @to_device_id
+    p to_device_id
     p "device count"
-    p @to_device_id.count
+    p to_device_id.count  rescue '0'
     p "user ids"
     p user_ids
 
@@ -648,7 +651,7 @@ class Api::RoundtripController < ApplicationController
         devices: @to_device_id
     }
 
-    if @to_device_id.count > 0
+    if to_device_id.count > 0
       options = @auth.merge({:notifications  => [notification_options]})
       options = {:request  => options}
       full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
@@ -661,7 +664,8 @@ class Api::RoundtripController < ApplicationController
       p "pushwoosh"
     end
 
-    render json:  {message: message}
+    devicecount = to_device_id.count rescue '0'
+    render json:  {message: message, devise_count: devicecount}
 
 
   end
