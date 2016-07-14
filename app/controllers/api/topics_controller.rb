@@ -63,8 +63,13 @@ class Api::TopicsController < ApplicationController
           end_place[:place].name
         end
 
+        data = params[:data]
+        data = data.delete('\\"')
+
         if current_user.present?
-          data = getHashValuefromString(params[:data]) if params[:data].present?
+
+          data = getHashValuefromString(data) if data.present?
+
 
           # p walk = getHashValuefromString(params[:walk]) if params[:walk].present?
           #
@@ -91,9 +96,10 @@ class Api::TopicsController < ApplicationController
               result = defined_Fields
             end
 
+            p result
 
-            if params[:depature_time].present?
-              result["depature_time"]= params[:depature_time]
+            if params[:departure_time].present?
+              result["depature_time"]= params[:departure_time]
               result["arrival_time"]= params[:arrival_time]
             end
           end
@@ -145,7 +151,7 @@ class Api::TopicsController < ApplicationController
           end
 
 
-          if check_banned_profanity(title)
+          if check_banned_profanity(topic.title)
             user = User.find(current_user.id)
             user.profanity_counter += 1
             user.offence_date = Time.now

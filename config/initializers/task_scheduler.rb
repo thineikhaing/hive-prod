@@ -32,12 +32,12 @@ scheduler.every 3.minutes do
 end
 
 
-scheduler.every 15.minutes do
-  ActiveRecord::Base.connection.execute("TRUNCATE TABLE taxi_availabilities
- RESTART IDENTITY")
-
-  TaxiAvailability.fetch_nearby_taxi
-end
+# scheduler.every 15.minutes do
+#   ActiveRecord::Base.connection.execute("TRUNCATE TABLE taxi_availabilities
+#  RESTART IDENTITY")
+#
+#   TaxiAvailability.fetch_nearby_taxi
+# end
 
 #scheduler.every '2s' do
 #  puts 'check blood pressure'

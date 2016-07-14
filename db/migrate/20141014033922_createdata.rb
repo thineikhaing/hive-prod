@@ -32,11 +32,19 @@ class Createdata < ActiveRecord::Migration
     HiveApplication.create(devuser_id: 1, app_name: "Favr",app_type: "social",description: "Favr",api_key: api_key )
 
     api_key = SecureRandom.hex
-    HiveApplication.create(devuser_id: 1, app_name: "RoundTrip",app_type: "social",description: "RoundTrip",api_key: api_key )
+    roundtrip = HiveApplication.create(devuser_id: 1, app_name: "RoundTrip",app_type: "social",description: "RoundTrip",api_key: api_key )
 
     hive_app = HiveApplication.find_by_app_name('Favr')
     AppAdditionalField.create(app_id: hive_app.id,table_name: "User", additional_column_name: "device_id")
 
+    if roundtrip.present?
+      AppAdditionalField.create(app_id: roundtrip.id,table_name: "Topic", additional_column_name: "transport_type")
+      AppAdditionalField.create(app_id: roundtrip.id,table_name: "Topic", additional_column_name: "total_estimate_time")
+      AppAdditionalField.create(app_id: roundtrip.id,table_name: "Topic", additional_column_name: "approximate_fare")
+      AppAdditionalField.create(app_id: roundtrip.id,table_name: "Topic", additional_column_name: "total_distance")
+      AppAdditionalField.create(app_id: roundtrip.id,table_name: "Topic", additional_column_name: "depature_time")
+      AppAdditionalField.create(app_id: roundtrip.id,table_name: "Topic", additional_column_name: "arrival_time")
+    end
 
     if carmmic_app.present?
       AppAdditionalField.create(app_id: carmmic_app.id,table_name: "User", additional_column_name: "color")

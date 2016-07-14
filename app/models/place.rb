@@ -386,8 +386,7 @@ class Place < ActiveRecord::Base
         check_records = Place.nearest(latitude, longitude, 0.5)
 
         check_records.each do |cr|
-          p "name ::::"
-          p cr
+
           private_place = cr if cr.user_id == user_id and cr.source == 6
           place = cr if cr.name.downcase == name.downcase if name.present?
         end
