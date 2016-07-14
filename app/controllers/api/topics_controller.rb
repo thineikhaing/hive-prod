@@ -63,8 +63,8 @@ class Api::TopicsController < ApplicationController
           end_place[:place].name
         end
 
-        data = params[:data]
-        data = data.delete('\\"')
+        data = params[:data] if data.present?
+        data = data.delete('\\"') if data.present?
 
         if current_user.present?
 

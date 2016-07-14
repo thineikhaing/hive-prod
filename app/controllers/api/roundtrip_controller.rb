@@ -582,11 +582,7 @@ class Api::RoundtripController < ApplicationController
 
     @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
-
-    users_to_push = []
-    user_ids = []
     to_device_id = []
-
 
     hive_application = HiveApplication.find_by_api_key(params[:app_key])
     users = User.where("app_data ->'app_id#{hive_application.id}' = '#{hive_application.api_key}'")
