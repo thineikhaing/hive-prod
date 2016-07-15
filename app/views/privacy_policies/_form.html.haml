@@ -5,7 +5,9 @@
       %ul
         - @privacy_policy.errors.full_messages.each do |msg|
           %li= msg
-
+  .field
+    = f.label :hive_application
+    = f.select :hiveapplication_id, options_from_collection_for_select(HiveApplication.all, "id", "app_name", selected: @privacy_policy.hiveapplication_id), {prompt: 'Please select application name' }
   .field
     = f.label :title
     = f.text_field :title
@@ -13,4 +15,4 @@
     = f.label :content
     = f.text_area :content, style: 'height:500px'
   .actions
-    = f.submit 'Save'
+    = f.submit 'Save' , class: 'logout'

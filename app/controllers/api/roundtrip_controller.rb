@@ -818,6 +818,15 @@ class Api::RoundtripController < ApplicationController
   end
 
 
+  def get_rt_privacy_policy
+    hiveapp = HiveApplication.find_by_api_key(params[:app_key])
+    pp = PrivacyPolicy.find_by_hiveapplication_id(hiveapp.id)
+    title = pp.title rescue ''
+    content = pp.content rescue ''
+    render json:{title: title,content: content}
+  end
+
+
 
 end
 

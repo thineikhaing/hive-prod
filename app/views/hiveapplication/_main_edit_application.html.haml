@@ -1,6 +1,10 @@
 #create_application_form
   = form_for :dev_portal, url: { controller: "hiveapplication", action: "edit_application"}, method: "post", id:"updateapplication" do |f|
     = f.hidden_field :application_id, value: @application.id
+    -if @application.privacy_policy.present?
+      = link_to 'Privacy Policy', privacy_policy_path(@application.privacy_policy.id)
+    -else
+      = link_to 'New Privacy Policy', new_privacy_policy_path
     %table{class: "tbl_create_app_container"}
       %tr
         %td

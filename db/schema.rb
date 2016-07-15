@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,11 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160610072020) do
+ActiveRecord::Schema.define(version: 20160715070525) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
+  enable_extension "pg_stat_statements"
 
   create_table "action_logs", force: :cascade do |t|
     t.string   "action_type",    null: false
@@ -83,9 +83,8 @@ ActiveRecord::Schema.define(version: 20160610072020) do
     t.string   "queue"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
   end
-
-  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
   create_table "devices", force: :cascade do |t|
     t.string   "push_token"
@@ -114,10 +113,9 @@ ActiveRecord::Schema.define(version: 20160610072020) do
     t.datetime "updated_at"
     t.integer  "hiveapplication_id"
     t.integer  "role"
+    t.index ["email"], name: "index_devusers_on_email", unique: true, using: :btree
+    t.index ["reset_password_token"], name: "index_devusers_on_reset_password_token", unique: true, using: :btree
   end
-
-  add_index "devusers", ["email"], name: "index_devusers_on_email", unique: true, using: :btree
-  add_index "devusers", ["reset_password_token"], name: "index_devusers_on_reset_password_token", unique: true, using: :btree
 
   create_table "favractions", force: :cascade do |t|
     t.integer  "topic_id"
@@ -223,8 +221,9 @@ ActiveRecord::Schema.define(version: 20160610072020) do
   create_table "privacy_policies", force: :cascade do |t|
     t.string   "title"
     t.text     "content"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.integer  "hiveapplication_id"
   end
 
   create_table "route_logs", force: :cascade do |t|
@@ -247,10 +246,9 @@ ActiveRecord::Schema.define(version: 20160610072020) do
     t.text     "data"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["session_id"], name: "index_sessions_on_session_id", unique: true, using: :btree
+    t.index ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
   end
-
-  add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", unique: true, using: :btree
-  add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
 
   create_table "sg_accident_histories", force: :cascade do |t|
     t.string   "type"
@@ -415,10 +413,9 @@ ActiveRecord::Schema.define(version: 20160610072020) do
     t.integer  "socal_id"
     t.integer  "daily_points",           default: 10
     t.hstore   "app_data"
+    t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
-
-  add_index "users", ["authentication_token"], name: "index_users_on_authentication_token", unique: true, using: :btree
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
   create_table "votes", force: :cascade do |t|
     t.integer  "vote"

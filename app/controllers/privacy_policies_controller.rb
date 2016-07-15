@@ -69,6 +69,6 @@ class PrivacyPoliciesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def privacy_policy_params
-      params.require(:privacy_policy).permit(:title, :content)
+      params.require(:privacy_policy).permit(:title, :content,:hiveapplication_id)
     end
 end

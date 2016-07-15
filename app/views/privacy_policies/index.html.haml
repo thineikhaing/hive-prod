@@ -1,39 +1,39 @@
 -#%h1 Listing privacy_policies
+= link_to 'New Privacy policy', new_privacy_policy_path , style: 'float: right;margin:20px;'
+-#- @privacy_policies.each do |privacy_policy|
+-#  %h3
+-#    Title:
+-#    =privacy_policy.title
+-#  %p
+-#    = simple_format(privacy_policy.content)
+-#
+-#  %br
+-#  = link_to 'Edit', edit_privacy_policy_path(privacy_policy)
+-#  |
+-#  = link_to 'Destroy', privacy_policy, :method => :delete, :data => { :confirm => 'Are you sure?' }
+-#
+-#
+%br
 
-- @privacy_policies.each do |privacy_policy|
-  %h3
-    Title:
-    =privacy_policy.title
-  %p
-    = simple_format(privacy_policy.content)
+%table
+  %thead
+    %tr
+      %th Application
+      %th Title
+      %th Content
+      %th
+      %th
 
-  %br
-  = link_to 'Edit', edit_privacy_policy_path(privacy_policy)
-  |
-  = link_to 'Destroy', privacy_policy, :method => :delete, :data => { :confirm => 'Are you sure?' }
+  %tbody
+    - @privacy_policies.each do |privacy_policy|
+      %tr
+        %td=privacy_policy.application.app_name
+        %td= privacy_policy.title
+        %td= simple_format(privacy_policy.content)
+        %td= link_to 'Show', privacy_policy
+        %td= link_to 'Edit', edit_privacy_policy_path(privacy_policy)
 
--if @privacy_policies.count == 0
-  = link_to 'New Privacy policy', new_privacy_policy_path
 
--#
--#%table
--#  %thead
--#    %tr
--#      %th Title
--#      %th Content
--#      %th
--#      %th
--#      %th
--#
--#  %tbody
--#    - @privacy_policies.each do |privacy_policy|
--#      %tr
--#        %td= privacy_policy.title
--#        %td= simple_format(privacy_policy.content)
--#        %td= link_to 'Show', privacy_policy
--#        %td= link_to 'Edit', edit_privacy_policy_path(privacy_policy)
--#        %td
--#
--#%br
--#
--#
+%br
+
+

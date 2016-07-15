@@ -1,6 +1,7 @@
 class HiveApplication < ActiveRecord::Base
   belongs_to :devuser
   has_many :topics  , :foreign_key => 'hiveapplication_id'
+  has_one :privacy_policy  , :foreign_key => 'hiveapplication_id'
 
   #xss_foliate :sanitize => [ :body]
 
