@@ -1295,7 +1295,14 @@ class Topic < ActiveRecord::Base
 
     p "after noti options"
 
-    appID = PushWoosh_Const::RT_D_APP_ID
+    if Rails.env.production?
+      appID = PushWoosh_Const::RT_P_APP_ID
+    elsif Rails.env.staging?
+      appID = PushWoosh_Const::RT_S_APP_ID
+    else
+      appID = PushWoosh_Const::RT_D_APP_ID
+    end
+
     @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
     if to_device_id.count > 0
