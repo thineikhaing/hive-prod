@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   match "devapp_list"             =>  'home#devapp_list'        , via: [:get, :post]
   match "get_topic_by_map"        =>  'home#get_topic_by_map'   , via: [:get, :post]
   match "home/edit_application"   =>  'home#edit_application'   , via: [:get, :post]
+  match "create_train_fault_alert" => 'home#create_train_fault_alert', via: [:get, :post]
+
   get 'carmic' => 'carmic#index', as: 'carmic'
   get   'user_accounts/:id' => 'hiveapplication#user_accounts', :as => :user_accounts
   devise_for :users
@@ -29,6 +31,7 @@ Rails.application.routes.draw do
 
   match "dev_portal"               => 'hiveapplication#dev_portal'       , as: "hiveapplication/dev_portal"   , via: [:get, :post]
   match "application_list"         => 'hiveapplication#dev_portal'       , as: "hiveapplication/application_list", via: [:get, :post]
+
   match "sign_up"                  => 'hiveapplication#sign_up'          , as: "hiveapplication/sign_up"      , via: [:get, :post]
   match "regenerate_api_key"       => 'hiveapplication#regenerate_api_key' , as: "hiveapplication/regenerate_api_key"  , via: [:get, :post]
   match "delete_application"       => 'hiveapplication#delete_application' , as: "hiveapplication/delete_application" , via: [:get, :post]

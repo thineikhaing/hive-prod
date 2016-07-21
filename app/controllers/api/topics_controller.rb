@@ -112,30 +112,6 @@ class Api::TopicsController < ApplicationController
           params[:special_type].present? ? special_type = params[:special_type] : special_type = 0
           #check the profanity
 
-          name = params[:smrt_name]
-          station1 = params[:station1]
-          station2 = params[:station2]
-          towards = params[:towards]
-          reason = params[:reason]
-
-
-          if params[:reason].present?
-
-            if station1.present? && station2.present?
-              title = "[#{name}]"+reason +", between "+station1+" and "+station2
-
-            elsif station1.present? && station2.blank?
-              title =  "[#{name}]"+reason +" from "+station1
-            end
-
-            if towards.present?
-              p "title before create"
-              p title += " towards "+towards
-            end
-          else
-            p "title before create"
-            p title = params[:title]
-          end
 
 
           if params[:image_url].present?
@@ -194,13 +170,7 @@ class Api::TopicsController < ApplicationController
               topic.notify_carmmunicate_msg_to_nearby_users
             end
           end
-          p "check"
-          p hiveapplication.api_key
-          p round_key
-          if hiveapplication.api_key == round_key  and topic.present? and station1.present?
-            p "notify to round trip user"
-            topic.notify_train_fault_to_roundtrip_users(name, station1, station2, towards)
-          end
+
 
 
           #increase like and dislike count

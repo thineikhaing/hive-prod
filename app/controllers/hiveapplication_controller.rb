@@ -847,6 +847,8 @@ class HiveapplicationController < ApplicationController
   end
 end
 
+
+
 private
 def devuser
   params.require(:devuser).permit(:username, :email, :password, :password_confirmation, :verified, :email_verification_code, :hiveapplication_id, :data)

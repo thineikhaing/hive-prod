@@ -33,6 +33,12 @@ class HiveApplication < ActiveRecord::Base
 
   end
 
+  SMRT = ["NSL", "NEL","DTL", "EWL","CCL"]
+  # North_South_Line    = "NSL"
+  # Northeast_Line      = "NEL"
+  # Downtown_Line       = "DTL"
+  # East_West_Line      = "EWL"
+  # Circle_Line         = "CCL"
   def self.generate_verification_code(length=16)
     # Generates an alphanumerical verification code (length = 16bits)
     chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ0123456789'

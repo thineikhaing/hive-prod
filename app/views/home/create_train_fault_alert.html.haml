@@ -1,0 +1,37 @@
+%h4 Create Train Alert to RoundTrip Users
+%br
+= form_for :topic, url: { controller: "home", action: "create_train_fault_alert"}, method: "post", :remote => true do |f|
+  .row
+    .large-4.columns
+      =f.label :smrt
+      = f.select(:smrt, HiveApplication::SMRT.sort,:include_blank => "--- Select SMRT Line ---" )
+    .large-4.columns
+      =f.label :hiveapplication_id
+      = f.select(:hiveapplication_id, options_from_collection_for_select(HiveApplication.all, "id", "app_name"),:include_blank => "--- Select Hive App ---" )
+    .large-4.columns
+      &nbsp;
+  .row
+    .large-12.columns
+      = f.label :reason
+      = f.text_area :reason
+  .row
+
+    .large-4.columns
+      =f.label :start_place
+      = f.select :start_place_id, options_from_collection_for_select(Place.where(id: 2..92).order(:name), "id", "name"), :include_blank => "--- Select From Station ---"
+
+    .large-4.columns
+      =f.label :end_place
+      = f.select :end_place_id, options_from_collection_for_select(Place.where(id: 2..92).order(:name), "id", "name"), :include_blank => "--- Select To Station ---"
+
+    .large-4.columns
+      =f.label :toward
+      = f.select :toward, options_from_collection_for_select(Place.where(id: 2..92).order(:name), "id", "name"),:include_blank => "--- Select Toward Station ---"
+
+  .row
+    .large-12.columns
+      = f.label :additional_info
+      = f.text_area :additional_info
+  .row
+    .large-12.columns
+      = f.submit "Submit" , class: 'button tiny warning'  , style:'float:right'
