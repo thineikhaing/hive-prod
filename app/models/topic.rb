@@ -1256,7 +1256,7 @@ class Topic < ActiveRecord::Base
     p "start added active users"
 
     to_device_id = []
-
+     user_id = []
     @users = User.all
 
     time_allowance = Time.now - 10.minutes.ago
@@ -1267,10 +1267,12 @@ class Topic < ActiveRecord::Base
           hash_array = u.data
           device_id = hash_array["device_id"] if  hash_array["device_id"].present?
           to_device_id.push(device_id)
+          user_id.push(u.id)
         end
       end
     end
-
+    p "Push User ID :: "
+    p user_id
 
     notification_options = {
         send_date: "now",
