@@ -26,7 +26,10 @@
 -#.row
 -#  .large-12.columns
 -#    %h5=link_to "User list", hiveapplication_users_path , style:'float:right'
-
+.row
+  .columns.large-12
+    %h4
+      =link_to "Create Train Fault Topic/Alert", create_train_fault_alert_path
 .row
   .large-centered.large-12.columns
     -if !@hive_applications.nil?
