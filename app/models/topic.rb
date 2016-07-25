@@ -1295,6 +1295,7 @@ class Topic < ActiveRecord::Base
 
     p "after noti options"
 
+    p "Push Woosh Authentication"
     if Rails.env.production?
       appID = PushWoosh_Const::RT_P_APP_ID
     elsif Rails.env.staging?

@@ -232,13 +232,15 @@ class HomeController < ApplicationController
 
        topic.hive_broadcast
        topic.app_broadcast_with_content
+       p station1name = station1.name.chomp(' MRT')
+       p station2name = station2.name.chomp(' MRT')
 
        if hiveapplication.api_key == round_key  and topic.present?
          p "notify to round trip user"
-         topic.notify_train_fault_to_roundtrip_users(smrt, station1.name.chomp(' MRT'), station2.name.chomp(' MRT'), towards.name)
+         topic.notify_train_fault_to_roundtrip_users(smrt, station1name, station2name, towards.name)
        end
 
-       flash.now[:notice] = "Created SMRT alert Message!"
+       flash[:notice] = "Create SMRT alert message successfully!"
        redirect_to create_train_fault_alert_path
      end
    end
