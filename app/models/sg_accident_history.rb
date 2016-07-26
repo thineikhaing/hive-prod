@@ -71,13 +71,20 @@ class SgAccidentHistory < ActiveRecord::Base
       if u.check_in_time.present?
         time_difference = Time.now - u.check_in_time
         unless time_difference.to_i > time_allowance.to_i
-          hash_array = u.data
-          device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-          to_device_id.push(device_id)
-          user_id.push(u.id)
+          p "user data:"
+          p hash_array = u.data
+
+          if hash_array.present?
+            device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+            to_device_id.push(device_id)
+            user_id.push(u.id)
+          end
+
         end
       end
     end
+
+
 
     sg_accident = SgAccidentHistory.where(notify: false).take
     if sg_accident.present?
