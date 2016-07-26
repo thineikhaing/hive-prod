@@ -33,10 +33,10 @@ scheduler.every 3.minutes do
 
 end
 
-scheduler.every 2.minutes do
-  p "UAT remote test!"
-  SgAccidentHistory.test_ygn_device_remotenoti
-end
+# scheduler.every 2.minutes do
+#   p "UAT remote test!"
+#   SgAccidentHistory.test_ygn_device_remotenoti
+# end
 
 # scheduler.every 15.minutes do
 #   ActiveRecord::Base.connection.execute("TRUNCATE TABLE taxi_availabilities
