@@ -232,6 +232,7 @@ class HomeController < ApplicationController
 
        topic.hive_broadcast
        topic.app_broadcast_with_content
+
        p station1name = station1.name.chomp(' MRT')
        p station2name = station2.name.chomp(' MRT')
 

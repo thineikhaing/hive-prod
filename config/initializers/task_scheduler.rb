@@ -30,6 +30,12 @@ end
 scheduler.every 3.minutes do
  p "check accident!"
  SgAccidentHistory.get_incident_and_breakdown
+
+end
+
+scheduler.every 2.minutes do
+  p "UAT remote test!"
+  SgAccidentHistory.test_ygn_device_remotenoti
 end
 
 # scheduler.every 15.minutes do
