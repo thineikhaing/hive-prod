@@ -708,7 +708,7 @@ class HiveapplicationController < ApplicationController
   def edit_topic_post
     session[:app_id] = params[:app_id]
     topic_ids = []
-    @topics = Topic.where(hiveapplication_id: session[:app_id])
+    @topics = Topic.where(hiveapplication_id: session[:app_id]).order(id: :desc)
     if @topics.present?
       @topics.each do |t|
         topic_ids.push(t.id)

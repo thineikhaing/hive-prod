@@ -582,13 +582,13 @@ class Api::RoundtripController < ApplicationController
 
     @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
-    to_device_id = []
+
 
     hive_application = HiveApplication.find_by_api_key(params[:app_key])
     users = User.where("app_data ->'app_id#{hive_application.id}' = '#{hive_application.api_key}'")
 
     p users.count
-
+    to_device_id = []
     time_allowance = Time.now - 10.minutes.ago
     users.each do |u|
       if u.check_in_time.present?
