@@ -26,18 +26,16 @@ class SgAccidentHistory < ActiveRecord::Base
         devices: user.data["device_id"]
     }
 
-    if to_device_id.count > 0
-      options = @auth.merge({:notifications  => [notification_options]})
-      options = {:request  => options}
-      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-      url = URI.parse(full_path)
-      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-      req.body = options.to_json
-      con = Net::HTTP.new(url.host, url.port)
-      con.use_ssl = true
-      r = con.start {|http| http.request(req)}
-      p "pushwoosh message send to HWT!"
-    end
+    options = @auth.merge({:notifications  => [notification_options]})
+    options = {:request  => options}
+    full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+    url = URI.parse(full_path)
+    req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+    req.body = options.to_json
+    con = Net::HTTP.new(url.host, url.port)
+    con.use_ssl = true
+    r = con.start {|http| http.request(req)}
+    p "pushwoosh message send to HWT!"
 
   end
 
