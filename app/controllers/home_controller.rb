@@ -264,8 +264,11 @@ class HomeController < ApplicationController
            time_difference = Time.now - u.check_in_time
            unless time_difference.to_i > time_allowance.to_i
              hash_array = u.data
-             device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-             to_device_id.push(device_id)
+             if hash_array.present?
+               device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+               to_device_id.push(device_id)
+             end
+
            end
          end
        end
