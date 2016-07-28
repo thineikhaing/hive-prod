@@ -286,6 +286,7 @@ class HomeController < ApplicationController
                smrtline: smrt,
                station1: station1name,
                station2: station2name,
+               towards: towards.name,
                type: "train fault"
            },
            devices: to_device_id
