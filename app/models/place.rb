@@ -135,7 +135,7 @@ class Place < ActiveRecord::Base
       p "topic list within 1km of each points"
     end
 
-    if radius_between > 4
+    if radius_between  >= 4
       centerpoint = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], [e_latitude,e_longitude]])
     end
 
@@ -205,6 +205,7 @@ class Place < ActiveRecord::Base
     if radius_between >= 4
       p "radius is greater than 4 km"
       p radius_between
+      p centerpoint
       center_box = Geocoder::Calculations.bounding_box(centerpoint, radius, {units: :km})
       center_places = Place.where(latitude: center_box[0] .. center_box[2], longitude: center_box[1] .. center_box[3])
 
