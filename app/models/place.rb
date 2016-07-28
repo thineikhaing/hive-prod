@@ -109,97 +109,73 @@ class Place < ActiveRecord::Base
   # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)
   def self.nearest_topics_within_start_and_end(s_latitude, s_longitude,e_latitude, e_longitude, radius, hive_id)
 
-    p "radius between two points"
-    radius_between = Geocoder::Calculations.distance_between([s_latitude,s_longitude], [e_latitude,e_longitude], {units: :km})
-    p radius_between = radius_between.round
 
+    radius_between = Geocoder::Calculations.distance_between([s_latitude,s_longitude], [e_latitude,e_longitude], {units: :km})
+    radius_between = radius_between.round
+
+    p "radius between two points is #{radius_between} km"
     radius = 1
 
     if radius_between <= 0.5
-      radius = 0.5
-      p "counting from start point with radius 500m"
+      radius = 0.2
 
     elsif radius_between.between?(0.5, 1)
 
-      radius = 1
-      p "counting from start point with radius 1km"
+      radius = 0.5
 
     elsif radius_between.between?(1, 2)
 
       radius =  radius_between
-      p "topic list distance between two points unit in km"
 
     elsif radius_between > 2
 
       radius = 1
-      p "topic list within 1km of each points"
+
+    end
+    p "topic list within #{radius}km of each points"
+
+    centerpoint = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], [e_latitude,e_longitude]])
+
+    s_center_point = [s_latitude.to_f, s_longitude.to_f]
+    s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
+    s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
+
+    e_center_point = [e_latitude.to_f, e_longitude.to_f]
+    e_box = Geocoder::Calculations.bounding_box(e_center_point, radius, {units: :km})
+    e_places = Place.where(latitude: e_box[0] .. e_box[2], longitude: e_box[1] .. e_box[3])
+
+
+
+    topics_array = [ ]
+
+    s_places.each do |place|
+      if place.start_places.present?
+        place.start_places.each do |topic|
+          topics_array.push(topic)
+        end
+      end
+
+      if place.end_places.present?
+        place.end_places.each do |topic|
+          topics_array.push(topic)
+        end
+      end
+
     end
 
-    if radius_between  >= 4
-      centerpoint = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], [e_latitude,e_longitude]])
-    end
-
-
-    if radius_between > 2
-      p "radius is greater than 2 km"
-      p radius_between
-
-      s_center_point = [s_latitude.to_f, s_longitude.to_f]
-      s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
-      s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
-
-      e_center_point = [e_latitude.to_f, e_longitude.to_f]
-      e_box = Geocoder::Calculations.bounding_box(e_center_point, radius, {units: :km})
-      e_places = Place.where(latitude: e_box[0] .. e_box[2], longitude: e_box[1] .. e_box[3])
-
-      topics_array = [ ]
-
-      s_places.each do |place|
-        if place.start_places.present?
-          place.start_places.each do |topic|
-            topics_array.push(topic)
-          end
-        end
-
-        if place.end_places.present?
-          place.end_places.each do |topic|
-            topics_array.push(topic)
-          end
-        end
-
-      end
-
-      e_places.each do |place|
-        if place.end_places.present?
-          place.end_places.each do |topic|
-            topics_array.push(topic)
-          end
-        end
-
-        if place.end_places.present?
-          place.end_places.each do |topic|
-            topics_array.push(topic)
-          end
-        end
-
-      end
-
-    elsif radius_between <= 2
-      p "radius is less than 2 km"
-      p radius_between
-      s_center_point = [s_latitude.to_f, s_longitude.to_f]
-      s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
-      s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
-
-      topics_array = [ ]
-
-      s_places.each do |place|
-        if place.start_places.present?
-          place.start_places.each do |topic|
-            topics_array.push(topic)
-          end
+    e_places.each do |place|
+      if place.end_places.present?
+        place.end_places.each do |topic|
+          topics_array.push(topic)
         end
       end
+
+      if place.end_places.present?
+        place.end_places.each do |topic|
+          topics_array.push(topic)
+        end
+      end
+
     end
 
     if radius_between >= 4
