@@ -115,22 +115,15 @@ class Place < ActiveRecord::Base
     p "radius between two points is #{radius_between} km"
     radius = 1
 
-    if radius_between <= 0.5
-      radius = 0.2
-
-    elsif radius_between.between?(0.5, 1)
-
-      radius = 0.5
-
-    elsif radius_between.between?(1, 1.9)
-
-      radius =  radius_between
+    if radius_between < 2
+      radius = (radius_between / 2).round(2)
 
     elsif radius_between >= 2
 
       radius = 1
 
     end
+
     p "topic list within #{radius}km of each points"
 
     centerpoint = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], [e_latitude,e_longitude]])
@@ -176,9 +169,10 @@ class Place < ActiveRecord::Base
       end
 
     end
+    p topics_array.count rescue '0'
 
     if radius_between >= 4
-      p "radius is greater than 4 km"
+      p "get the center point's topic list cuz radius is greater than 4 km"
       p radius_between
       p centerpoint
       center_box = Geocoder::Calculations.bounding_box(centerpoint, radius, {units: :km})
@@ -199,7 +193,7 @@ class Place < ActiveRecord::Base
 
       end
     end
-
+    p topics_array.count rescue '0'
 
     if topics_array.present?
       topics_array = topics_array.uniq{ |topic| [topic[:id]]}
