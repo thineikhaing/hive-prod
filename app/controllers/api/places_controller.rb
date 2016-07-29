@@ -313,16 +313,17 @@ class Api::PlacesController < ApplicationController
     factual_data_array = [ ]
     google_data_array = []
     gothere_data = []
+    query = []
     if params[:latitude].present? and params[:longitude].present? and params[:radius].present? and params[:keyword].present?
 
-      factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
-      p "factual data"
-
-      begin
-        query = factual.table("global").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
-      rescue Geocoder::OverQueryLimitError
-        p "****** gecoder limit hit ******"
-      end
+      # factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+      # p "factual data"
+      #
+      # begin
+      #   query = factual.table("global").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
+      # rescue Geocoder::OverQueryLimitError
+      #   p "****** gecoder limit hit ******"
+      # end
       #Google Geocoding API error: over query limit.
 
       # read_query = factual.table("places-sg").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})

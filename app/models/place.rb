@@ -109,7 +109,6 @@ class Place < ActiveRecord::Base
   # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)
   def self.nearest_topics_within_start_and_end(s_latitude, s_longitude,e_latitude, e_longitude, radius, hive_id)
 
-
     radius_between = Geocoder::Calculations.distance_between([s_latitude,s_longitude], [e_latitude,e_longitude], {units: :km})
     radius_between = radius_between.round
 
@@ -123,11 +122,11 @@ class Place < ActiveRecord::Base
 
       radius = 0.5
 
-    elsif radius_between.between?(1, 2)
+    elsif radius_between.between?(1, 1.9)
 
       radius =  radius_between
 
-    elsif radius_between > 2
+    elsif radius_between >= 2
 
       radius = 1
 
