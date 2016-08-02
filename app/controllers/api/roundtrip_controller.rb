@@ -706,58 +706,26 @@ class Api::RoundtripController < ApplicationController
 
     @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
-
-    @users_to_push = []
-    @to_device_id = []
-    @users = User.all
+    user_id = []
+    to_device_id = []
+    users = User.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
 
     time_allowance = Time.now - 10.minutes.ago
-    @users.each do |u|
+    users.each do |u|
       if u.check_in_time.present?
         time_difference = Time.now - u.check_in_time
         unless time_difference.to_i > time_allowance.to_i
-          if u.data.present?
+          if u.data.present?  and u.id == current_user.id
             hash_array = u.data
             device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-            @to_device_id.push(device_id)
+            to_device_id.push(device_id)
+            user_id.push(u)
           end
         end
       end
     end
-
-
-
-
-    message = params[:message]
-
-    notification_options = {
-        send_date: "now",
-        badge: "1",
-        sound: "default",
-        content:{
-            fr:message,
-            en:message
-        },
-        data:{
-            broadcast_user: current_user.id,
-            message: message,
-            shared: true
-        },
-        devices: @to_device_id
-    }
-
-    if @to_device_id.count > 0
-      options = @auth.merge({:notifications  => [notification_options]})
-      options = {:request  => options}
-      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-      url = URI.parse(full_path)
-      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-      req.body = options.to_json
-      con = Net::HTTP.new(url.host, url.port)
-      con.use_ssl = true
-      r = con.start {|http| http.request(req)}
-      p "pushwoosh"
-    end
+     p "user to push"
+    p user_id
 
     params[:start_name].present? ? start_name = params[:start_name] : start_name = nil
     params[:start_address].present? ? start_address = params[:start_address] : start_address = ""
@@ -804,10 +772,44 @@ class Api::RoundtripController < ApplicationController
       user_place = Place.first
     end
 
+    message = params[:message]
+
     topic = Topic.create(title:message, user_id: current_user.id, topic_type: 0, hiveapplication_id: hiveapplication.id,
                          place_id: user_place.id, start_place_id: start_id, end_place_id: end_id)
     topic.hive_broadcast
     topic.app_broadcast
+
+
+
+    notification_options = {
+        send_date: "now",
+        badge: "1",
+        sound: "default",
+        content:{
+            fr:message,
+            en:message
+        },
+        data:{
+            broadcast_user: current_user.id,
+            message: message,
+            topic: topic,
+            shared: true
+        },
+        devices: to_device_id
+    }
+
+    if to_device_id.count > 0
+      options = @auth.merge({:notifications  => [notification_options]})
+      options = {:request  => options}
+      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+      url = URI.parse(full_path)
+      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+      req.body = options.to_json
+      con = Net::HTTP.new(url.host, url.port)
+      con.use_ssl = true
+      r = con.start {|http| http.request(req)}
+      p "pushwoosh"
+    end
 
     render json:{status: 200, topic:topic, message: "broadcast topic create sucessfully!"}
 
