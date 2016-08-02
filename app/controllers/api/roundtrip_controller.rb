@@ -715,7 +715,7 @@ class Api::RoundtripController < ApplicationController
       if u.check_in_time.present?
         time_difference = Time.now - u.check_in_time
         unless time_difference.to_i > time_allowance.to_i
-          if u.data.present?  and u.id == current_user.id
+          if u.data.present? && u.id != current_user.id
             hash_array = u.data
             device_id = hash_array["device_id"] if  hash_array["device_id"].present?
             to_device_id.push(device_id)
