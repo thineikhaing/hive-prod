@@ -790,9 +790,9 @@ class Api::RoundtripController < ApplicationController
             en:message
         },
         data:{
-            broadcast_user: current_user.id,
-            message: topic.title,
             topic: topic,
+            message: topic.title,
+            broadcast_user: current_user.id,
             shared: true
         },
         devices: to_device_id

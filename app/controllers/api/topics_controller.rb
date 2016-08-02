@@ -171,6 +171,13 @@ class Api::TopicsController < ApplicationController
             end
           end
 
+           p "check to share"
+          p params[:shared_rt]
+          if params[:shared_rt].present? and hiveapplication.api_key == round_key
+            p "notify to rt users"
+             topic.notify_roundtrip_users
+          end
+
 
 
           #increase like and dislike count

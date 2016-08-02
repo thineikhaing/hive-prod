@@ -44,22 +44,23 @@ class SgAccidentHistory < ActiveRecord::Base
           p "add new record"
           SgAccidentHistory.create(type:type,message: message, accident_datetime: accidentDateTIme, latitude:latitude, longitude:longitude, summary:summary )
         end
+        if sg_accident.present?
+
+          data = {
+              title: sg_accident.message,
+              type: sg_accident.type,
+              latitude: sg_accident.latitude,
+              longitude: sg_accident.longitude,
+              accident_datetime: sg_accident.accident_datetime
+
+          }
+          Pusher["hive_channel"].trigger_async("train_fault", data)
+        end
       end
 
     end
 
-    if sg_accident.present?
 
-      data = {
-          title: sg_accident.message,
-          type: sg_accident.type,
-          latitude: sg_accident.latitude,
-          longitude: sg_accident.longitude,
-          accident_datetime: sg_accident.accident_datetime
-
-      }
-      Pusher["hive_channel"].trigger_async("train_fault", data)
-    end
 
     # if Rails.env.production?
     #   appID = PushWoosh_Const::RT_P_APP_ID
