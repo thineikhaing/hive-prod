@@ -719,7 +719,7 @@ class Api::RoundtripController < ApplicationController
             hash_array = u.data
             device_id = hash_array["device_id"] if  hash_array["device_id"].present?
             to_device_id.push(device_id)
-            user_id.push(u)
+            user_id.push(u.id)
           end
         end
       end
@@ -779,7 +779,7 @@ class Api::RoundtripController < ApplicationController
     topic.hive_broadcast
     topic.app_broadcast
 
-
+    p topic.title
 
     notification_options = {
         send_date: "now",
@@ -791,7 +791,7 @@ class Api::RoundtripController < ApplicationController
         },
         data:{
             broadcast_user: current_user.id,
-            message: message,
+            message: topic.title,
             topic: topic,
             shared: true
         },
