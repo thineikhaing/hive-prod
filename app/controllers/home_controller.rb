@@ -287,6 +287,7 @@ class HomeController < ApplicationController
                station1: station1name,
                station2: station2name,
                towards: towards.name,
+               topic: topic,
                type: "train fault"
            },
            devices: to_device_id
