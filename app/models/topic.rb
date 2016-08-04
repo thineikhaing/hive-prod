@@ -1320,13 +1320,13 @@ class Topic < ActiveRecord::Base
   def notify_train_fault_to_roundtrip_users(name, station1, station2, towards)
 
     p "start added active users"
-
+    hiveapplication = HiveApplication.find(self.hiveapplication_id)
     to_device_id = []
      user_id = []
-    @users = User.all
+    users = User.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
 
     time_allowance = Time.now - 10.minutes.ago
-    @users.each do |u|
+    users.each do |u|
       if u.check_in_time.present?
         time_difference = Time.now - u.check_in_time
         unless time_difference.to_i > time_allowance.to_i
@@ -1354,6 +1354,7 @@ class Topic < ActiveRecord::Base
             station1: station1,
             station2: station2,
             towards: towards,
+            topic: self,
             type: "train fault"
         },
         devices: to_device_id

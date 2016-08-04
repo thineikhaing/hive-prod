@@ -202,7 +202,7 @@ class HomeController < ApplicationController
        reason = params[:topic][:reason]
        hiveapplication_id = params[:topic][:hiveapplication_id]
 
-       hiveapplication = HiveApplication.find(hiveapplication_id)
+
 
        station1 = Place.find(start_place_id)
        station2 = Place.find(end_place_id)
@@ -236,75 +236,72 @@ class HomeController < ApplicationController
        p station1name = station1.name.chomp(' MRT')
        p station2name = station2.name.chomp(' MRT')
 
-       if hiveapplication.api_key == round_key  and topic.present?
-         p "notify to round trip user"
-         topic.notify_train_fault_to_roundtrip_users(smrt, station1name, station2name, towards.name)
-       end
+       p "notify to round trip user"
+       topic.notify_train_fault_to_roundtrip_users(smrt, station1name, station2name, towards.name)
 
-
-       p "Push Woosh Authentication"
-       if Rails.env.production?
-         appID = PushWoosh_Const::RT_P_APP_ID
-       elsif Rails.env.staging?
-         appID = PushWoosh_Const::RT_S_APP_ID
-       else
-         appID = PushWoosh_Const::RT_D_APP_ID
-       end
-
-       @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
-
-
-       users = User.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
-
-       p users.count
-       to_device_id = []
-       time_allowance = Time.now - 10.minutes.ago
-       users.each do |u|
-         if u.check_in_time.present?
-           time_difference = Time.now - u.check_in_time
-           unless time_difference.to_i > time_allowance.to_i
-             hash_array = u.data
-             if hash_array.present?
-               device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-               to_device_id.push(device_id)
-             end
-
-           end
-         end
-       end
-
-       notification_options = {
-           send_date: "now",
-           badge: "1",
-           sound: "default",
-           content:{
-               fr:topic.title,
-               en:topic.title
-           },
-           data:{
-               trainfault_datetime: Time.now,
-               smrtline: smrt,
-               station1: station1name,
-               station2: station2name,
-               towards: towards.name,
-               topic: topic,
-               type: "train fault"
-           },
-           devices: to_device_id
-       }
-
-       if to_device_id.count > 0
-         options = @auth.merge({:notifications  => [notification_options]})
-         options = {:request  => options}
-         full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-         url = URI.parse(full_path)
-         req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-         req.body = options.to_json
-         con = Net::HTTP.new(url.host, url.port)
-         con.use_ssl = true
-         r = con.start {|http| http.request(req)}
-         p "pushwoosh"
-       end
+       # p "Push Woosh Authentication"
+       # if Rails.env.production?
+       #   appID = PushWoosh_Const::RT_P_APP_ID
+       # elsif Rails.env.staging?
+       #   appID = PushWoosh_Const::RT_S_APP_ID
+       # else
+       #   appID = PushWoosh_Const::RT_D_APP_ID
+       # end
+       #
+       # @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+       #
+       #
+       # users = User.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+       #
+       # p users.count
+       # to_device_id = []
+       # time_allowance = Time.now - 10.minutes.ago
+       # users.each do |u|
+       #   if u.check_in_time.present?
+       #     time_difference = Time.now - u.check_in_time
+       #     unless time_difference.to_i > time_allowance.to_i
+       #       hash_array = u.data
+       #       if hash_array.present?
+       #         device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+       #         to_device_id.push(device_id)
+       #       end
+       #
+       #     end
+       #   end
+       # end
+       #
+       # notification_options = {
+       #     send_date: "now",
+       #     badge: "1",
+       #     sound: "default",
+       #     content:{
+       #         fr:topic.title,
+       #         en:topic.title
+       #     },
+       #     data:{
+       #         trainfault_datetime: Time.now,
+       #         smrtline: smrt,
+       #         station1: station1name,
+       #         station2: station2name,
+       #         towards: towards.name,
+       #         topic: topic,
+       #         type: "train fault"
+       #     },
+       #     devices: to_device_id
+       # }
+       #
+       # if to_device_id.count > 0
+       #   options = @auth.merge({:notifications  => [notification_options]})
+       #   options = {:request  => options}
+       #   full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+       #   url = URI.parse(full_path)
+       #   req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+       #   req.body = options.to_json
+       #   con = Net::HTTP.new(url.host, url.port)
+       #   con.use_ssl = true
+       #   r = con.start {|http| http.request(req)}
+       #   p "pushwoosh"
+       # end
 
        flash[:notice] = "Create SMRT alert message successfully!"
        redirect_to create_train_fault_alert_path
