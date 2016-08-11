@@ -1000,14 +1000,6 @@ class Api::UsersController < ApplicationController
     #check the place_id presents
     if current_user.present?
 
-      # if params[:place_id]
-      #   place_id = params[:place_id].to_i
-      # else
-      #   #create place first if the place_id is null
-      #   place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
-      #   place_id = place.id
-      #
-      # end
       place = Place.new
       params[:name].present? ? name = params[:name] : name = nil
       params[:latitude].present? ? latitude = params[:latitude] : latitude = nil
@@ -1024,6 +1016,7 @@ class Api::UsersController < ApplicationController
       params[:postcode].present? ? postcode = params[:postcode] : postcode=""
 
       place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, current_user.id, current_user.authentication_token, choice,img_url,place_type,locality,country,postcode)
+      p status = place[:status]
 
       place_id = place[:place].id
 
@@ -1039,7 +1032,7 @@ class Api::UsersController < ApplicationController
         render json:{ userfavlocation: @fav_locations, status: 'user fav location successfully added.'}
 
       else
-        render json:{status: 'location already exit!'}
+        render json:{error_msg: 'location already exit!'}
       end
 
     else
