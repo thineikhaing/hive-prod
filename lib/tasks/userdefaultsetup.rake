@@ -45,5 +45,20 @@ namespace :userdefaultsetup do
     puts "Lookup DDMs created!"
   end
 
-    
+
+  # CSV.foreach("db/migrate/20140328083723_stations_seed.csv") do |row|
+  #   Place.create(name: row[0], latitude: row[1], longitude: row[2], address: row[3], locality: row[4], country: row[5], img_url: row[6], user_id: admin.id, source: 0)
+  #   puts "Created: #{row}"
+  # end
+
+  desc "Update MRT latitude and longitude"
+  task :update_mrt_lat_and_lng => :environment do
+    CSV.foreach("db/stations_seed.csv") do |row|
+      place = Place.find_by_name(row[0])
+      place.latitude =  row[1]
+      place.longitude = row[2]
+      place.save
+    end
+  end
+
 end
