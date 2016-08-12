@@ -314,46 +314,71 @@ class Api::PlacesController < ApplicationController
     google_data_array = []
     gothere_data = []
     query = []
+    google_places= []
     if params[:latitude].present? and params[:longitude].present? and params[:radius].present? and params[:keyword].present?
 
-      # factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
-      # p "factual data"
-      #
-      # begin
-      #   query = factual.table("global").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
-      # rescue Geocoder::OverQueryLimitError
-      #   p "****** gecoder limit hit ******"
-      # end
+      factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+      p "factual data"
+
+      if params[:latitude].to_i == -1
+        query = factual.table("global").search(params[:keyword])
+      else
+
+        begin
+          query = factual.table("global").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
+        rescue Geocoder::OverQueryLimitError
+          p "****** gecoder limit hit ******"
+        end
+      end
+
+
       #Google Geocoding API error: over query limit.
 
       # read_query = factual.table("places-sg").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
 
-      box = Geocoder::Calculations.bounding_box("#{params[:latitude]},#{params[:longitude]}", params[:radius], {units: :km})
-      places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
+      if params[:latitude].to_i == -1
+        places = Place.all
+      else
+        box = Geocoder::Calculations.bounding_box("#{params[:latitude]},#{params[:longitude]}", params[:radius], {units: :km})
+        places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
+      end
+
 
       @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
       lat = params[:latitude]
       lng = params[:longitude]
       keyword = params[:keyword]
 
+      # Search from Google
+      # if lat and lng is -1 search by keyword
+      # if not search by keyword and location in radius
 
-      @client.predictions_by_input(
-          '310',
-          lat: 1.3181786,
-          lng: 103.8433952,
-          radius: 50000,
-          types: 'geocode',
-          language: I18n.locale,
-      )
+      if params[:latitude].to_i == -1
+        predition = @client.predictions_by_input(
+            keyword,
+            lat: 0.0,
+            lng: 0.0,
+            radius: 20000000,
+            types: 'geocode',
+            language: I18n.locale,
+        )
+        predition.each do |pre|
+          pre_place = @client.spot(pre.place_id)
+          google_places.push(pre_place)
+        end
+      else
 
-      begin
-        # Exceptions raised by this code will
-        # be caught by the following rescue clause
-        google_places = @client.spots(lat, lng, :name => keyword, :radius => 10000)
-      rescue GooglePlaces::OverQueryLimitError
-        p "GooglePlaces OverQueryLimitError"
-        # raise
+        begin
+          # Exceptions raised by this code will
+          # be caught by the following rescue clause
+          google_places = @client.spots(lat, lng, :name => keyword, :radius => 10000)
+        rescue GooglePlaces::OverQueryLimitError
+          p "GooglePlaces OverQueryLimitError"
+          # raise
+        end
+
       end
+
 
 
       if !google_places.nil?
@@ -379,7 +404,6 @@ class Api::PlacesController < ApplicationController
         end
 
       end
-
 
       places.each do |place|
         if place.name.present?
