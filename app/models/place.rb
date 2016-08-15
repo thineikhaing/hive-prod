@@ -115,7 +115,7 @@ class Place < ActiveRecord::Base
     p "radius between two points is #{radius_between} km"
     radius = 1
 
-    if radius_between < 2
+    if radius_between < 2 and radius_between > 0
       radius = (radius_between / 2).round(2)
 
     elsif radius_between >= 2
@@ -123,6 +123,9 @@ class Place < ActiveRecord::Base
       radius = 1
 
     end
+
+    p "radius to query"
+    p radius
 
     p "topic list within #{radius}km of each points"
 
