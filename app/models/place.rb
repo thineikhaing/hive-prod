@@ -121,7 +121,8 @@ class Place < ActiveRecord::Base
     elsif radius_between >= 2
 
       radius = 1
-
+    else
+      radius = 1
     end
 
     p "radius to query"
