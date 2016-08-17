@@ -21,6 +21,7 @@ class Api::TopicsController < ApplicationController
             Checkinplace.create(place_id: place.id, user_id: current_user.id)
           end
 
+
         end
 
         params[:start_name].present? ? start_name = params[:start_name] : start_name = nil
@@ -128,12 +129,7 @@ class Api::TopicsController < ApplicationController
           end
 
 
-          if check_banned_profanity(topic.title)
-            user = User.find(current_user.id)
-            user.profanity_counter += 1
-            user.offence_date = Time.now
-            user.save!
-          end
+
 
           #create post if param post_content is passed
           if topic.present? and params[:post_content].present?
@@ -200,6 +196,13 @@ class Api::TopicsController < ApplicationController
             #broadcast new topic creation to hive_channel and app_channel
             topic.hive_broadcast
             topic.app_broadcast
+          end
+
+          if check_banned_profanity(topic.title)
+            user = User.find(current_user.id)
+            user.profanity_counter += 1
+            user.offence_date = Time.now
+            user.save!
           end
 
           if hiveapplication.id ==1 #Hive Application
