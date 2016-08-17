@@ -198,19 +198,19 @@ class Api::TopicsController < ApplicationController
             topic.app_broadcast
           end
 
-          if check_banned_profanity(topic.title)
-            user = User.find(current_user.id)
-            user.profanity_counter += 1
-            user.offence_date = Time.now
-            user.save!
-          end
-
           if hiveapplication.id ==1 #Hive Application
             render json: { topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
           elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1 #All Applications under Herenow except Hive
             render json: { topic: JSON.parse(topic.to_json(content: true)), profanity_counter: current_user.profanity_counter}
           else #3rd party App
             render json: { topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
+          end
+
+          if check_banned_profanity(topic.title)
+            user = User.find(current_user.id)
+            user.profanity_counter += 1
+            user.offence_date = Time.now
+            user.save!
           end
 
         else
