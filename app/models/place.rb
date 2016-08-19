@@ -211,7 +211,8 @@ class Place < ActiveRecord::Base
 
   # add_record("name", "latitude", "longitude", "address", "", "", 163, 333, "y-cZXxwrSXvtiyTGBzpf", "choice","img_url",category="",locality="",country="",postcode="")
 
-  def add_record(name, latitude, longitude, address, source, source_id, place_id, user_id, auth_token, choice,img_url,category="",locality="",country="",postcode="")
+  def add_record(name, latitude, longitude, address, source, source_id, place_id, user_id, auth_token,
+                 choice,img_url,category="",locality="",country="",postcode="")
     factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
     user = User.find(user_id)
 
@@ -327,7 +328,6 @@ class Place < ActiveRecord::Base
 
       elsif source_id.present? && source.to_i == Place::GOOGLE
         p "add record from google"
-        p source_id
         @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
         @spot = @client.spot(source_id.to_s)
 
@@ -345,10 +345,23 @@ class Place < ActiveRecord::Base
 
         end
 
+        place = Place.create(
+            name: @spot.name,
+            latitude: @spot.lat,
+            longitude: @spot.lng,
+            address: @spot.formatted_address,
+            source: Place::GOOGLE,
+            source_id: source_id,
+            user_id: user_id,
+            img_url: url,
+            category: category,
+            country: @spot.country,
+            postal_code: @spot.postal_code,
+            locality: locality) unless place.present?
 
-        place = Place.create(name: @spot.name, latitude: @spot.lat, longitude: @spot.lng, address: @spot.formatted_address,
-            source: Place::GOOGLE, source_id: source_id, user_id: user_id, img_url: url,category: category,country: @spot.country,
-            postal_code: @spot.postal_code,locality: locality) unless place.present?
+        p "place source id"
+        p place.source_id
+        place.save!
 
         Checkinplace.create(place_id: place.id, user_id: user_id)
         user.last_known_latitude =  place.latitude
@@ -429,7 +442,8 @@ class Place < ActiveRecord::Base
 
         factual_result["website"].present? ? website = factual_result["website"] : website = ""
         factual_result["tel"].present? ? tel = factual_result["tel"] : tel = ""
-        new_place = Place.create(name: factual_result["name"], latitude: factual_result["latitude"], longitude: factual_result["longitude"], address: factual_result["address"], country: factual_result["country"], category: category, locality: factual_result["locality"], postal_code: factual_result["postcode"], region: factual_result["region"],  website_url: website, source: 3, source_id: source_id, user_id: user_id,img_url: img_url)
+        new_place = Place.create(name: factual_result["name"], latitude: factual_result["latitude"], longitude: factual_result["longitude"], address: factual_result["address"], country: factual_result["country"], category: category, locality: factual_result["locality"], postal_code: factual_result["postcode"], region: factual_result["region"],  website_url: website, source: 3,
+            source_id: source_id, user_id: user_id,img_url: img_url)
 
         return { place: new_place, status: 70 }
       end

@@ -1015,10 +1015,17 @@ class Api::UsersController < ApplicationController
       params[:country].present? ? country = params[:country] : country=""
       params[:postcode].present? ? postcode = params[:postcode] : postcode=""
 
-      place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, current_user.id, current_user.authentication_token, choice,img_url,place_type,locality,country,postcode)
+      place = place.add_record(name, latitude, longitude, address, source, source_id,
+                               place_id, current_user.id, current_user.authentication_token,
+                               choice,img_url,place_type,locality,country,postcode)
       p status = place[:status]
 
       place_id = place[:place].id
+
+      # pp = Place.find(place_id)
+      # pp.source_id = source_id
+      # pp.save!
+      # p 'save soruce id'
 
       user = User.find_by_authentication_token (params[:auth_token]) if params[:auth_token].present?
 
@@ -1055,6 +1062,7 @@ class Api::UsersController < ApplicationController
       # end
       p "update id"
       p update_id = params[:id]
+      userfav = UserFavLocation.find(update_id)
 
       place = Place.new
       params[:name].present? ? name = params[:name] : name = nil
@@ -1063,7 +1071,7 @@ class Api::UsersController < ApplicationController
       params[:address].present? ? address = params[:address] : address = nil
       params[:source].present? ? source = params[:source] : source = nil
       params[:source_id].present? ? source_id = params[:source_id] : source_id = nil
-      params[:place_id].present? ? place_id = params[:place_id] : place_id = nil
+      params[:place_id].present? ? place_id = params[:place_id] : place_id = userfav.place_id
       params[:choice].present? ? choice = params[:choice] : choice = nil
       params[:img_url].present? ? img_url = params[:img_url] : img_url = nil
       params[:place_type].present? ? place_type = params[:place_type] : place_type = nil
@@ -1073,9 +1081,14 @@ class Api::UsersController < ApplicationController
 
       p place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, current_user.id, current_user.authentication_token, choice,img_url,place_type,locality,country,postcode)
       p "place id"
-      p place[:place].id
+      p updated_id = place[:place].id
 
-      userfav = UserFavLocation.find(update_id).update(place_id: place[:place].id)
+      if updated_id.to_i == userfav.place_id
+        userfav.name = name
+        userfav.save!
+      end
+
+      userfav = userfav.update(place_id: place[:place].id)
 
 
       if userfav.present?

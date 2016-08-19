@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160715070525) do
+ActiveRecord::Schema.define(version: 20160819083934) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -189,7 +189,7 @@ ActiveRecord::Schema.define(version: 20160715070525) do
     t.string   "contact_number", default: ""
     t.string   "img_url"
     t.string   "source",         default: ""
-    t.integer  "source_id",      default: 0
+    t.string   "source_id",      default: "0"
     t.integer  "user_id"
     t.hstore   "data"
     t.float    "latitude",       default: 0.0, null: false
@@ -352,6 +352,7 @@ ActiveRecord::Schema.define(version: 20160715070525) do
     t.string   "place_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "name"
   end
 
   create_table "user_friend_lists", force: :cascade do |t|
