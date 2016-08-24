@@ -825,7 +825,55 @@ class Api::RoundtripController < ApplicationController
   end
 
   def get_bus_arrival_time
+    tempnextBus1 = Hash.new
+    tempnextBus2  = Hash.new
+    tempnextBus3 = Hash.new
+    stop_name = params[:stop_name]
+    service_no = params[:service_no]
+    sg_bus  = SgBusStop.find_by_description(stop_name)
+    p "bus id"
+    p sg_bus.bus_id
 
+    uri = URI('http://datamall2.mytransport.sg/ltaodataservice/BusArrival')
+    params = { :BusStopID => sg_bus.bus_id, :ServiceNo => service_no, :SST => true}
+    uri.query = URI.encode_www_form(params)
+    p uri
+    res = Net::HTTP::Get.new(uri,
+                             initheader = {"accept" =>"application/json",
+                                           "AccountKey"=>"4G40nh9gmUGe8L2GTNWbgg==",
+                                           "UniqueUserID"=>"d52627a6-4bde-4fa1-bd48-c6270b02ffc0"})
+    con = Net::HTTP.new(uri.host, uri.port)
+    r = con.start {|http| http.request(res)}
+    results = JSON.parse(r.body)
+    results = results["Services"]
+
+    nextBus1 = results[0]["NextBus"]
+    nextbus_arrivalTime1 = Time.parse(nextBus1["EstimatedArrival"]).strftime("at %I:%M%p")
+    nextBusInMin1 = TimeDifference.between(Time.now,Time.parse(nextBus1["EstimatedArrival"])).in_minutes.to_i
+    nextBusInMin1 == 0 ? nextBusInMin1 = "Arrive" : nextBusInMin1 = nextBusInMin1.to_s + " min"
+    tempnextBus1[:nextBusInText] = nextbus_arrivalTime1
+    tempnextBus1[:nextBusInMin] = nextBusInMin1
+    results[0]["NextBus"].merge!(tempnextBus1)
+
+    nextBus2 = results[0]["SubsequentBus"]
+    nextbus_arrivalTime2 = Time.parse(nextBus2["EstimatedArrival"]).strftime("at %I:%M%p")
+    nextBusInMin2 = TimeDifference.between(Time.now,Time.parse(nextBus2["EstimatedArrival"])).in_minutes.to_i
+    nextBusInMin2 == 0 ? nextBusInMin2 = "Arrive" : nextBusInMin2 = nextBusInMin2.to_s + " min"
+    tempnextBus2[:nextBusInText] = nextbus_arrivalTime2
+    tempnextBus2[:nextBusInMin] = nextBusInMin2
+    results[0]["SubsequentBus"].merge!(tempnextBus2)
+
+    nextBus3 = results[0]["SubsequentBus3"]
+    nextbus_arrivalTime3 = Time.parse(nextBus3["EstimatedArrival"]).strftime("at %I:%M%p")
+    nextBusInMin3 = TimeDifference.between(Time.now,Time.parse(nextBus3["EstimatedArrival"])).in_minutes.to_i
+    nextBusInMin3 == 0 ? nextBusInMin3 = "Arrive" : nextBusInMin3 = nextBusInMin3.to_s + " min"
+    tempnextBus3[:nextBusInText] = nextbus_arrivalTime3
+    tempnextBus3[:nextBusInMin] = nextBusInMin3
+    results[0]["SubsequentBus3"].merge!(tempnextBus3)
+
+    nextBusInMin1 == 0 ? nextBusInMin1 = "Arrive" : nextBusInMin1 = nextBusInMin1
+
+    render json:{results: results}
   end
 
 end
