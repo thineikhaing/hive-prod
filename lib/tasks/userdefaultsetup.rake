@@ -61,4 +61,53 @@ namespace :userdefaultsetup do
     end
   end
 
+
+  desc "Fetch bus stop data from data mall"
+  task :fetch_busstop_data_from_data_mall   do
+
+    DatabaseCleaner.clean_with(:truncation, :only => ['sg_bus_stops'])
+    result = []
+    i = 0
+    while i < 5300
+
+      p "result count"
+      p result.count
+
+      uri = URI('http://datamall2.mytransport.sg/ltaodataservice/BusStops')
+      params = { :$skip => i}
+      uri.query = URI.encode_www_form(params)
+      p uri
+      res = Net::HTTP::Get.new(uri,
+                               initheader = {"accept" =>"application/json",
+                                             "AccountKey"=>"4G40nh9gmUGe8L2GTNWbgg==",
+                                             "UniqueUserID"=>"d52627a6-4bde-4fa1-bd48-c6270b02ffc0"})
+      con = Net::HTTP.new(uri.host, uri.port)
+      r = con.start {|http| http.request(res)}
+      new_results = JSON.parse(r.body)
+
+      p new_results["value"].last
+      p "+++++++++"
+
+      result += new_results["value"]
+
+      p "new_results"
+      p new_results["value"].count
+
+      # Increment.
+      i += 50
+    end
+
+
+    result.each do |data|
+      SgBusStop.create(bus_id: data["BusStopCode"],road_name: data["RoadName"],
+          description: data["Description"],latitude: data["Latitude"],longitude: data["Longitude"])
+
+    end
+
+  end
+
+
+
+
+
 end
