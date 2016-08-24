@@ -824,7 +824,9 @@ class Api::RoundtripController < ApplicationController
     render json:{title: title,content: content}
   end
 
+  def get_bus_arrival_time
 
+  end
 
 end
 
