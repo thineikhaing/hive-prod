@@ -64,7 +64,7 @@ namespace :userdefaultsetup do
 
   desc "Fetch bus stop data from data mall"
   task :fetch_busstop_data_from_data_mall  => :environment do
-    DatabaseCleaner.clean_with(:truncation, :only => ['sg_bus_stops'])
+    # DatabaseCleaner.clean_with(:truncation, :only => ['sg_bus_stops'])
     result = []
     i = 0
     while i < 5300
