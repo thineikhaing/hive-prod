@@ -398,6 +398,8 @@ class Place < ActiveRecord::Base
           place = cr if cr.name.downcase == name.downcase if name.present?
         end
 
+        p "check place "
+        p place
 
         if private_place.present?
           return { place: private_place, status: 71 }
@@ -406,7 +408,7 @@ class Place < ActiveRecord::Base
             place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, category: "Food and Dining",img_url: img_url,country: country,postal_code: postcode,locality: locality) unless place.present?
           else
 
-            geocoder = Geocoder.search("#{1.315411},#{103.845541}").first
+            geocoder = Geocoder.search("#{latitude},#{longitude}").first
             if geocoder.present? and geocoder.address.present?
               check = Place.find_by_address(geocoder.address)
               check.present? ? place = check : place = Place.create(name: geocoder.address, latitude: latitude, longitude: longitude,
