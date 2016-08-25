@@ -227,24 +227,15 @@ class Place < ActiveRecord::Base
         Checkinplace.create(place_id: place.id, user_id: user_id)
         user.last_known_latitude =  place.latitude
         user.last_known_longitude = place.longitude
-        if img_url.present?
-          place.img_url = img_url
-          place.save!
-        end
-        if locality.present?
-          place.locality = locality
-          place.save!
-        end
-        if country.present?
-          place.country = country
-          place.save!
-        end
-        if postcode.present?
-          place.postcode = postcode
-          place.save!
-        end
         user.check_in_time = Time.now
         user.save!
+
+        place.img_url = img_url if img_url.present?
+        place.locality = locality if locality.present?
+        place.country = country if country.present?
+        place.postcode = postcode if postcode.present?
+        place.save!
+
         Userpreviouslocation.create(latitude: place.latitude, longitude: place.longitude, radius: 1, user_id: user_id)
 
         return { place: place, status: 70 }
@@ -392,22 +383,27 @@ class Place < ActiveRecord::Base
             place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, category: "Food and Dining",img_url: img_url,country: country,postal_code: postcode,locality: locality) unless place.present?
           else
 
-            if name.present?
-              place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, img_url: img_url,category: category,country: country,postal_code: postcode,locality: locality) unless place.present?
-            else
-              geocoder = Geocoder.search("#{latitude},#{longitude}").first
-              if geocoder.present? and geocoder.address.present?
-                check = Place.find_by_address(geocoder.address)
-                check.present? ? place = check : place = Place.create(name: geocoder.address, latitude: latitude, longitude: longitude,
-                                                                      address: geocoder.address, source: source, source_id: source_id, user_id: user_id,
-                                                                      img_url: img_url,category: category,country: geocoder.country,
-                                                                      postal_code: geocoder.postal_code,locality: locality) unless place.present?
-              end
+            geocoder = Geocoder.search("#{latitude},#{longitude}").first
+            if geocoder.present? and geocoder.address.present?
+              check = Place.find_by_address(geocoder.address)
+              check.present? ? place = check : place = Place.create(name: geocoder.address, latitude: latitude, longitude: longitude,
+                  address: geocoder.address, source: source, source_id: source_id, user_id: user_id,
+                  img_url: img_url,category: category,country: geocoder.country,
+                  postal_code: geocoder.postal_code,locality: locality) unless place.present?
             end
 
-
-
-            #
+            # if name.present?
+            #   place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, img_url: img_url,category: category,country: country,postal_code: postcode,locality: locality) unless place.present?
+            # else
+            #   geocoder = Geocoder.search("#{latitude},#{longitude}").first
+            #   if geocoder.present? and geocoder.address.present?
+            #     check = Place.find_by_address(geocoder.address)
+            #     check.present? ? place = check : place = Place.create(name: geocoder.address, latitude: latitude, longitude: longitude,
+            #                                                           address: geocoder.address, source: source, source_id: source_id, user_id: user_id,
+            #                                                           img_url: img_url,category: category,country: geocoder.country,
+            #                                                           postal_code: geocoder.postal_code,locality: locality) unless place.present?
+            #   end
+            # end
           end
 
           Checkinplace.create(place_id: place.id, user_id: user_id)
@@ -442,8 +438,11 @@ class Place < ActiveRecord::Base
 
         factual_result["website"].present? ? website = factual_result["website"] : website = ""
         factual_result["tel"].present? ? tel = factual_result["tel"] : tel = ""
-        new_place = Place.create(name: factual_result["name"], latitude: factual_result["latitude"], longitude: factual_result["longitude"], address: factual_result["address"], country: factual_result["country"], category: category, locality: factual_result["locality"], postal_code: factual_result["postcode"], region: factual_result["region"],  website_url: website, source: 3,
-            source_id: source_id, user_id: user_id,img_url: img_url)
+        new_place = Place.create(name: factual_result["name"], latitude: factual_result["latitude"],
+            longitude: factual_result["longitude"], address: factual_result["address"],
+            country: factual_result["country"], category: category, locality: factual_result["locality"],
+            postal_code: factual_result["postcode"], region: factual_result["region"],  website_url: website,
+            source: 3,source_id: source_id, user_id: user_id,img_url: img_url)
 
         return { place: new_place, status: 70 }
       end

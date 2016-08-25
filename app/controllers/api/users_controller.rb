@@ -1033,7 +1033,7 @@ class Api::UsersController < ApplicationController
 
       if userfav.count == 0
 
-        UserFavLocation.create(user_id: current_user.id, place_id: place_id, place_type: params[:place_type])
+        UserFavLocation.create(user_id: current_user.id, place_id: place_id, place_type: params[:place_type],name: name)
 
         @fav_locations = UserFavLocation.where(user_id: current_user.id)
         render json:{ userfavlocation: @fav_locations, status: 'user fav location successfully added.'}
@@ -1045,21 +1045,13 @@ class Api::UsersController < ApplicationController
     else
       render json:{error_msg: "Params app_key must be presented"} , status: 400
     end
-
   end
 
   def update_user_fav_location
     place_id = nil
     #check the place_id presents
     if current_user.present?
-      # if params[:place_id]
-      #   place_id = params[:place_id].to_i
-      # else
-      #   #create place first if the place_id is null
-      #   place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
-      #   place_id = place.id
-      #
-      # end
+
       p "update id"
       p update_id = params[:id]
       userfav = UserFavLocation.find(update_id)
