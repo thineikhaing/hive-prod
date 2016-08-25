@@ -314,7 +314,7 @@ class Place < ActiveRecord::Base
           place = cr if cr.name.downcase == factual_result["name"].downcase
         end
 
-        if place.nil?
+        if place == ""
           place = Place.create(name: factual_result["name"], latitude: factual_result["latitude"], longitude: factual_result["longitude"], address: factual_result["address"],
               country: factual_result["country"], category: category, locality: factual_result["locality"], postal_code: factual_result["postcode"], region: factual_result["region"],
               website_url: website, source: 3, source_id: source_id, user_id: user_id,img_url: img_url)
@@ -355,7 +355,7 @@ class Place < ActiveRecord::Base
           p "exisiting google record"
           place = cr if cr.name.downcase == @spot.name.downcase
         end
-        if place.nil?
+        if place == ""
           place = Place.create(
               name: @spot.name,
               latitude: @spot.lat,
@@ -373,6 +373,7 @@ class Place < ActiveRecord::Base
 
 
         p "place source id"
+        p place
         p place.source_id
         place.save!
 
