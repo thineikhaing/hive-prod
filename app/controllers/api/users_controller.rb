@@ -1076,12 +1076,14 @@ class Api::UsersController < ApplicationController
       p "place id"
       p updated_id = place[:place].id
 
-      if updated_id.to_i == userfav.place_id
-        userfav.name = name
-        userfav.save!
-      end
+      # if updated_id.to_i == userfav.place_id
+      #   userfav.name = name
+      #   userfav.save!
+      # end
 
-      userfav = userfav.update(place_id: place[:place].id)
+
+
+      userfav = userfav.update(place_id: place[:place].id,name: name)
 
 
       if userfav.present?
