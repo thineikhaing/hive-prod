@@ -304,9 +304,22 @@ class Place < ActiveRecord::Base
         factual_result["website"].present? ? website = factual_result["website"] : website = ""
         factual_result["tel"].present? ? tel = factual_result["tel"] : tel = ""
 
-        place = Place.create(name: factual_result["name"], latitude: factual_result["latitude"], longitude: factual_result["longitude"], address: factual_result["address"],
-            country: factual_result["country"], category: category, locality: factual_result["locality"], postal_code: factual_result["postcode"], region: factual_result["region"],
-            website_url: website, source: 3, source_id: source_id, user_id: user_id,img_url: img_url)
+
+        place = ""
+        p check_records = Place.where(name:factual_result["name"], source:3)
+        p "check record"
+
+        check_records.each do |cr|
+          p "exisiting factual record"
+          place = cr if cr.name.downcase == factual_result["name"].downcase
+        end
+
+        if place.nil?
+          place = Place.create(name: factual_result["name"], latitude: factual_result["latitude"], longitude: factual_result["longitude"], address: factual_result["address"],
+              country: factual_result["country"], category: category, locality: factual_result["locality"], postal_code: factual_result["postcode"], region: factual_result["region"],
+              website_url: website, source: 3, source_id: source_id, user_id: user_id,img_url: img_url)
+        end
+
         #end
         Checkinplace.create(place_id: place.id, user_id: user_id)
         user.last_known_latitude =  place.latitude
@@ -335,20 +348,29 @@ class Place < ActiveRecord::Base
           end
 
         end
+        place = ""
+        check_records = Place.where(name:@spot.name, source:7)
 
-        place = Place.create(
-            name: @spot.name,
-            latitude: @spot.lat,
-            longitude: @spot.lng,
-            address: @spot.formatted_address,
-            source: Place::GOOGLE,
-            source_id: source_id,
-            user_id: user_id,
-            img_url: url,
-            category: category,
-            country: @spot.country,
-            postal_code: @spot.postal_code,
-            locality: locality) unless place.present?
+        check_records.each do |cr|
+          p "exisiting google record"
+          place = cr if cr.name.downcase == @spot.name.downcase
+        end
+        if place.nil?
+          place = Place.create(
+              name: @spot.name,
+              latitude: @spot.lat,
+              longitude: @spot.lng,
+              address: @spot.formatted_address,
+              source: Place::GOOGLE,
+              source_id: source_id,
+              user_id: user_id,
+              img_url: url,
+              category: category,
+              country: @spot.country,
+              postal_code: @spot.postal_code,
+              locality: locality)
+        end
+
 
         p "place source id"
         p place.source_id
@@ -383,7 +405,7 @@ class Place < ActiveRecord::Base
             place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, category: "Food and Dining",img_url: img_url,country: country,postal_code: postcode,locality: locality) unless place.present?
           else
 
-            geocoder = Geocoder.search("#{latitude},#{longitude}").first
+            geocoder = Geocoder.search("#{1.315411},#{103.845541}").first
             if geocoder.present? and geocoder.address.present?
               check = Place.find_by_address(geocoder.address)
               check.present? ? place = check : place = Place.create(name: geocoder.address, latitude: latitude, longitude: longitude,

@@ -1032,7 +1032,8 @@ class Api::UsersController < ApplicationController
       userfav = UserFavLocation.where(user_id: user.id , place_id: place_id)
 
       if userfav.count == 0
-
+        p "custom name by user"
+        p name
         UserFavLocation.create(user_id: current_user.id, place_id: place_id, place_type: params[:place_type],name: name)
 
         @fav_locations = UserFavLocation.where(user_id: current_user.id)
