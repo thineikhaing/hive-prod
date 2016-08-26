@@ -17,12 +17,20 @@ class UserFavLocation < ActiveRecord::Base
       place = Place.find(self.place_id)
 
       name = self.name
-      if name.nil?
-        name = place.name
-      end
-      { id: place.id, name: name, latitude: place.latitude, longitude: place.longitude, address: place.address, category: place.category, source: place.source, source_id: place.source_id, user_id: place.user_id, country: place.country, postal_code: place.postal_code, chain_name: place.chain_name, contact_number: place.contact_number, img_url: place.img_url,locality: place.locality, region: place.region, neighbourhood: place.neighbourhood, data: place.data }
+      img_url = self.img_url
+
+      name.nil? ? name = place.name : name = self.name
+      img_url.nil? ? img_url = place.img_url : img_url = self.img_url
+
+      { id: place.id, name: name, latitude: place.latitude, longitude: place.longitude,
+          address: place.address, category: place.category, source: place.source,
+          source_id: place.source_id, user_id: place.user_id, country: place.country,
+          postal_code: place.postal_code, chain_name: place.chain_name,
+          contact_number: place.contact_number, img_url: img_url,locality: place.locality,
+          region: place.region, neighbourhood: place.neighbourhood, data: place.data }
     else
-      { id: nil, name: nil, latitude: nil, longitude: nil, address: nil , custom_pin_url: nil, source: nil, user_id: nil, popular: nil }
+      { id: nil, name: nil, latitude: nil, longitude: nil, address: nil ,
+          custom_pin_url: nil, source: nil, user_id: nil, popular: nil }
     end
   end
 

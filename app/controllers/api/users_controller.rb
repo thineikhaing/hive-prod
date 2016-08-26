@@ -1017,7 +1017,7 @@ class Api::UsersController < ApplicationController
 
       place = place.add_record(name, latitude, longitude, address, source, source_id,
                                place_id, current_user.id, current_user.authentication_token,
-                               choice,img_url,place_type,locality,country,postcode)
+                               choice,"",place_type,locality,country,postcode)
       p status = place[:status]
 
       place_id = place[:place].id
@@ -1032,9 +1032,8 @@ class Api::UsersController < ApplicationController
       userfav = UserFavLocation.where(user_id: user.id , place_id: place_id)
 
       if userfav.count == 0
-        p "custom name by user"
-        p name
-        UserFavLocation.create(user_id: current_user.id, place_id: place_id, place_type: params[:place_type],name: name)
+        UserFavLocation.create(user_id: current_user.id, place_id: place_id,
+            place_type: params[:place_type],name: name,img_url: img_url)
 
         @fav_locations = UserFavLocation.where(user_id: current_user.id)
         render json:{ userfavlocation: @fav_locations, status: 'user fav location successfully added.'}
@@ -1072,18 +1071,13 @@ class Api::UsersController < ApplicationController
       params[:country].present? ? country = params[:country] : country=""
       params[:postcode].present? ? postcode = params[:postcode] : postcode=""
 
-      p place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, current_user.id, current_user.authentication_token, choice,img_url,place_type,locality,country,postcode)
+      p place = place.add_record(name, latitude, longitude, address, source, source_id,
+                                 place_id, current_user.id, current_user.authentication_token,
+                                 choice,"",place_type,locality,country,postcode)
       p "place id"
       p updated_id = place[:place].id
 
-      # if updated_id.to_i == userfav.place_id
-      #   userfav.name = name
-      #   userfav.save!
-      # end
-
-
-
-      userfav = userfav.update(place_id: place[:place].id,name: name)
+      userfav = userfav.update(place_id: place[:place].id,name: name,img_url:img_url)
 
 
       if userfav.present?
