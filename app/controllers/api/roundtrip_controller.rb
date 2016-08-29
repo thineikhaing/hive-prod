@@ -889,6 +889,8 @@ class Api::RoundtripController < ApplicationController
     nextBusInMin2 == 0 ? nextBusInMin2 = "Arrive" : nextBusInMin2 = nextBusInMin2
     nextBusInMin3 == 0 ? nextBusInMin3 = "Arrive" : nextBusInMin3 = nextBusInMin3
 
+    results[0].delete("SubsequentBus3")
+
     render json:{results: results}
   end
 
