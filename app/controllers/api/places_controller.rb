@@ -312,24 +312,23 @@ class Api::PlacesController < ApplicationController
     hive_data_array = [ ]
     factual_data_array = [ ]
     google_data_array = []
-    gothere_data = []
     query = []
     google_places= []
     if params[:latitude].present? and params[:longitude].present? and params[:radius].present? and params[:keyword].present?
 
-      factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
-      p "factual data"
-
-      if params[:latitude].to_i == -1
-        query = factual.table("global").search(params[:keyword])
-      else
-
-        begin
-          query = factual.table("global").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
-        rescue Geocoder::OverQueryLimitError
-          p "****** gecoder limit hit ******"
-        end
-      end
+      # factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
+      # p "factual data"
+      #
+      # if params[:latitude].to_i == -1
+      #   query = factual.table("global").search(params[:keyword])
+      # else
+      #
+      #   begin
+      #     query = factual.table("global").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
+      #   rescue Geocoder::OverQueryLimitError
+      #     p "****** gecoder limit hit ******"
+      #   end
+      # end
 
 
       #Google Geocoding API error: over query limit.
@@ -342,7 +341,6 @@ class Api::PlacesController < ApplicationController
         box = Geocoder::Calculations.bounding_box("#{params[:latitude]},#{params[:longitude]}", params[:radius], {units: :km})
         places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
       end
-
 
       @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
       lat = params[:latitude]
@@ -378,8 +376,6 @@ class Api::PlacesController < ApplicationController
         end
 
       end
-
-
 
       if !google_places.nil?
 
@@ -423,28 +419,31 @@ class Api::PlacesController < ApplicationController
         end
       end
 
-      if !query.nil?
-        query.each do |q|
-          fdata = { name: q["name"],
-                    address: q["address"],
-                    latitude: q["latitude"],
-                    longitude: q["longitude"],
-                    img_url: "",
-                    user_id: nil,
-                    username: nil,
-                    source: Place::FACTUAL,
-                    source_id: q["factual_id"],
-                    status:'factual' }
-
-          factual_data_array.push(fdata)
-        end
-
-      end
+      # if !query.nil?
+      #   query.each do |q|
+      #     fdata = { name: q["name"],
+      #               address: q["address"],
+      #               latitude: q["latitude"],
+      #               longitude: q["longitude"],
+      #               img_url: "",
+      #               user_id: nil,
+      #               username: nil,
+      #               source: Place::FACTUAL,
+      #               source_id: q["factual_id"],
+      #               status:'factual' }
+      #
+      #     factual_data_array.push(fdata)
+      #   end
+      #
+      # end
 
 
       code = params[:keyword]
 
       data_array =   hive_data_array + google_data_array + factual_data_array
+
+      p hive_data_array.count
+      p google_data_array.count
 
       # if code.to_i.is_a?Integer
       #
@@ -500,6 +499,7 @@ class Api::PlacesController < ApplicationController
       if uniq_array.present?
         uniq_array.each do |data|
           p data[:name]
+          # p data[:source]
         end
       end
 

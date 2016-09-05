@@ -80,7 +80,7 @@ class Api::RoundtripController < ApplicationController
 
     #bubble sort by distance to get the fastest route
     routes =  routes if routes.size <= 1 # already sorted
-
+                                                                                  p
     loop do
       swapped = false
 

@@ -184,6 +184,8 @@ class User < ActiveRecord::Base
     center_point = [latitude.to_f, longitude.to_f]
     box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
 
+    # users = users.where("app_data ->'app_id#{hive_application.id}' = '#{hive_application.api_key}'")
+
     User.where(last_known_latitude: box[0] .. box[2], last_known_longitude: box[1] .. box[3])
   end
 

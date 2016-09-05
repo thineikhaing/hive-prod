@@ -283,41 +283,44 @@ class Api::UsersController < ApplicationController
           else
             time_allowance = Time.now - 10.minutes.ago
           end
+
+          users.each do |u|
+            if u.check_in_time.present?
+              time_difference = Time.now - u.check_in_time
+              unless time_difference.to_i > time_allowance.to_i
+                # usersArray.push(u)
+
+                unless u.id == current_user.id
+                  user = User.find(u.id)
+                  avatar = Topic.get_avatar(user.username)
+                  avatar_url = u.avatar_url
+                  if avatar_url.nil?
+                    avatar_url = ""
+                  end
+                  active_users = { id: u.id, username: u.username, avatar_url: avatar_url,
+                      local_avatar: avatar, last_known_latitude: u.last_known_latitude,
+                      last_known_longitude: u.last_known_longitude , data: u.data,
+                      updated_at: u.updated_at}
+
+                  activeUsersArray.push(active_users)
+                end
+
+              end
+            end
+          end
+          render json: { users: activeUsersArray}
         else
           render json: { error_msg: "Invalid application key" }, status:400
           return
         end
       else
-        time_allowance = Time.now - 10.minutes.ago
+        # time_allowance = Time.now - 10.minutes.ago
+        render json: { error_msg: "Param Application key must be presented"}, status: 400
       end
 
       #create_car_action_logs(user.id, params[:latitude], params[:longitude], speed, direction, activity, heartrate)
 
-      usersArray = []
 
-      users.each do |u|
-        if u.check_in_time.present?
-          time_difference = Time.now - u.check_in_time
-          unless time_difference.to_i > time_allowance.to_i
-            usersArray.push(u)
-          end
-        end
-      end
-
-      usersArray.each do |ua|
-        unless ua.id == current_user.id
-          user = User.find(ua.id)
-          avatar = Topic.get_avatar(user.username)
-          avatar_url = ua.avatar_url
-          if avatar_url.nil?
-            avatar_url = ""
-          end
-          active_users = { id: ua.id, username: ua.username, avatar_url: avatar_url,local_avatar: avatar, last_known_latitude: ua.last_known_latitude, last_known_longitude: ua.last_known_longitude , data: ua.data, updated_at: ua.updated_at}
-          activeUsersArray.push(active_users)
-        end
-      end
-
-      render json: { users: activeUsersArray}
     else
       render json: { error_msg: "Param user id, authentication token, latitude and longitude must be presented"}, status: 400
     end
