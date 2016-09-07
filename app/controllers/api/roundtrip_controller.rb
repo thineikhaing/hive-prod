@@ -837,14 +837,27 @@ class Api::RoundtripController < ApplicationController
     nextBusInMin3 = 0
     stop_name = params[:stop_name]
     service_no = params[:service_no]
-    sg_bus  = SgBusStop.find_by_description(stop_name)
+    latitude = params[:latitude]
+    longitude = params[:longitude]
 
-    if sg_bus.present?
+    sg_bus  = SgBusStop.where(description: stop_name)
+
+    bus_info = nil
+
+    sg_bus.each do |bus|
+      lat = bus.latitude.round(7)
+      lng = bus.longitude.round(7)
+      bus_info = bus if lat.to_f == latitude.to_f && lng.to_f == longitude.to_f
+
+    end
+
+
+    if bus_info.present?
       p "bus id"
-      p sg_bus.bus_id
+      p bus_info.bus_id
 
       uri = URI('http://datamall2.mytransport.sg/ltaodataservice/BusArrival')
-      params = { :BusStopID => sg_bus.bus_id, :ServiceNo => service_no, :SST => true}
+      params = { :BusStopID => bus_info.bus_id, :ServiceNo => service_no, :SST => true}
       uri.query = URI.encode_www_form(params)
       res = Net::HTTP::Get.new(uri,
                                initheader = {"accept" =>"application/json",
@@ -856,51 +869,38 @@ class Api::RoundtripController < ApplicationController
       results = results["Services"]
     end
 
+    p results
 
     if results.present?
 
       nextBus1 = results[0]["NextBus"]
-      nextbus_arrivalTime1 = Time.parse(nextBus1["EstimatedArrival"]).strftime("at %I:%M%p")
-      tempnextBus1[:nextBusInText] = nextbus_arrivalTime1
-      results[0]["NextBus"].merge!(tempnextBus1)
+      status = results[0]["Status"]
 
-      # nextBusInMin1 = TimeDifference.between(Time.now,Time.parse(nextBus1["EstimatedArrival"])).in_minutes.to_i
-      # nextBusInMin1 == 0 ? nextBusInMin1 = "Arrive" : nextBusInMin1 = nextBusInMin1.to_s + " min"
-      # tempnextBus1[:nextBusInMin] = nextBusInMin1
+      if status == "In Operation"
+        nextbus_arrivalTime1 = Time.parse(nextBus1["EstimatedArrival"]).strftime("at %I:%M%p")
+        tempnextBus1[:nextBusInText] = nextbus_arrivalTime1
+        results[0]["NextBus"].merge!(tempnextBus1)
+
+        nextBus2 = results[0]["SubsequentBus"]
+        if nextBus2["EstimatedArrival"].present?
+          nextbus_arrivalTime2 = Time.parse(nextBus2["EstimatedArrival"]).strftime("at %I:%M%p")
+          tempnextBus2[:nextBusInText] = nextbus_arrivalTime2
+        else
+          tempnextBus2[:nextBusInText] = ""
+        end
+        results[0]["SubsequentBus"].merge!(tempnextBus2)
+
+        nextBus3 = results[0]["SubsequentBus3"]
+        if nextBus3["EstimatedArrival"].present?
+          nextbus_arrivalTime3 = Time.parse(nextBus3["EstimatedArrival"]).strftime("at %I:%M%p")
+          tempnextBus3[:nextBusInText] = nextbus_arrivalTime3
+        else
+          tempnextBus3[:nextBusInText] = ""
+        end
+        results[0]["SubsequentBus3"].merge!(tempnextBus3)
 
 
-      nextBus2 = results[0]["SubsequentBus"]
-      if nextBus2["EstimatedArrival"].present?
-        nextbus_arrivalTime2 = Time.parse(nextBus2["EstimatedArrival"]).strftime("at %I:%M%p")
-        tempnextBus2[:nextBusInText] = nextbus_arrivalTime2
-
-        # nextBusInMin2 = TimeDifference.between(Time.now,Time.parse(nextBus2["EstimatedArrival"])).in_minutes.to_i
-        # nextBusInMin2 == 0 ? nextBusInMin2 = "Arrive" : nextBusInMin2 = nextBusInMin2.to_s + " min"
-        # tempnextBus2[:nextBusInMin] = nextBusInMin2
-      else
-        tempnextBus2[:nextBusInText] = ""
-        # tempnextBus2[:nextBusInMin] = ""
       end
-      results[0]["SubsequentBus"].merge!(tempnextBus2)
-
-      nextBus3 = results[0]["SubsequentBus3"]
-      if nextBus3["EstimatedArrival"].present?
-        nextbus_arrivalTime3 = Time.parse(nextBus3["EstimatedArrival"]).strftime("at %I:%M%p")
-        tempnextBus3[:nextBusInText] = nextbus_arrivalTime3
-
-        # nextBusInMin3 = TimeDifference.between(Time.now,Time.parse(nextBus3["EstimatedArrival"])).in_minutes.to_i
-        # nextBusInMin3 == 0 ? nextBusInMin3 = "Arrive" : nextBusInMin3 = nextBusInMin3.to_s + " min"
-        # tempnextBus3[:nextBusInMin] = nextBusInMin3
-
-      else
-        tempnextBus3[:nextBusInText] = ""
-        # tempnextBus3[:nextBusInMin] = ""
-      end
-      results[0]["SubsequentBus3"].merge!(tempnextBus3)
-
-      # nextBusInMin1 == 0 ? nextBusInMin1 = "Arrive" : nextBusInMin1 = nextBusInMin1
-      # nextBusInMin2 == 0 ? nextBusInMin2 = "Arrive" : nextBusInMin2 = nextBusInMin2
-      # nextBusInMin3 == 0 ? nextBusInMin3 = "Arrive" : nextBusInMin3 = nextBusInMin3
 
       results[0].delete("SubsequentBus3")
 
