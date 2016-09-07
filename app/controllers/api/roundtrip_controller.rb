@@ -839,13 +839,19 @@ class Api::RoundtripController < ApplicationController
     longitude = params[:longitude]
 
     if latitude.present? && longitude.present? && stop_name.present? && service_no.present?
+
+      # center_point = [latitude.to_f, longitude.to_f]
+      # box = Geocoder::Calculations.bounding_box(center_point, 0.01, {units: :km})
+      # bus_info = SgBusStop.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3],description: stop_name).take
+
       sg_bus  = SgBusStop.where(description: stop_name)
       sg_bus.each do |bus|
-        lat = bus.latitude.round(7)
-        lng = bus.longitude.round(7)
-        bus_info = bus if lat.to_f == latitude.to_f && lng.to_f == longitude.to_f
+        lat = bus.latitude.round(7).to_f
+        lng = bus.longitude.round(7).to_f
+        bus_info = bus if lat == latitude.to_f && lng == longitude.to_f
       end
 
+       p bus_info
       if bus_info.present?
         p "bus id"
         p bus_info.bus_id
@@ -890,20 +896,18 @@ class Api::RoundtripController < ApplicationController
             tempnextBus3[:nextBusInText] = ""
           end
           results[0]["SubsequentBus3"].merge!(tempnextBus3)
-
-
         end
 
         results[0].delete("SubsequentBus3")
 
         render json:{results: results}
       else
-        render json:{error_msg:"No Available Result!"} , status: 400
+        render json:{error_msg:"No Available Result!"}
 
       end
 
     else
-      render json:{error_msg:"Parameter latitude, longitude, stop_name and service_no must be presented."}  , status: 400
+      render json:{error_msg:"Parameter latitude, longitude, stop_name and service_no must be presented."}
     end
 
   end
