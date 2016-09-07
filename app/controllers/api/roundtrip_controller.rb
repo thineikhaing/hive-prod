@@ -898,12 +898,12 @@ class Api::RoundtripController < ApplicationController
 
         render json:{results: results}
       else
-        render json:{error_msg:"No Available Result!", status: 400}
+        render json:{error_msg:"No Available Result!"} , status: 400
 
       end
 
     else
-      render json:{error_msg:"Parameter latitude, longitude, stop_name and service_no must be presented.", status: 400}
+      render json:{error_msg:"Parameter latitude, longitude, stop_name and service_no must be presented."}  , status: 400
     end
 
   end
