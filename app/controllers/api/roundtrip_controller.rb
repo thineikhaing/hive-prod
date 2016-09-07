@@ -832,82 +832,78 @@ class Api::RoundtripController < ApplicationController
     tempnextBus1 = Hash.new
     tempnextBus2 = Hash.new
     tempnextBus3 = Hash.new
-    nextBusInMin1 = 0
-    nextBusInMin2 = 0
-    nextBusInMin3 = 0
+    bus_info = nil
     stop_name = params[:stop_name]
     service_no = params[:service_no]
     latitude = params[:latitude]
     longitude = params[:longitude]
 
-    sg_bus  = SgBusStop.where(description: stop_name)
+    if latitude.present? && longitude.present? && stop_name.present? && service_no.present?
+      sg_bus  = SgBusStop.where(description: stop_name)
+      sg_bus.each do |bus|
+        lat = bus.latitude.round(7)
+        lng = bus.longitude.round(7)
+        bus_info = bus if lat.to_f == latitude.to_f && lng.to_f == longitude.to_f
+      end
 
-    bus_info = nil
+      if bus_info.present?
+        p "bus id"
+        p bus_info.bus_id
 
-    sg_bus.each do |bus|
-      lat = bus.latitude.round(7)
-      lng = bus.longitude.round(7)
-      bus_info = bus if lat.to_f == latitude.to_f && lng.to_f == longitude.to_f
+        uri = URI('http://datamall2.mytransport.sg/ltaodataservice/BusArrival')
+        params = { :BusStopID => bus_info.bus_id, :ServiceNo => service_no, :SST => true}
+        uri.query = URI.encode_www_form(params)
+        res = Net::HTTP::Get.new(uri,
+                                 initheader = {"accept" =>"application/json",
+                                               "AccountKey"=>"4G40nh9gmUGe8L2GTNWbgg==",
+                                               "UniqueUserID"=>"d52627a6-4bde-4fa1-bd48-c6270b02ffc0"})
+        con = Net::HTTP.new(uri.host, uri.port)
+        r = con.start {|http| http.request(res)}
+        results = JSON.parse(r.body)
+        p results = results["Services"]
+      end
 
-    end
+      if results.present?
+
+        nextBus1 = results[0]["NextBus"]
+        status = results[0]["Status"]
+
+        if status == "In Operation"
+          nextbus_arrivalTime1 = Time.parse(nextBus1["EstimatedArrival"]).strftime("at %I:%M%p")
+          tempnextBus1[:nextBusInText] = nextbus_arrivalTime1
+          results[0]["NextBus"].merge!(tempnextBus1)
+
+          nextBus2 = results[0]["SubsequentBus"]
+          if nextBus2["EstimatedArrival"].present?
+            nextbus_arrivalTime2 = Time.parse(nextBus2["EstimatedArrival"]).strftime("at %I:%M%p")
+            tempnextBus2[:nextBusInText] = nextbus_arrivalTime2
+          else
+            tempnextBus2[:nextBusInText] = ""
+          end
+          results[0]["SubsequentBus"].merge!(tempnextBus2)
+
+          nextBus3 = results[0]["SubsequentBus3"]
+          if nextBus3["EstimatedArrival"].present?
+            nextbus_arrivalTime3 = Time.parse(nextBus3["EstimatedArrival"]).strftime("at %I:%M%p")
+            tempnextBus3[:nextBusInText] = nextbus_arrivalTime3
+          else
+            tempnextBus3[:nextBusInText] = ""
+          end
+          results[0]["SubsequentBus3"].merge!(tempnextBus3)
 
 
-    if bus_info.present?
-      p "bus id"
-      p bus_info.bus_id
-
-      uri = URI('http://datamall2.mytransport.sg/ltaodataservice/BusArrival')
-      params = { :BusStopID => bus_info.bus_id, :ServiceNo => service_no, :SST => true}
-      uri.query = URI.encode_www_form(params)
-      res = Net::HTTP::Get.new(uri,
-                               initheader = {"accept" =>"application/json",
-                                             "AccountKey"=>"4G40nh9gmUGe8L2GTNWbgg==",
-                                             "UniqueUserID"=>"d52627a6-4bde-4fa1-bd48-c6270b02ffc0"})
-      con = Net::HTTP.new(uri.host, uri.port)
-      r = con.start {|http| http.request(res)}
-      results = JSON.parse(r.body)
-      results = results["Services"]
-    end
-
-    p results
-
-    if results.present?
-
-      nextBus1 = results[0]["NextBus"]
-      status = results[0]["Status"]
-
-      if status == "In Operation"
-        nextbus_arrivalTime1 = Time.parse(nextBus1["EstimatedArrival"]).strftime("at %I:%M%p")
-        tempnextBus1[:nextBusInText] = nextbus_arrivalTime1
-        results[0]["NextBus"].merge!(tempnextBus1)
-
-        nextBus2 = results[0]["SubsequentBus"]
-        if nextBus2["EstimatedArrival"].present?
-          nextbus_arrivalTime2 = Time.parse(nextBus2["EstimatedArrival"]).strftime("at %I:%M%p")
-          tempnextBus2[:nextBusInText] = nextbus_arrivalTime2
-        else
-          tempnextBus2[:nextBusInText] = ""
         end
-        results[0]["SubsequentBus"].merge!(tempnextBus2)
 
-        nextBus3 = results[0]["SubsequentBus3"]
-        if nextBus3["EstimatedArrival"].present?
-          nextbus_arrivalTime3 = Time.parse(nextBus3["EstimatedArrival"]).strftime("at %I:%M%p")
-          tempnextBus3[:nextBusInText] = nextbus_arrivalTime3
-        else
-          tempnextBus3[:nextBusInText] = ""
-        end
-        results[0]["SubsequentBus3"].merge!(tempnextBus3)
+        results[0].delete("SubsequentBus3")
 
+        render json:{results: results}
+      else
+        render json:{error_msg:"No Available Result!", status: 400}
 
       end
 
-      results[0].delete("SubsequentBus3")
-
-      render json:{results: results}
     else
-      render json:{error_msg:"No Available Result!"}
-
+      render json:{error_msg:"Parameter latitude, longitude, stop_name and service_no must be presented.", status: 400}
     end
 
   end
