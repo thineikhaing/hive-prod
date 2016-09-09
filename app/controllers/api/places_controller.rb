@@ -68,8 +68,6 @@ class Api::PlacesController < ApplicationController
     end
   end
 
-
-
   def user_recent_places
     if current_user.present?
       places_array = current_user.checkinplaces.order("created_at DESC")
@@ -324,12 +322,12 @@ class Api::PlacesController < ApplicationController
       # else
       #
       #   begin
-      #     query = factual.table("global").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
+      #     # query = factual.table("global").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
+      #     query = factual.table("global").geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]}).search(params[:keyword])
       #   rescue Geocoder::OverQueryLimitError
       #     p "****** gecoder limit hit ******"
       #   end
       # end
-
 
       #Google Geocoding API error: over query limit.
 
@@ -380,13 +378,6 @@ class Api::PlacesController < ApplicationController
       if !google_places.nil?
 
         google_places.each do |data|
-          # if data.photos[0].present?
-          #   url = ''
-          #   url = data.photos[0].fetch_url(800)
-          # else
-          #   url = ""
-          # end
-
           google_data_array.push({name: data.name ,
                                   address: data.vicinity,
                                   latitude: data.lat,
@@ -438,55 +429,11 @@ class Api::PlacesController < ApplicationController
       # end
 
 
-      code = params[:keyword]
-
       data_array =   hive_data_array + google_data_array + factual_data_array
 
       p hive_data_array.count
       p google_data_array.count
 
-      # if code.to_i.is_a?Integer
-      #
-      #   uri = URI.parse('https://gothere.sg/maps/geo')
-      #   params ={output: '',q: code,client: '',sensor: false,callback:''}
-      #   # Add params to URI
-      #   uri.query = URI.encode_www_form( params )
-      #   p response = JSON.parse(Net::HTTP.get(uri))
-      #   p response
-      #
-      #   response = Net::HTTP.get_response(URI("https://gothere.sg/maps/geo?output=&q='#{code}'&client=&sensor=false&callback=")).body
-      #   response = JSON.parse(response)
-      #   p "response from gothere"
-      #   p status = response["Status"]["code"]
-      #
-      #   # p response
-      #   # p status
-      #
-      #   if status == 200
-      #     place= response["Placemark"][0]
-      #     add_detail = place["AddressDetails"]["Country"]
-      #
-      #     lng  = place["Point"]["coordinates"][0]
-      #     lat= place["Point"]["coordinates"][1]
-      #
-      #     name = add_detail["Thoroughfare"]["ThoroughfareName"]
-      #     add = place["address"]
-      #     gothere_data.push({ name: name , address: add, latitude: lat,longitude: lng,img_url: "",
-      #                         user_id: nil,
-      #                         username: nil,
-      #                         source: Place::GOTHERE,
-      #                         source_id: code, status:'gothere'})
-      #
-      #     data_array =  gothere_data+ hive_data_array + google_data_array + factual_data_array
-      #   else
-      #
-      #     data_array = hive_data_array + google_data_array + factual_data_array
-      #   end
-      #
-      #
-      # end
-
-      # data_array =   hive_data_array + google_data_array + factual_data_array
       uniq_array = data_array.uniq! {|p| p[:name]}         #remove duplicate item in hash array
 
 
@@ -751,6 +698,33 @@ class Api::PlacesController < ApplicationController
     end
     render json: { topicmeal: topicmeal, locationmeal: factual_data_array[0]}
 
+  end
+
+
+  def search_place_by_keyword
+    # p = "http://www.onemap.sg/API/JS/?accessKEY="+OneMap::OneMap_DToken
+    p keyword = params[:keyword]
+    uri = URI('http://www.onemap.sg/APIV2/services.svc/basicSearchV2')
+    params = {
+        "token" => "StOhuX4b8SZByl8/GSRyMIAnVm2dbKomU2LnPICDMH3wvlQaOMUvz/qmBt4MCN25d6/ru2yNXynoK9Rt4kfs1E7QR7tFyERqjNnwhxtrwusaD13sDaeDgw==",
+        "searchVal" => keyword,
+        "returnGeom" => 0,
+        "rset" =>1,
+        "getAddrDetl" => "Y",
+
+    }
+    uri.query = URI.encode_www_form(params)
+    res = Net::HTTP::Get.new(uri,
+                             initheader = {"accept" =>"application/json",
+                                           "AccountKey"=>"4G40nh9gmUGe8L2GTNWbgg==",
+                                           "UniqueUserID"=>"d52627a6-4bde-4fa1-bd48-c6270b02ffc0"})
+    con = Net::HTTP.new(uri.host, uri.port)
+    r = con.start {|http| http.request(res)}
+    new_results = JSON.parse(r.body)
+    p "result :::"
+    p new_results
+
+    render json: {result: new_results}
   end
 
 

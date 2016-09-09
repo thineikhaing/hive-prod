@@ -222,6 +222,12 @@ module GoogleAPI
   Google_Key = "AIzaSyCmCjZVJvI5h2Qg7XcdI9jTFjyK-IgzyQk"
 end
 
+module OneMap
+  OneMap_SToken ="20hJb9BMPUIBzwyZ1/m6fMK3ioaM+fzdrwxfFmT0m2xfTzAqDBUS3fdKeqIMxRu+t+1BagPZNGZYjrmr40nNvyJZB3UNAr0d1vxUw3eunX/c0/H65tEeGusW3AL/bSal|mv73ZvjFcSo="
+  OneMap_DAccessKey = "20hJb9BMPUIBzwyZ1/m6fMK3ioaM+fzdwNpdOdYO0fCICsxRJI4527+gtsuFoVcrKIXAldas3XhtX2E0ZfaJtN0EfoFrJamMpsmC0dhopDEUQblJMXSdcA==|mv73ZvjFcSo="
+  D_Token = "StOhuX4b8SZByl8/GSRyMIAnVm2dbKomU2LnPICDMH3wvlQaOMUvz/qmBt4MCN25d6/ru2yNXynoK9Rt4kfs1E7QR7tFyERqjNnwhxtrwusaD13sDaeDgw=="
+end
+
 # @client.predictions_by_input(
 #     'Thomson plaza',
 #     lat: 1.3181786,
