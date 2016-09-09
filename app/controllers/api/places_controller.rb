@@ -305,45 +305,29 @@ class Api::PlacesController < ApplicationController
 
   def within_location
     data = [ ]
-    fdata=  []
-    data_array = []
     hive_data_array = [ ]
-    factual_data_array = [ ]
     google_data_array = []
     query = []
     google_places= []
     if params[:latitude].present? and params[:longitude].present? and params[:radius].present? and params[:keyword].present?
 
-      # factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
-      # p "factual data"
-      #
-      # if params[:latitude].to_i == -1
-      #   query = factual.table("global").search(params[:keyword])
-      # else
-      #
-      #   begin
-      #     # query = factual.table("global").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
-      #     query = factual.table("global").geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]}).search(params[:keyword])
-      #   rescue Geocoder::OverQueryLimitError
-      #     p "****** gecoder limit hit ******"
-      #   end
-      # end
-
-      #Google Geocoding API error: over query limit.
-
-      # read_query = factual.table("places-sg").search(params[:keyword]).geo("$circle" => {"$center" => [params[:latitude], params[:longitude]], "$meters" => params[:radius]})
-
-      if params[:latitude].to_i == -1
-        places = Place.all
-      else
-        box = Geocoder::Calculations.bounding_box("#{params[:latitude]},#{params[:longitude]}", params[:radius], {units: :km})
-        places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
-      end
-
-      @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
       lat = params[:latitude]
       lng = params[:longitude]
       keyword = params[:keyword]
+
+
+      p places =  Place.where('lower(name) LIKE ?', "%#{keyword.downcase}%")
+
+
+      # if params[:latitude].to_i == -1
+      #   places = Place.all
+      # else
+      #   box = Geocoder::Calculations.bounding_box("#{params[:latitude]},#{params[:longitude]}", params[:radius], {units: :km})
+      #   places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
+      # end
+
+      @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
+
 
       # Search from Google
       # if lat and lng is -1 search by keyword
@@ -367,7 +351,7 @@ class Api::PlacesController < ApplicationController
         begin
           # Exceptions raised by this code will
           # be caught by the following rescue clause
-          google_places = @client.spots(lat, lng, :name => keyword, :radius => 10000)
+          google_places = @client.spots(lat, lng, :name => keyword, :radius => 100000)
         rescue GooglePlaces::OverQueryLimitError
           p "GooglePlaces OverQueryLimitError"
           # raise
@@ -393,43 +377,38 @@ class Api::PlacesController < ApplicationController
       end
 
       places.each do |place|
-        if place.name.present?
-          if place.name.downcase.include?(params[:keyword].downcase)
-            hive_data_array.push({name: place.name,
-                                  address: place.address,
-                                  latitude: place.latitude,
-                                  longitude: place.longitude,
-                                  img_url: place.img_url,
-                                  user_id: place.user_id,
-                                  username: nil,
-                                  source: Place::HERENOW,
-                                  place_id: place.id,
-                                  status:'hive'})
-            data.push(place)
-          end
-        end
+        hive_data_array.push({name: place.name,
+            address: place.address,
+            latitude: place.latitude,
+            longitude: place.longitude,
+            img_url: place.img_url,
+            user_id: place.user_id,
+            username: nil,
+            source: Place::HERENOW,
+            place_id: place.id,
+            status:'hive'})
+        data.push(place)
+        # if place.name.present?
+        #   if place.name.downcase.include?(params[:keyword].downcase)
+        #     hive_data_array.push({name: place.name,
+        #                           address: place.address,
+        #                           latitude: place.latitude,
+        #                           longitude: place.longitude,
+        #                           img_url: place.img_url,
+        #                           user_id: place.user_id,
+        #                           username: nil,
+        #                           source: Place::HERENOW,
+        #                           place_id: place.id,
+        #                           status:'hive'})
+        #     data.push(place)
+        #   end
+        # end
       end
 
-      # if !query.nil?
-      #   query.each do |q|
-      #     fdata = { name: q["name"],
-      #               address: q["address"],
-      #               latitude: q["latitude"],
-      #               longitude: q["longitude"],
-      #               img_url: "",
-      #               user_id: nil,
-      #               username: nil,
-      #               source: Place::FACTUAL,
-      #               source_id: q["factual_id"],
-      #               status:'factual' }
-      #
-      #     factual_data_array.push(fdata)
-      #   end
-      #
-      # end
 
 
-      data_array =   hive_data_array + google_data_array + factual_data_array
+
+      data_array =   hive_data_array + google_data_array
 
       p hive_data_array.count
       p google_data_array.count
@@ -443,15 +422,11 @@ class Api::PlacesController < ApplicationController
       p "uniq array"
       p uniq_array.count
 
-      if uniq_array.present?
-        uniq_array.each do |data|
-          p data[:name]
-          # p data[:source]
-        end
-      end
-
-      # if code.is_integer? && code.length == 6
-      #   uniq_array =  gothere_data
+      # if uniq_array.present?
+      #   uniq_array.each do |data|
+      #     p data[:name]
+      #     # p data[:source]
+      #   end
       # end
 
       render json: {local_and_factual_data: uniq_array, database: data, factual: query}
