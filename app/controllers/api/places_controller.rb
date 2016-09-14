@@ -315,8 +315,7 @@ class Api::PlacesController < ApplicationController
       lng = params[:longitude]
       keyword = params[:keyword]
 
-
-      p places =  Place.where('lower(name) LIKE ?', "%#{keyword.downcase}%")
+      places =  Place.where('lower(name) LIKE ?', "%#{keyword.downcase}%")
 
 
       # if params[:latitude].to_i == -1
@@ -701,7 +700,6 @@ class Api::PlacesController < ApplicationController
 
     render json: {result: new_results}
   end
-
 
 end
 

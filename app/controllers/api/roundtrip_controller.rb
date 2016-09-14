@@ -874,13 +874,13 @@ class Api::RoundtripController < ApplicationController
         nextBus1 = results[0]["NextBus"]
         status = results[0]["Status"]
 
-        if status == "In Operation"
+        if status == "In Operation" and nextBus1["EstimatedArrival"] != ""
           nextbus_arrivalTime1 = Time.parse(nextBus1["EstimatedArrival"]).strftime("at %I:%M%p")
           tempnextBus1[:nextBusInText] = nextbus_arrivalTime1
           results[0]["NextBus"].merge!(tempnextBus1)
 
           nextBus2 = results[0]["SubsequentBus"]
-          if nextBus2["EstimatedArrival"].present?
+          if nextBus2["EstimatedArrival"].present? and nextBus2["EstimatedArrival"] != ""
             nextbus_arrivalTime2 = Time.parse(nextBus2["EstimatedArrival"]).strftime("at %I:%M%p")
             tempnextBus2[:nextBusInText] = nextbus_arrivalTime2
           else
@@ -889,7 +889,7 @@ class Api::RoundtripController < ApplicationController
           results[0]["SubsequentBus"].merge!(tempnextBus2)
 
           nextBus3 = results[0]["SubsequentBus3"]
-          if nextBus3["EstimatedArrival"].present?
+          if nextBus3["EstimatedArrival"].present? and nextBus3["EstimatedArrival"] != ""
             nextbus_arrivalTime3 = Time.parse(nextBus3["EstimatedArrival"]).strftime("at %I:%M%p")
             tempnextBus3[:nextBusInText] = nextbus_arrivalTime3
           else
