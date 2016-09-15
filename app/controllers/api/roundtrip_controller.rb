@@ -898,7 +898,7 @@ class Api::RoundtripController < ApplicationController
           results[0]["SubsequentBus3"].merge!(tempnextBus3)
         end
 
-        results[0].delete("SubsequentBus3")
+        # results[0].delete("SubsequentBus3")
 
         render json:{results: results}
       else
