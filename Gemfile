@@ -62,6 +62,8 @@ gem 'sinatra', github: 'sinatra'
 
 gem 'rails_12factor', group: :production
 
+gem 'scout_apm'
+
 group :assets do
   gem 'bourbon'
   gem 'uglifier'
