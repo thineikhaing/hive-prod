@@ -1,0 +1,26 @@
+# This configuration file is used for Scout APM.
+# Environment variables can also be used to configure Scout. See our help docs for information.
+common: &defaults
+  # By default the application names comes from Rails.application.class. Overide this below.
+  # name:
+
+  key: 8JzxxxgA1Y8SZXW23vdI # your unique organization API key
+
+  # The default log_level is 'info'. Override this below.
+  # log_level: debug
+
+  monitor: true # set to false to disable monitoring
+
+production:
+  <<: *defaults
+
+development:
+  <<: *defaults
+  monitor: false
+
+test:
+  <<: *defaults
+  monitor: false
+
+staging:
+  <<: *defaults
