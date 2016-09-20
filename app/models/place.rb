@@ -145,22 +145,33 @@ class Place < ActiveRecord::Base
 
     s_places.each do |place|
       if place.start_places.present?
-        topics_array = place.start_places
+        place.start_places.each do |topic|
+          topics_array.push(topic)
+        end
       end
 
       if place.end_places.present?
-        topics_array =place.end_places
+        # topics_array =place.end_places
+        place.end_places.each do |topic|
+          topics_array.push(topic)
+        end
       end
 
     end
 
     e_places.each do |place|
       if place.start_places.present?
-        topics_array =place.start_places
+        place.start_places.each do |topic|
+          topics_array.push(topic)
+        end
+        # topics_array =place.start_places
       end
 
       if place.end_places.present?
-        topics_array =place.end_places
+        place.end_places.each do |topic|
+          topics_array.push(topic)
+        end
+        # topics_array =place.end_places
       end
 
     end
@@ -175,11 +186,17 @@ class Place < ActiveRecord::Base
 
       center_places.each do |place|
         if place.start_places.present?
-          topics_array = place.start_places
+          # topics_array = place.start_places
+          place.start_places.each do |topic|
+            topics_array.push(topic)
+          end
         end
 
         if place.end_places.present?
-          topics_array = place.end_places
+          # topics_array = place.end_places
+          place.end_places.each do |topic|
+            topics_array.push(topic)
+          end
         end
 
       end
