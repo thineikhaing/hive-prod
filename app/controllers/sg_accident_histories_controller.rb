@@ -27,9 +27,14 @@ class SgAccidentHistoriesController < ApplicationController
     @sg_accident_history = SgAccidentHistory.new(sg_accident_history_params)
 
     respond_to do |format|
+      @sg_accident_history.type ="HeavyTraffic"
+      @sg_accident_history.accident_datetime = Time.now
+
       if @sg_accident_history.save
-        format.html { redirect_to @sg_accident_history, notice: 'Sg accident history was successfully created.' }
-        format.json { render :show, status: :created, location: @sg_accident_history }
+        SgAccidentHistory.send_traffic_noti
+
+        format.html { redirect_to sg_accident_histories_url, notice: 'Sg accident history was successfully created.' }
+        format.json { render :index, status: :created, location: sg_accident_histories_url }
       else
         format.html { render :new }
         format.json { render json: @sg_accident_history.errors, status: :unprocessable_entity }

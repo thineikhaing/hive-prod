@@ -11,33 +11,11 @@ class SgAccidentHistory < ActiveRecord::Base
     r = con.start {|http| http.request(req)}
     p "get incident list"
 
-    if Rails.env.production?
-      appID = PushWoosh_Const::RT_P_APP_ID
-      round_key = RoundTrip_key::Production_Key
-    elsif Rails.env.staging?
-      appID = PushWoosh_Const::RT_S_APP_ID
-      round_key = RoundTrip_key::Staging_Key
-    else
-      appID = PushWoosh_Const::RT_D_APP_ID
-      round_key = RoundTrip_key::Development_Key
-    end
-
-    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
-
-    hive_application = HiveApplication.find_by_api_key(round_key)
-
-
     @request_payload = JSON.parse r.body
     @request_payload["d"].each do |data|
       # type = data["Type"]
       # if type == "Accident" || type == "Vehicle Breakdown" || type == "Heavy Traffic"
       if data["Type"] == "Heavy Traffic"
-
-        # if type == "Vehicle Breakdown"
-        #   type = "VehicleBreakdown"
-        # elsif type == "Heavy Traffic"
-        #   type = "HeavyTraffic"
-        # end
 
         message  = data["Message"]  # "(2/2)11:24 Vehicle breakdown on KJE (towards BKE) before Sungei Tengah Exit."
         inc_datetime= message.match(" ").pre_match #(2/2)11:24
@@ -67,6 +45,30 @@ class SgAccidentHistory < ActiveRecord::Base
     end
 
     sg_accident = SgAccidentHistory.where(notify: false).take
+
+    if sg_accident.present?
+      SgAccidentHistory.send_traffic_noti
+    end
+
+
+  end
+
+  def self.send_traffic_noti
+    sg_accident = SgAccidentHistory.where(notify: false).take
+    if Rails.env.production?
+      appID = PushWoosh_Const::RT_P_APP_ID
+      round_key = RoundTrip_key::Production_Key
+    elsif Rails.env.staging?
+      appID = PushWoosh_Const::RT_S_APP_ID
+      round_key = RoundTrip_key::Staging_Key
+    else
+      appID = PushWoosh_Const::RT_D_APP_ID
+      round_key = RoundTrip_key::Development_Key
+    end
+
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+
+    hive_application = HiveApplication.find_by_api_key(round_key)
 
     if sg_accident.present?
       latitude = sg_accident.latitude
@@ -142,18 +144,7 @@ class SgAccidentHistory < ActiveRecord::Base
         p "pushwoosh"
       end
 
-      # data = {
-      #     title: sg_accident.message,
-      #     type: sg_accident.type,
-      #     latitude: sg_accident.latitude,
-      #     longitude: sg_accident.longitude,
-      #     accident_datetime: sg_accident.accident_datetime
-      #
-      # }
-      # Pusher["hive_channel"].trigger_async("train_fault", data)
     end
-
-
   end
 
 end

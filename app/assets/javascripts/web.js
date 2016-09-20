@@ -20,6 +20,7 @@
 //= require google.maps.animatemarker
 //= require getGeocodeAddress
 //= require jquery-swapsies
+//= require traffic_map
 //= require_self
 
 

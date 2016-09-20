@@ -6,26 +6,38 @@
         - @sg_accident_history.errors.full_messages.each do |msg|
           %li= msg
 
-  .field
-    = f.label :type
-    = f.text_field :type
-  .field
-    = f.label :message
-    = f.text_field :message
-  .field
-    = f.label :accident_datetime
-    = f.datetime_select :accident_datetime
-  .field
-    = f.label :latitude
-    = f.text_field :latitude
-  .field
-    = f.label :longitude
-    = f.text_field :longitude
-  .field
-    = f.label :summary
-    = f.text_area :summary
-  .field
-    = f.label :notify
-    = f.check_box :notify
-  .actions
-    = f.submit 'Save'
+  .row
+    -#.large-4.columns
+    -#  = f.label :type
+    -#  = f.text_field :type
+    .large-12.columns
+      = f.label :message
+      = f.text_area :message
+    -#.large-4.columns
+    -#  = f.label :accident_datetime
+    -#  = f.datetime_select :accident_datetime
+  .row
+    .large-4.columns
+      = f.label :latitude
+      = f.text_field :latitude
+    .large-4.columns
+      = f.label :longitude
+      = f.text_field :longitude
+    .large-4.columns
+      &nbsp;
+  .row
+    .large-12.columns
+      = f.label :summary
+      = f.text_area :summary
+    -#.field
+    -#  = f.label :notify
+    -#  = f.check_box :notify
+    -#%div{:style => "width: 800px; height: 400px;border:1px solid"}
+    -#  #trafficmap{:style => "width: 800px; height: 400px;"}
+  .row
+    .large-12.columns
+      .actions
+        = f.submit 'Save'
+
+-#:javascript
+-#  Traffic.init();
