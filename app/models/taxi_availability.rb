@@ -7,7 +7,8 @@ class TaxiAvailability < ActiveRecord::Base
     t=Time.now
     t= t.strftime("%Y-%m-%dT%H:%M%S")
     full_path = 'https://api.data.gov.sg/v1/transport/taxi-availability?date_time='+t
-    url = URI.parse(full_path)
+    p "fetch taxi url"
+    p url = URI.parse(full_path)
     req = Net::HTTP::Get.new(url.path, initheader = {"accept" =>"application/json",  "api-key"=>"PGif1D2lFvYZCxLeAodZtdAAuEIleWkG"})
     con = Net::HTTP.new(url.host, url.port)
     con.use_ssl = true

@@ -141,40 +141,30 @@ class Place < ActiveRecord::Base
     e_box = Geocoder::Calculations.bounding_box(e_center_point, radius, {units: :km})
     e_places = Place.where(latitude: e_box[0] .. e_box[2], longitude: e_box[1] .. e_box[3])
 
-
-
     topics_array = [ ]
 
     s_places.each do |place|
       if place.start_places.present?
-        place.start_places.each do |topic|
-          topics_array.push(topic)
-        end
+        topics_array =place.start_places
       end
 
       if place.end_places.present?
-        place.end_places.each do |topic|
-          topics_array.push(topic)
-        end
+        topics_array =place.end_places
       end
 
     end
 
     e_places.each do |place|
-      if place.end_places.present?
-        place.end_places.each do |topic|
-          topics_array.push(topic)
-        end
+      if place.start_places.present?
+        topics_array =place.start_places
       end
 
       if place.end_places.present?
-        place.end_places.each do |topic|
-          topics_array.push(topic)
-        end
+        topics_array =place.end_places
       end
 
     end
-    p topics_array.count rescue '0'
+    # p topics_array.count rescue '0'
 
     if radius_between >= 4
       p "get the center point's topic list cuz radius is greater than 4 km"
@@ -185,20 +175,16 @@ class Place < ActiveRecord::Base
 
       center_places.each do |place|
         if place.start_places.present?
-          place.start_places.each do |topic|
-            topics_array.push(topic)
-          end
+          topics_array = place.start_places
         end
 
         if place.end_places.present?
-          place.end_places.each do |topic|
-            topics_array.push(topic)
-          end
+          topics_array = place.end_places
         end
 
       end
     end
-    p topics_array.count rescue '0'
+    #
 
     if topics_array.present?
       topics_array = topics_array.uniq{ |topic| [topic[:id]]}
@@ -206,6 +192,8 @@ class Place < ActiveRecord::Base
       topics_array = [ ]
     end
     topics_array
+
+    # p topics_array.count rescue '0'
 
   end
 
