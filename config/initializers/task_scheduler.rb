@@ -27,11 +27,10 @@ scheduler.cron '05 00 * * *' do
   end
 end
 
-# scheduler.every 3.minutes do
-#  p "check accident!"
-#  SgAccidentHistory.get_incident_and_breakdown
-#
-# end
+scheduler.every 1.minutes do
+ p "check accident!"
+ SgAccidentHistory.get_incident_and_breakdown
+end
 
 # scheduler.every 2.minutes do
 #   p "UAT remote test!"

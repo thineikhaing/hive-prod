@@ -145,7 +145,7 @@ class Place < ActiveRecord::Base
 
     s_places.each do |place|
       if place.start_places.present?
-        topics_array =place.start_places
+        topics_array = place.start_places
       end
 
       if place.end_places.present?
