@@ -1,6 +1,7 @@
-%h2 SG Transport Accident Records
+%h2 SG Transport Accident
+%h4.right
+  = link_to 'New Heavy Traffic Alert', new_sg_accident_history_path
 
-%br
 %table
   %thead
     %tr
@@ -36,4 +37,3 @@
 
 %br
 = paginate @sg_accident_histories
-= link_to 'New Heavy Traffic Alert', new_sg_accident_history_path
