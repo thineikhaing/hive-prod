@@ -33,8 +33,6 @@ class SgAccidentHistory < ActiveRecord::Base
 
         sg_accident = SgAccidentHistory.where(message: message).take
 
-
-
         if sg_accident.nil?
           p "add new record"
           SgAccidentHistory.create(type:"HeavyTraffic",message: message, accident_datetime: accidentDateTIme, latitude:latitude, longitude:longitude, summary:summary )
@@ -44,16 +42,12 @@ class SgAccidentHistory < ActiveRecord::Base
 
     end
 
-    sg_accident = SgAccidentHistory.where(notify: false).take
-
-    if sg_accident.present?
-      SgAccidentHistory.send_traffic_noti
-    end
-
+    self.send_traffic_noti
 
   end
 
   def self.send_traffic_noti
+    p "send traffic_noti"
     sg_accident = SgAccidentHistory.where(notify: false).take
     if Rails.env.production?
       appID = PushWoosh_Const::RT_P_APP_ID
@@ -111,6 +105,7 @@ class SgAccidentHistory < ActiveRecord::Base
 
       sg_accident.notify = true
       sg_accident.save
+      p sg_accident.message
 
       notification_options = {
           send_date: "now",
