@@ -58,6 +58,8 @@ gem 'activerecord-session_store'
 gem "hstore_accessor"
 gem 'holidays'
 
+gem "puma_worker_killer"
+
 gem 'sinatra', github: 'sinatra'
 
 gem 'rails_12factor', group: :production
