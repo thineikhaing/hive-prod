@@ -76,7 +76,7 @@ group :development do
   gem 'foreman'
   gem 'pivotal_git_scripts'
   gem 'license_finder'
-
+  gem 'derailed'
 end
 
 group :development, :test do
