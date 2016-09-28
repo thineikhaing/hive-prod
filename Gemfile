@@ -26,7 +26,7 @@ gem "fog"
 gem "koala"
 gem 'factual-api'
 gem 'obscenity'
-gem 'newrelic_rpm', '~> 3.15', '>= 3.15.2.317'
+gem 'newrelic_rpm'
 gem 'airbrake'
 gem "mini_magick"
 gem "encryptor"

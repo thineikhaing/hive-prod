@@ -618,7 +618,7 @@ DEPENDENCIES
   koala
   license_finder
   mini_magick
-  newrelic_rpm (~> 3.15, >= 3.15.2.317)
+  newrelic_rpm
   obscenity
   pg
   pivotal_git_scripts
