@@ -173,7 +173,6 @@ class Place < ActiveRecord::Base
         end
         # topics_array =place.end_places
       end
-
     end
     # p topics_array.count rescue '0'
 

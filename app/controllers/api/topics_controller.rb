@@ -57,7 +57,9 @@ class Api::TopicsController < ApplicationController
           # p "start place info::::"
           start_id = start_place[:place].id
           start_place[:place].name
+        end
 
+        if params[:end_place_id] || params[:end_longitude]  || params[:end_longitude]  || params[:end_source_id]
           end_place = place.add_record(end_name, end_latitude, end_longitude, end_address, end_source, end_source_id, end_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
           # p "end place info::::"
           end_id = end_place[:place].id
