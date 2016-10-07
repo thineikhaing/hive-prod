@@ -209,6 +209,11 @@ class Place < ActiveRecord::Base
     end
     topics_array
 
+
+    # a.sort {|x,y| y[:bar]<=>x[:bar]}
+    #     topics_array.sort_by { |k| k["id"] }
+
+
     # p topics_array.count rescue '0'
 
   end
