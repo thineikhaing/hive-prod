@@ -28,7 +28,9 @@ scheduler.cron '05 00 * * *' do
 
   p "flash topic if there is no post within 24 hrs"
 
-  topics = Topic.where(created_at: 24.hours.ago..Time.now,topic_type: 10)
+  # Topic.where(created_at: 24.hours.ago..Time.now,topic_type: 10)
+
+  topics = Topic.where('updated_at > ? and topic_type = ?', 24.hours.ago,10)
   if topics.present?
     topics.each do |topic|
       if topic.posts.present?
