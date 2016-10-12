@@ -25,6 +25,20 @@ scheduler.cron '05 00 * * *' do
     user.daily_points = 10
     user.save
   end
+
+  p "flash topic if there is no post within 24 hrs"
+
+  topics = Topic.where(created_at: 24.hours.ago..Time.now,topic_type: 10)
+  if topics.present?
+    topics.each do |topic|
+      if topic.posts.present?
+        p "keep this topic"
+      else
+        topic.delete
+      end
+    end
+  end
+
 end
 
 scheduler.every 2.minutes do

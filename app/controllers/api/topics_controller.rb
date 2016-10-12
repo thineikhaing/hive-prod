@@ -206,7 +206,7 @@ class Api::TopicsController < ApplicationController
             render json: { topic: JSON.parse(topic.to_json(content: true)), profanity_counter: current_user.profanity_counter}
           else #3rd party App
             render json: { topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
-          end
+        end
 
           if check_banned_profanity(topic.title)
             user = User.find(current_user.id)
