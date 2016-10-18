@@ -154,8 +154,16 @@ class Topic < ActiveRecord::Base
       elsif place.short_name.present? && place.source != Place::HERENOW.to_s
         if place.name.length > 6
           p = place.name.last(6).to_s
-          p.count("0-9") == 6 ? place_name = place.short_name : place_name = place.name
+          if p.count("0-9") == 6
+            place_name = place.name
+          else
+            place_name = place.name
+          end
+
+        else
+          place_name = place.name
         end
+
       else
         place_name = place.name
       end
@@ -183,8 +191,16 @@ class Topic < ActiveRecord::Base
       elsif place.short_name.present? && place.source != Place::HERENOW.to_s
         if place.name.length > 6
           p = place.name.last(6).to_s
-          p.count("0-9") == 6 ? place_name = place.short_name : place_name = place.name
+          if p.count("0-9") == 6
+            place_name = place.name
+          else
+              place_name = place.name
+          end
+
+        else
+          place_name = place.name
         end
+
       else
         place_name = place.name
       end
