@@ -150,6 +150,10 @@ class Topic < ActiveRecord::Base
       if fav.present?
         place_name = fav.name
       elsif place.short_name.present? && place.source != Place::HERENOW.to_s
+        if place.name.length > 6
+          p = place.name.last(6).to_s
+          p.count("0-9") == 6 ? place_name = place.name : place_name = place.name
+        end
          place_name = place.short_name
       else
         place_name = place.name
@@ -172,9 +176,14 @@ class Topic < ActiveRecord::Base
 
       rt_user = Topic.current
       fav = UserFavLocation.where(user_id: rt_user.id, place_id: place.id).take
+
       if fav.present?
         place_name = fav.name
       elsif place.short_name.present? && place.source != Place::HERENOW.to_s
+        if place.name.length > 6
+          p = place.name.last(6).to_s
+          p.count("0-9") == 6 ? place_name = place.name : place_name = place.name
+        end
         place_name = place.short_name
       else
         place_name = place.name
