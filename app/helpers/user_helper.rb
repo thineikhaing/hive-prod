@@ -20,11 +20,11 @@ module UserHelper
   end
 
   def current_rtuser
-    RequestStore.store[:user] = user
+    Thread.current[:user] = user
   end
 
   def clear_current_rtuser
-    RequestStore.store[:user] = nil
+    Thread.current[:user] = []
   end
 end
                                                                                                                                                      ``
