@@ -155,7 +155,7 @@ class Topic < ActiveRecord::Base
         if place.name.length > 6
           p = place.name.last(6).to_s
           if p.count("0-9") == 6
-            place_name = place.name
+            place_name = place.short_name
           else
             place_name = place.name
           end
@@ -192,7 +192,7 @@ class Topic < ActiveRecord::Base
         if place.name.length > 6
           p = place.name.last(6).to_s
           if p.count("0-9") == 6
-            place_name = place.name
+            place_name = place.short_name
           else
               place_name = place.name
           end
