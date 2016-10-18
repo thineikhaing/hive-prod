@@ -27,7 +27,7 @@ class Topic < ActiveRecord::Base
   end
 
   def self.current
-    Thread.current[:current_user] = nil
+    Thread.current[:current_user]
   end
 
 

@@ -23,8 +23,6 @@ module UserHelper
     Thread.current[:user] = user
   end
 
-  def clear_current_rtuser
-    Thread.current[:user] = []
-  end
+
 end
                                                                                                                                                      ``
