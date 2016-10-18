@@ -66,6 +66,8 @@ gem 'rails_12factor', group: :production
 
 gem 'scout_apm'
 
+gem 'request_store'
+
 group :assets do
   gem 'bourbon'
   gem 'uglifier'

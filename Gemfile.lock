@@ -631,6 +631,7 @@ DEPENDENCIES
   rails-backbone
   rails_12factor
   rails_layout
+  request_store
   rmagick
   rqrcode_png
   rspec-rails

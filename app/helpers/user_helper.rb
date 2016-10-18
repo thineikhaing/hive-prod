@@ -20,12 +20,11 @@ module UserHelper
   end
 
   def current_rtuser
-    "This is testing for session"
-    Thread.current[:user] = user
+    RequestStore.store[:user] = user
   end
 
-  def test_userhelper
-
+  def clear_current_rtuser
+    RequestStore.store[:user] = nil
   end
 end
                                                                                                                                                      ``

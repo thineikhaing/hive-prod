@@ -23,11 +23,11 @@ class Topic < ActiveRecord::Base
   store_accessor :data
 
   def self.current=(user)
-    Thread.current[:current_user] = user
+    RequestStore.store[:current_user] = user
   end
 
   def self.current
-    Thread.current[:current_user]
+    RequestStore.store[:current_user] = nil
   end
 
 
