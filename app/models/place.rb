@@ -107,7 +107,8 @@ class Place < ActiveRecord::Base
 
 
   # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)
-  def self.nearest_topics_within_start_and_end(s_latitude, s_longitude,e_latitude, e_longitude, radius, hive_id)
+  def self.nearest_topics_within_start_and_end(current_user,s_latitude, s_longitude,e_latitude, e_longitude, radius, hive_id)
+
     radius = 1
     radius_between = Geocoder::Calculations.distance_between([s_latitude,s_longitude], [e_latitude,e_longitude], {units: :km})
     radius_between = radius_between.round
@@ -125,10 +126,8 @@ class Place < ActiveRecord::Base
       p "radius is less than zero"
       radius = 1
     end
-
     p "radius to query"
     p radius
-
     p "topic list within #{radius}km of each points"
 
     centerpoint = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], [e_latitude,e_longitude]])
@@ -145,36 +144,26 @@ class Place < ActiveRecord::Base
 
     s_places.each do |place|
       if place.start_places.present?
-        place.start_places.each do |topic|
-          topics_array.push(topic)
-        end
+        (topics_array << place.start_places).flatten!
       end
 
       if place.end_places.present?
-        # topics_array =place.end_places
-        place.end_places.each do |topic|
-          topics_array.push(topic)
-        end
+        # topics_array.merge(place.end_places)
+        (topics_array << place.end_places).flatten!
       end
 
     end
 
     e_places.each do |place|
       if place.start_places.present?
-        place.start_places.each do |topic|
-          topics_array.push(topic)
-        end
-        # topics_array =place.start_places
+        (topics_array << place.start_places).flatten!
       end
 
       if place.end_places.present?
-        place.end_places.each do |topic|
-          topics_array.push(topic)
-        end
-        # topics_array =place.end_places
+        (topics_array << place.end_places).flatten!
       end
     end
-    # p topics_array.count rescue '0'
+
 
     if radius_between >= 4
       p "get the center point's topic list cuz radius is greater than 4 km"
@@ -185,17 +174,11 @@ class Place < ActiveRecord::Base
 
       center_places.each do |place|
         if place.start_places.present?
-          # topics_array = place.start_places
-          place.start_places.each do |topic|
-            topics_array.push(topic)
-          end
+          (topics_array << place.start_places).flatten!
         end
 
         if place.end_places.present?
-          # topics_array = place.end_places
-          place.end_places.each do |topic|
-            topics_array.push(topic)
-          end
+          (topics_array << place.end_places).flatten!
         end
 
       end
@@ -207,7 +190,17 @@ class Place < ActiveRecord::Base
     else
       topics_array = [ ]
     end
-    topics_array
+    # modify_topic = []
+    # topics_array.each do |topic|
+    #   p s_id = topic.rtplaces_information[:start_place][:id]
+    #   p e_id = topic.rtplaces_information[:end_place][:id]
+    #   s_fav = UserFavLocation.where(user_id: current_user.id, place_id: s_id).take
+    #   e_fav = UserFavLocation.where(user_id: current_user.id, place_id: e_id).take
+    #
+    #   topic.rtplaces_information[:start_place][:name] = s_fav.name if s_fav.present?
+    #   topic.rtplaces_information[:end_place][:name] = e_fav.name if e_fav.present?
+    #
+    # end
 
 
     # a.sort {|x,y| y[:bar]<=>x[:bar]}
@@ -281,6 +274,8 @@ class Place < ActiveRecord::Base
 
       elsif source_id.present? && source.to_i == Place::FACTUAL
         p "add record from factual"
+
+        factual_result = factual.table("places").filters("factual_id" => "2e8e4a1a-3838-48a4-b8ed-f6d9c717a715").first
         factual_result = factual.table("places").filters("factual_id" => source_id.to_s).first
         p factual_result
         if factual_result["category_labels"].present?
@@ -532,7 +527,7 @@ class Place < ActiveRecord::Base
     #
     #
     # end
-
+    # geocoder = Geocoder.search("1.3326774, 103.8474212").first
     geocoder = Geocoder.search("#{latitude},#{longitude}").first
 
     geocoder = Geocoder.search("1.31762812403745,103.849500944488").first

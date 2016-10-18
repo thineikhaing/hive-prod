@@ -1,5 +1,6 @@
 require 'value_enums'
 class Topic < ActiveRecord::Base
+  extend UserHelper
   belongs_to :hiveapplication
   belongs_to :user
   belongs_to :place
@@ -48,6 +49,7 @@ class Topic < ActiveRecord::Base
 
   paginates_per 5
 
+
   #attr_accessible :title, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id, :user_id, :data, :created_at,
                   # :image_url, :width, :height, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
                   # :special_type , :extra_info, :valid_start_date, :valid_end_date, :points, :free_points, :state,
@@ -64,11 +66,14 @@ class Topic < ActiveRecord::Base
     if options[:content].present?      #return topic json with content information
       super(only: [:id, :state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
-                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username,:avatar_url, :place_information, :tag_information, :post_information, :rtplaces_information, :content, :active_user])
+                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username,:avatar_url, :place_information,
+                                                                                         :tag_information, :post_information,
+                                                                                         :rtplaces_information, :content, :active_user])
     else
       super(only: [:id,:state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
-                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username, :avatar_url, :place_information, :tag_information,:post_information,:rtplaces_information, :content,:active_user])
+                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username, :avatar_url, :place_information,
+                                                                                         :tag_information,:post_information,:rtplaces_information, :content,:active_user])
     end
   end
 
@@ -124,18 +129,45 @@ class Topic < ActiveRecord::Base
   end
 
   def rtplaces_information
+    @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
 
-    places = {}
     if self.start_place_id.present? and self.start_place_id > 0
       place = Place.find(self.start_place_id)
-      start_place = { id: place.id, name: place.name, latitude: place.latitude, longitude: place.longitude, address: place.address, category: place.category, source: place.source, source_id: place.source_id, user_id: place.user_id, country: place.country, postal_code: place.postal_code, chain_name: place.chain_name, contact_number: place.contact_number, img_url: place.img_url,locality: place.locality, region: place.region, neighbourhood: place.neighbourhood, data: place.data }
+
+
+      if place.short_name.present? && place.source != Place::HERENOW.to_s
+         place_name = place.short_name
+      else
+        place_name = place.name
+      end
+
+      start_place = { id: place.id, name: place_name, short_name: place.short_name, latitude: place.latitude,
+          longitude: place.longitude, address: place.address,
+          category: place.category, source: place.source,
+          source_id: place.source_id, user_id: place.user_id,
+          country: place.country, postal_code: place.postal_code,
+          chain_name: place.chain_name, contact_number: place.contact_number,
+          img_url: place.img_url,locality: place.locality, region: place.region,
+          neighbourhood: place.neighbourhood, data: place.data }
     else
       { id: nil, name: nil, latitude: nil, longitude: nil, address: nil , custom_pin_url: nil, source: nil, user_id: nil, popular: nil }
     end
 
     if self.end_place_id.present? and self.end_place_id > 0
       place = Place.find(self.end_place_id)
-      end_place = { id: place.id, name: place.name, latitude: place.latitude, longitude: place.longitude, address: place.address, category: place.category, source: place.source, source_id: place.source_id, user_id: place.user_id, country: place.country, postal_code: place.postal_code, chain_name: place.chain_name, contact_number: place.contact_number, img_url: place.img_url,locality: place.locality, region: place.region, neighbourhood: place.neighbourhood, data: place.data }
+      if place.short_name.present? && place.source != Place::HERENOW.to_s
+        place_name = place.short_name
+      else
+        place_name = place.name
+      end
+      end_place = { id: place.id, name: place_name, short_name: place.short_name, latitude: place.latitude,
+          longitude: place.longitude, address: place.address,
+          category: place.category, source: place.source,
+          source_id: place.source_id, user_id: place.user_id,
+          country: place.country, postal_code: place.postal_code,
+          chain_name: place.chain_name, contact_number: place.contact_number,
+          img_url: place.img_url,locality: place.locality, region: place.region,
+          neighbourhood: place.neighbourhood, data: place.data }
     else
       { id: nil, name: nil, latitude: nil, longitude: nil, address: nil , custom_pin_url: nil, source: nil, user_id: nil, popular: nil }
     end

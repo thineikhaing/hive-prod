@@ -62,6 +62,25 @@ namespace :userdefaultsetup do
   end
 
 
+  desc "Add short name for place table"
+  task :add_shortname_to_place => :environment do
+    @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
+
+    places = Place.all
+    places.each do |p|
+      geocoder = Geocoder.search("#{p.latitude},#{p.longitude}").first
+      if geocoder.present?
+        place = @client.spot(geocoder.place_id)
+        place.present? ? street = place.street : street = ""
+        short_name = street
+      else
+        short_name = ""
+      end
+      p.short_name = short_name
+      p.save
+    end
+  end
+
   desc "Fetch bus stop data from data mall"
   task :fetch_busstop_data_from_data_mall  => :environment do
     # DatabaseCleaner.clean_with(:truncation, :only => ['sg_bus_stops'])
