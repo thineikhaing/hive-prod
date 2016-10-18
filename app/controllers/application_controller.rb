@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   include UserHelper, AuthenticationHelper, UtilityHelper
 
   before_action :current_browser
+  before_filter :set_user
 
   # This token check if the client device is login and has a valid token.
   # Token is generate from Application API token has encryption key.
@@ -31,6 +32,14 @@ class ApplicationController < ActionController::Base
     @browser = Browser.new(ua: request.user_agent)
   end
 
+  def set_user
+    p "session data user"
+
+    if params[:auth_token].present? && params[:user_id].present?
+      Topic.current = User.find(params[:user_id])  #get user by user_id
+    end
+  end
+
   def check_banned_profanity(content)
     contentArray = [ ]
     content.downcase!
@@ -52,4 +61,6 @@ class ApplicationController < ActionController::Base
 
     return false
   end
+
+  helper_method :set_user
 end

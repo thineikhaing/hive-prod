@@ -1,6 +1,6 @@
 require 'value_enums'
 class Topic < ActiveRecord::Base
-  extend UserHelper
+  include UserHelper
   belongs_to :hiveapplication
   belongs_to :user
   belongs_to :place
@@ -21,6 +21,14 @@ class Topic < ActiveRecord::Base
 
   # Setup hstore
   store_accessor :data
+
+  def self.current=(user)
+    Thread.current[:current_user] = user
+  end
+
+  def self.current
+    Thread.current[:current_user]
+  end
 
 
   # hstore_accessor :options,
@@ -98,6 +106,7 @@ class Topic < ActiveRecord::Base
   end
 
 
+
   def local_avatar
     avatar = User.find_by_id(self.user_id).avatar_url
     if avatar.nil?
@@ -128,14 +137,19 @@ class Topic < ActiveRecord::Base
 
   end
 
+
   def rtplaces_information
     @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
 
     if self.start_place_id.present? and self.start_place_id > 0
       place = Place.find(self.start_place_id)
 
+      rt_user = Topic.current
+      fav = UserFavLocation.where(user_id: rt_user.id, place_id: place.id).take
 
-      if place.short_name.present? && place.source != Place::HERENOW.to_s
+      if fav.present?
+        place_name = fav.name
+      elsif place.short_name.present? && place.source != Place::HERENOW.to_s
          place_name = place.short_name
       else
         place_name = place.name
@@ -155,11 +169,17 @@ class Topic < ActiveRecord::Base
 
     if self.end_place_id.present? and self.end_place_id > 0
       place = Place.find(self.end_place_id)
-      if place.short_name.present? && place.source != Place::HERENOW.to_s
+
+      rt_user = Topic.current
+      fav = UserFavLocation.where(user_id: rt_user.id, place_id: place.id).take
+      if fav.present?
+        place_name = fav.name
+      elsif place.short_name.present? && place.source != Place::HERENOW.to_s
         place_name = place.short_name
       else
         place_name = place.name
       end
+
       end_place = { id: place.id, name: place_name, short_name: place.short_name, latitude: place.latitude,
           longitude: place.longitude, address: place.address,
           category: place.category, source: place.source,

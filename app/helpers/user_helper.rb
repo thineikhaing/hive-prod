@@ -18,5 +18,14 @@ module UserHelper
       Devuser.find_by_id(session[:session_devuser_id])
     end
   end
+
+  def current_rtuser
+    "This is testing for session"
+    Thread.current[:user] = user
+  end
+
+  def test_userhelper
+
+  end
 end
                                                                                                                                                      ``

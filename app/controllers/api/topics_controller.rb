@@ -628,7 +628,9 @@ class Api::TopicsController < ApplicationController
 
     if hive_app.present?
 
-     topics = Place.nearest_topics_within_start_and_end(current_user,s_latitude, s_longitude, e_latitude,e_longitude , nil, hive_app.id)
+      session[:user] = current_user
+
+     topics = Place.nearest_topics_within_start_and_end(s_latitude, s_longitude, e_latitude,e_longitude , nil, hive_app.id)
 
      topics = topics.sort {|x,y| y["id"]<=>x["id"]}
 
