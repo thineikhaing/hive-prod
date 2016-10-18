@@ -60,6 +60,18 @@ class Api::PlacesController < ApplicationController
       currentuser = User.find_by_authentication_token(params[:auth_token])
       place = place.add_record(name, latitude, longitude, address, source, source_id, place_id, currentuser.id, params[:auth_token], choice,img_url,place_type,locality,country,postcode)
 
+      @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
+      geocoder = Geocoder.search("#{place.latitude},#{place.longitude}").first
+
+      if geocoder.present?
+        geo_p = @client.spot(geocoder.place_id)
+        geo_p.present? ? street = geo_p.street : street = ""
+        place.short_name = street
+      else
+        place.short_name = ""
+      end
+      place.save!
+
       render json: place
 
 
