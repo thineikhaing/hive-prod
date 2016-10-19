@@ -23,6 +23,5 @@ module UserHelper
     Thread.current[:user] = user
   end
 
-
 end
                                                                                                                                                      ``
