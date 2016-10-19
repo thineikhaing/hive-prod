@@ -277,6 +277,9 @@ class Topic < ActiveRecord::Base
   end
 
   def hive_broadcast
+    p 'rt user before hive_broadcast'
+    p Topic.current = nil
+
     data = {
         id: self.id,
         title: self.title,
@@ -314,6 +317,9 @@ class Topic < ActiveRecord::Base
   end
 
   def app_broadcast
+    p 'rt user before app_broadcast'
+    p Topic.current = nil
+
     hiveapplication = HiveApplication.find(self.hiveapplication_id)
     data = {
         id: self.id,
