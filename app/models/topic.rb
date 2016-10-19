@@ -140,11 +140,12 @@ class Topic < ActiveRecord::Base
 
   def rtplaces_information
     @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
+    p "RT current user"
+    p rt_user = Topic.current
 
     if self.start_place_id.present? and self.start_place_id > 0
       place = Place.find(self.start_place_id)
 
-      rt_user = Topic.current
       if rt_user.present?
         fav = UserFavLocation.where(user_id: rt_user.id, place_id: place.id).take
       end
@@ -183,9 +184,10 @@ class Topic < ActiveRecord::Base
     if self.end_place_id.present? and self.end_place_id > 0
       place = Place.find(self.end_place_id)
 
-      rt_user = Topic.current
-      fav = UserFavLocation.where(user_id: rt_user.id, place_id: place.id).take
-
+      if rt_user.present?
+        fav = UserFavLocation.where(user_id: rt_user.id, place_id: place.id).take
+      end
+      p "round trip current user"
       if fav.present?
         place_name = fav.name
       elsif place.short_name.present? && place.source != Place::HERENOW.to_s
