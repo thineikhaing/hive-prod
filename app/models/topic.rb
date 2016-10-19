@@ -153,14 +153,13 @@ class Topic < ActiveRecord::Base
       if fav.present?
         place_name = fav.name
       elsif place.short_name.present? && place.source != Place::HERENOW.to_s
-        if place.name.length > 6
+        if place.name.length >= 6
           p = place.name.last(6).to_s
           if p.count("0-9") == 6
             place_name = place.short_name
           else
             place_name = place.name
           end
-
         else
           place_name = place.name
         end
@@ -191,7 +190,7 @@ class Topic < ActiveRecord::Base
       if fav.present?
         place_name = fav.name
       elsif place.short_name.present? && place.source != Place::HERENOW.to_s
-        if place.name.length > 6
+        if place.name.length >= 6
           p = place.name.last(6).to_s
           if p.count("0-9") == 6
             place_name = place.short_name
@@ -277,8 +276,7 @@ class Topic < ActiveRecord::Base
   end
 
   def hive_broadcast
-    p 'rt user before hive_broadcast'
-    p Topic.current = nil
+    Topic.current = nil
 
     data = {
         id: self.id,
@@ -317,8 +315,7 @@ class Topic < ActiveRecord::Base
   end
 
   def app_broadcast
-    p 'rt user before app_broadcast'
-    p Topic.current = nil
+    Topic.current = nil
 
     hiveapplication = HiveApplication.find(self.hiveapplication_id)
     data = {
