@@ -666,7 +666,7 @@ class Api::RoundtripController < ApplicationController
     radius = 1 if radius.nil?
     center_point = [latitude.to_f, longitude.to_f]
     box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
-    places = TaxiAvailability.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3]).limit(10)
+    places = TaxiAvailability.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3]).limit(7)
 
 
     gmaps = GoogleMapsService::Client.new(key: GoogleAPI::Google_Key)
