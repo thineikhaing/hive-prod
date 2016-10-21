@@ -91,6 +91,7 @@ production:
   <<: *default
   url:  <%= ENV["DATABASE_URL"] %>
   password: <%= ENV['HIVE_DATABASE_PASSWORD'] %>
+  pool: 20
 
 
 staging:
