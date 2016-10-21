@@ -118,7 +118,6 @@ GEM
       sprockets (< 4.0)
     concurrent-ruby (1.0.2)
     cookiejar (0.3.3)
-    daemons (1.2.3)
     database_cleaner (1.5.3)
     delayed_job (4.1.2)
       activesupport (>= 3.0, < 5.1)
@@ -428,9 +427,6 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
     puma (3.6.0)
-    puma_worker_killer (0.0.6)
-      get_process_mem (~> 0.2)
-      puma (>= 2.7, < 4)
     pusher (1.1.0)
       httpclient (~> 2.7)
       multi_json (~> 1.0)
@@ -545,10 +541,6 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     svy21 (1.0.1)
-    thin (1.7.0)
-      daemons (~> 1.0, >= 1.0.9)
-      eventmachine (~> 1.0, >= 1.0.4)
-      rack (>= 1, < 3)
     thor (0.19.1)
     thread_safe (0.3.5)
     tilt (2.0.5)
@@ -622,7 +614,7 @@ DEPENDENCIES
   obscenity
   pg
   pivotal_git_scripts
-  puma_worker_killer
+  puma
   pusher
   pushwoosh
   rack-jsonp-middleware
@@ -642,10 +634,12 @@ DEPENDENCIES
   sinatra!
   sprockets-rails
   svy21
-  thin
   time_difference
   turbolinks
   uglifier
+
+RUBY VERSION
+   ruby 2.2.3p173
 
 BUNDLED WITH
    1.12.5

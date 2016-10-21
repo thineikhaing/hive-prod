@@ -3,7 +3,8 @@ source 'https://rubygems.org'
 ruby '2.2.3'
 #gem 'rails', :git => 'git://github.com/rails/rails.git', :tag => 'v4.1.0.beta1'
 gem 'rails'
-gem 'thin'
+# gem 'thin'
+gem 'puma'
 gem 'sprockets-rails'
 gem 'haml-rails'
 gem 'rails-backbone'
@@ -58,7 +59,7 @@ gem 'activerecord-session_store'
 gem "hstore_accessor"
 gem 'holidays'
 
-gem "puma_worker_killer"
+# gem "puma_worker_killer"
 
 gem 'sinatra', github: 'sinatra'
 
