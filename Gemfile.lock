@@ -427,6 +427,9 @@ GEM
       method_source (~> 0.8.1)
       slop (~> 3.4)
     puma (3.6.0)
+    puma_worker_killer (0.0.6)
+      get_process_mem (~> 0.2)
+      puma (>= 2.7, < 4)
     pusher (1.1.0)
       httpclient (~> 2.7)
       multi_json (~> 1.0)
@@ -615,6 +618,7 @@ DEPENDENCIES
   pg
   pivotal_git_scripts
   puma
+  puma_worker_killer
   pusher
   pushwoosh
   rack-jsonp-middleware
