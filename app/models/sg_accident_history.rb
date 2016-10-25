@@ -16,8 +16,8 @@ class SgAccidentHistory < ActiveRecord::Base
       # type = data["Type"]
       # if type == "Accident" || type == "Vehicle Breakdown" || type == "Heavy Traffic"
       if data["Type"] == "Heavy Traffic"
-
-        message  = data["Message"]  # "(2/2)11:24 Vehicle breakdown on KJE (towards BKE) before Sungei Tengah Exit."
+       p "message"
+       p message  = data["Message"]  # "(2/2)11:24 Vehicle breakdown on KJE (towards BKE) before Sungei Tengah Exit."
         inc_datetime= message.match(" ").pre_match #(2/2)11:24
         message= message.match(" ").post_match
         inc_date = inc_datetime.scan(/\(([^\)]+)\)/).last.first   # "2/2"
@@ -31,7 +31,7 @@ class SgAccidentHistory < ActiveRecord::Base
         longitude=data["Longitude"]
         summary=data["Summary"]
 
-        sg_accident = SgAccidentHistory.where(message: message).take
+        sg_accident = SgAccidentHistory.where(message: message).take if message.present?
 
         if sg_accident.nil?
           p "add new record"
