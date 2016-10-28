@@ -12,6 +12,7 @@ class Api::TopicsController < ApplicationController
         #check the place_id presents
         if params[:place_id]
           place_id = params[:place_id].to_i
+
         else
           #create place first if the place_id is null
           place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
@@ -65,6 +66,12 @@ class Api::TopicsController < ApplicationController
           end_id = end_place[:place].id
           end_place[:place].name
         end
+
+
+      if params[:latitude].to_i == 0 && params[:longitude].to_i
+        place_id = start_id
+      end
+
 
         data = params[:data] if data.present?
         data = data.delete('\\"') if data.present?
