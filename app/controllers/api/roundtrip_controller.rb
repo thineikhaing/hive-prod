@@ -12,6 +12,7 @@ class Api::RoundtripController < ApplicationController
 
     start_address = params[:start_address]
     end_address = params[:end_address]
+    alternative = params[:alternative]
 
     ncd_price = 0.0
     enl_price = 0.0
@@ -119,122 +120,38 @@ class Api::RoundtripController < ApplicationController
       enl_price = 0.0
       ew_ns_lrt = 0.0
       nel_ccl_dtl = 0.0
+      bus_distance = 0.0
+      fare = 0.0
 
       steps.each_with_index do |step,s_index|
         if step[:travel_mode] == "TRANSIT"
           vehicle = step[:transit_details][:line][:vehicle]
-          station = step[:transit_details][:line][:short_name]
+          station = step[:transit_details][:line][:name]
           step_distance = (step[:distance][:value]* 0.001).round(1)
-
           if vehicle[:type] == "SUBWAY"
-
-            p "smrt station"
-            station = step[:transit_details][:line][:name]
             if station ==  "North East Line" || station == "Circle Line" || station == "Downtown Line"
-              p "station with NE CC DT"
-              p station
-              p step[:distance][:value]
-              nel_ccl_dtl = nel_ccl_dtl + step[:distance][:value]* 0.001
+              p "NE | CC | DTL "
+              p nel_ccl_dtl = nel_ccl_dtl + step[:distance][:value]
             else
-              p "station with EW NS LRT"
-              p station
-              p step[:distance][:value]
-              ew_ns_lrt = ew_ns_lrt + step[:distance][:value]* 0.001
-            end
-
-            if nel_ccl_dtl >= 40.2
-              ncd_price =  2.28
-            elsif nel_ccl_dtl > 0
-              CSV.foreach("db/NE-CC-DT.csv") do |row|
-                range = row[0]
-                num1= range.match(",").pre_match.to_f
-                num2= range.match(",").post_match.to_f
-
-                if nel_ccl_dtl.between?(num1,num2)
-                  p "ncd_price"
-                  p ncd_price =  (row[1].to_i* 0.01)
-                end
-
-              end
-            end
-
-            if ew_ns_lrt >= 40.2
-              enl_price =  2.03
-
-            elsif ew_ns_lrt > 0
-              CSV.foreach("db/NS-EW-LRT.csv") do |row|
-                range = row[0]
-                num1= range.match(",").pre_match.to_f
-                num2= range.match(",").post_match.to_f
-
-                if ew_ns_lrt.between?(num1,num2)
-                  p "enl_price"
-                  p enl_price =  (row[1].to_i* 0.01)
-                end
-
-              end
+              p "EW | NS | LRT "
+              p ew_ns_lrt = ew_ns_lrt + step[:distance][:value]
             end
           else
-            # p "bus number"
-            # p station
-            # p "calculate price based on buses"
-            if step_distance >= 40.2
-              price3 =  2.03
-            else
-
-              CSV.foreach("db/sms-bus.csv") do |row|
-                range = row[0]
-                num1= range.match(",").pre_match.to_f
-                num2= range.match(",").post_match.to_f
-
-                if step_distance.between?(num1,num2)
-
-                  price3 =  (row[1].to_i* 0.01)
-                  price3 = price3.round(2)
-                end
-
-              end
-
-            end
-            tempPrice3[:estimate_price] = price3
-            step[:distance].merge!(tempPrice3)
-            p price3
+            p "Bus"
+            p bus_distance = step[:distance][:value]
           end
 
-          # p "total estiamte price"
-          totalestimateprice = ncd_price + enl_price + price3
-          p totalestimateprice = totalestimateprice.round(2)
-          tempHash[:total_estimate_price] = totalestimateprice
-          route.merge!(tempHash)
+
 
         elsif step[:travel_mode] == "DRIVING"
 
           drivingHash = Hash.new
 
-          p "DRIVING"
-          p total_distance_km =  (route[:legs][0][:distance][:value]* 0.001).round(1)
-          p total_duration_min =  route[:legs][0][:duration][:value] / 60
-          p total_estimated_fare = calculate_taxi_rate(depature_address ,total_distance_km, total_duration_min)
+          total_distance_km =  (route[:legs][0][:distance][:value]* 0.001).round(1)
+          total_duration_min =  route[:legs][0][:duration][:value] / 60
+          total_estimated_fare = calculate_taxi_rate(depature_address ,total_distance_km, total_duration_min)
 
-          p "calculate_taxi_rate"
-          p "flat down rate"
-          p @flat_rate
-          p "net meter fare"
-          p @net_meterfare
-          p "waiting charge"
-          p @waiting_charge
-          p "peek hour charge"
-          p @peekhour_charge
-          p "late hour charge"
-          p @latehour_charge
-          p "public holiday charge"
-          p @pbHoliday_charge
-          p "location charge"
-          p @location_charge
-
-
-          p "total estiamte price"
-          p totalestimateprice = total_estimated_fare.round(2)
+          totalestimateprice = total_estimated_fare.round(2)
           today = Time.new.utc.in_time_zone
 
           drivingHash = { servertime: today,flate_rate: @flat_rate, net_meter_fare: @net_meterfare,
@@ -325,78 +242,6 @@ class Api::RoundtripController < ApplicationController
               tempHash[:have_green_option] = "yes"
               sub_route[:sub_walking_route] = walking_route
 
-              # transit_route.each do |route, r_index|
-              #
-              #   steps = route[:legs][0][:steps]
-              #
-              #   steps.each do |step, s_index|
-              #     if step[:travel_mode] == "TRANSIT"
-              #
-              #       vehicle = step[:transit_details][:line][:vehicle]
-              #       station = step[:transit_details][:line][:short_name]
-              #       step_distance = (step[:distance][:value]* 0.001).round(1)
-              #
-              #       if vehicle[:type] == "SUBWAY"
-              #         if station ==  "NE" || station == "CC" || station == "DT"
-              #           # p "calculate price based on NE CC DT"
-              #           if step_distance >= 40.2
-              #             price1 =  2.28
-              #           else
-              #
-              #             CSV.foreach("db/NE-CC-DT.csv") do |row|
-              #               range = row[0]
-              #               num1= range.match(",").pre_match.to_f
-              #               num2= range.match(",").post_match.to_f
-              #
-              #               if step_distance.between?(num1,num2)
-              #                 price1 =  (row[1].to_i* 0.01)
-              #                 price1 =   price1.round(2)
-              #               end
-              #
-              #             end
-              #
-              #           end
-              #
-              #           tempPrice1[:estimate_price] = price1
-              #           step[:distance].merge!(tempPrice1)
-              #           p price1
-              #
-              #         else
-              #           # p "calculate price based on NS EW BPLRT SPLRT"
-              #           if step_distance >= 40.2
-              #             price2 =  2.03
-              #
-              #           else
-              #             CSV.foreach("db/NS-EW-LRT.csv") do |row|
-              #               range = row[0]
-              #               num1= range.match(",").pre_match.to_f
-              #               num2= range.match(",").post_match.to_f
-              #
-              #               if step_distance.between?(num1,num2)
-              #
-              #                 price2 =  (row[1].to_i* 0.01)
-              #                 price2=  price2.round(2)
-              #               end
-              #
-              #             end
-              #
-              #           end
-              #           tempPrice2[:estimate_price] = price2
-              #           step[:distance].merge!(tempPrice2)
-              #           p price2
-              #
-              #         end
-              #
-              #       else
-              #
-              #         bus
-              #
-              #       end
-              #
-              #     end
-              #   end
-              #
-              # end
               sub_route[:sub_transit_route] = transit_route
             else
               tempHash[:have_green_option] = "no"
@@ -411,9 +256,12 @@ class Api::RoundtripController < ApplicationController
       end
 
       end
-      p "total walking distance"
-      p total_walking_distance.round(1)
-      p "+++++++++++++"
+
+
+      fare = calculate_transit_fare(ew_ns_lrt,nel_ccl_dtl,bus_distance)
+
+      tempHash[:total_estimate_price] = fare
+      route.merge!(tempHash)
 
     end
 
@@ -446,6 +294,45 @@ class Api::RoundtripController < ApplicationController
     end
 
     render json: {fastest_routes: fastest_route,cheapest_routes: cheapest_route}
+
+  end
+
+  def calculate_transit_fare(smrt, sbs, bus)
+
+    total_distance = (smrt + sbs + bus) * 0.001
+    compare_distance = []
+    p 'compare_distance'
+    p compare_distance.push(smrt,sbs,bus)
+    max_distance = compare_distance.max
+    p "look up price table"
+    if max_distance == smrt
+      p "SMRT"
+      price_table = "db/NS-EW-LRT.csv"
+      total_fare = 2.03 if total_distance >= 40.2
+    elsif max_distance == sbs
+      p "SBS"
+      price_table = "db/NE-CC-DT.csv"
+      total_fare = 2.28 if total_distance >= 40.2
+    else
+      p "BUS"
+      total_fare = 2.03 if total_distance >= 40.2
+      price_table = "db/sms-bus.csv"
+    end
+
+
+    if total_distance > 0
+      CSV.foreach(price_table) do |row|
+        range = row[0]
+        num1= range.match(",").pre_match.to_f
+        num2= range.match(",").post_match.to_f
+
+        if total_distance.between?(num1,num2)
+          total_fare =  (row[1].to_i* 0.01)
+        end
+      end
+    end
+
+    total_fare.round(2)
 
   end
 
