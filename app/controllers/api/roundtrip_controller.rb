@@ -304,6 +304,7 @@ class Api::RoundtripController < ApplicationController
     p 'compare_distance'
     p compare_distance.push(smrt,sbs,bus)
     max_distance = compare_distance.max
+
     p "look up price table"
     if max_distance == smrt
       p "SMRT"

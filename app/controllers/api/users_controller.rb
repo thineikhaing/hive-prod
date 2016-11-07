@@ -625,7 +625,7 @@ class Api::UsersController < ApplicationController
         user.save!
         render json: { :user => user, local_avatar: Topic.get_avatar(user.username), :success => 30 }, status: 200
       else
-        render json: { :error => var, message: 'Duplicate username!' }, status: 400
+        render json: { :error => var, message: 'This username has already been taken.' }, status: 400
       end
     else
       #render json:{ error_msg: "Param authentication token/ user id must be presented" } , status: 400
