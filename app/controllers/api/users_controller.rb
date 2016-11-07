@@ -625,7 +625,7 @@ class Api::UsersController < ApplicationController
         user.save!
         render json: { :user => user, local_avatar: Topic.get_avatar(user.username), :success => 30 }, status: 200
       elsif params[:username].to_s == user.username
-        render json: {message: "no changes"}, status: 200
+        render json: { :user => user, local_avatar: Topic.get_avatar(user.username), :success => 30 }, status: 200
       else
         render json: { :error => var, message: 'This username has already been taken.' }, status: 400
       end
