@@ -727,24 +727,30 @@ class Api::RoundtripController < ApplicationController
     longitude = params[:longitude]
 
     if latitude.present? && longitude.present? && stop_name.present? && service_no.present?
-
+      name_count = 0
       center_point = [latitude.to_f, longitude.to_f]
-      box = Geocoder::Calculations.bounding_box(center_point, 0.04, {units: :km})
+      box = Geocoder::Calculations.bounding_box(center_point, 0.05, {units: :km})
       p bus_info = SgBusStop.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
-      p bus_info.count
-      bus_info = bus_info.take
-      p "bus info"
 
-      # if bus_info.nil?
-      #   sg_bus  = SgBusStop.where(description: stop_name)
-      #   p sg_bus.count
-      #   sg_bus.each do |bus|
-      #     lat = bus.latitude.round(7).to_f
-      #     lng = bus.longitude.round(7).to_f
-      #     bus_info = bus
-      #   end
-      #
-      # end
+      if bus_info.count > 1
+        bus_info.each do |info|
+          if info.description == stop_name
+            name_count +=1
+          end
+        end
+
+        if name_count == 1
+          bus_info  = SgBusStop.where(description: stop_name).take
+        else
+          bus_info = bus_info.take
+        end
+
+      else
+        bus_info = bus_info.take
+      end
+
+        p "bus info"
+
 
        p bus_info
       if bus_info.present?
