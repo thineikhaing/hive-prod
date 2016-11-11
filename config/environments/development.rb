@@ -63,13 +63,13 @@ Hive::Application.configure do
   config.action_mailer.raise_delivery_errors = :true
 
   ActionMailer::Base.smtp_settings = {
-      :address              => "smtp.raydiusapp.com",
+      :address              => "smtp.gmail.com",
       :port                 => "587",
       :domain               => "raydiusapp.com",
       :authentication       => :plain,
-      :user_name            => "info@raydiusapp.com",
-      :password             => "raydiusadm1n" ,
-      :enable_starttls_auto => false
+      :user_name            => "thineikhaing@gmail.com",
+      :password             => "abcABC!@#" ,
+      # :enable_starttls_auto => false
   }
 
 end
