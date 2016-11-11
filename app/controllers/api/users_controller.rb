@@ -140,7 +140,8 @@ class Api::UsersController < ApplicationController
      p  "sign up"
     if params[:auth_token].present?
       user = User.find_by_authentication_token(params[:auth_token])
-      useracc = UserAccount.find_by_user_id(user.id)
+      p "facebook user account"
+      p useracc = UserAccount.find_by_user_id(user.id)
       
       if current_user.present?
         if user.id == current_user.id
@@ -164,32 +165,13 @@ class Api::UsersController < ApplicationController
             render json: {:user => user, user_accounts: user_account,userfavlocation: userFav,friend_list: friend_lists,:name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
             # render json: { :user => user, :user_account => user_account, :success => 10 }, status: 200
 
-
-          else
-            p "password"
-            user.password
-            p "user account"
-            p useracc
-            if user.password.blank? and useracc.present?
-              user.username = params[:username]
-              user.email = params[:email]
-              user.password = params[:password]
-              user.password_confirmation = params[:password]
-              user.token_expiry_date= Date.today + 6.months
-              user.save!
-
-              name = user.username
-              id = user.id
-              avatar = Topic.get_avatar(user.username)
-              userFav = UserFavLocation.where(user_id: user.id)
-              friend_lists = UserFriendList.where(user_id: user.id)
-
-              render json: {:user => user, user_accounts: user_account,userfavlocation: userFav,friend_list: friend_lists,:name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
-            elsif user.password.nil? and useracc.nil?
+          elsif useracc.nil?
               var.push(11)
               render json: { :error => var , :error_msg => "Email already exist!"}, status: 400 # Email already exist
-            end
 
+          else
+            var.push(11)
+            render json: { :error => var , :message => "You already register with facebook, please sign in with facebook!"}, status: 400 # Email already exist
           end
           
         end
