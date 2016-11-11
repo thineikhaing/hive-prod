@@ -98,7 +98,7 @@ Hive::Application.configure do
       :authentication       => :plain,
       :user_name            => "thineikhaing@gmail.com",
       :password             => "abcABC!@#" ,
-      # :enable_starttls_auto => false
+      :enable_starttls_auto => true
   }
 
   # ActionMailer::Base.smtp_settings = {

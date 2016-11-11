@@ -77,8 +77,8 @@ Hive::Application.configure do
       :port                 => "587",
       :domain               => "raydiusapp.com",
       :authentication       => :plain,
-      :user_name            => "dev@rs-v.com",
-      :password             => "fev2bed7mEe8" ,
+      :user_name            => "thineikhaing@gmail.com",
+      :password             => "abcABC!@#" ,
       :enable_starttls_auto => true
   }
   # ActionMailer::Base.smtp_settings = {
