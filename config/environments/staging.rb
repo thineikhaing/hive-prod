@@ -72,24 +72,17 @@ Hive::Application.configure do
   # SMTP
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = :true
+
   ActionMailer::Base.smtp_settings = {
-      :address              => "smtp.gmail.com",
+      :address              => "smtp.hnmail.xyz",
       :port                 => "587",
       :domain               => "raydiusapp.com",
       :authentication       => :plain,
-      :user_name            => "thineikhaing@gmail.com",
-      :password             => "abcABC!@#" ,
+      :user_name            => "tripbot@hnmail.xyz",
+      :password             => "MNHTiGCz" ,
       :enable_starttls_auto => true
   }
-  # ActionMailer::Base.smtp_settings = {
-  #     :address              => "smtp.raydiusapp.com",
-  #     :port                 => "587",
-  #     :domain               => "raydiusapp.com",
-  #     :authentication       => :plain,
-  #     :user_name            => "info@raydiusapp.com",
-  #     :password             => "raydiusadm1n" ,
-  #     :enable_starttls_auto => true
-  # }
+
 end
 
 ::ActiveSupport::Deprecation.silenced = true

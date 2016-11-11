@@ -72,6 +72,7 @@ class Api::UsersController < ApplicationController
 
         # p "user by app_key"
         # p users = users.where("app_data ->'app_id#{app.id}' = '#{app.api_key}'")
+        users = User.where("app_data ->'app_id7' =?", "95a729b4ba7f45bbf386d1639af342e5")
 
         user.app_data = app_data
         if params[:app_name]
@@ -141,7 +142,8 @@ class Api::UsersController < ApplicationController
     if params[:auth_token].present?
       user = User.find_by_authentication_token(params[:auth_token])
       p "facebook user account"
-      p useracc = UserAccount.find_by_user_id(user.id)
+      fb_user = User.find_by_email(params[:email])
+      p useracc = UserAccount.find_by_user_id(fb_user.id) if fb_user.present?
       
       if current_user.present?
         if user.id == current_user.id
@@ -1072,10 +1074,10 @@ class Api::UsersController < ApplicationController
       p place = place.add_record(name, latitude, longitude, address, source, source_id,
                                  place_id, current_user.id, current_user.authentication_token,
                                  choice,"",place_type,locality,country,postcode)
-      p "place id"
+      p "place to be update id"
       p updated_id = place[:place].id
 
-      userfav = userfav.update(place_id: place[:place].id,name: name,img_url:img_url)
+      p userfav = userfav.update(place_id: place[:place].id,name: name,img_url:img_url)
 
 
       if userfav.present?
