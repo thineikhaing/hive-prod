@@ -140,6 +140,7 @@ class Api::UsersController < ApplicationController
      p  "sign up"
     if params[:auth_token].present?
       user = User.find_by_authentication_token(params[:auth_token])
+      useracc = UserAccount.find_by_user_id(user.id)
       
       if current_user.present?
         if user.id == current_user.id
@@ -154,31 +155,37 @@ class Api::UsersController < ApplicationController
             user.token_expiry_date= Date.today + 6.months
             user.save!
 
-            if params[:app_key]
-              hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
-              user_account = UserAccount.where(user_id: user.id, hiveapplication_id: hiveapplication.id)
-              if user_account.count == 0
-                user_account = UserAccount.create(user_id: user.id, account_type: hiveapplication.app_name, linked_account_id: 0,priority: 0,hiveapplication_id: hiveapplication.id)
-              end
-
-            end
-
             name = user.username
             id = user.id
             avatar = Topic.get_avatar(user.username)
-
             userFav = UserFavLocation.where(user_id: user.id)
-
             friend_lists = UserFriendList.where(user_id: user.id)
-
 
             render json: {:user => user, user_accounts: user_account,userfavlocation: userFav,friend_list: friend_lists,:name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
             # render json: { :user => user, :user_account => user_account, :success => 10 }, status: 200
 
 
           else
-            var.push(11)
-            render json: { :error => var , :error_msg => "Email already exist!"}, status: 400 # Email already exist
+            if user.password.nil? and useracc.present?
+              user.username = params[:username]
+              user.email = params[:email]
+              user.password = params[:password]
+              user.password_confirmation = params[:password]
+              user.token_expiry_date= Date.today + 6.months
+              user.save!
+
+              name = user.username
+              id = user.id
+              avatar = Topic.get_avatar(user.username)
+              userFav = UserFavLocation.where(user_id: user.id)
+              friend_lists = UserFriendList.where(user_id: user.id)
+
+              render json: {:user => user, user_accounts: user_account,userfavlocation: userFav,friend_list: friend_lists,:name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
+            elsif user.password.nil? and useracc.nil?
+              var.push(11)
+              render json: { :error => var , :error_msg => "Email already exist!"}, status: 400 # Email already exist
+            end
+
           end
           
         end
@@ -493,7 +500,7 @@ class Api::UsersController < ApplicationController
       user = User.find (current_user.id)
       # fb_account = UserAccount.find_all_by_account_type_and_linked_account_id("facebook",params[:fb_id])
 
-      fb_account = UserAccount.where(account_type: "facebook", linked_account_id: params[:fb_id]).take
+      fb_account = UserAccount.where(user_id: user.id,account_type: "facebook", linked_account_id: params[:fb_id]).take
 
       if user.present?
         if fb_account.present?
