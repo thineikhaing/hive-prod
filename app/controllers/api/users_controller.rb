@@ -166,7 +166,11 @@ class Api::UsersController < ApplicationController
 
 
           else
-            if user.password.nil? and useracc.present?
+            p "password"
+            user.password
+            p "user account"
+            p useracc
+            if user.password.blank? and useracc.present?
               user.username = params[:username]
               user.email = params[:email]
               user.password = params[:password]
@@ -500,7 +504,7 @@ class Api::UsersController < ApplicationController
       user = User.find (current_user.id)
       # fb_account = UserAccount.find_all_by_account_type_and_linked_account_id("facebook",params[:fb_id])
 
-      fb_account = UserAccount.where(user_id: user.id,account_type: "facebook", linked_account_id: params[:fb_id]).take
+      fb_account = UserAccount.find_by_linked_account_id(params[:fb_id])
 
       if user.present?
         if fb_account.present?
