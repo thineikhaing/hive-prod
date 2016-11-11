@@ -1063,7 +1063,7 @@ class Api::UsersController < ApplicationController
       params[:address].present? ? address = params[:address] : address = nil
       params[:source].present? ? source = params[:source] : source = nil
       params[:source_id].present? ? source_id = params[:source_id] : source_id = nil
-      params[:place_id].present? ? place_id = params[:place_id] : place_id = userfav.place_id
+      params[:place_id].present? ? place_id = params[:place_id] : place_id = nil
       params[:choice].present? ? choice = params[:choice] : choice = nil
       params[:img_url].present? ? img_url = params[:img_url] : img_url = nil
       params[:place_type].present? ? place_type = params[:place_type] : place_type = nil
