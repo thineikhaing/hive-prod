@@ -164,7 +164,7 @@ class Api::UsersController < ApplicationController
             userFav = UserFavLocation.where(user_id: user.id)
             friend_lists = UserFriendList.where(user_id: user.id)
 
-            render json: {:user => user, user_accounts: user_account,userfavlocation: userFav,friend_list: friend_lists,:name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
+            render json: {:user => user,userfavlocation: userFav,friend_list: friend_lists,:name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
             # render json: { :user => user, :user_account => user_account, :success => 10 }, status: 200
 
           elsif useracc.nil?
