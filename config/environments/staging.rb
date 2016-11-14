@@ -74,7 +74,8 @@ Hive::Application.configure do
   config.action_mailer.perform_deliveries = :true
 
   ActionMailer::Base.smtp_settings = {
-      :address              => "smtp.hnmail.xyz",
+      :openssl_verify_mode => OpenSSL::SSL::VERIFY_NONE,
+      :address              => "mail.hnmail.xyz",
       :port                 => "587",
       :domain               => "raydiusapp.com",
       :authentication       => :plain,
