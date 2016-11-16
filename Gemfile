@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.2.3'
+ruby '2.3.1'
 #gem 'rails', :git => 'git://github.com/rails/rails.git', :tag => 'v4.1.0.beta1'
 gem 'rails'
 # gem 'thin'
@@ -17,6 +17,8 @@ gem 'delayed_job_active_record'
 gem "hirefire-resource"
 gem 'devise'
 gem 'httparty'
+
+gem 'geoip'
 
 gem 'pusher'
 gem 'em-http-request'
