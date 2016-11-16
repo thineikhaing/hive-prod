@@ -34,11 +34,13 @@ class ApplicationController < ActionController::Base
     p user_ip = request.remote_ip
     p "user country"
     @geoip ||= GeoIP.new("db/GeoIP.dat")
+=begin
     remote_ip = request.remote_ip if remote_ip != "127.0.0.1" #todo: check for other local addresses or set default value
+=end
     p "location"
-    p location_location = @geoip.country(remote_ip)
+    p location_location = @geoip.country("220.255.130.209")
     if location_location != nil
-      p country = location_location[2]
+      p country = location_location[5]
     end
 
   end
