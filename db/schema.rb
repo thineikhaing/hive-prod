@@ -376,8 +376,8 @@ ActiveRecord::Schema.define(version: 20161018052928) do
   create_table "user_push_tokens", force: :cascade do |t|
     t.integer  "user_id",    null: false
     t.string   "push_token", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "userpreviouslocations", force: :cascade do |t|

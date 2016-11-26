@@ -63,7 +63,7 @@ class Api::PlacesController < ApplicationController
       @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
       geocoder = Geocoder.search("#{place.latitude},#{place.longitude}").first
 
-       geocoder = Geocoder.search("1.3186428,103.8457616").first
+       # geocoder = Geocoder.search("1.3186428,103.8457616").first
 
       if geocoder.present?
         geo_p = @client.spot(geocoder.place_id)
