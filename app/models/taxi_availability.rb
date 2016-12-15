@@ -4,6 +4,10 @@ class TaxiAvailability < ActiveRecord::Base
 
 
   def self.fetch_nearby_taxi
+
+    ActiveRecord::Base.connection.execute("TRUNCATE TABLE taxi_availabilities
+ RESTART IDENTITY")
+
     t=Time.now
     t= t.strftime("%Y-%m-%dT%H:%M%S")
     full_path = 'https://api.data.gov.sg/v1/transport/taxi-availability?date_time='+t
