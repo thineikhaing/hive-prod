@@ -182,25 +182,27 @@ class Api::UsersController < ApplicationController
       end
       
     elsif params[:hiveweb]
-      p "sign up from hiveweb"
+      p "sign up from web"
       p email= params[:email]
+      params[:name].present? ? name = params[:name] : name = ""
       p password = params[:password]
 
-      user = User.new
-      user.email = email
-      user.password = password
-      user.password_confirmation = params[:password]
+      checkEmail = User.find_by_email(params[:email])
 
-      p user
-      p "+++++++"
-      user.save!
-      p "user is saved!"
-
-      p name = user.username
-      p id = user.id
-      
-      render json: { name: name, id: id , :success => 1 }, status: 200
-      
+      if checkEmail.nil?
+        user = User.new
+        user.email = email
+        user.password = password
+        user.username = name
+        user.password_confirmation = params[:password]
+        user.save!
+        avatar = Topic.get_avatar(user.username)
+        p name = user.username
+        p id = user.id
+        render json: { user: user, name: name, id: id , avatar:avatar, :success => 1,status: 200}, status: 200
+      else
+        render json: {message: "Email already exit." , status: 400}, status: 400
+      end
     else
       
       render json: { error_msg: "Param authentication token must be presented" }, status: 400
