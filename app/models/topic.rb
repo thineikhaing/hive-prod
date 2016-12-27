@@ -132,6 +132,7 @@ class Topic < ActiveRecord::Base
     end
   end
 
+
   def post_information
     first_post = Post.where(topic_id: self.id).last
 

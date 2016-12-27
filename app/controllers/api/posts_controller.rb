@@ -147,6 +147,7 @@ class Api::PostsController < ApplicationController
       application_id = HiveApplication.find_by_api_key(params[:app_key])
       if application_id.present?
         topic = Topic.find_by_id(params[:topic_id])
+
         if topic.present?
           params[:numPosts].present? ? no_of_posts= params[:numPosts].to_i : no_of_posts=0
           params[:post_id].present? ? post_id= params[:post_id].to_i : post_id=0
@@ -163,7 +164,7 @@ class Api::PostsController < ApplicationController
 
           end
         end
-        render json: {posts: posts}
+        render json: {posts: posts,topic:topic}
       else
         render json: { error_msg: "Invalid application key" }, status: 400
       end
