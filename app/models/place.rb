@@ -528,10 +528,8 @@ class Place < ActiveRecord::Base
     #
     #
     # end
-    # geocoder = Geocoder.search("1.3326774, 103.8474212").first
+    # geocoder = Geocoder.search("1.31530223917614, 103.841052440723").first
     geocoder = Geocoder.search("#{latitude},#{longitude}").first
-
-    geocoder = Geocoder.search("1.31762812403745,103.849500944488").first
 
     if geocoder.present? and geocoder.address.present?
       check = Place.find_by_address(geocoder.address)
