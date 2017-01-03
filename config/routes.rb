@@ -119,6 +119,7 @@ Rails.application.routes.draw do
 
     match "downloaddata/incident_and_breakdown" => "downloaddata#incident_and_breakdown"   , via: [:get, :post]
 
+    match "users/get_user"             => "users#get_user"            , via: [:get, :post]
     match "users/create_anonymous_user"             => "users#create_anonymous_user"            , via: [:get, :post]
     match "users/sign_up"                           => "users#sign_up"                          , via: [:get, :post]
     match "users/sign_in"                           => "users#sign_in"                          , via: [:get, :post]

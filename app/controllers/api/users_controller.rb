@@ -10,6 +10,13 @@ class Api::UsersController < ApplicationController
     !Rails.env.development?
   end
 
+  def get_user
+    if params[:auth_token].present? && params[:user_id].present?
+      p user =User.find_by_id(params[:id])
+      render json: {user: user}
+    end
+  end
+
   def get_user_avatar
     if params[:username]
 
