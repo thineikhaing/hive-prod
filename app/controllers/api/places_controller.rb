@@ -151,10 +151,18 @@ class Api::PlacesController < ApplicationController
             end
           else
             if pl.user_id.present?
-              data = { id: pl.id, name: pl.name, latitude: pl.latitude, longitude: pl.longitude, address: pl.address, source: pl.source, user_id: pl.user_id, username: username, users_check_in: numOfCheckIns.count(:user_id, distinct: true), img_url: pl.img_url }
+              p pl
+              data = { id: pl.id, name: pl.name,
+                  latitude: pl.latitude, longitude: pl.longitude,
+                  address: pl.address, source: pl.source, user_id:
+                  pl.user_id, username: username, users_check_in: numOfCheckIns.count(:user_id),
+                  img_url: pl.img_url }
               data_array.push(data)
             else
-              data = { id: pl.id, name: pl.name, latitude: pl.latitude, longitude: pl.longitude, address: pl.address, source: pl.source, user_id: nil, username: nil, users_check_in: numOfCheckIns.count(:user_id, distinct: true), img_url: pl.img_url }
+              data = { id: pl.id, name: pl.name, latitude: pl.latitude,
+                  longitude: pl.longitude, address: pl.address, source:
+                  pl.source, user_id: nil, username: nil, users_check_in: numOfCheckIns.count(:user_id),
+                  img_url: pl.img_url }
               data_array.push(data)
             end
           end

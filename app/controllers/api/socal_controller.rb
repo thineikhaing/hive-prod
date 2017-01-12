@@ -12,7 +12,7 @@ class Api::SocalController < ApplicationController
         params[:event_name],
         params[:datetime],
         params[:email],
-        params[:username],
+        params[:name],
         data, hiveapplication.id,params[:invitation_code])
 
     p "Create event"

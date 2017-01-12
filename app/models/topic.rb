@@ -225,39 +225,42 @@ class Topic < ActiveRecord::Base
   end
 
   def active_user
-    place = Place.find(self.place_id)
-    posts = self.posts
-    users = User.nearest(place.latitude, place.longitude, 1)
+    if (self.place_id != 0)
+      place = Place.find(self.place_id)
+      posts = self.posts
+      users = User.nearest(place.latitude, place.longitude, 1)
 
-    usersArray = []
-    active_users = []
-    post_users = []
+      usersArray = []
+      active_users = []
+      post_users = []
 
-    posts.each do |post|
-      post_users.push(post.user_id)
+      posts.each do |post|
+        post_users.push(post.user_id)
+      end
+
+      post_users = post_users & post_users
+
+      time_allowance = Time.now - 2.weeks.ago
+      users.each do |u|
+        usersArray.push(u)
+        active_users.push(u.id)
+        # if u.check_in_time.present?
+        #   time_difference = Time.now - u.check_in_time
+        #   unless time_difference.to_i > time_allowance.to_i
+        #     usersArray.push(u)
+        #     active_users.push(u.id)
+        #   end
+        # end
+      end
+      # p "post user and active users"
+      # p post_users
+      # p active_users
+
+      active_post_user = post_users
+
+      return active_post_user.count
     end
 
-    post_users = post_users & post_users
-
-    time_allowance = Time.now - 2.weeks.ago
-    users.each do |u|
-      usersArray.push(u)
-      active_users.push(u.id)
-      # if u.check_in_time.present?
-      #   time_difference = Time.now - u.check_in_time
-      #   unless time_difference.to_i > time_allowance.to_i
-      #     usersArray.push(u)
-      #     active_users.push(u.id)
-      #   end
-      # end
-    end
-    # p "post user and active users"
-    # p post_users
-    # p active_users
-
-    active_post_user = post_users
-
-    return active_post_user.count
   end
 
 

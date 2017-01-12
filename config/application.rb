@@ -114,7 +114,7 @@ module Favr_key
 end
 
 module Socal_key
-  Development_Key = "db6f9de70998d2e590884b39ac6809e8"
+  Development_Key = "2ccf78d8a6fd929a48ea6cf6fe033c18"
   Staging_Key = "2ccf78d8a6fd929a48ea6cf6fe033c18"
   Production_Key = "89433f46a2f596f3f1c8259e8f262c3e"
 end

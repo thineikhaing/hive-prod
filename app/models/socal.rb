@@ -11,6 +11,8 @@ class Socal
     else
       user.username = name
     end
+    p name
+    user.username = name
     user.password = '12345678'
     user.save!
 
