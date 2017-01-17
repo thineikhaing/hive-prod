@@ -426,39 +426,37 @@ class Api::PlacesController < ApplicationController
         # end
       end
 
-      # go_there_array = []
-      # response = Net::HTTP.get_response(URI("https://gothere.sg/maps/geo?output=&q='#{keyword}'&client=&sensor=false&callback=")).body
-      # response = JSON.parse(response)
-      # status = response["Status"]["code"]
-      # if status == 200
-      #   response["Placemark"].each do |place|
-      #     add_detail = place["AddressDetails"]["Country"]
-      #
-      #     lng  = place["Point"]["coordinates"][0]
-      #     lat= place["Point"]["coordinates"][1]
-      #
-      #     name = add_detail["Thoroughfare"]["ThoroughfareName"]
-      #     country_name = add_detail["Thoroughfare"]["CountryName"]
-      #     add = place["address"]
-      #
-      #     go_there_array.push({name: name ,
-      #         address: add,
-      #         latitude: lat,
-      #         longitude: lng,
-      #         img_url: "",
-      #         user_id: nil,
-      #         username: nil,
-      #         source: Place::GOTHERE,
-      #         source_id: name,
-      #         status:'gothere'})
-      #   end
-      #   # place= response["Placemark"][0]
-      #
-      # end
+      go_there_array = []
+      response = Net::HTTP.get_response(URI("https://gothere.sg/maps/geo?output=&q='#{keyword}'&client=&sensor=false&callback=")).body
+      response = JSON.parse(response)
+      status = response["Status"]["code"]
+      if status == 200
+        response["Placemark"].each do |place|
+          add_detail = place["AddressDetails"]["Country"]
 
+          lng  = place["Point"]["coordinates"][0]
+          lat= place["Point"]["coordinates"][1]
 
+          name = add_detail["Thoroughfare"]["ThoroughfareName"]
+          country_name = add_detail["Thoroughfare"]["CountryName"]
+          add = place["address"]
 
-      data_array = hive_data_array + google_data_array
+          go_there_array.push({name: name ,
+              address: add,
+              latitude: lat,
+              longitude: lng,
+              img_url: "",
+              user_id: nil,
+              username: nil,
+              source: Place::GOTHERE,
+              source_id: name,
+              status:'gothere'})
+        end
+        # place= response["Placemark"][0]
+
+      end
+
+      data_array = hive_data_array +go_there_array+ google_data_array
 
       p hive_data_array.count
       p google_data_array.count

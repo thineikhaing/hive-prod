@@ -16,6 +16,9 @@ scheduler.cron '05 00 * * mon' do
   ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_accident_histories
  RESTART IDENTITY")
 
+  ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_mrt_stations
+ RESTART IDENTITY")
+
 end
 
 
