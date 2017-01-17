@@ -380,22 +380,22 @@ class Api::PlacesController < ApplicationController
 
       end
 
-      if !google_places.nil?
-
-        google_places.each do |data|
-          google_data_array.push({name: data.name ,
-                                  address: data.vicinity,
-                                  latitude: data.lat,
-                                  longitude: data.lng,
-                                  img_url: "",
-                                  user_id: nil,
-                                  username: nil,
-                                  source: Place::GOOGLE,
-                                  source_id: data.place_id,
-                                  status:'google'})
-        end
-
-      end
+      # if !google_places.nil?
+      #
+      #   google_places.each do |data|
+      #     google_data_array.push({name: data.name ,
+      #                             address: data.vicinity,
+      #                             latitude: data.lat,
+      #                             longitude: data.lng,
+      #                             img_url: "",
+      #                             user_id: nil,
+      #                             username: nil,
+      #                             source: Place::GOOGLE,
+      #                             source_id: data.place_id,
+      #                             status:'google'})
+      #   end
+      #
+      # end
 
       places.each do |place|
         hive_data_array.push({name: place.name,
@@ -456,7 +456,7 @@ class Api::PlacesController < ApplicationController
 
       end
 
-      data_array = hive_data_array +go_there_array+ google_data_array
+      data_array = hive_data_array +go_there_array
 
       p hive_data_array.count
       p google_data_array.count
