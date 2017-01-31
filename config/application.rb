@@ -96,7 +96,7 @@ module Hive_key
 end
 
 module Mealbox_key
-  Development_Key = "5eaf74ea85990fd832dcb7fd7e6dc5f9"
+  Development_Key = "5a6ef1c1d6fcbcee7bf3b34f7134ee32"
   Staging_Key= "5a6ef1c1d6fcbcee7bf3b34f7134ee32"
   Production_Key = "d80eab337c8eeba960ecf65772e1f2af"
 end

@@ -504,6 +504,8 @@ class Topic < ActiveRecord::Base
 
   def content(post_id=-1,action_id=-1)
 
+    p "get content of topic"
+
     testDataArray = [ ]
     if action_id > -1
       post_content = ""
@@ -537,7 +539,6 @@ class Topic < ActiveRecord::Base
 
     if hiveapplication.present?
 
-      mealbox_key = ""
       if Rails.env.development?
         mealbox_key = Mealbox_key::Development_Key
       elsif Rails.env.staging?
@@ -546,7 +547,8 @@ class Topic < ActiveRecord::Base
         mealbox_key = Mealbox_key::Production_Key
       end
 
-      hiveapplication.api_key
+      p hiveapplication.api_key
+      p mealbox_key
 
       if hiveapplication.api_key ==  mealbox_key   #api key for mealbox
         p "api key for mealbox"

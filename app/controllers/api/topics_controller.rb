@@ -41,6 +41,7 @@ class Api::TopicsController < ApplicationController
         params[:end_place_id].present? ? end_place_id = params[:end_place_id] : end_place_id = nil
         params[:end_source].present? ? end_source = params[:end_source] : end_source = ""
         params[:end_source_id].present? ? end_source_id = params[:end_source_id] : end_source_id = nil
+        params[:place_id].present? ? place_id = params[:place_id].to_i :  place_id = nil
 
         category = ""
         locality=""
@@ -58,6 +59,11 @@ class Api::TopicsController < ApplicationController
           # p "start place info::::"
           start_id = start_place[:place].id
           start_place[:place].name
+
+          if params[:latitude].to_i == 0 && params[:longitude].to_i
+            place_id = start_id
+          end
+
         end
 
         if params[:end_place_id] || params[:end_longitude]  || params[:end_longitude]  || params[:end_source_id]
@@ -65,17 +71,21 @@ class Api::TopicsController < ApplicationController
           # p "end place info::::"
           end_id = end_place[:place].id
           end_place[:place].name
+
+          if params[:latitude].to_i == 0 && params[:longitude].to_i
+            place_id = start_id
+          end
+
         end
 
 
-      if params[:latitude].to_i == 0 && params[:longitude].to_i
-        place_id = start_id
-      end
+
 
 
         data = params[:data] if data.present?
         data = data.delete('\\"') if data.present?
-
+        p "data hash value"
+        p data
         if current_user.present?
 
           data = getHashValuefromString(data) if data.present?
@@ -86,7 +96,7 @@ class Api::TopicsController < ApplicationController
           # p train = getHashValuefromString(params[:train]) if params[:train].present?
 
           #get all extra columns that define in app setting
-          appAdditionalField = AppAdditionalField.where(:app_id => hiveapplication.id, :table_name => "Topic")
+           p appAdditionalField = AppAdditionalField.where(:app_id => hiveapplication.id, :table_name => "Topic")
           if appAdditionalField.present?
             defined_Fields = Hash.new
             appAdditionalField.each do |field|
@@ -99,7 +109,8 @@ class Api::TopicsController < ApplicationController
               result = Hash.new
 
               defined_Fields.keys.each do |key|
-                result.merge!(data.extract! (key))
+                p "merge value"
+                p result.merge!(data.extract! (key))
               end
 
             else
@@ -107,7 +118,6 @@ class Api::TopicsController < ApplicationController
             end
 
             p result
-
             if params[:departure_time].present?
               result["depature_time"]= params[:departure_time]
               result["arrival_time"]= params[:arrival_time]

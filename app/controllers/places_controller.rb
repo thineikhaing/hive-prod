@@ -4,7 +4,7 @@ class PlacesController < ApplicationController
   end
 
   def show
-    @place = Place.find(params[:id])
+    p @place = Place.find(params[:id])
     @visit = 0
     users_array = [ ]
     active_users_array = [ ]
