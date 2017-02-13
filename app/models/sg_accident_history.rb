@@ -75,8 +75,6 @@ class SgAccidentHistory < ActiveRecord::Base
 
       users = users.where("app_data ->'app_id#{hive_application.id}' = '#{hive_application.api_key}'")
 
-
-
       to_device_id = []
       user_id = []
       time_allowance = Time.now - 30.minutes.ago
