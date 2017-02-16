@@ -185,6 +185,9 @@ module PushWoosh_Const
   RT_S_APP_ID = "580A1-A9601"
   RT_P_APP_ID = "AA643-BDEA1"
 
+  TE_RTS_APP_ID =  "A0CED-41A42"
+  TE_RTD_APP_ID =  "F2FBB-56463"
+
   API_ACCESS = "y5dMhjeQ1pcAf3SNnMqy4LBexlqTR0d86p2o3c84NhEajv3Mxsffz8QuEVshTklJ6Qn9JpwVPJKjx0bmsCBn"
 end
 

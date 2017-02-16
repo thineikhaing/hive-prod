@@ -547,9 +547,6 @@ class Topic < ActiveRecord::Base
         mealbox_key = Mealbox_key::Production_Key
       end
 
-      p hiveapplication.api_key
-      p mealbox_key
-
       if hiveapplication.api_key ==  mealbox_key   #api key for mealbox
         p "api key for mealbox"
 
@@ -1315,41 +1312,24 @@ class Topic < ActiveRecord::Base
     @avatar_url = avatar_url
   end
 
-
-  def notify_carmmunicate_msg_to_nearby_users
-    users_to_push=[]
-    place = Place.find_by_id(self.place_id)
-    current_lat = place.latitude
-    current_lng = place.longitude
-    user = User.find(self.user_id)
-
-    #get the user within 5KM
-    users_to_push = get_active_users_to_push(current_lat, current_lng, 5, user.id)
-
-    #get the user within 10KM if there is no user to push within 5KM
-    unless users_to_push.present?
-      users_to_push = get_active_users_to_push(current_lat, current_lng, 10, user.id)
-    end
-
-    if users_to_push.present?
-        notify_carmmunicate_msg_to_selected_users(users_to_push, false)
-
-    end
-  end
-
-
   def notify_roundtrip_users
 
     p "Push Woosh Authentication"
     if Rails.env.production?
       appID = PushWoosh_Const::RT_P_APP_ID
+      hyID = PushWoosh_Const::TE_RTS_APP_ID
     elsif Rails.env.staging?
       appID = PushWoosh_Const::RT_S_APP_ID
+      hyID = PushWoosh_Const::TE_RTS_APP_ID
     else
       appID = PushWoosh_Const::RT_D_APP_ID
+      hyID = PushWoosh_Const::TE_RTD_APP_ID
     end
 
     @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+
+    @hyAuth = {:application  => hyID ,:auth => PushWoosh_Const::API_ACCESS}
+
     hiveapplication = HiveApplication.find(self.hiveapplication_id)
     user_id = []
     to_device_id = []
@@ -1398,6 +1378,18 @@ class Topic < ActiveRecord::Base
       con = Net::HTTP.new(url.host, url.port)
       con.use_ssl = true
       r = con.start {|http| http.request(req)}
+
+
+      options = @hyAuth.merge({:notifications  => [notification_options]})
+      options = {:request  => options}
+      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+      url = URI.parse(full_path)
+      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+      req.body = options.to_json
+      con = Net::HTTP.new(url.host, url.port)
+      con.use_ssl = true
+      r = con.start {|http| http.request(req)}
+
       p "pushwoosh"
     end
 
@@ -1412,18 +1404,28 @@ class Topic < ActiveRecord::Base
      user_id = []
     users = User.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
 
-    time_allowance = Time.now - 10.minutes.ago
+    # time_allowance = Time.now - 10.minutes.ago
+    # users.each do |u|
+    #   if u.check_in_time.present?
+    #     time_difference = Time.now - u.check_in_time
+    #     unless time_difference.to_i > time_allowance.to_i
+    #       hash_array = u.data
+    #       device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+    #       to_device_id.push(device_id)
+    #       user_id.push(u.id)
+    #     end
+    #   end
+    # end
+
     users.each do |u|
       if u.check_in_time.present?
-        time_difference = Time.now - u.check_in_time
-        unless time_difference.to_i > time_allowance.to_i
-          hash_array = u.data
-          device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-          to_device_id.push(device_id)
-          user_id.push(u.id)
-        end
+        hash_array = u.data
+        device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+        to_device_id.push(device_id)
+        user_id.push(u.id)
       end
     end
+
     p "Push User ID :: "
     p user_id
 
@@ -1452,16 +1454,30 @@ class Topic < ActiveRecord::Base
     p "Push Woosh Authentication"
     if Rails.env.production?
       appID = PushWoosh_Const::RT_P_APP_ID
+      hyID = PushWoosh_Const::TE_RTS_APP_ID
     elsif Rails.env.staging?
       appID = PushWoosh_Const::RT_S_APP_ID
+      hyID = PushWoosh_Const::TE_RTS_APP_ID
     else
       appID = PushWoosh_Const::RT_D_APP_ID
+      hyID = PushWoosh_Const::RT_S_APP_ID
     end
 
     @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+    @hyAuth = {:application  => hyID ,:auth => PushWoosh_Const::API_ACCESS}
 
     if to_device_id.count > 0
-      options = @auth.merge({:notifications  => [notification_options]})
+      # options = @auth.merge({:notifications  => [notification_options]})
+      # options = {:request  => options}
+      # full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+      # url = URI.parse(full_path)
+      # req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+      # req.body = options.to_json
+      # con = Net::HTTP.new(url.host, url.port)
+      # con.use_ssl = true
+      # r = con.start {|http| http.request(req)}
+
+      options = @hyAuth.merge({:notifications  => [notification_options]})
       options = {:request  => options}
       full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
       url = URI.parse(full_path)
@@ -1470,6 +1486,7 @@ class Topic < ActiveRecord::Base
       con = Net::HTTP.new(url.host, url.port)
       con.use_ssl = true
       r = con.start {|http| http.request(req)}
+
       p "pushwoosh"
     end
 

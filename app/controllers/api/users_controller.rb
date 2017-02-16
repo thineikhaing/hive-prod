@@ -81,7 +81,7 @@ class Api::UsersController < ApplicationController
 
         # p "user by app_key"
         # p users = users.where("app_data ->'app_id#{app.id}' = '#{app.api_key}'")
-        users = User.where("app_data ->'app_id7' =?", "95a729b4ba7f45bbf386d1639af342e5")
+        # users = User.where("app_data ->'app_id7' =?", "95a729b4ba7f45bbf386d1639af342e5")
 
         user.app_data = app_data
         if params[:app_name]
@@ -337,8 +337,8 @@ class Api::UsersController < ApplicationController
     if params[:push_token].present?  && current_user.present?
 
       user_token = UserPushToken.find_by(user_id: current_user.id,push_token: params[:push_token])
-
       push_user = UserPushToken.create(user_id: current_user.id,push_token: params[:push_token])   unless user_token.present?
+
 
       if user_token.nil?
         user = User.find_by_authentication_token(params[:auth_token])
@@ -361,7 +361,6 @@ class Api::UsersController < ApplicationController
     elsif params[:device_token].present?
       user = User.find_by_authentication_token(params[:auth_token])
       if user.present?
-
         result = Hash.new
         result[:device_id] = params[:device_token]
         user.data = result

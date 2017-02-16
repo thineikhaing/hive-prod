@@ -56,7 +56,7 @@ class SgAccidentHistory < ActiveRecord::Base
       appID = PushWoosh_Const::RT_S_APP_ID
       round_key = RoundTrip_key::Staging_Key
     else
-      appID = PushWoosh_Const::RT_D_APP_ID
+      appID = PushWoosh_Const::RT_S_APP_ID
       round_key = RoundTrip_key::Development_Key
     end
 
