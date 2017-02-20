@@ -545,7 +545,6 @@ class Api::RoundtripController < ApplicationController
 
   end
 
-
   def get_nearby_taxi
 
     latitude = params[:latitude]
@@ -707,7 +706,6 @@ class Api::RoundtripController < ApplicationController
     render json:{status: 200, topic:topic, message: "broadcast topic create sucessfully!"}
 
   end
-
 
   def get_rt_privacy_policy
     hiveapp = HiveApplication.find_by_api_key(params[:app_key])

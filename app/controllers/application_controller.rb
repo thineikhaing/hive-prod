@@ -30,7 +30,6 @@ class ApplicationController < ActionController::Base
 
   def current_browser
     @browser = Browser.new(ua: request.user_agent)
-
   end
 
   def set_user

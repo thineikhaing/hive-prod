@@ -11,7 +11,7 @@ class Place < ActiveRecord::Base
 
   #attr_accessible :name, :category, :address, :locality, :region, :neighbourhood, :chain_name, :country, :postal_code, :website_url, :contact_number, :img_url, :source, :source_id, :latitude, :longitude, :user_id
 
-  enums %w(HERENOW USER VENDOR FACTUAL MRT UNKNOWN PRIVATE GOOGLE GOTHERE)
+  enums %w(HERENOW USER VENDOR FACTUAL MRT UNKNOWN PRIVATE GOOGLE GOTHERE ONEMAP)
 
   # def self.start_places
   #   Topic.where(start_place_id: self.id)
@@ -242,6 +242,46 @@ class Place < ActiveRecord::Base
         Userpreviouslocation.create(latitude: place.latitude, longitude: place.longitude, radius: 1, user_id: user_id)
 
         return { place: place, status: 70 }
+
+      elsif source.to_i == Place::ONEMAP
+        place = ""
+        check_records = Place.where(name:name)
+
+        check_records.each do |cr|
+          p "exisiting  record"
+          place = cr if cr.name.downcase == name.downcase
+        end
+
+        if place == ""
+          place = Place.create(
+              name: name,
+              latitude: latitude,
+              longitude: longitude,
+              address: address,
+              source: Place::OneMap,
+              source_id: source_id,
+              user_id: user_id,
+              img_url: img_url,
+              category: category,
+              country: country,
+              postal_code: postcode,
+              locality: locality)
+        end
+
+
+        p "place source id"
+        p place
+        place.save!
+
+        Checkinplace.create(place_id: place.id, user_id: user_id)
+        user.last_known_latitude =  place.latitude
+        user.last_known_longitude = place.longitude
+        user.check_in_time = Time.now
+        user.save!
+        Userpreviouslocation.create(latitude: place.latitude, longitude: place.longitude, radius: 1, user_id: user_id)
+
+        return { place: place, status: 70 }
+
       elsif source_id.present? && source.to_i == Place::GOTHERE
 
         check_record = Place.find_by_postal_code(source_id)
@@ -354,12 +394,14 @@ class Place < ActiveRecord::Base
 
         end
         place = ""
+
         check_records = Place.where(name:@spot.name, source:7)
 
         check_records.each do |cr|
           p "exisiting google record"
           place = cr if cr.name.downcase == @spot.name.downcase
         end
+
         if place == ""
           place = Place.create(
               name: @spot.name,
