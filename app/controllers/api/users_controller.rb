@@ -1116,15 +1116,29 @@ class Api::UsersController < ApplicationController
 
   def delete_user_fav_location
     if current_user.present?
+      if params[:id].present?
+        loc_to_delete = UserFavLocation.find(params[:id])
+        if loc_to_delete.present?
+          loc_to_delete.destroy
+          fav_locations = UserFavLocation.where(user_id: params[:user_id])
+          render json: {message: "Delete favourite location by id.", userfavlocation: fav_locations}  , status: 200
+        end
+      elsif params[:ids].present?
+        p "selected id to delete"
+        p selected_ids = params[:ids].to_a
 
-      loc_to_delete = UserFavLocation.find(params[:id])
-      if loc_to_delete.present?
-        loc_to_delete.destroy
 
-        @fav_locations = UserFavLocation.where(user_id: params[:user_id])
+        for i in 0..selected_ids.count-1
+          fav_id = selected_ids[i].to_i
+          UserFavLocation.find(fav_id).destroy
+        end
 
-        render json: {message: "Delete favourite location by id.", userfavlocation: @fav_locations}  , status: 200
+        fav_locations = UserFavLocation.where(user_id: params[:user_id])
+        render json: {message: "Delete favourite location by id.", userfavlocation: fav_locations}  , status: 200
+
+
       end
+
 
     else
       render json:{error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
