@@ -177,7 +177,7 @@ class Api::TopicsController < ApplicationController
 
           if hiveapplication.api_key == carmmunicate_key  and topic.present?
             p "notify to carmic user"
-            if params[:users_to_push].present?
+            if !params[:users_to_push].nil?
               #broadcast to selected user group
                 topic.notify_carmmunicate_msg_to_selected_users(params[:users_to_push], true)
             else

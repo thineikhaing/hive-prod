@@ -25,7 +25,8 @@ development:
   <<: *default
   database: hive_development
   hostname: localhost
-  username: thineikhaing
+  username: raydius
+#  username: thineikhaing
   password:
   pool: 5
   timeout: 5000
@@ -64,7 +65,8 @@ test:
   <<: *default
   database: hive_test
   hostname: localhost
-  username: thineikhaing
+  username: raydius
+#  username: thineikhaing
   password:
   pool: 5
   timeout: 5000

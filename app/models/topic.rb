@@ -74,13 +74,13 @@ class Topic < ActiveRecord::Base
     if options[:content].present?      #return topic json with content information
       super(only: [:id, :state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
-                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username,:avatar_url, :place_information,
+                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username,:avatar_url,:local_avatar, :place_information,
                                                                                          :tag_information, :post_information,
                                                                                          :rtplaces_information, :content, :active_user])
     else
       super(only: [:id,:state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
-                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username, :avatar_url, :place_information,
+                   :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username, :avatar_url,:local_avatar, :place_information,
                                                                                          :tag_information,:post_information,:rtplaces_information, :content,:active_user])
     end
   end
@@ -1133,6 +1133,115 @@ class Topic < ActiveRecord::Base
       #po.delete_event_broadcast
       po.delete
     }
+  end
+
+  def notify_carmmunicate_msg_to_nearby_users
+    hiveapplication = HiveApplication.find(self.hiveapplication_id)
+    user_id = []
+    to_device_id = []
+
+    users = User.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+    users.each do |u|
+      if u.check_in_time.present?
+        time_difference = Time.now - u.check_in_time
+        unless time_difference.to_i > time_allowance.to_i
+          if u.data.present? && u.id != self.user_id
+            hash_array = u.data
+            device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+            to_device_id.push(device_id)
+            user_id.push(u.id)
+          end
+        end
+      end
+    end
+    p "user to push"
+    p user_id
+
+    p "device_id"
+    p to_device_id
+
+    if Rails.env.production?
+      appID = PushWoosh_Const::CM_P_APP_ID
+    elsif Rails.env.staging?
+      appID = PushWoosh_Const::CM_S_APP_ID
+    else
+      appID = PushWoosh_Const::CM_D_APP_ID
+    end
+
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+
+    p "Push Woosh Authentication"
+
+    if !self.title.nil?
+      if self.title.include? ":"
+        title = self.title.match(":").post_match
+      else
+        title = self.title
+      end
+    else
+      title = ""
+    end
+
+    avatar = Topic.get_avatar(username)
+
+    notification_options = {
+        send_date: "now",
+        badge: "+1",
+        sound: "default",
+        content:{
+        fr:title,
+        en:title
+    },
+        data:{
+        id: self.id,
+        title: self.title,
+        user_id: self.user_id,
+        topic_type: self.topic_type,
+        state: self.state,
+        topic_sub_type: self.topic_sub_type,
+        place_id: self.place_id,
+        image_url: self.image_url,
+        width:  self.width,
+        height: self.height,
+        hiveapplication_id: self.hiveapplication_id,
+        value:  self.value,
+        unit: self.unit,
+        likes: self.likes,
+        dislikes: self.dislikes,
+        offensive: self.offensive,
+        notification_range: self.notification_range,
+        special_type: self.special_type,
+        created_at: self.created_at,
+        data: self.data,
+        points: self.points,
+        free_points:self.free_points,
+        methods: {
+        username: username,
+        avatar: avatar,
+        place_information: self.place_information,
+        tag_information: self.tag_information,
+        is_private_message: isprivatemsg,
+        to_plate_number: to_plate_number,
+        to_device_id: to_device_id
+    }
+    },
+        devices: to_device_id
+    }
+
+    options = @auth.merge({:notifications  => [notification_options]})
+    options = {:request  => options}
+
+    full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+    url = URI.parse(full_path)
+    req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+    req.body = options.to_json
+    con = Net::HTTP.new(url.host, url.port)
+    con.use_ssl = true
+
+    r = con.start {|http| http.request(req)}
+
+    p "pushwoosh"
+
   end
 
   def notify_carmmunicate_msg_to_selected_users (users_to_push, isprivatemsg)

@@ -812,5 +812,29 @@ class Api::RoundtripController < ApplicationController
 
   end
 
+  require "base64"
+  def upload_rt_placeImage
+
+    uploader = PhotoUploader.new
+    uploader.retrieve_from_store!(params[:image_data])
+    uploader.cache_stored_file!
+    uploader.resize_to_fit(uploader.get_geometry[0]/5,uploader.get_geometry[1]/5)
+    uploader.store!
+
+    # aws_access_key_id='AKIAIJMZ5RLXRO6LJHPQ',     # required
+    # aws_secret_access_key='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',    # required
+    #
+    # s3 = AWS::S3.new(access_key_id: aws_access_key_id,secret_access_key: aws_secret_access_key)
+    # bucket = s3.buckets['hivestagingimages']
+    # data = Base64.decode64(params[:image_data].to_s)
+    # type = params[:contentType].to_s
+    # name = params[:image_name]
+    # obj = bucket.objects.create(name,data,{content_type:type,acl:"public_read"})
+    # url = obj.public_url().to_s
+    #
+    render json:{status:"ok"}
+
+  end
+
 end
 
