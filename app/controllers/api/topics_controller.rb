@@ -41,7 +41,7 @@ class Api::TopicsController < ApplicationController
         params[:end_place_id].present? ? end_place_id = params[:end_place_id] : end_place_id = nil
         params[:end_source].present? ? end_source = params[:end_source] : end_source = ""
         params[:end_source_id].present? ? end_source_id = params[:end_source_id] : end_source_id = nil
-        params[:place_id].present? ? place_id = params[:place_id].to_i :  place_id = nil
+        # params[:place_id].present? ? place_id = params[:place_id].to_i :  place_id = nil
 
         category = ""
         locality=""
