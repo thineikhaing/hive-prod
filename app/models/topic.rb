@@ -1139,20 +1139,28 @@ class Topic < ActiveRecord::Base
     hiveapplication = HiveApplication.find(self.hiveapplication_id)
     user_id = []
     to_device_id = []
-
+    time_allowance = Time.now - 10.minutes.ago
     users = User.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+    p "carmic users"
+    p users
     users.each do |u|
-      if u.check_in_time.present?
-        time_difference = Time.now - u.check_in_time
-        unless time_difference.to_i > time_allowance.to_i
-          if u.data.present? && u.id != self.user_id
-            hash_array = u.data
-            device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-            to_device_id.push(device_id)
-            user_id.push(u.id)
-          end
-        end
+      if u.data.present? && u.id != self.user_id
+        hash_array = u.data
+        device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+        to_device_id.push(device_id)
+        user_id.push(u.id)
       end
+      # if u.check_in_time.present?
+      #   time_difference = Time.now - u.check_in_time
+      #   unless time_difference.to_i > time_allowance.to_i
+      #     if u.data.present? && u.id != self.user_id
+      #       hash_array = u.data
+      #       device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+      #       to_device_id.push(device_id)
+      #       user_id.push(u.id)
+      #     end
+      #   end
+      # end
     end
     p "user to push"
     p user_id
@@ -1189,42 +1197,40 @@ class Topic < ActiveRecord::Base
         badge: "+1",
         sound: "default",
         content:{
-        fr:title,
-        en:title
-    },
+            fr:title,
+            en:title
+        },
         data:{
-        id: self.id,
-        title: self.title,
-        user_id: self.user_id,
-        topic_type: self.topic_type,
-        state: self.state,
-        topic_sub_type: self.topic_sub_type,
-        place_id: self.place_id,
-        image_url: self.image_url,
-        width:  self.width,
-        height: self.height,
-        hiveapplication_id: self.hiveapplication_id,
-        value:  self.value,
-        unit: self.unit,
-        likes: self.likes,
-        dislikes: self.dislikes,
-        offensive: self.offensive,
-        notification_range: self.notification_range,
-        special_type: self.special_type,
-        created_at: self.created_at,
-        data: self.data,
-        points: self.points,
-        free_points:self.free_points,
-        methods: {
-        username: username,
-        avatar: avatar,
-        place_information: self.place_information,
-        tag_information: self.tag_information,
-        is_private_message: isprivatemsg,
-        to_plate_number: to_plate_number,
-        to_device_id: to_device_id
-    }
-    },
+            id: self.id,
+            title: self.title,
+            user_id: self.user_id,
+            topic_type: self.topic_type,
+            state: self.state,
+            topic_sub_type: self.topic_sub_type,
+            place_id: self.place_id,
+            image_url: self.image_url,
+            width:  self.width,
+            height: self.height,
+            hiveapplication_id: self.hiveapplication_id,
+            value:  self.value,
+            unit: self.unit,
+            likes: self.likes,
+            dislikes: self.dislikes,
+            offensive: self.offensive,
+            notification_range: self.notification_range,
+            special_type: self.special_type,
+            created_at: self.created_at,
+            data: self.data,
+            points: self.points,
+            free_points:self.free_points,
+            methods: {
+                username: username,
+                avatar: avatar,
+                place_information: self.place_information,
+                tag_information: self.tag_information,
+                to_device_id: to_device_id
+            }
+        },
         devices: to_device_id
     }
 
