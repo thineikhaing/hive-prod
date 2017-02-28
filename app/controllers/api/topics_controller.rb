@@ -12,7 +12,6 @@ class Api::TopicsController < ApplicationController
         #check the place_id presents
         if params[:place_id]
           place_id = params[:place_id].to_i
-
         else
           #create place first if the place_id is null
           place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
@@ -79,9 +78,6 @@ class Api::TopicsController < ApplicationController
         end
 
 
-
-
-
         data = params[:data] if data.present?
         data = data.delete('\\"') if data.present?
         p "data hash value"
@@ -89,14 +85,7 @@ class Api::TopicsController < ApplicationController
         if current_user.present?
 
           data = getHashValuefromString(data) if data.present?
-
-
-          # p walk = getHashValuefromString(params[:walk]) if params[:walk].present?
-          #
-          # p train = getHashValuefromString(params[:train]) if params[:train].present?
-
-          #get all extra columns that define in app setting
-           p appAdditionalField = AppAdditionalField.where(:app_id => hiveapplication.id, :table_name => "Topic")
+          appAdditionalField = AppAdditionalField.where(:app_id => hiveapplication.id, :table_name => "Topic")
           if appAdditionalField.present?
             defined_Fields = Hash.new
             appAdditionalField.each do |field|
@@ -148,8 +137,6 @@ class Api::TopicsController < ApplicationController
           end
 
 
-
-
           #create post if param post_content is passed
           if topic.present? and params[:post_content].present?
             post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, place_id: place_id) if params[:post_type] == Post::TEXT.to_s
@@ -193,8 +180,6 @@ class Api::TopicsController < ApplicationController
              topic.notify_roundtrip_users
           end
 
-
-
           #increase like and dislike count
 
           if likes > 0
@@ -203,16 +188,17 @@ class Api::TopicsController < ApplicationController
           if dislikes > 0
             ActionLog.create(action_type: "dislike", type_id: topic.id, type_name: "topic", action_user_id: current_user.id) if topic.present?
           end
-
+          p "hiveapplication id:::"
+          p hiveapplication.id
           if hiveapplication.id ==1
-            #broadcast new topic creation to hive_channel only
+            p "broadcast new topic creation to hive_channel only"
             topic.hive_broadcast
-          elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1
-            #All Applications under Herenow except Hive
+          elsif hiveapplication.devuser_id ==1 and hiveapplication.id!=1
+            p "All Applications under Herenow except Hive"
             topic.hive_broadcast
             topic.app_broadcast_with_content
           else
-            #broadcast new topic creation to hive_channel and app_channel
+            p "broadcast new topic creation to hive_channel and app_channel"
             topic.hive_broadcast
             topic.app_broadcast
           end
