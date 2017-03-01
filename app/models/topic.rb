@@ -1455,20 +1455,30 @@ class Topic < ActiveRecord::Base
     to_device_id = []
     users = User.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
 
-    time_allowance = Time.now - 10.minutes.ago
+    # time_allowance = Time.now - 10.minutes.ago
+    # users.each do |u|
+    #   if u.check_in_time.present?
+    #     time_difference = Time.now - u.check_in_time
+    #     unless time_difference.to_i > time_allowance.to_i
+    #       if u.data.present? && u.id != self.user_id
+    #         hash_array = u.data
+    #         device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+    #         to_device_id.push(device_id)
+    #         user_id.push(u.id)
+    #       end
+    #     end
+    #   end
+    # end
+
     users.each do |u|
-      if u.check_in_time.present?
-        time_difference = Time.now - u.check_in_time
-        unless time_difference.to_i > time_allowance.to_i
-          if u.data.present? && u.id != self.user_id
-            hash_array = u.data
-            device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-            to_device_id.push(device_id)
-            user_id.push(u.id)
-          end
-        end
+      hash_array = u.data
+      if !hash_array.nil?
+        device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+        to_device_id.push(device_id)
+        user_id.push(u.id)
       end
     end
+
     p "user to push"
     p user_id
 
