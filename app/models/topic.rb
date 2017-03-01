@@ -1472,7 +1472,7 @@ class Topic < ActiveRecord::Base
 
     users.each do |u|
       hash_array = u.data
-      if !hash_array.nil?
+      if !hash_array.nil? && u.id != self.user_id
         device_id = hash_array["device_id"] if  hash_array["device_id"].present?
         to_device_id.push(device_id)
         user_id.push(u.id)
