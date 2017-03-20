@@ -3,7 +3,7 @@ class SgAccidentHistory < ActiveRecord::Base
   paginates_per 10
 
   def self.get_incident_and_breakdown
-    full_path = 'http://datamall.mytransport.sg/ltaodataservice.svc/IncidentSet'
+    full_path = 'http://datamall2.mytransport.sg/ltaodataservice/TrafficIncidents'
     url = URI.parse(full_path)
     req = Net::HTTP::Get.new(url.path, initheader = {"accept" =>"application/json", "AccountKey"=>"4G40nh9gmUGe8L2GTNWbgg==", "UniqueUserID"=>"d52627a6-4bde-4fa1-bd48-c6270b02ffc0"})
     con = Net::HTTP.new(url.host, url.port)
@@ -12,10 +12,16 @@ class SgAccidentHistory < ActiveRecord::Base
     p "get incident list"
 
     @request_payload = JSON.parse r.body
-    @request_payload["d"].each do |data|
-      # type = data["Type"]
-      # if type == "Accident" || type == "Vehicle Breakdown" || type == "Heavy Traffic"
-      if data["Type"] == "Heavy Traffic"
+
+    @request_payload["value"].each do |data|
+      type = data["Type"]
+      if type == "Accident" || type == "Vehicle Breakdown" || type == "Heavy Traffic"
+        if type == "Heavy Traffic"
+          type = "HeavyTraffic"
+        elsif type == "Vehicle Breakdown"
+          type = "VehicleBreakdown"
+        end
+
        p "message"
        p message  = data["Message"]  # "(2/2)11:24 Vehicle breakdown on KJE (towards BKE) before Sungei Tengah Exit."
         inc_datetime= message.match(" ").pre_match #(2/2)11:24
@@ -35,7 +41,7 @@ class SgAccidentHistory < ActiveRecord::Base
 
         if sg_accident.nil?
           p "add new record"
-          SgAccidentHistory.create(type:"HeavyTraffic",message: message, accident_datetime: accidentDateTIme, latitude:latitude, longitude:longitude, summary:summary )
+          SgAccidentHistory.create(type:type,message: message, accident_datetime: accidentDateTIme, latitude:latitude, longitude:longitude, summary:summary )
         end
 
       end
@@ -51,18 +57,23 @@ class SgAccidentHistory < ActiveRecord::Base
     sg_accident = SgAccidentHistory.where(notify: false).take
     if Rails.env.production?
       appID = PushWoosh_Const::RT_P_APP_ID
+      hyID = PushWoosh_Const::TE_RTS_APP_ID
       round_key = RoundTrip_key::Production_Key
     elsif Rails.env.staging?
       appID = PushWoosh_Const::RT_S_APP_ID
+      hyID = PushWoosh_Const::TE_RTS_APP_ID
       round_key = RoundTrip_key::Staging_Key
     else
       appID = PushWoosh_Const::RT_S_APP_ID
+      hyID = PushWoosh_Const::TE_RTS_APP_ID
       round_key = RoundTrip_key::Development_Key
     end
 
-    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+    native_rtauth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+    auth_hash = {:application  => hyID ,:auth => PushWoosh_Const::API_ACCESS}
 
     hive_application = HiveApplication.find_by_api_key(round_key)
+
 
     if sg_accident.present?
       latitude = sg_accident.latitude
@@ -72,7 +83,6 @@ class SgAccidentHistory < ActiveRecord::Base
       center_point = [latitude.to_f, longitude.to_f]
       box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
       users = User.where(last_known_latitude: box[0] .. box[2], last_known_longitude: box[1] .. box[3])
-
       users = users.where("app_data ->'app_id#{hive_application.id}' = '#{hive_application.api_key}'")
 
       to_device_id = []
@@ -125,15 +135,10 @@ class SgAccidentHistory < ActiveRecord::Base
       p to_device_id
 
       if to_device_id.count > 0
-        options = @auth.merge({:notifications  => [notification_options]})
-        options = {:request  => options}
-        full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-        url = URI.parse(full_path)
-        req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-        req.body = options.to_json
-        con = Net::HTTP.new(url.host, url.port)
-        con.use_ssl = true
-        r = con.start {|http| http.request(req)}
+
+        Pushwoosh::PushNotification.new(auth_hash).notify_devices(sg_accident.message, to_device_id, notification_options)
+        Pushwoosh::PushNotification.new(native_rtauth).notify_devices(sg_accident.message, to_device_id, notification_options)
+
         p "pushwoosh"
       end
 

@@ -1447,7 +1447,6 @@ class Topic < ActiveRecord::Base
     end
 
     @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
-
     @hyAuth = {:application  => hyID ,:auth => PushWoosh_Const::API_ACCESS}
 
     hiveapplication = HiveApplication.find(self.hiveapplication_id)
@@ -1455,29 +1454,26 @@ class Topic < ActiveRecord::Base
     to_device_id = []
     users = User.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
 
-    # time_allowance = Time.now - 10.minutes.ago
-    # users.each do |u|
-    #   if u.check_in_time.present?
-    #     time_difference = Time.now - u.check_in_time
-    #     unless time_difference.to_i > time_allowance.to_i
-    #       if u.data.present? && u.id != self.user_id
-    #         hash_array = u.data
-    #         device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-    #         to_device_id.push(device_id)
-    #         user_id.push(u.id)
-    #       end
-    #     end
-    #   end
-    # end
+    time_allowance = Time.now - 10.minutes.ago
 
     users.each do |u|
-      hash_array = u.data
-      if !hash_array.nil? && u.id != self.user_id
-        device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-        to_device_id.push(device_id)
-        user_id.push(u.id)
+      if u.check_in_time.present?
+        time_difference = Time.now - u.check_in_time
+        if time_difference < time_allowance
+
+          hash_array = u.data
+          if hash_array.present?
+            device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+            to_device_id.push(device_id)
+            user_id.push(u.id)
+          end
+
+        end
+
       end
+
     end
+
 
     p "user to push"
     p user_id
@@ -1499,26 +1495,30 @@ class Topic < ActiveRecord::Base
     }
 
     if to_device_id.count > 0
-      options = @auth.merge({:notifications  => [notification_options]})
-      options = {:request  => options}
-      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-      url = URI.parse(full_path)
-      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-      req.body = options.to_json
-      con = Net::HTTP.new(url.host, url.port)
-      con.use_ssl = true
-      r = con.start {|http| http.request(req)}
 
+      Pushwoosh::PushNotification.new(@auth).notify_devices(self.title, to_device_id, notification_options)
+      Pushwoosh::PushNotification.new(@hyAuth).notify_devices(self.title, to_device_id, notification_options)
 
-      options = @hyAuth.merge({:notifications  => [notification_options]})
-      options = {:request  => options}
-      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-      url = URI.parse(full_path)
-      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-      req.body = options.to_json
-      con = Net::HTTP.new(url.host, url.port)
-      con.use_ssl = true
-      r = con.start {|http| http.request(req)}
+      # options = @auth.merge({:notifications  => [notification_options]})
+      # options = {:request  => options}
+      # full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+      # url = URI.parse(full_path)
+      # req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+      # req.body = options.to_json
+      # con = Net::HTTP.new(url.host, url.port)
+      # con.use_ssl = true
+      # r = con.start {|http| http.request(req)}
+      #
+      #
+      # options = @hyAuth.merge({:notifications  => [notification_options]})
+      # options = {:request  => options}
+      # full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+      # url = URI.parse(full_path)
+      # req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+      # req.body = options.to_json
+      # con = Net::HTTP.new(url.host, url.port)
+      # con.use_ssl = true
+      # r = con.start {|http| http.request(req)}
 
       p "pushwoosh"
     end
