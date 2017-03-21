@@ -115,6 +115,16 @@ class SgAccidentHistory < ActiveRecord::Base
       sg_accident.save
       p sg_accident.message
 
+
+
+      startplace = Place.create_place_by_lat_lng(sg_accident.latitude, sg_accident.longitude,User.first)
+
+      topic = Topic.create(title:sg_accident.message, user_id: User.first.id, topic_type: 10 ,start_place_id: startplace.id ,  end_place_id: startplace.id  ,
+          topic_sub_type: 0, hiveapplication_id: hive_application.id, place_id: Place.first.id)
+
+      topic.hive_broadcast
+      topic.app_broadcast_with_content
+
       notification_options = {
           send_date: "now",
           badge: "1",
@@ -124,6 +134,8 @@ class SgAccidentHistory < ActiveRecord::Base
           en:sg_accident.message
       },
           data:{
+          topic_id: topic.id,
+          topic_title: topic.title,
           accident_datetime: sg_accident.accident_datetime,
           latitude: sg_accident.latitude,
           longitude: sg_accident.longitude,
@@ -132,8 +144,6 @@ class SgAccidentHistory < ActiveRecord::Base
           devices: to_device_id
       }
 
-      p to_device_id
-
       if to_device_id.count > 0
 
         Pushwoosh::PushNotification.new(auth_hash).notify_devices(sg_accident.message, to_device_id, notification_options)
@@ -141,14 +151,6 @@ class SgAccidentHistory < ActiveRecord::Base
 
         p "pushwoosh"
       end
-
-      startplace = Place.create_place_by_lat_lng(sg_accident.latitude, sg_accident.longitude,User.first)
-
-      topic = Topic.create(title:sg_accident.message, user_id: User.first.id, topic_type: 10 ,start_place_id: startplace.id ,  end_place_id: startplace.id  ,
-          topic_sub_type: 0, hiveapplication_id: hive_application.id, place_id: Place.first.id)
-
-      topic.hive_broadcast
-      topic.app_broadcast_with_content
 
     end
   end
