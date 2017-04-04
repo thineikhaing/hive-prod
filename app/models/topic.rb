@@ -509,7 +509,7 @@ class Topic < ActiveRecord::Base
 
   def content(post_id=-1,action_id=-1)
 
-    p "get content of topic"
+    # p "get content of topic"
 
     testDataArray = [ ]
     if action_id > -1

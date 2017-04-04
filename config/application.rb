@@ -72,6 +72,11 @@ module Hive
 
     config.middleware.use Rack::JSONP
 
+    config.action_dispatch.default_headers = {
+        'Access-Control-Allow-Origin' => '*',
+        'Access-Control-Request-Method' => %w{GET POST OPTIONS}.join(",") # or whatever else you would like to allow
+    }
+
     config.generators do |g|
       g.factory_girl false
     end
