@@ -83,8 +83,12 @@ class User < ActiveRecord::Base
   #
   #   [*('A'..'Z'),*('0'..'9')].shuffle[0,6].join
   # end
+  # def self.search_data(search)
+  #   where("lower(username) like ?", "%#{search.downcase}%")
+  # end
+
   def self.search_data(search)
-    where("lower(username) like ?", "%#{search.downcase}%")
+    where("lower(username) = ?", "#{search.downcase}%")
   end
 
 
