@@ -14,7 +14,8 @@
     = csrf_meta_tags
     %script{src: "https://maps.googleapis.com/maps/api/js?key=AIzaSyCmCjZVJvI5h2Qg7XcdI9jTFjyK-IgzyQk&libraries=places", type: "text/javascript"}
     -#%script{src: "https://maps.googleapis.com/maps/api/js?sensor=false&libraries=places", type: "text/javascript"}
-
+    %link{:href => "http://openlayers.org/en/v3.14.2/css/ol.css", :rel => "stylesheet", :type => "text/css"}/
+    %script{:src => "http://www.openlayers.org/api/OpenLayers.js"}
     %script{src: "http://googlemaps.github.io/js-marker-clusterer/src/markerclusterer.js"}
     %script{src: "http://googlemaps.github.io/js-rich-marker/src/richmarker.js"}
     %script{src: "http://googlemaps.github.io/js-info-bubble/src/infobubble.js"}
@@ -23,7 +24,7 @@
     %script{:src => "//code.jquery.com/jquery-1.10.2.js"}
     %script{:src => "//code.jquery.com/ui/1.11.4/jquery-ui.js"}
 
-    %script{:src => "http://www.onemap.sg/API/JS/?accessKEY=20hJb9BMPUIBzwyZ1/m6fMK3ioaM+fzdwNpdOdYO0fCICsxRJI4527+gtsuFoVcrKIXAldas3XhtX2E0ZfaJtN0EfoFrJamMpsmC0dhopDEUQblJMXSdcA==|mv73ZvjFcSo=", :type => "text/JavaScript"}
+    -#%script{:src => "http://www.onemap.sg/API/JS/?accessKEY=20hJb9BMPUIBzwyZ1/m6fMK3ioaM+fzdwNpdOdYO0fCICsxRJI4527+gtsuFoVcrKIXAldas3XhtX2E0ZfaJtN0EfoFrJamMpsmC0dhopDEUQblJMXSdcA==|mv73ZvjFcSo=", :type => "text/JavaScript"}
 
     = javascript_include_tag "web"
     = javascript_include_tag 'vendor/modernizr'

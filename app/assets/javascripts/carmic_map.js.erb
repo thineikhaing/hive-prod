@@ -270,7 +270,7 @@ var Carmic = {
             $('#myModal').foundation('reveal', 'open');
         });
 
-        $(".ui-widget-overlay").live("click", function() {
+        $(".ui-widget-overlay").on("click", function() {
             $(".modal").dialog("close");
         })
 
