@@ -202,7 +202,8 @@ class User < ActiveRecord::Base
   end
 
 
-  def update_data_column(name, value, user_id)
+
+  def self.update_data_column(name, value, user_id)
     u = User.find(user_id)
     unless u.data.present?
       data_hash = {}
@@ -218,9 +219,9 @@ class User < ActiveRecord::Base
         u.save!
       else
         if value.length > 0
-          data_hash = u.data.except(name)
+          p data_hash = u.data.except(name)
           data_hash[name] = value
-          u.data = data_hash
+          p u.data = data_hash
           u.data_will_change!
           u.save!
         end

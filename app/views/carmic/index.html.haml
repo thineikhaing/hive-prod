@@ -997,7 +997,7 @@
 
    });
 
-   $("#btn_forwardTime").on("click", function() {
+   $("#btn_forwardTime").live("click", function() {
                time_val = time_val + 1;
                $("#time_val").val(time_val);
                topic_filter_by_time(time_val)

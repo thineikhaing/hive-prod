@@ -334,6 +334,7 @@ class Api::UsersController < ApplicationController
 
 
   def register_apn
+    # for pushwoosh token
     if params[:push_token].present?  && current_user.present?
 
       user_token = UserPushToken.find_by(user_id: current_user.id,push_token: params[:push_token])
@@ -369,10 +370,29 @@ class Api::UsersController < ApplicationController
 
         render json: { status: true, daily_points: user.daily_points}
       end
+    #for amazon sns token
+    elsif params[:endpoint_arn].present?
+
+      user = User.find_by_authentication_token(params[:auth_token])
+      if user.present?
+
+        endpoint_arn = params[:endpoint_arn]
+
+        User.update_data_column("endpoint_arn", endpoint_arn, user.id)
+
+        user.save!
+
+        updateUser = User.find(user.id)
+
+        render json: {user: updateUser, status: true}
+      end
     else
       p 'Param user id, authentication token, pusher token must be presented'
       render json: { error_msg: "Param user id, authentication token, pusher token must be presented" }, status: 400
     end
+
+
+
   end
 
   # def register_apn
