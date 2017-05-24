@@ -144,13 +144,55 @@ class SgAccidentHistory < ActiveRecord::Base
           devices: to_device_id
       }
 
+
       if to_device_id.count > 0
-
         Pushwoosh::PushNotification.new(auth_hash).notify_devices(sg_accident.message, to_device_id, notification_options)
-        Pushwoosh::PushNotification.new(native_rtauth).notify_devices(sg_accident.message, to_device_id, notification_options)
-
-        p "pushwoosh"
+        # Pushwoosh::PushNotification.new(native_rtauth).notify_devices(sg_accident.message, to_device_id, notification_options)
       end
+
+      sns = Aws::SNS::Client.new
+      target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
+
+      iphone_notification = {
+          aps: {
+              alert: sg_accident.message,
+              sound: "default",
+              badge: 0,
+              extra:  {
+                  topic_id: topic.id,
+                  topic_title: topic.title,
+                  accident_datetime: sg_accident.accident_datetime,
+                  latitude: sg_accident.latitude,
+                  longitude: sg_accident.longitude,
+                  type: sg_accident.type
+              }
+          }
+      }
+
+      android_notification = {
+          data: {
+              message: sg_accident.message,
+              badge: 0,
+              extra:  {
+                  topic_id: topic.id,
+                  topic_title: topic.title,
+                  accident_datetime: sg_accident.accident_datetime,
+                  latitude: sg_accident.latitude,
+                  longitude: sg_accident.longitude,
+                  type: sg_accident.type
+              }
+          }
+      }
+
+      sns_message = {
+          default: sg_accident.message,
+          APNS_SANDBOX: iphone_notification.to_json,
+          APNS: iphone_notification.to_json,
+          GCM: android_notification.to_json
+      }.to_json
+
+
+      sns.publish(target_arn: target_topic, message: sns_message, message_structure:"json")
 
     end
   end

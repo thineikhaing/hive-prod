@@ -1434,21 +1434,6 @@ class Topic < ActiveRecord::Base
 
   def notify_roundtrip_users
 
-    p "Push Woosh Authentication"
-    if Rails.env.production?
-      appID = PushWoosh_Const::RT_P_APP_ID
-      hyID = PushWoosh_Const::TE_RTS_APP_ID
-    elsif Rails.env.staging?
-      appID = PushWoosh_Const::RT_S_APP_ID
-      hyID = PushWoosh_Const::TE_RTS_APP_ID
-    else
-      appID = PushWoosh_Const::RT_D_APP_ID
-      hyID = PushWoosh_Const::TE_RTS_APP_ID
-    end
-
-    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
-    @hyAuth = {:application  => hyID ,:auth => PushWoosh_Const::API_ACCESS}
-
     hiveapplication = HiveApplication.find(self.hiveapplication_id)
     user_id = []
     to_device_id = []
@@ -1467,16 +1452,21 @@ class Topic < ActiveRecord::Base
             to_device_id.push(device_id)
             user_id.push(u.id)
           end
-
         end
-
       end
-
     end
 
+    p "Push Woosh Authentication"
+    if Rails.env.production?
+      appID = PushWoosh_Const::RT_P_APP_ID
 
-    p "user to push"
-    p user_id
+    elsif Rails.env.staging?
+      appID = PushWoosh_Const::RT_S_APP_ID
+    else
+      appID = PushWoosh_Const::RT_D_APP_ID
+    end
+
+    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
     notification_options = {
         send_date: "now",
@@ -1495,33 +1485,48 @@ class Topic < ActiveRecord::Base
     }
 
     if to_device_id.count > 0
-
       Pushwoosh::PushNotification.new(@auth).notify_devices(self.title, to_device_id, notification_options)
-      Pushwoosh::PushNotification.new(@hyAuth).notify_devices(self.title, to_device_id, notification_options)
-
-      # options = @auth.merge({:notifications  => [notification_options]})
-      # options = {:request  => options}
-      # full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-      # url = URI.parse(full_path)
-      # req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-      # req.body = options.to_json
-      # con = Net::HTTP.new(url.host, url.port)
-      # con.use_ssl = true
-      # r = con.start {|http| http.request(req)}
-      #
-      #
-      # options = @hyAuth.merge({:notifications  => [notification_options]})
-      # options = {:request  => options}
-      # full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-      # url = URI.parse(full_path)
-      # req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-      # req.body = options.to_json
-      # con = Net::HTTP.new(url.host, url.port)
-      # con.use_ssl = true
-      # r = con.start {|http| http.request(req)}
-
-      p "pushwoosh"
     end
+
+
+    sns = Aws::SNS::Client.new
+    target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
+
+    iphone_notification = {
+        aps: {
+            alert: self.title,
+            sound: "default",
+            badge: 0,
+            extra:  {
+                topic: self,
+                message: self.title,
+                shared: true
+            }
+        }
+    }
+
+
+    android_notification = {
+        data: {
+            message: self.title ,
+            badge: 0,
+            extra:  {
+                topic: self,
+                message: self.title,
+                shared: true
+            }
+        }
+    }
+
+    sns_message = {
+        default: self.title,
+        APNS_SANDBOX: iphone_notification.to_json,
+        APNS: iphone_notification.to_json,
+        GCM: android_notification.to_json
+    }.to_json
+
+    #AWS ns notification message to hybrid roundtrip app
+    sns.publish(target_arn: target_topic, message: sns_message, message_structure:"json")
 
   end
 
@@ -1588,10 +1593,61 @@ class Topic < ActiveRecord::Base
 
     if to_device_id.count > 0
       Pushwoosh::PushNotification.new(auth_hash).notify_devices(self.title, to_device_id, notification_options)
-      Pushwoosh::PushNotification.new(native_rtauth).notify_devices(self.title, to_device_id, notification_options)
-
+      # Pushwoosh::PushNotification.new(native_rtauth).notify_devices(self.title, to_device_id, notification_options)
       p "pushwoosh"
     end
+
+
+    sns = Aws::SNS::Client.new
+    target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
+
+    iphone_notification = {
+        aps: {
+            alert: self.title,
+            sound: "default",
+            badge: 0,
+            extra:  {
+                trainfault_datetime: Time.now,
+                smrtline: name,
+                station1: station1,
+                station2: station2,
+                towards: towards,
+                topic: self,
+                topic_id: self.id,
+                topic_title: self.title,
+                type: "train fault"
+            }
+        }
+    }
+
+
+    android_notification = {
+        data: {
+            message: self.title ,
+            badge: 0,
+            extra:  {
+                trainfault_datetime: Time.now,
+                smrtline: name,
+                station1: station1,
+                station2: station2,
+                towards: towards,
+                topic: self,
+                topic_id: self.id,
+                topic_title: self.title,
+                type: "train fault"
+            }
+        }
+    }
+
+    sns_message = {
+        default: self.title,
+        APNS_SANDBOX: iphone_notification.to_json,
+        APNS: iphone_notification.to_json,
+        GCM: android_notification.to_json
+    }.to_json
+
+    #AWS ns notification message to hybrid roundtrip app
+    sns.publish(target_arn: target_topic, message: sns_message, message_structure:"json")
 
   end
 
