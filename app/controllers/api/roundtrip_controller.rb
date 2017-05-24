@@ -507,39 +507,89 @@ class Api::RoundtripController < ApplicationController
     end
 
 
-    notification_options = {
-        send_date: "now",
-        badge: "1",
-        sound: "default",
-        content:{
-            fr:message,
-            en:message
-        },
-        data:{
-            trainfault_datetime: Time.now,
-            smrtline: name,
-            station1: station1,
-            station2: station2,
-            towards: towards,
-            type: "train fault"
-        },
-        devices: to_device_id
+    # notification_options = {
+    #     send_date: "now",
+    #     badge: "1",
+    #     sound: "default",
+    #     content:{
+    #         fr:message,
+    #         en:message
+    #     },
+    #     data:{
+    #         trainfault_datetime: Time.now,
+    #         smrtline: name,
+    #         station1: station1,
+    #         station2: station2,
+    #         towards: towards,
+    #         type: "train fault"
+    #     },
+    #     devices: to_device_id
+    # }
+    #
+    # if to_device_id.count > 0
+    #   options = @auth.merge({:notifications  => [notification_options]})
+    #   options = {:request  => options}
+    #   full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
+    #   url = URI.parse(full_path)
+    #   req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
+    #   req.body = options.to_json
+    #   con = Net::HTTP.new(url.host, url.port)
+    #   con.use_ssl = true
+    #   r = con.start {|http| http.request(req)}
+    #   p "pushwoosh"
+    # end
+
+    sns = Aws::SNS::Client.new
+    target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
+    # ios_endpoint_arn = 'arn:aws:sns:ap-southeast-1:378631322826:endpoint/APNS_SANDBOX/Roundtrip_S/01040580-07fb-3126-836b-39f9d301c4e0'
+
+    iphone_notification = {
+        aps: {
+            alert: message,
+            sound: "default",
+            badge: 0,
+            extra:  {
+                trainfault_datetime: Time.now,
+                smrtline: name,
+                station1: station1,
+                station2: station2,
+                towards: towards,
+                type: "train fault"
+            }
+        }
     }
 
-    if to_device_id.count > 0
-      options = @auth.merge({:notifications  => [notification_options]})
-      options = {:request  => options}
-      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-      url = URI.parse(full_path)
-      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-      req.body = options.to_json
-      con = Net::HTTP.new(url.host, url.port)
-      con.use_ssl = true
-      r = con.start {|http| http.request(req)}
-      p "pushwoosh"
-    end
+
+    android_notification = {
+        data: {
+            message: message,
+            badge: 0,
+            extra:  {
+                        trainfault_datetime: Time.now,
+                        smrtline: name,
+                        station1: station1,
+                        station2: station2,
+                        towards: towards,
+                        type: "train fault"
+                    }
+        }
+    }
+
+    sns_message = {
+        default: message,
+        APNS_SANDBOX: iphone_notification.to_json,
+        APNS: iphone_notification.to_json,
+        GCM: android_notification.to_json
+    }.to_json
+
+
+    noti_message = sns.publish(target_arn: target_topic,
+                               message: sns_message, message_structure:"json")
+
 
     devicecount = to_device_id.count rescue '0'
+
+
     render json:  {message: message, device_count: devicecount}
 
 
