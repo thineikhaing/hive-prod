@@ -1601,18 +1601,18 @@ class Topic < ActiveRecord::Base
     sns = Aws::SNS::Client.new
     target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
 
+    p "topic title word count"
+    p self.title.size
     iphone_notification = {
         aps: {
             alert: self.title,
             sound: "default",
             badge: 0,
             extra:  {
-                trainfault_datetime: Time.now,
                 smrtline: name,
                 station1: station1,
                 station2: station2,
                 towards: towards,
-                topic: self,
                 topic_id: self.id,
                 topic_title: self.title,
                 type: "train fault"
@@ -1626,12 +1626,10 @@ class Topic < ActiveRecord::Base
             message: self.title ,
             badge: 0,
             extra:  {
-                trainfault_datetime: Time.now,
                 smrtline: name,
                 station1: station1,
                 station2: station2,
                 towards: towards,
-                topic: self,
                 topic_id: self.id,
                 topic_title: self.title,
                 type: "train fault"
