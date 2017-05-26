@@ -1832,13 +1832,15 @@ def ok
       }
   }
 
+  ios_endpoint_arn = 'arn:aws:sns:ap-southeast-1:378631322826:endpoint/APNS/Roundtrip_S/1ab611da-e4ec-38cb-8758-f63c63d6f2ce'
+
 # double json encode
   message_json = {
       'APNS' => data.to_json
   }.to_json
 
   sns.publish(
-      target_arn: "arn:aws:sns:ap-southeast-1:378631322826:endpoint/GCM/Roundtrip_S/f3c1f48f-b21c-3906-bbd9-f0ae29ca0bdc",
+      target_arn: ios_endpoint_arn,
       message: message_json,
       message_structure: 'json',
       GCM: "okay"
@@ -1878,7 +1880,7 @@ def ok
 
   sns = Aws::SNS::Client.new
   target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
-  # ios_endpoint_arn = 'arn:aws:sns:ap-southeast-1:378631322826:endpoint/APNS_SANDBOX/Roundtrip_S/01040580-07fb-3126-836b-39f9d301c4e0'
+
 
   iphone_notification = {
       aps: {
