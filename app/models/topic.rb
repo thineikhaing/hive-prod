@@ -1437,6 +1437,8 @@ class Topic < ActiveRecord::Base
     hiveapplication = HiveApplication.find(self.hiveapplication_id)
     user_id = []
     to_device_id = []
+    to_endpoint_arn = []
+
     users = User.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
 
     time_allowance = Time.now - 10.minutes.ago
@@ -1447,9 +1449,11 @@ class Topic < ActiveRecord::Base
         if time_difference < time_allowance
 
           hash_array = u.data
-          if hash_array.present?
+          if hash_array.present? && u.id != self.user_id
             device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+            endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
             to_device_id.push(device_id)
+            to_endpoint_arn.push(endpoint_arn)
             user_id.push(u.id)
           end
         end
@@ -1488,45 +1492,50 @@ class Topic < ActiveRecord::Base
       Pushwoosh::PushNotification.new(@auth).notify_devices(self.title, to_device_id, notification_options)
     end
 
+    to_endpoint_arn.each do |arn|
 
-    sns = Aws::SNS::Client.new
-    target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
-
-    iphone_notification = {
-        aps: {
-            alert: self.title,
-            sound: "default",
-            badge: 0,
-            extra:  {
-                topic_id: self.id,
-                message: self.title,
-                shared: true
+      if arn.present?
+        user_arn = arn
+        sns = Aws::SNS::Client.new
+        iphone_notification = {
+            aps: {
+                alert: message,
+                sound: "default",
+                badge: 0,
+                extra:  {
+                    topic_id: self.id,
+                    message: topic.title,
+                    broadcast_user: current_user.id,
+                    shared: true
+                }
             }
         }
-    }
 
-
-    android_notification = {
-        data: {
-            message: self.title ,
-            badge: 0,
-            extra:  {
-                topic_id: self.id,
-                message: self.title,
-                shared: true
+        android_notification = {
+            data: {
+                message: message,
+                badge: 0,
+                extra:  {
+                    topic_id: self.id,
+                    message: topic.title,
+                    broadcast_user: current_user.id,
+                    shared: true
+                }
             }
         }
-    }
 
-    sns_message = {
-        default: self.title,
-        APNS_SANDBOX: iphone_notification.to_json,
-        APNS: iphone_notification.to_json,
-        GCM: android_notification.to_json
-    }.to_json
+        sns_message = {
+            default: message,
+            APNS_SANDBOX: iphone_notification.to_json,
+            APNS: iphone_notification.to_json,
+            GCM: android_notification.to_json
+        }.to_json
 
-    #AWS ns notification message to hybrid roundtrip app
-    sns.publish(target_arn: target_topic, message: sns_message, message_structure:"json")
+
+        sns.publish(target_arn: user_arn, message: sns_message, message_structure:"json")
+
+      end
+    end
 
   end
 
