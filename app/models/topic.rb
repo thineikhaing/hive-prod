@@ -1499,13 +1499,13 @@ class Topic < ActiveRecord::Base
         sns = Aws::SNS::Client.new
         iphone_notification = {
             aps: {
-                alert: message,
+                alert: self.title,
                 sound: "default",
                 badge: 0,
                 extra:  {
                     topic_id: self.id,
-                    message: topic.title,
-                    broadcast_user: current_user.id,
+                    message: self.title,
+                    broadcast_user: self.user_id,
                     shared: true
                 }
             }
@@ -1513,26 +1513,30 @@ class Topic < ActiveRecord::Base
 
         android_notification = {
             data: {
-                message: message,
+                message: self.title,
                 badge: 0,
                 extra:  {
                     topic_id: self.id,
-                    message: topic.title,
-                    broadcast_user: current_user.id,
+                    message: self.title,
+                    broadcast_user: self.user_id,
                     shared: true
                 }
             }
         }
 
         sns_message = {
-            default: message,
+            default: self.title,
             APNS_SANDBOX: iphone_notification.to_json,
             APNS: iphone_notification.to_json,
             GCM: android_notification.to_json
         }.to_json
 
+        begin
+          sns.publish(target_arn: user_arn, message: sns_message, message_structure:"json")
+        rescue Aws::SNS::Errors::EndpointDisabled
+          p "EndpointDisabledException"
+        end
 
-        sns.publish(target_arn: user_arn, message: sns_message, message_structure:"json")
 
       end
     end
