@@ -728,12 +728,15 @@ class Api::RoundtripController < ApplicationController
     to_endpoint_arn.each do |arn|
 
       if arn.present?
+
         user_arn = arn
+
         sns = Aws::SNS::Client.new
         # target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
+
         iphone_notification = {
             aps: {
-                alert: message,
+                alert: topic.title,
                 sound: "default",
                 badge: 0,
                 extra:  {
@@ -747,19 +750,17 @@ class Api::RoundtripController < ApplicationController
 
         android_notification = {
             data: {
-                message: message,
+                message: topic.title,
                 badge: 0,
-                extra:  {
-                    topic_id: topic.id,
-                    topic_title: topic.title,
-                    broadcast_user: current_user.id,
-                    shared: true
-                }
+                topic_id: topic.id,
+                topic_title: topic.title,
+                broadcast_user: current_user.id,
+                shared: true
             }
         }
 
         sns_message = {
-            default: message,
+            default: topic.title,
             APNS_SANDBOX: iphone_notification.to_json,
             APNS: iphone_notification.to_json,
             GCM: android_notification.to_json

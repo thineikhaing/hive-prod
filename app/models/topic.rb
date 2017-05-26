@@ -1506,6 +1506,10 @@ class Topic < ActiveRecord::Base
                     topic_id: self.id,
                     topic_title: self.title,
                     broadcast_user: self.user_id,
+                    start_place: self.rtplaces_information[:start_place][:name],
+                    end_place:  self.rtplaces_information[:end_place][:name],
+                    topic_username: self.username,
+                    create_at: self.created_at,
                     shared: true
                 }
             }
@@ -1519,6 +1523,10 @@ class Topic < ActiveRecord::Base
                     topic_id: self.id,
                     topic_title: self.title,
                     broadcast_user: self.user_id,
+                    start_place: self.rtplaces_information[:start_place][:name],
+                    end_place:  self.rtplaces_information[:end_place][:name],
+                    topic_username: self.username,
+                    create_at: self.created_at,
                     shared: true
                 }
             }
@@ -1626,6 +1634,10 @@ class Topic < ActiveRecord::Base
                 towards: towards,
                 topic_id: self.id,
                 topic_title: self.title,
+                start_place: self.rtplaces_information[:start_place][:name],
+                end_place:  self.rtplaces_information[:end_place][:name],
+                topic_username: self.username,
+                create_at: self.created_at,
                 type: "train fault"
             }
         }
@@ -1643,6 +1655,10 @@ class Topic < ActiveRecord::Base
                 towards: towards,
                 topic_id: self.id,
                 topic_title: self.title,
+                start_place: self.rtplaces_information[:start_place][:name],
+                end_place:  self.rtplaces_information[:end_place][:name],
+                topic_username: self.username,
+                create_at: self.created_at,
                 type: "train fault"
             }
         }

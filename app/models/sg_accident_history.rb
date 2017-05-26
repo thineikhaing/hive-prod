@@ -161,6 +161,10 @@ class SgAccidentHistory < ActiveRecord::Base
                   extra:  {
                       topic_id: topic.id,
                       topic_title: topic.title,
+                      start_place: topic.rtplaces_information[:start_place][:name],
+                      end_place:  topic.rtplaces_information[:end_place][:name],
+                      topic_username: topic.username,
+                      create_at: topic.created_at,
                       accident_datetime: sg_accident.accident_datetime,
                       latitude: sg_accident.latitude,
                       longitude: sg_accident.longitude,
@@ -176,6 +180,10 @@ class SgAccidentHistory < ActiveRecord::Base
                   extra:  {
                       topic_id: topic.id,
                       topic_title: topic.title,
+                      start_place: topic.rtplaces_information[:start_place][:name],
+                      end_place:  topic.rtplaces_information[:end_place][:name],
+                      topic_username: topic.username,
+                      create_at: topic.created_at,
                       accident_datetime: sg_accident.accident_datetime,
                       latitude: sg_accident.latitude,
                       longitude: sg_accident.longitude,
