@@ -109,6 +109,8 @@ class SgAccidentHistory < ActiveRecord::Base
       p "total user near by count"
       p user_id
       p user_id.count
+      p "end point arn"
+      p to_endpoint_arn
 
       sg_accident.notify = true
       sg_accident.save
@@ -121,93 +123,73 @@ class SgAccidentHistory < ActiveRecord::Base
 
       topic.hive_broadcast
       topic.app_broadcast_with_content
+      if to_endpoint_arn.count > 0
 
-      # notification_options = {
-      #     send_date: "now",
-      #     badge: "1",
-      #     sound: "default",
-      #     content:{
-      #     fr:sg_accident.message,
-      #     en:sg_accident.message
-      # },
-      #     data:{
-      #     topic_id: topic.id,
-      #     topic_title: topic.title,
-      #     accident_datetime: sg_accident.accident_datetime,
-      #     latitude: sg_accident.latitude,
-      #     longitude: sg_accident.longitude,
-      #     type: sg_accident.type
-      # },
-      #     devices: to_device_id
-      # }
-      #
-      #
-      # if to_device_id.count > 0
-      #   Pushwoosh::PushNotification.new(auth_hash).notify_devices(sg_accident.message, to_device_id, notification_options)
-      # end
+        to_endpoint_arn.each do |arn|
 
-      to_endpoint_arn.each do |arn|
+          if arn.present?
 
-        if arn.present?
+            user_arn  = arn
+            sns = Aws::SNS::Client.new
 
-          user_arn  = arn
-          sns = Aws::SNS::Client.new
+            iphone_notification = {
+                aps: {
+                    alert: sg_accident.message,
+                    sound: "default",
+                    badge: 0,
+                    extra:  {
+                        topic_id: topic.id,
+                        topic_title: topic.title,
+                        start_place: topic.rtplaces_information[:start_place][:name],
+                        end_place:  topic.rtplaces_information[:end_place][:name],
+                        topic_username: topic.username,
+                        create_at: topic.created_at,
+                        accident_datetime: sg_accident.accident_datetime,
+                        latitude: sg_accident.latitude,
+                        longitude: sg_accident.longitude,
+                        type: sg_accident.type
+                    }
+                }
+            }
 
-          iphone_notification = {
-              aps: {
-                  alert: sg_accident.message,
-                  sound: "default",
-                  badge: 0,
-                  extra:  {
-                      topic_id: topic.id,
-                      topic_title: topic.title,
-                      start_place: topic.rtplaces_information[:start_place][:name],
-                      end_place:  topic.rtplaces_information[:end_place][:name],
-                      topic_username: topic.username,
-                      create_at: topic.created_at,
-                      accident_datetime: sg_accident.accident_datetime,
-                      latitude: sg_accident.latitude,
-                      longitude: sg_accident.longitude,
-                      type: sg_accident.type
-                  }
-              }
-          }
+            android_notification = {
+                data: {
+                    message: sg_accident.message,
+                    badge: 0,
+                    extra:  {
+                        topic_id: topic.id,
+                        topic_title: topic.title,
+                        start_place: topic.rtplaces_information[:start_place][:name],
+                        end_place:  topic.rtplaces_information[:end_place][:name],
+                        topic_username: topic.username,
+                        create_at: topic.created_at,
+                        accident_datetime: sg_accident.accident_datetime,
+                        latitude: sg_accident.latitude,
+                        longitude: sg_accident.longitude,
+                        type: sg_accident.type
+                    }
+                }
+            }
 
-          android_notification = {
-              data: {
-                  message: sg_accident.message,
-                  badge: 0,
-                  extra:  {
-                      topic_id: topic.id,
-                      topic_title: topic.title,
-                      start_place: topic.rtplaces_information[:start_place][:name],
-                      end_place:  topic.rtplaces_information[:end_place][:name],
-                      topic_username: topic.username,
-                      create_at: topic.created_at,
-                      accident_datetime: sg_accident.accident_datetime,
-                      latitude: sg_accident.latitude,
-                      longitude: sg_accident.longitude,
-                      type: sg_accident.type
-                  }
-              }
-          }
+            sns_message = {
+                default: sg_accident.message,
+                APNS_SANDBOX: iphone_notification.to_json,
+                APNS: iphone_notification.to_json,
+                GCM: android_notification.to_json
+            }.to_json
 
-          sns_message = {
-              default: sg_accident.message,
-              APNS_SANDBOX: iphone_notification.to_json,
-              APNS: iphone_notification.to_json,
-              GCM: android_notification.to_json
-          }.to_json
+            begin
+              sns.publish(target_arn: user_arn, message: sns_message, message_structure:"json")
+            rescue Aws::SNS::Errors::EndpointDisabled
+              p "EndpointDisabledException"
+            end
 
-          begin
-            sns.publish(target_arn: user_arn, message: sns_message, message_structure:"json")
-          rescue Aws::SNS::Errors::EndpointDisabled
-            p "EndpointDisabledException"
+
           end
-
 
         end
       end
+
 
     end
   end
