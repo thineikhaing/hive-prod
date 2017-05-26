@@ -1498,7 +1498,7 @@ class Topic < ActiveRecord::Base
             sound: "default",
             badge: 0,
             extra:  {
-                topic: self,
+                topic_id: self.id,
                 message: self.title,
                 shared: true
             }
@@ -1511,7 +1511,7 @@ class Topic < ActiveRecord::Base
             message: self.title ,
             badge: 0,
             extra:  {
-                topic: self,
+                topic_id: self.id,
                 message: self.title,
                 shared: true
             }
