@@ -1460,37 +1460,37 @@ class Topic < ActiveRecord::Base
       end
     end
 
-    p "Push Woosh Authentication"
-    if Rails.env.production?
-      appID = PushWoosh_Const::RT_P_APP_ID
-
-    elsif Rails.env.staging?
-      appID = PushWoosh_Const::RT_S_APP_ID
-    else
-      appID = PushWoosh_Const::RT_D_APP_ID
-    end
-
-    @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
-
-    notification_options = {
-        send_date: "now",
-        badge: "1",
-        sound: "default",
-        content:{
-            fr:self.title,
-            en:self.title
-        },
-        data:{
-            topic: self,
-            message: self.title,
-            shared: true
-        },
-        devices: to_device_id
-    }
-
-    if to_device_id.count > 0
-      Pushwoosh::PushNotification.new(@auth).notify_devices(self.title, to_device_id, notification_options)
-    end
+    # p "Push Woosh Authentication"
+    # if Rails.env.production?
+    #   appID = PushWoosh_Const::RT_P_APP_ID
+    #
+    # elsif Rails.env.staging?
+    #   appID = PushWoosh_Const::RT_S_APP_ID
+    # else
+    #   appID = PushWoosh_Const::RT_D_APP_ID
+    # end
+    #
+    # @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+    #
+    # notification_options = {
+    #     send_date: "now",
+    #     badge: "1",
+    #     sound: "default",
+    #     content:{
+    #         fr:self.title,
+    #         en:self.title
+    #     },
+    #     data:{
+    #         topic: self,
+    #         message: self.title,
+    #         shared: true
+    #     },
+    #     devices: to_device_id
+    # }
+    #
+    # if to_device_id.count > 0
+    #   Pushwoosh::PushNotification.new(@auth).notify_devices(self.title, to_device_id, notification_options)
+    # end
 
     to_endpoint_arn.each do |arn|
 
@@ -1546,76 +1546,74 @@ class Topic < ActiveRecord::Base
 
   def notify_train_fault_to_roundtrip_users(name, station1, station2, towards)
 
-    p "start added active users"
-    hiveapplication = HiveApplication.find(self.hiveapplication_id)
-    to_device_id = []
-     user_id = []
-    users = User.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+    # p "start added active users"
+    # hiveapplication = HiveApplication.find(self.hiveapplication_id)
+    # to_device_id = []
+    #  user_id = []
+    # users = User.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+    #
+    # time_allowance = Time.now - 10.minutes.ago
+    # users.each do |u|
+    #   if u.check_in_time.present?
+    #     time_difference = Time.now - u.check_in_time
+    #     unless time_difference.to_i > time_allowance.to_i
+    #       hash_array = u.data
+    #       device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+    #       to_device_id.push(device_id)
+    #       user_id.push(u.id)
+    #     end
+    #   end
+    # end
 
-    time_allowance = Time.now - 10.minutes.ago
-    users.each do |u|
-      if u.check_in_time.present?
-        time_difference = Time.now - u.check_in_time
-        unless time_difference.to_i > time_allowance.to_i
-          hash_array = u.data
-          device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-          to_device_id.push(device_id)
-          user_id.push(u.id)
-        end
-      end
-    end
-
-    notification_options = {
-        send_date: "now",
-        badge: "1",
-        sound: "default",
-        content:{
-            fr:self.title,
-            en:self.title
-        },
-        data:{
-            trainfault_datetime: Time.now,
-            smrtline: name,
-            station1: station1,
-            station2: station2,
-            towards: towards,
-            topic: self,
-            topic_id: self.id,
-            topic_title: self.title,
-            type: "train fault"
-        },
-        devices: to_device_id
-    }
-
-    p "after noti options"
-
-    p "Push Woosh Authentication"
-    if Rails.env.production?
-      appID = PushWoosh_Const::RT_P_APP_ID
-      hyID = PushWoosh_Const::TE_RTS_APP_ID
-    elsif Rails.env.staging?
-      appID = PushWoosh_Const::RT_S_APP_ID
-      hyID = PushWoosh_Const::TE_RTS_APP_ID
-    else
-      appID = PushWoosh_Const::RT_D_APP_ID
-      hyID = PushWoosh_Const::TE_RTS_APP_ID
-    end
-
-    native_rtauth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
-    auth_hash = {:application  => hyID ,:auth => PushWoosh_Const::API_ACCESS}
-
-    if to_device_id.count > 0
-      Pushwoosh::PushNotification.new(auth_hash).notify_devices(self.title, to_device_id, notification_options)
-      # Pushwoosh::PushNotification.new(native_rtauth).notify_devices(self.title, to_device_id, notification_options)
-      p "pushwoosh"
-    end
+    # notification_options = {
+    #     send_date: "now",
+    #     badge: "1",
+    #     sound: "default",
+    #     content:{
+    #         fr:self.title,
+    #         en:self.title
+    #     },
+    #     data:{
+    #         trainfault_datetime: Time.now,
+    #         smrtline: name,
+    #         station1: station1,
+    #         station2: station2,
+    #         towards: towards,
+    #         topic: self,
+    #         topic_id: self.id,
+    #         topic_title: self.title,
+    #         type: "train fault"
+    #     },
+    #     devices: to_device_id
+    # }
+    #
+    # p "after noti options"
+    #
+    # p "Push Woosh Authentication"
+    # if Rails.env.production?
+    #   appID = PushWoosh_Const::RT_P_APP_ID
+    #   hyID = PushWoosh_Const::TE_RTS_APP_ID
+    # elsif Rails.env.staging?
+    #   appID = PushWoosh_Const::RT_S_APP_ID
+    #   hyID = PushWoosh_Const::TE_RTS_APP_ID
+    # else
+    #   appID = PushWoosh_Const::RT_D_APP_ID
+    #   hyID = PushWoosh_Const::TE_RTS_APP_ID
+    # end
+    #
+    # native_rtauth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+    # auth_hash = {:application  => hyID ,:auth => PushWoosh_Const::API_ACCESS}
+    #
+    # if to_device_id.count > 0
+    #   Pushwoosh::PushNotification.new(auth_hash).notify_devices(self.title, to_device_id, notification_options)
+    #   # Pushwoosh::PushNotification.new(native_rtauth).notify_devices(self.title, to_device_id, notification_options)
+    #   p "pushwoosh"
+    # end
 
 
     sns = Aws::SNS::Client.new
     target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
 
-    p "topic title word count"
-    p self.title.size
     iphone_notification = {
         aps: {
             alert: self.title,

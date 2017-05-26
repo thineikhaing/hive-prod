@@ -704,26 +704,26 @@ class Api::RoundtripController < ApplicationController
 
     p topic.title
 
-    notification_options = {
-        send_date: "now",
-        badge: "1",
-        sound: "default",
-        content:{
-            fr:message,
-            en:message
-        },
-        data:{
-            topic: topic,
-            message: topic.title,
-            broadcast_user: current_user.id,
-            shared: true
-        },
-        devices: to_device_id
-    }
-
-    if to_device_id.count > 0
-      Pushwoosh::PushNotification.new(@auth).notify_devices(message, to_device_id, notification_options)
-    end
+    # notification_options = {
+    #     send_date: "now",
+    #     badge: "1",
+    #     sound: "default",
+    #     content:{
+    #         fr:message,
+    #         en:message
+    #     },
+    #     data:{
+    #         topic: topic,
+    #         message: topic.title,
+    #         broadcast_user: current_user.id,
+    #         shared: true
+    #     },
+    #     devices: to_device_id
+    # }
+    #
+    # if to_device_id.count > 0
+    #   Pushwoosh::PushNotification.new(@auth).notify_devices(message, to_device_id, notification_options)
+    # end
 
     to_endpoint_arn.each do |arn|
 
