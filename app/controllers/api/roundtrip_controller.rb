@@ -737,8 +737,8 @@ class Api::RoundtripController < ApplicationController
                 sound: "default",
                 badge: 0,
                 extra:  {
-                    topic: topic,
-                    message: topic.title,
+                    topic_id: topic.id,
+                    topic_title: topic.title,
                     broadcast_user: current_user.id,
                     shared: true
                 }
@@ -750,8 +750,8 @@ class Api::RoundtripController < ApplicationController
                 message: message,
                 badge: 0,
                 extra:  {
-                    topic: topic,
-                    message: topic.title,
+                    topic_id: topic.id,
+                    topic_title: topic.title,
                     broadcast_user: current_user.id,
                     shared: true
                 }

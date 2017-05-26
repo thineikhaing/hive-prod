@@ -1504,7 +1504,7 @@ class Topic < ActiveRecord::Base
                 badge: 0,
                 extra:  {
                     topic_id: self.id,
-                    message: self.title,
+                    topic_title: self.title,
                     broadcast_user: self.user_id,
                     shared: true
                 }
@@ -1517,7 +1517,7 @@ class Topic < ActiveRecord::Base
                 badge: 0,
                 extra:  {
                     topic_id: self.id,
-                    message: self.title,
+                    topic_title: self.title,
                     broadcast_user: self.user_id,
                     shared: true
                 }
