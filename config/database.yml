@@ -25,7 +25,7 @@ development:
   <<: *default
   database: hive_development
   hostname: localhost
-  username: raydius
+  username: enterprise
 #  username: thineikhaing
   password:
   pool: 5
@@ -65,7 +65,7 @@ test:
   <<: *default
   database: hive_test
   hostname: localhost
-  username: raydius
+  username: enterprise
 #  username: thineikhaing
   password:
   pool: 5
