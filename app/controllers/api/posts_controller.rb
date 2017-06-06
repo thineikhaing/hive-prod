@@ -169,8 +169,9 @@ class Api::PostsController < ApplicationController
         posts.each do |post|
           username = post.user.username
           if post.user.avatar_url.nil?
-            Topic.get_avatar(username)
-            post_avatar_url[post.id] = @avatar_url
+            p "post avatar url"
+            p avatar = Topic.get_avatar(username)
+            post_avatar_url[post.id] = avatar
           else
             post_avatar_url[post.id] = post.user.avatar_url
           end
