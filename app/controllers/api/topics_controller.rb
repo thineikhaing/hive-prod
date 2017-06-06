@@ -1800,3 +1800,116 @@ class Api::TopicsController < ApplicationController
   end
 
 end
+
+
+def ok
+  sns = AWS::SNS.new(
+      access_key_id: "AKIAIJMZ5RLXRO6LJHPQ",
+      secret_access_key: "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",
+      region: "ap-southeast-1"
+  )
+  client = sns.client
+
+
+  begin
+    response = client.create_platform_endpoint(
+        platform_application_arn: 'arn:aws:sns:ap-southeast-1:378631322826:app/GCM/Roundtrip_S',
+        token: device_token
+    )
+    p endpoint_arn = response[:endpoint_arn]
+  rescue => e
+    result = e.message.match(/Endpoint(.*)already/)
+    if result.present?
+      endpoint_arn = result[1].strip
+    end
+  end
+
+  data = {
+      'aps' => {
+          'alert' => 'Hi there!',
+          'badge' => 1,
+          'sound' => 'default'
+      }
+  }
+
+  ios_endpoint_arn = 'arn:aws:sns:ap-southeast-1:378631322826:endpoint/APNS/Roundtrip_S/1ab611da-e4ec-38cb-8758-f63c63d6f2ce'
+
+# double json encode
+  message_json = {
+      'APNS' => data.to_json
+  }.to_json
+
+  sns.publish(
+      target_arn: ios_endpoint_arn,
+      message: message_json,
+      message_structure: 'json',
+      GCM: "okay"
+  )
+
+  topic = client.create_topic(name: 'RoundTrip_Topic')
+  topic_arn = topic[:topic_arn]
+
+  client.subscribe(
+      topic_arn: topic_arn,
+      protocol: 'application',
+      endpoint: endpoint_arn
+  )
+
+  data = {
+      'aps' => {
+          'alert' => 'Hi there!',
+          'badge' => 1,
+          'sound' => 'default'
+      }
+  }
+
+# double json encode
+  message_json = {
+      'default' => 'Hi there!',
+      'APNS' => data.to_json
+  }.to_json
+
+  client.publish(
+      target_arn: topic_arn,
+      message: message_json,
+      message_structure: 'json'
+  )
+
+
+  #send noti message to iphone
+
+  sns = Aws::SNS::Client.new
+  target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
+
+
+  iphone_notification = {
+      aps: {
+          alert: "Send message to ios from hive",
+          sound: "default",
+          badge: 0,
+          extra:  {a: 1, b: 2}
+      }
+  }
+
+
+  android_notification = {
+      data: {
+          message: "Send message to android from hive" ,
+          badge: 0,
+          extra:  {a: 1, b: 2}
+      }
+  }
+
+  sns_message = {
+      default: "Hi there",
+      APNS_SANDBOX: iphone_notification.to_json,
+      APNS: iphone_notification.to_json,
+      GCM: android_notification.to_json
+  }.to_json
+
+
+  noti_message = sns.publish(target_arn: target_topic,
+                         message: sns_message, message_structure:"json")
+
+
+end

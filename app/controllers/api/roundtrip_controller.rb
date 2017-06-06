@@ -463,7 +463,6 @@ class Api::RoundtripController < ApplicationController
     towards = params[:towards]
     reason = params[:reason]
 
-    p "Push Woosh Authentication"
     if Rails.env.production?
       appID = PushWoosh_Const::RT_P_APP_ID
     elsif Rails.env.staging?
@@ -474,12 +473,9 @@ class Api::RoundtripController < ApplicationController
 
     @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
-
-
     hive_application = HiveApplication.find_by_api_key(params[:app_key])
     users = User.where("app_data ->'app_id#{hive_application.id}' = '#{hive_application.api_key}'")
 
-    p users.count
     to_device_id = []
     time_allowance = Time.now - 10.minutes.ago
     users.each do |u|
@@ -493,6 +489,7 @@ class Api::RoundtripController < ApplicationController
       end
     end
 
+    devicecount = to_device_id.count rescue '0'
 
     message = ""
     if station1.present? && station2.present?
@@ -505,7 +502,6 @@ class Api::RoundtripController < ApplicationController
     if towards.present?
       message += " towards "+towards
     end
-
 
     notification_options = {
         send_date: "now",
@@ -527,19 +523,53 @@ class Api::RoundtripController < ApplicationController
     }
 
     if to_device_id.count > 0
-      options = @auth.merge({:notifications  => [notification_options]})
-      options = {:request  => options}
-      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-      url = URI.parse(full_path)
-      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-      req.body = options.to_json
-      con = Net::HTTP.new(url.host, url.port)
-      con.use_ssl = true
-      r = con.start {|http| http.request(req)}
-      p "pushwoosh"
+      Pushwoosh::PushNotification.new(@auth).notify_devices(message, to_device_id, notification_options)
     end
 
-    devicecount = to_device_id.count rescue '0'
+    sns = Aws::SNS::Client.new
+    target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
+
+    iphone_notification = {
+        aps: {
+            alert: message,
+            sound: "default",
+            badge: 0,
+            extra:  {
+                trainfault_datetime: Time.now,
+                smrtline: name,
+                station1: station1,
+                station2: station2,
+                towards: towards,
+                type: "train fault"
+            }
+        }
+    }
+
+    android_notification = {
+        data: {
+            message: message,
+            badge: 0,
+            extra:  {
+                        trainfault_datetime: Time.now,
+                        smrtline: name,
+                        station1: station1,
+                        station2: station2,
+                        towards: towards,
+                        type: "train fault"
+                    }
+        }
+    }
+
+    sns_message = {
+        default: message,
+        APNS_SANDBOX: iphone_notification.to_json,
+        APNS: iphone_notification.to_json,
+        GCM: android_notification.to_json
+    }.to_json
+
+
+    sns.publish(target_arn: target_topic, message: sns_message, message_structure:"json")
+
     render json:  {message: message, device_count: devicecount}
 
 
@@ -600,6 +630,7 @@ class Api::RoundtripController < ApplicationController
 
     user_id = []
     to_device_id = []
+    to_endpoint_arn = []
     users = User.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
 
     time_allowance = Time.now - 10.minutes.ago
@@ -610,14 +641,14 @@ class Api::RoundtripController < ApplicationController
           if u.data.present? && u.id != current_user.id
             hash_array = u.data
             device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+            endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
             to_device_id.push(device_id)
+            to_endpoint_arn.push(endpoint_arn)
             user_id.push(u.id)
           end
         end
       end
     end
-    p "user to push"
-    p user_id
 
     params[:start_name].present? ? start_name = params[:start_name] : start_name = nil
     params[:start_address].present? ? start_address = params[:start_address] : start_address = ""
@@ -673,35 +704,75 @@ class Api::RoundtripController < ApplicationController
 
     p topic.title
 
-    notification_options = {
-        send_date: "now",
-        badge: "1",
-        sound: "default",
-        content:{
-            fr:message,
-            en:message
-        },
-        data:{
-            topic: topic,
-            message: topic.title,
-            broadcast_user: current_user.id,
-            shared: true
-        },
-        devices: to_device_id
-    }
+    # notification_options = {
+    #     send_date: "now",
+    #     badge: "1",
+    #     sound: "default",
+    #     content:{
+    #         fr:message,
+    #         en:message
+    #     },
+    #     data:{
+    #         topic: topic,
+    #         message: topic.title,
+    #         broadcast_user: current_user.id,
+    #         shared: true
+    #     },
+    #     devices: to_device_id
+    # }
+    #
+    # if to_device_id.count > 0
+    #   Pushwoosh::PushNotification.new(@auth).notify_devices(message, to_device_id, notification_options)
+    # end
 
-    if to_device_id.count > 0
-      options = @auth.merge({:notifications  => [notification_options]})
-      options = {:request  => options}
-      full_path = 'https://cp.pushwoosh.com/json/1.3/createMessage'
-      url = URI.parse(full_path)
-      req = Net::HTTP::Post.new(url.path, initheader = {'Content-Type' =>'application/json'})
-      req.body = options.to_json
-      con = Net::HTTP.new(url.host, url.port)
-      con.use_ssl = true
-      r = con.start {|http| http.request(req)}
-      p "pushwoosh"
+    to_endpoint_arn.each do |arn|
+
+      if arn.present?
+
+        user_arn = arn
+
+        sns = Aws::SNS::Client.new
+        # target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
+
+        iphone_notification = {
+            aps: {
+                alert: topic.title,
+                sound: "default",
+                badge: 0,
+                extra:  {
+                    topic_id: topic.id,
+                    topic_title: topic.title,
+                    broadcast_user: current_user.id,
+                    shared: true
+                }
+            }
+        }
+
+        android_notification = {
+            data: {
+                message: topic.title,
+                badge: 0,
+                topic_id: topic.id,
+                topic_title: topic.title,
+                broadcast_user: current_user.id,
+                shared: true
+            }
+        }
+
+        sns_message = {
+            default: topic.title,
+            APNS_SANDBOX: iphone_notification.to_json,
+            APNS: iphone_notification.to_json,
+            GCM: android_notification.to_json
+        }.to_json
+
+
+        sns.publish(target_arn: user_arn, message: sns_message, message_structure:"json")
+
+      end
     end
+
+
 
     render json:{status: 200, topic:topic, message: "broadcast topic create sucessfully!"}
 

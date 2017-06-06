@@ -49,7 +49,6 @@ class SgAccidentHistory < ActiveRecord::Base
     end
 
     self.send_traffic_noti
-
   end
 
   def self.send_traffic_noti
@@ -57,20 +56,17 @@ class SgAccidentHistory < ActiveRecord::Base
     sg_accident = SgAccidentHistory.where(notify: false).take
     if Rails.env.production?
       appID = PushWoosh_Const::RT_P_APP_ID
-      hyID = PushWoosh_Const::TE_RTS_APP_ID
       round_key = RoundTrip_key::Production_Key
     elsif Rails.env.staging?
       appID = PushWoosh_Const::RT_S_APP_ID
-      hyID = PushWoosh_Const::TE_RTS_APP_ID
       round_key = RoundTrip_key::Staging_Key
     else
       appID = PushWoosh_Const::RT_S_APP_ID
-      hyID = PushWoosh_Const::TE_RTS_APP_ID
       round_key = RoundTrip_key::Development_Key
     end
 
-    native_rtauth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
-    auth_hash = {:application  => hyID ,:auth => PushWoosh_Const::API_ACCESS}
+
+    auth_hash = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
     hive_application = HiveApplication.find_by_api_key(round_key)
 
@@ -88,6 +84,7 @@ class SgAccidentHistory < ActiveRecord::Base
       to_device_id = []
       user_id = []
       time_allowance = Time.now - 30.minutes.ago
+      to_endpoint_arn = []
 
       users.each do |u|
         if u.check_in_time.present?
@@ -97,7 +94,9 @@ class SgAccidentHistory < ActiveRecord::Base
             hash_array = u.data
             if hash_array.present?
               device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+              endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
               to_device_id.push(device_id)
+              to_endpoint_arn.push(endpoint_arn)
               user_id.push(u.id)
             end
 
@@ -110,12 +109,12 @@ class SgAccidentHistory < ActiveRecord::Base
       p "total user near by count"
       p user_id
       p user_id.count
+      p "end point arn"
+      p to_endpoint_arn
 
       sg_accident.notify = true
       sg_accident.save
       p sg_accident.message
-
-
 
       startplace = Place.create_place_by_lat_lng(sg_accident.latitude, sg_accident.longitude,User.first)
 
@@ -124,33 +123,73 @@ class SgAccidentHistory < ActiveRecord::Base
 
       topic.hive_broadcast
       topic.app_broadcast_with_content
+      if to_endpoint_arn.count > 0
 
-      notification_options = {
-          send_date: "now",
-          badge: "1",
-          sound: "default",
-          content:{
-          fr:sg_accident.message,
-          en:sg_accident.message
-      },
-          data:{
-          topic_id: topic.id,
-          topic_title: topic.title,
-          accident_datetime: sg_accident.accident_datetime,
-          latitude: sg_accident.latitude,
-          longitude: sg_accident.longitude,
-          type: sg_accident.type
-      },
-          devices: to_device_id
-      }
+        to_endpoint_arn.each do |arn|
 
-      if to_device_id.count > 0
+          if arn.present?
 
-        Pushwoosh::PushNotification.new(auth_hash).notify_devices(sg_accident.message, to_device_id, notification_options)
-        Pushwoosh::PushNotification.new(native_rtauth).notify_devices(sg_accident.message, to_device_id, notification_options)
+            user_arn  = arn
+            sns = Aws::SNS::Client.new
 
-        p "pushwoosh"
+            iphone_notification = {
+                aps: {
+                    alert: sg_accident.message,
+                    sound: "default",
+                    badge: 0,
+                    extra:  {
+                        topic_id: topic.id,
+                        topic_title: topic.title,
+                        start_place: topic.rtplaces_information[:start_place][:name],
+                        end_place:  topic.rtplaces_information[:end_place][:name],
+                        topic_username: topic.username,
+                        create_at: topic.created_at,
+                        accident_datetime: sg_accident.accident_datetime,
+                        latitude: sg_accident.latitude,
+                        longitude: sg_accident.longitude,
+                        type: sg_accident.type
+                    }
+                }
+            }
+
+            android_notification = {
+                data: {
+                    message: sg_accident.message,
+                    badge: 0,
+                    extra:  {
+                        topic_id: topic.id,
+                        topic_title: topic.title,
+                        start_place: topic.rtplaces_information[:start_place][:name],
+                        end_place:  topic.rtplaces_information[:end_place][:name],
+                        topic_username: topic.username,
+                        create_at: topic.created_at,
+                        accident_datetime: sg_accident.accident_datetime,
+                        latitude: sg_accident.latitude,
+                        longitude: sg_accident.longitude,
+                        type: sg_accident.type
+                    }
+                }
+            }
+
+            sns_message = {
+                default: sg_accident.message,
+                APNS_SANDBOX: iphone_notification.to_json,
+                APNS: iphone_notification.to_json,
+                GCM: android_notification.to_json
+            }.to_json
+
+            begin
+              sns.publish(target_arn: user_arn, message: sns_message, message_structure:"json")
+            rescue Aws::SNS::Errors::EndpointDisabled
+              p "EndpointDisabledException"
+            end
+
+
+          end
+
+        end
       end
+
 
     end
   end

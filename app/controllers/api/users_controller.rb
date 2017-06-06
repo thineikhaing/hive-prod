@@ -334,6 +334,7 @@ class Api::UsersController < ApplicationController
 
 
   def register_apn
+    # for pushwoosh token
     if params[:push_token].present?  && current_user.present?
 
       user_token = UserPushToken.find_by(user_id: current_user.id,push_token: params[:push_token])
@@ -343,16 +344,22 @@ class Api::UsersController < ApplicationController
       if user_token.nil?
         user = User.find_by_authentication_token(params[:auth_token])
         if user.present?
-          result = Hash.new
-          result[:device_id] = params[:push_token]
-          user.data = result
-          user.save!
+          device_id= params[:push_token]
+          User.update_data_column("device_id", device_id, user.id)
+
         end
       end
 
+      if params[:endpoint_arn].present?     #for amazon sns token
+        user = User.find_by_authentication_token(params[:auth_token])
+        endpoint_arn = params[:endpoint_arn]
+        User.update_data_column("endpoint_arn", endpoint_arn, user.id)
 
+      end
+
+      user = User.find(user.id)
       if push_user.present?  or user_token.present?
-        render json: { status: true }
+        render json: { status: true , user: user}
       else
         p 'There is no pusher token for the user'
         render json: { error_msg: "There is no pusher token for the user" }, status: 400
@@ -367,12 +374,16 @@ class Api::UsersController < ApplicationController
 
         user.save!
 
-        render json: { status: true, daily_points: user.daily_points}
+        render json: { status: true}
       end
+
     else
       p 'Param user id, authentication token, pusher token must be presented'
       render json: { error_msg: "Param user id, authentication token, pusher token must be presented" }, status: 400
     end
+
+
+
   end
 
   # def register_apn
