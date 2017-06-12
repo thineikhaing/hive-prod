@@ -195,10 +195,10 @@ class User < ActiveRecord::Base
 
 
   def update_user_peerdrivedata (speed, direction, activity,heartrate)
-    update_data_column("speed", speed, self.id)
-    update_data_column("direction", direction, self.id)
-    update_data_column("activity", activity, self.id)
-    update_data_column("heartrate", heartrate, self.id)
+    User.update_data_column("speed", speed, self.id)
+    User.update_data_column("direction", direction, self.id)
+    User.update_data_column("activity", activity, self.id)
+    User.update_data_column("heartrate", heartrate, self.id)
   end
 
 
