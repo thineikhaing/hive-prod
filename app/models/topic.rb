@@ -1439,57 +1439,58 @@ class Topic < ActiveRecord::Base
     to_device_id = []
     to_endpoint_arn = []
 
-    users = User.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+    users_by_location = []
 
-    time_allowance = Time.now - 10.minutes.ago
+    radius = 1 if radius.nil?
 
-    users.each do |u|
-      if u.check_in_time.present?
-        time_difference = Time.now - u.check_in_time
-        if time_difference < time_allowance
+    center_point = [self.place.latitude.to_f, self.place.longitude.to_f]
+    box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
+    center_users = User.where(last_known_latitude: box[0] .. box[2], last_known_longitude: box[1] .. box[3])
+    center_users = center_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
 
-          hash_array = u.data
-          if hash_array.present? && u.id != self.user_id
-            device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-            endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
-            to_device_id.push(device_id)
-            to_endpoint_arn.push(endpoint_arn)
-            user_id.push(u.id)
-          end
-        end
+    s_center_point = [self.start_place.latitude.to_f, self.start_place.longitude.to_f]
+    s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
+    start_users = User.where(last_known_latitude: s_box[0] .. s_box[2], last_known_longitude: s_box[1] .. s_box[3])
+    start_users = start_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+
+    e_center_point =  [self.end_place.latitude.to_f, self.end_place.longitude.to_f]
+    e_box = Geocoder::Calculations.bounding_box(e_center_point, radius, {units: :km})
+    end_users = User.where(last_known_latitude: e_box[0] .. e_box[2], last_known_longitude: e_box[1] .. e_box[3])
+    end_users = end_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+
+
+    users_by_location = center_users +start_users+end_users
+
+    users_by_location.each do |u|
+      hash_array = u.data
+      if hash_array.present? && u.id != self.user_id
+        device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+        endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
+        to_device_id.push(device_id)
+        to_endpoint_arn.push(endpoint_arn)
+        user_id.push(u.id)
       end
     end
 
-    # p "Push Woosh Authentication"
-    # if Rails.env.production?
-    #   appID = PushWoosh_Const::RT_P_APP_ID
+
     #
-    # elsif Rails.env.staging?
-    #   appID = PushWoosh_Const::RT_S_APP_ID
-    # else
-    #   appID = PushWoosh_Const::RT_D_APP_ID
-    # end
+    # time_allowance = Time.now - 10.minutes.ago
     #
-    # @auth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
+    # users_by_location.each do |u|
+    #   if u.check_in_time.present?
+    #     time_difference = Time.now - u.check_in_time
+    #     if time_difference < time_allowance
     #
-    # notification_options = {
-    #     send_date: "now",
-    #     badge: "1",
-    #     sound: "default",
-    #     content:{
-    #         fr:self.title,
-    #         en:self.title
-    #     },
-    #     data:{
-    #         topic: self,
-    #         message: self.title,
-    #         shared: true
-    #     },
-    #     devices: to_device_id
-    # }
-    #
-    # if to_device_id.count > 0
-    #   Pushwoosh::PushNotification.new(@auth).notify_devices(self.title, to_device_id, notification_options)
+    #       hash_array = u.data
+    #       if hash_array.present? && u.id != self.user_id
+    #         device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+    #         endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
+    #         to_device_id.push(device_id)
+    #         to_endpoint_arn.push(endpoint_arn)
+    #         user_id.push(u.id)
+    #       end
+    #     end
+    #   end
     # end
 
     to_endpoint_arn.each do |arn|

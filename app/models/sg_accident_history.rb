@@ -101,9 +101,7 @@ class SgAccidentHistory < ActiveRecord::Base
             end
 
           end
-
         end
-
       end
 
       p "total user near by count"
