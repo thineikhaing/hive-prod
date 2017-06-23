@@ -1461,37 +1461,46 @@ class Topic < ActiveRecord::Base
 
     users_by_location = center_users +start_users+end_users
 
+    users_by_location = users_by_location.uniq{ |user| [user[:id]]}
+
+    # users_by_location.each do |u|
+    #   hash_array = u.data
+    #   if hash_array.present? && u.id != self.user_id
+    #     device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+    #     endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
+    #     if !endpoint_arn.nil?
+    #       to_endpoint_arn.push(endpoint_arn)
+    #     end
+    #
+    #     user_id.push(u.id)
+    #
+    #   end
+    # end
+
+
+    #
+    time_allowance = Time.now - 1.day.ago
+
     users_by_location.each do |u|
-      hash_array = u.data
-      if hash_array.present? && u.id != self.user_id
-        device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-        endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
-        to_device_id.push(device_id)
-        to_endpoint_arn.push(endpoint_arn)
-        user_id.push(u.id)
+      if u.check_in_time.present?
+        time_difference = Time.now - u.check_in_time
+        if time_difference < time_allowance
+
+          hash_array = u.data
+          if hash_array.present? && u.id != self.user_id
+            device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+            endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
+            to_device_id.push(device_id)
+            to_endpoint_arn.push(endpoint_arn)
+            user_id.push(u.id)
+          end
+        end
       end
     end
 
-
-    #
-    # time_allowance = Time.now - 10.minutes.ago
-    #
-    # users_by_location.each do |u|
-    #   if u.check_in_time.present?
-    #     time_difference = Time.now - u.check_in_time
-    #     if time_difference < time_allowance
-    #
-    #       hash_array = u.data
-    #       if hash_array.present? && u.id != self.user_id
-    #         device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-    #         endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
-    #         to_device_id.push(device_id)
-    #         to_endpoint_arn.push(endpoint_arn)
-    #         user_id.push(u.id)
-    #       end
-    #     end
-    #   end
-    # end
+    p "list of to_endpoint_arn"
+    p to_endpoint_arn
+    p user_id
 
     to_endpoint_arn.each do |arn|
 
@@ -1540,10 +1549,15 @@ class Topic < ActiveRecord::Base
             GCM: android_notification.to_json
         }.to_json
 
+        p "endpoint arn"
+        p arn
+
         begin
           sns.publish(target_arn: user_arn, message: sns_message, message_structure:"json")
-        rescue Aws::SNS::Errors::EndpointDisabled
-          p "EndpointDisabledException"
+        rescue
+          # Aws::SNS::Errors::EndpointDisabled
+          # Aws::SNS::Errors::InvalidParameter
+          p "EndpointDisabledException or InvalidParameter"
         end
 
 
