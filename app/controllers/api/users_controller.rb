@@ -333,13 +333,36 @@ class Api::UsersController < ApplicationController
   end
 
   def check_user_device_id
-    user = User.where("data->'device_id'=?",params[:device_id])
-    if user.present?
-      user = User.take
-      endpoint_arn = user.data["endpoint_arn"]
-      render json: [status: 1,endpoint_arn: endpoint_arn], status: 200
+    prev_users = User.where("data->'device_id'=?",params[:device_id])
+    if prev_users.present?
+      prev_user = prev_users.take
+      prev_arn = prev_user.data["endpoint_arn"]
+      if prev_arn.nil?
+        render json: {status: 0}, status: 200
+      else
+        p current_user = User.find_by_authentication_token(params[:auth_token])
+
+        if current_user.present?
+
+          if !current_user.data.nil?
+            endpoint_arn = current_user.data["endpoint_arn"]
+
+            if endpoint_arn.present?
+              render json: {status: 2, message:"exit user"}, status: 200
+            else
+              render json: {status: 1,endpoint_arn: prev_arn, message: "update arn"}, status: 200
+            end
+          else
+            render json: {status: 1,endpoint_arn: prev_arn, message: "update arn"}, status: 200
+
+          end
+
+        end
+
+      end
+
     else
-      render json: [status: 0], status: 200
+      render json: {status: 0,message: "register arn2"}, status: 200
 
     end
   end
