@@ -332,6 +332,17 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def check_user_device_id
+    user = User.where("data->'device_id'=?",params[:device_id])
+    if user.present?
+      user = User.take
+      endpoint_arn = user.data["endpoint_arn"]
+      render json: [status: 1,endpoint_arn: endpoint_arn], status: 200
+    else
+      render json: [status: 0], status: 200
+
+    end
+  end
 
   def register_apn
     # for pushwoosh token
@@ -354,7 +365,6 @@ class Api::UsersController < ApplicationController
         user = User.find_by_authentication_token(params[:auth_token])
         endpoint_arn = params[:endpoint_arn]
         User.update_data_column("endpoint_arn", endpoint_arn, user.id)
-
       end
 
       user = User.find(user.id)
