@@ -17,16 +17,20 @@
           %th Last Active
           %th email
       %tbody
-        -@users.each do |user|
+        -if @users.present?
+          -@users.each do |user|
+            %tr
+              %td=user.id
+              %td=link_to user.username, user_accounts_path(user.id)
+              %td=user.authentication_token
+              %td= user.check_in_time.present? ? time_ago_in_words(user.check_in_time) : "-"
+              %td=user.email rescue ''
+        -else
           %tr
-            %td=user.id
-            %td=link_to user.username, user_accounts_path(user.id)
-            %td=user.authentication_token
-            %td= user.check_in_time.present? ? time_ago_in_words(user.check_in_time) : "-"
-            %td=user.email rescue ''
+            %td{colspan: 5} There is no user for selected application.
     = paginate @users
 
-=link_to "back", hiveapplication_dev_portal_path , style:'float:right', class:'button tiny warning'
+=link_to "back", hiveapplication_dev_portal_path , style:'float:right;margin-top:15px;', class:'button tiny warning'
 
 :javascript
   function update_list(){
