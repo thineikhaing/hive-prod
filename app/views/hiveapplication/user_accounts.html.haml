@@ -1,48 +1,46 @@
 .row
   .large-centered.large-12.columns
     %h5=link_to "back", hiveapplication_users_path , style:'float:right'
-    %table.user_list
-      %thead
-        %tr
-          %th App Name
-          %th Sync?
-      %tbody
-        -if @syn_app.present?
-          -@syn_app.each do |key, value|
-            %tr
-              %td
-                =key
-              %td
-                =value
+    .table
+      .trow.header
+        .cell App Name
+        .cell Sync?
+      -if @syn_app.present?
+        -@syn_app.each do |key, value|
+          .trow
+            .cell=key
+            .cell=value
 
-    %h4 Topic
-    %table.user_list
-      %thead
-        %tr
-          %th Title
-      %tbody
+
+    %h4.utt Topic
+    .table
+      .trow.header.blue
+        .cell Title
+      -if @topics.present?
         -@topics.each do |topic|
-          %tr
-            %td
-              =topic.title
-        %tr
-          %td= paginate @topics , :param_name => "topic_page"
+          .trow
+            .cell=topic.title
+        .trow
+          .cell= paginate @topics , :param_name => "topic_page"
+      -else
+        .trow
+          .cell There is no topic yet.
 
-    %h4 Post
-    %table.user_list
-      %thead
-        %tr
-          %th Topic Title
-          %th Content
-      %tbody
+
+    %h4.utt Post
+    .table
+      .trow.header.green
+        .cell Topic Title
+        .cell Post Message
+      -if @posts.present?
         -@posts.each do |post|
-          %tr
-            %td
-              =post.topic.title rescue ''
-            %td
-              =post.content
-
-        %tr
-          %td= paginate @posts, :param_name => "post_page"
-
+          .trow
+            .cell=post.topic.title rescue ''
+            .cell=post.content
+        .trow
+          .cell= paginate @posts , :param_name => "post_page"
+          .cell=''
+      -else
+        .trow
+          .cell There is no post yet.
 
