@@ -1,21 +1,51 @@
 .row
-  .large-centered.large-12.columns
-    %h3 User Listing
-    %h5=link_to "back", hiveapplication_dev_portal_path , style:'float:right'
+  .large-4.columns{style:'float:right'}
+    %label Filter User by Application
+    =select_tag "application", options_for_select(HiveApplication.all.map{|h|[h.app_name, h.id]}), prompt: "All Users", onchange: "update_list()"
 
-    %table.tbl_applisting
-      %thead
-        %tr
-          %th id
-          %th User Name
-          %th email
-          %th auth
-      %tbody
-        -count = 0
-        -@users.each do |user|
+#display_user_list
+  .row
+    .large-centered.large-12.columns
+      %h3 User Listing
+      %table.tbl_applisting
+        %thead
           %tr
-            %td=user.id
-            %td=link_to user.username, user_accounts_path(user.id)
-            %td=user.email rescue ''
-            %td=user.authentication_token
-    = paginate @users
+            %th id
+            %th User Name
+            %th email
+            %th auth
+        %tbody
+          -@users.each do |user|
+            %tr
+              %td=user.id
+              %td=link_to user.username, user_accounts_path(user.id)
+              %td=user.email rescue ''
+              %td=user.authentication_token
+      = paginate @users
+  %h5=link_to "back", hiveapplication_dev_portal_path , style:'float:right'
+
+:javascript
+  function update_list(){
+    var element = document.getElementById("application");
+    var selectedText = element.options[element.selectedIndex].text;
+    var selectedValue = element.options[element.selectedIndex].value;
+    console.log(selectedText,selectedValue)
+
+    if(selectedText == "All Users"){
+      selectedValue = 0
+    }
+
+    $.ajax({
+          type: "GET",
+          data: {app_id:selectedValue},
+          success:function(html){
+            console.log(html)
+            var htmlobject = $(html);
+            var output = htmlobject.find("#display_user_list")[0];
+            var testing = new XMLSerializer().serializeToString(output);
+            $("#display_user_list").replaceWith(testing);
+
+          }
+      });
+
+  }

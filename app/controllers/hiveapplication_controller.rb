@@ -119,6 +119,18 @@ class HiveapplicationController < ApplicationController
       redirect_to root_url, alert: "Not authorized. Please login..."
     else
       @users = User.all.order("email desc").page params[:page]
+      if params[:app_id].present?
+        if (params[:app_id].to_i != 0)
+          hive = HiveApplication.find(params[:app_id])
+          @users = User.where("app_data ->'app_id#{hive.id}' = '#{hive.api_key}'").order("email desc").page params[:page]
+        end
+
+      end
+      respond_to do |format|
+        format.html
+        format.js
+      end
+
     end
 
   end
@@ -129,6 +141,23 @@ class HiveapplicationController < ApplicationController
     else
       @user = User.find(params[:id])
       @userAccount = UserAccount.where(user_id: params[:id])
+      @syn_app = Hash.new
+      HiveApplication.all.each do |hive|
+        unless @user.app_data.nil?
+          if @user.app_data["app_id#{hive.id}"] == hive.api_key
+            p hive.app_name
+            @syn_app["#{hive.app_name}"] = "yes"
+          else
+            @syn_app["#{hive.app_name}"] = "no"
+          end
+        else
+          @syn_app["#{hive.app_name}"] = "no"
+        end
+
+
+      end
+      p "syn_app"
+      p @syn_app
       @topics = Topic.where(user_id: params[:id]).page(params[:topic_page]).per(5)
       @posts = Post.where(user_id: params[:id]).page(params[:post_page]).per(5)
 

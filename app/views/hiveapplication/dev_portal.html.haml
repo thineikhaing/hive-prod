@@ -26,12 +26,7 @@
 -#.row
 -#  .large-12.columns
 -#    %h5=link_to "User list", hiveapplication_users_path , style:'float:right'
-.row
-  .columns.large-12
-    %span{style: "font-size: 22px"}
-      =link_to "Create Train Fault Topic/Alert", create_train_fault_alert_path
-    %span{style: "font-size: 22px;float:right"}
-      =link_to "Create Heavy Traffic Alert", sg_accident_histories_path
+
 
 .row{style: "margin: 20px;"}
   .large-centered.large-12.columns
@@ -94,6 +89,13 @@
                     %td
                       %span= link_to 'Edit TOPIC/POST', hiveapplication_edit_topic_post_path(:app_id=> hive_application.id)  , :class => 'label warning'
                       %span= link_to  'Delete',url_for(action: :delete_application,app_id: hive_application.id),data: {confirm: "Are you sure?"} 
+.row
+  .columns.large-4.large-centered
+
+    %ul#dashboard_links
+      %li=link_to "Create Train Fault Topic/Alert", create_train_fault_alert_path
+      %li=link_to "Create Heavy Traffic Alert", sg_accident_histories_path
+      %li=link_to "User Management", hiveapplication_users_path
 
 
 

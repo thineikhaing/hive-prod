@@ -1,44 +1,25 @@
 .row
   .large-centered.large-12.columns
-    %h4 User Accounts
     %h5=link_to "back", hiveapplication_users_path , style:'float:right'
-
     %table.user_list
       %thead
         %tr
           %th App Name
           %th Sync?
       %tbody
-        -if @userAccount.present?
-          -@userAccount.each do |acc|
+        -if @syn_app.present?
+          -@syn_app.each do |key, value|
             %tr
               %td
-                =acc.account_type
+                =key
               %td
-                yes
-        -else
-          %tr
-            %td Hive
-            %td no
-          %tr
-            %td MealBox
-            %td no
-          %tr
-            %td Carmmunicate
-            %td no
-          %tr
-            %td Socal
-            %td no
-          %tr
-            %td Favr
-            %td no
-
+                =value
 
     %h4 Topic
     %table.user_list
       %thead
         %tr
-          %th title
+          %th Title
       %tbody
         -@topics.each do |topic|
           %tr
@@ -51,10 +32,13 @@
     %table.user_list
       %thead
         %tr
+          %th Topic Title
           %th Content
       %tbody
         -@posts.each do |post|
           %tr
+            %td
+              =post.topic.title rescue ''
             %td
               =post.content
 

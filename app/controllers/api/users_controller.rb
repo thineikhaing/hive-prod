@@ -79,9 +79,12 @@ class Api::UsersController < ApplicationController
           app_data['app_id'+hiveapp.id.to_s] = app_key
         end
 
+        if hiveapp.present?
+          app_data['app_id'+hiveapp.id.to_s] = app_key
+        end
         # p "user by app_key"
         # p users = users.where("app_data ->'app_id#{app.id}' = '#{app.api_key}'")
-        # users = User.where("app_data ->'app_id7' =?", "95a729b4ba7f45bbf386d1639af342e5")
+        # users = User.where("app_data ->'app_id7' =?", "800d7dc5f6d074c679375801086d2f0f")
 
         user.app_data = app_data
         if params[:app_name]
@@ -165,6 +168,21 @@ class Api::UsersController < ApplicationController
             user.password = params[:password]
             user.password_confirmation = params[:password]
             user.token_expiry_date= Date.today + 6.months
+
+            if params[:app_key]
+              hiveapp = HiveApplication.find_by_api_key(params[:app_key])
+
+              if hiveapp.present?
+                app_data = Hash.new
+                app_data['app_id'+hiveapp.id.to_s] = params[:app_key]
+                p user.app_data
+                p "Merge data"
+                p user.app_data = user.app_data.merge(app_data)
+              end
+            end
+
+
+
             user.save!
 
             name = user.username

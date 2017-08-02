@@ -1,3 +1,18 @@
 // Place all the styles related to the home controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+#dashboard_links > li{
+  text-align: center;
+  width: 250px;
+  padding: 10px;
+  border: 1px solid grey;
+  margin-bottom: 10px;
+  background: orange;
+  a {
+    color:#fff;
+  }
+}
+#dashboard_links {
+  margin: 0 auto;
+}
