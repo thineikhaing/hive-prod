@@ -17,15 +17,21 @@ class HiveapplicationController < ApplicationController
     if params[:hive].present?
       if params[:hive][:login_password].present?
         if params[:hive][:login_password] == App_Password::Key
+
           redirect_to hiveapplication_index_path
         else
           #show error msg for wrong password
+          render layout: false
           flash.now[:notice] = "Wrong Password"
-          render layout: nil
+          # render layout: nil
+
         end
+      else
+        render layout: false
+        flash.now[:notice] = "Enter Password"
       end
     else
-      render layout: nil
+      render layout: false
     end
   end
 

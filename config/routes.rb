@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  root to: 'home#index'
+  root to: 'hiveapplication#login_page'
   post "dev_sign_in"              =>  'home#dev_sign_in'        , via: [:get, :post]
   # match "application_portal"      => "home#application_portal"  , as: "home/application_portal", via: [:get, :post]
   match "devapp_list"             =>  'home#devapp_list'        , via: [:get, :post]

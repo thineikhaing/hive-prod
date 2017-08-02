@@ -9,9 +9,9 @@
 
         = f.label :password
         = f.password_field :password , autocomplete: "off", class: "sign_in_input"
-        = f.submit "Login" , class: 'button tiny warning'  , style:'float:right'
+        = f.submit "Login" , class: 'button tiny warning'  , style:'float:right;margin-top: 10px;margin-bottom: 10px;'
         %br
-        .field{style:'float:right'}
+        .field
           = link_to "Forgot password?", hiveapplication_forget_password_path, style:'color: orange'
           |
           = link_to "Signup", hiveapplication_sign_up_path, style:'color: orange'
