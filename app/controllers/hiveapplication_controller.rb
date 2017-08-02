@@ -158,8 +158,8 @@ class HiveapplicationController < ApplicationController
       end
       p "syn_app"
       p @syn_app
-      @topics = Topic.where(user_id: params[:id]).page(params[:topic_page]).per(5)
-      @posts = Post.where(user_id: params[:id]).page(params[:post_page]).per(5)
+      @topics = Topic.where(user_id: params[:id]).order("created_at desc").page(params[:topic_page]).per(5)
+      @posts = Post.where(user_id: params[:id]).order("created_at desc").page(params[:post_page]).per(5)
 
     end
 

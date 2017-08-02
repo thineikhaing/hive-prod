@@ -23,37 +23,48 @@
             .cell=value
 
 
-    %h5.utt Topic
     .table
       .trow.header.blue
-        .cell Title
+        .cell Topic Title
+        .cell NumOfPost
+        .cell Create At
       -if @topics.present?
         -@topics.each do |topic|
           .trow
             .cell=topic.title
+            .cell=topic.posts.count
+            .cell=time_ago_in_words(topic.created_at) + ' ago'
         .trow
           .cell= paginate @topics , :param_name => "topic_page"
+          .cell=""
+          .cell=""
       -else
         .trow
           .cell There is no topic yet.
+          .cell=""
+          .cell=""
 
 
-    %h5.utt Post
+    %h5.utt Post Message
     .table{style:'margin-bottom:20px;'}
       .trow.header.green
         .cell Topic Title
-        .cell Post Message
+        .cell Message
+        .cell Created At
       -if @posts.present?
         -@posts.each do |post|
           .trow
             .cell=post.topic.title rescue ''
             .cell=post.content
+            .cell=time_ago_in_words(post.created_at) + ' ago'
         .trow
           .cell= paginate @posts , :param_name => "post_page"
+          .cell=''
           .cell=''
       -else
         .trow
           .cell There is no post yet.
+          .cell=''
           .cell=''
 
 %h5=link_to "back", hiveapplication_users_path , style:'float:right', class:'button tiny warning'
