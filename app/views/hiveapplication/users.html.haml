@@ -1,7 +1,8 @@
 .row
   .large-4.columns{style:'float:right'}
     %label{style:'color:orange;font-size:18px;'} Filter User by Application
-    =select_tag "application", options_for_select(HiveApplication.all.map{|h|[h.app_name, h.id]}), prompt: "All Users", onchange: "update_list()"
+    =select_tag "application", options_for_select(HiveApplication.all.map{|h|[h.app_name, h.id]}), prompt: "All Users",
+    onchange: "update_list()", style:'margin-bottom:0px;'
 
 
 .row#display_user_list
@@ -11,18 +12,21 @@
       %thead
         %tr
           %th id
-          %th User Name
-          %th email
+          %th user name
           %th auth
+          %th Last Active
+          %th email
       %tbody
         -@users.each do |user|
           %tr
             %td=user.id
             %td=link_to user.username, user_accounts_path(user.id)
-            %td=user.email rescue ''
             %td=user.authentication_token
+            %td= user.check_in_time.present? ? time_ago_in_words(user.check_in_time) : "-"
+            %td=user.email rescue ''
     = paginate @users
-%h5=link_to "back", hiveapplication_dev_portal_path , style:'float:right'
+
+=link_to "back", hiveapplication_dev_portal_path , style:'float:right', class:'button tiny warning'
 
 :javascript
   function update_list(){

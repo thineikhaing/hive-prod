@@ -39,7 +39,7 @@
 
 
     %h5.utt Post
-    .table
+    .table{style:'margin-bottom:20px;'}
       .trow.header.green
         .cell Topic Title
         .cell Post Message
@@ -56,4 +56,4 @@
           .cell There is no post yet.
           .cell=''
 
-%h5=link_to "back", hiveapplication_users_path , style:'float:right'
+%h5=link_to "back", hiveapplication_users_path , style:'float:right', class:'button tiny warning'
