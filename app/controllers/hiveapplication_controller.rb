@@ -146,20 +146,25 @@ class HiveapplicationController < ApplicationController
         unless @user.app_data.nil?
           if @user.app_data["app_id#{hive.id}"] == hive.api_key
             p hive.app_name
-            @syn_app["#{hive.app_name}"] = "yes"
+            @syn_app["#{hive.app_name}"] = "1"
           else
-            @syn_app["#{hive.app_name}"] = "no"
+            @syn_app["#{hive.app_name}"] = "0"
           end
         else
-          @syn_app["#{hive.app_name}"] = "no"
+          @syn_app["#{hive.app_name}"] = "0"
         end
 
 
       end
       p "syn_app"
       p @syn_app
-      @topics = Topic.where(user_id: params[:id]).order("created_at desc").page(params[:topic_page]).per(5)
-      @posts = Post.where(user_id: params[:id]).order("created_at desc").page(params[:post_page]).per(5)
+      @topics = Topic.where(user_id: params[:id]).order("created_at desc")
+      @topic_count = @topics.count
+      @topics= @topics.page(params[:topic_page]).per(5)
+
+      @posts = Post.where(user_id: params[:id]).order("created_at desc")
+      @post_count = @posts.count
+      @posts = @posts.page(params[:post_page]).per(5)
 
     end
 

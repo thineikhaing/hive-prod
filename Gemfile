@@ -62,6 +62,7 @@ gem "hstore_accessor"
 gem 'holidays'
 
 gem "puma_worker_killer"
+gem "font-awesome-rails"
 
 gem 'sinatra', github: 'sinatra'
 

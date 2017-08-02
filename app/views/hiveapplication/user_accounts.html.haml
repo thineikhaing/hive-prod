@@ -2,15 +2,17 @@
   .large-centered.large-12.columns
     .table{style:'margin-bottom:0px;'}
       .trow.header
-        .cell id
         .cell UserName
         .cell Auth_Token
         .cell Email
+        .cell Topic Count
+        .cell Post Count
       .trow
-        .cell=@user.id
         .cell=@user.username
         .cell=@user.authentication_token
         .cell=@user.email rescue '-'
+        .cell=@topic_count
+        .cell=@post_count
 
     .table
       .trow{style:'background:#fff;color:orange'}
@@ -18,13 +20,18 @@
         .cell Sync?
       -if @syn_app.present?
         -@syn_app.each do |key, value|
+
           .trow
             .cell=key
-            .cell=value
+            .cell
+              -if value.to_i == 1
+                %span.fa.fa-square{style:'color:green'}
+              -else
+                %span.fa.fa-square{style:'color:#ea6153'}
 
 
     .table
-      .trow.header.blue
+      .trow.header.green
         .cell Topic Title
         .cell NumOfPost
         .cell Create At
@@ -47,7 +54,7 @@
 
     %h5.utt Post Message
     .table{style:'margin-bottom:20px;'}
-      .trow.header.green
+      .trow.header.blue
         .cell Topic Title
         .cell Message
         .cell Created At
