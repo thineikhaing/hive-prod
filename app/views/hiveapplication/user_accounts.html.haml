@@ -1,8 +1,19 @@
 .row
   .large-centered.large-12.columns
-    %h5=link_to "back", hiveapplication_users_path , style:'float:right'
-    .table
+    .table{style:'margin-bottom:0px;'}
       .trow.header
+        .cell id
+        .cell UserName
+        .cell Auth_Token
+        .cell Email
+      .trow
+        .cell=@user.id
+        .cell=@user.username
+        .cell=@user.authentication_token
+        .cell=@user.email rescue '-'
+
+    .table
+      .trow{style:'background:#fff;color:orange'}
         .cell App Name
         .cell Sync?
       -if @syn_app.present?
@@ -12,7 +23,7 @@
             .cell=value
 
 
-    %h4.utt Topic
+    %h5.utt Topic
     .table
       .trow.header.blue
         .cell Title
@@ -27,7 +38,7 @@
           .cell There is no topic yet.
 
 
-    %h4.utt Post
+    %h5.utt Post
     .table
       .trow.header.green
         .cell Topic Title
@@ -43,4 +54,6 @@
       -else
         .trow
           .cell There is no post yet.
+          .cell=''
 
+%h5=link_to "back", hiveapplication_users_path , style:'float:right'
