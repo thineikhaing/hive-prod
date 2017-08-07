@@ -95,7 +95,7 @@ class HiveapplicationController < ApplicationController
       cur_user = Devuser.find(session[:session_devuser_id])
       p cur_user.role
 
-
+      @cur_user = cur_user
       if cur_user.present?
 
         if cur_user.role == 1
@@ -538,6 +538,7 @@ class HiveapplicationController < ApplicationController
       dev_user.verified = true
       dev_user.save!
 
+      flash[:notice] = "Account verification is successful"
       #delete the batched job which deactivate the dev user account
       jobs= Delayed::Job.all
       jobs.each do |job|
