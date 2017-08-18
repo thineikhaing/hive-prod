@@ -111,6 +111,10 @@ class Api::TopicsController < ApplicationController
               result["depature_time"]= params[:departure_time]
               result["arrival_time"]= params[:arrival_time]
             end
+
+            if params[:transport_type].present?
+              result["transport_type"]= params[:transport_type]
+            end
           end
 
 
