@@ -14,7 +14,12 @@ class Api::TopicsController < ApplicationController
           place_id = params[:place_id].to_i
         else
           #create place first if the place_id is null
-          place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
+          if params[:latitude].present?
+           place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
+          # else
+          #   place = Place.create_place_by_lat_lng(1.352083, 103.819836,current_user)
+          end
+
 
           if place.present?
             place_id = place.id
