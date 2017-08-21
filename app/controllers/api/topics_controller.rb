@@ -114,6 +114,7 @@ class Api::TopicsController < ApplicationController
 
             if params[:transport_type].present?
               result["transport_type"]= params[:transport_type]
+              result["color"]= params[:color]
             end
           end
 
