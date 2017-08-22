@@ -134,7 +134,6 @@ class Place < ActiveRecord::Base
     centerpoint = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], [e_latitude,e_longitude]])
 
     s_center_point = [s_latitude.to_f, s_longitude.to_f]
-    s_center_point = [1.3178829, 103.8435566]
     s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
     s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3]).last(50)
 
