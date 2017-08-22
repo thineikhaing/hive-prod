@@ -40,7 +40,7 @@ class Place < ActiveRecord::Base
     radius = 1 if radius.nil?
     center_point = [latitude.to_f, longitude.to_f]
     box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
-    places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
+    places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3]).last(50)
 
     topics_array = [ ]
 
@@ -134,35 +134,39 @@ class Place < ActiveRecord::Base
     centerpoint = Geocoder::Calculations.geographic_center([[s_latitude, s_longitude], [e_latitude,e_longitude]])
 
     s_center_point = [s_latitude.to_f, s_longitude.to_f]
+    s_center_point = [1.3178829, 103.8435566]
     s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
-    s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
+    s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3]).last(50)
 
     e_center_point = [e_latitude.to_f, e_longitude.to_f]
     e_box = Geocoder::Calculations.bounding_box(e_center_point, radius, {units: :km})
-    e_places = Place.where(latitude: e_box[0] .. e_box[2], longitude: e_box[1] .. e_box[3])
+    e_places = Place.where(latitude: e_box[0] .. e_box[2], longitude: e_box[1] .. e_box[3]).last(50)
 
     topics_array = [ ]
+    e_places.each do |place|
+      if place.start_places.present?
+        (topics_array << place.start_places.order("created_at asc").last(5)).flatten!
+      end
+
+      if place.end_places.present?
+        (topics_array << place.end_places.order("created_at asc").last(5)).flatten!
+      end
+
+      topics_array = topics_array.uniq{ |topic| [topic[:id]]}
+    end
 
     s_places.each do |place|
       if place.start_places.present?
-        (topics_array << place.start_places).flatten!
+        (topics_array << place.start_places.order("created_at asc").last(5)).flatten!
       end
 
       if place.end_places.present?
         # topics_array.merge(place.end_places)
-        (topics_array << place.end_places).flatten!
+        (topics_array << place.end_places.order("created_at asc").last(5)).flatten!
       end
 
-    end
+      topics_array = topics_array.uniq{ |topic| [topic[:id]]}
 
-    e_places.each do |place|
-      if place.start_places.present?
-        (topics_array << place.start_places).flatten!
-      end
-
-      if place.end_places.present?
-        (topics_array << place.end_places).flatten!
-      end
     end
 
 
@@ -171,17 +175,16 @@ class Place < ActiveRecord::Base
       p radius_between
       p centerpoint
       center_box = Geocoder::Calculations.bounding_box(centerpoint, radius, {units: :km})
-      center_places = Place.where(latitude: center_box[0] .. center_box[2], longitude: center_box[1] .. center_box[3])
+      center_places = Place.where(latitude: center_box[0] .. center_box[2], longitude: center_box[1] .. center_box[3]).last(50)
 
       center_places.each do |place|
         if place.start_places.present?
-          (topics_array << place.start_places).flatten!
+          (topics_array << place.start_places.order("created_at asc").last(5)).flatten!
         end
-
         if place.end_places.present?
-          (topics_array << place.end_places).flatten!
+          (topics_array << place.end_places.order("created_at asc").last(5)).flatten!
         end
-
+        topics_array = topics_array.uniq{ |topic| [topic[:id]]}
       end
     end
     #
@@ -191,25 +194,6 @@ class Place < ActiveRecord::Base
     else
       topics_array = [ ]
     end
-    # modify_topic = []
-    # topics_array.each do |topic|
-    #   p s_id = topic.rtplaces_information[:start_place][:id]
-    #   p e_id = topic.rtplaces_information[:end_place][:id]
-    #   s_fav = UserFavLocation.where(user_id: current_user.id, place_id: s_id).take
-    #   e_fav = UserFavLocation.where(user_id: current_user.id, place_id: e_id).take
-    #
-    #   topic.rtplaces_information[:start_place][:name] = s_fav.name if s_fav.present?
-    #   topic.rtplaces_information[:end_place][:name] = e_fav.name if e_fav.present?
-    #
-    # end
-
-
-    # a.sort {|x,y| y[:bar]<=>x[:bar]}
-    #     topics_array.sort_by { |k| k["id"] }
-
-
-    # p topics_array.count rescue '0'
-
   end
 
   # add_record("name", "latitude", "longitude", "address", "", "", 163, 333, "y-cZXxwrSXvtiyTGBzpf", "choice","img_url",category="",locality="",country="",postcode="")

@@ -652,7 +652,6 @@ class Api::TopicsController < ApplicationController
      render json: {topics:topics, topic_count: tcount, status: "nearest topics within start and end"}
     else
       render json: {status: "Params app_key must be presented"}
-
     end
   end
 
