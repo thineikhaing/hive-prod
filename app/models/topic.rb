@@ -1519,7 +1519,7 @@ class Topic < ActiveRecord::Base
                     start_place: self.rtplaces_information[:start_place][:name],
                     end_place:  self.rtplaces_information[:end_place][:name],
                     topic_username: self.username,
-                    place_name: self.place_information.name
+                    place_name: self.place_information.name,
                     create_at: self.created_at,
                     shared: true
                 }
@@ -1537,7 +1537,7 @@ class Topic < ActiveRecord::Base
                     start_place: self.rtplaces_information[:start_place][:name],
                     end_place:  self.rtplaces_information[:end_place][:name],
                     topic_username: self.username,
-                    place_name: self.place_information.name
+                    place_name: self.place_information.name,
                     create_at: self.created_at,
                     shared: true
                 }
