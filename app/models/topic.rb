@@ -1442,11 +1442,12 @@ class Topic < ActiveRecord::Base
     users_by_location = []
 
     radius = 1 if radius.nil?
+    center_users= ""
 
     center_point = [self.place.latitude.to_f, self.place.longitude.to_f]
     box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
     center_users = User.where(last_known_latitude: box[0] .. box[2], last_known_longitude: box[1] .. box[3])
-    center_users = center_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+    center_users_list = center_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
 
     s_center_point = [self.start_place.latitude.to_f, self.start_place.longitude.to_f]
     s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
@@ -1459,7 +1460,7 @@ class Topic < ActiveRecord::Base
     end_users = end_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
 
 
-    users_by_location = center_users +start_users+end_users
+    users_by_location = center_users_list +start_users+end_users
 
     users_by_location = users_by_location.uniq{ |user| [user[:id]]}
 
@@ -1482,12 +1483,16 @@ class Topic < ActiveRecord::Base
     time_allowance = Time.now - 1.day.ago
 
     users_by_location.each do |u|
+      p 'users by location'
+      p u.id
       if u.check_in_time.present?
         time_difference = Time.now - u.check_in_time
         if time_difference < time_allowance
 
           hash_array = u.data
           if hash_array.present? && u.id != self.user_id
+            p "user_id"
+            p u.id
             device_id = hash_array["device_id"] if  hash_array["device_id"].present?
             endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
             to_device_id.push(device_id)

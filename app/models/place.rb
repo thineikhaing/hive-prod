@@ -144,11 +144,11 @@ class Place < ActiveRecord::Base
     topics_array = [ ]
     e_places.each do |place|
       if place.start_places.present?
-        (topics_array << place.start_places.order("created_at asc").last(5)).flatten!
+        (topics_array << place.start_places.order("created_at asc")).flatten!
       end
 
       if place.end_places.present?
-        (topics_array << place.end_places.order("created_at asc").last(5)).flatten!
+        (topics_array << place.end_places.order("created_at asc")).flatten!
       end
 
       topics_array = topics_array.uniq{ |topic| [topic[:id]]}
@@ -156,12 +156,12 @@ class Place < ActiveRecord::Base
 
     s_places.each do |place|
       if place.start_places.present?
-        (topics_array << place.start_places.order("created_at asc").last(5)).flatten!
+        (topics_array << place.start_places.order("created_at asc")).flatten!
       end
 
       if place.end_places.present?
         # topics_array.merge(place.end_places)
-        (topics_array << place.end_places.order("created_at asc").last(5)).flatten!
+        (topics_array << place.end_places.order("created_at asc")).flatten!
       end
 
       topics_array = topics_array.uniq{ |topic| [topic[:id]]}
@@ -178,10 +178,10 @@ class Place < ActiveRecord::Base
 
       center_places.each do |place|
         if place.start_places.present?
-          (topics_array << place.start_places.order("created_at asc").last(5)).flatten!
+          (topics_array << place.start_places.order("created_at asc")).flatten!
         end
         if place.end_places.present?
-          (topics_array << place.end_places.order("created_at asc").last(5)).flatten!
+          (topics_array << place.end_places.order("created_at asc")).flatten!
         end
         topics_array = topics_array.uniq{ |topic| [topic[:id]]}
       end
