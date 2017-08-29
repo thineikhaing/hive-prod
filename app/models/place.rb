@@ -6,6 +6,9 @@ class Place < ActiveRecord::Base
   has_many :start_places , class_name: "Topic", foreign_key: "start_place_id",primary_key: :id
   has_many :end_places , class_name: "Topic", foreign_key: "end_place_id",primary_key: :id
 
+  has_many :depatures, class_name: "Trip", foreign_key: "start_place_id",primary_key: :id
+  has_many :arrivals, class_name: "Trip", foreign_key: "end_place_id",primary_key: :id
+
   # Setup hstore
   store_accessor :data
 

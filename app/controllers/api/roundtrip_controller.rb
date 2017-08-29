@@ -1,5 +1,10 @@
 class Api::RoundtripController < ApplicationController
   require 'google_maps_service'
+  after_filter  :set_access_control_headers
+
+  def set_access_control_headers
+    headers['Access-Control-Allow-Origin'] = '*'
+  end
 
   def get_route_by_travelMode
 # Setup API keys
@@ -905,6 +910,67 @@ class Api::RoundtripController < ApplicationController
     #
     render json:{status:"ok"}
 
+  end
+
+  def save_trip
+    route_hash = Hash.new
+    user_id = params[:user_id]
+    auth_token = params[:auth_token]
+    start_latlng = params[:start_latlng]
+    end_latlng = params[:end_latlng]
+    depature_name = params[:depature_name]
+    arrival_name = params[:arrival_name]
+    transit_mode = params[:transit_mode]
+    p "depature_time"
+    p depature_time = params[:depature_time].to_datetime
+    p arrival_time = params[:arrival_time].to_datetime
+    fare = params[:fare]
+
+    trip_route = params[:trip_route]
+    source=  params[:source]
+    total_distance = 0.0
+
+    if source == "onemap"
+      trip_route = params[:trip_route][:legs]
+      trip_route.each do |index,data|
+        distance = data[:distance].to_f
+        total_distance = total_distance + distance
+        mode = data[:mode]
+        from_detail = data[:from]
+        to_detail = data[:to]
+        geo_points = data[:legGeometry][:points]
+        short_name = ""
+        total_stops = ""
+        if data[:mode] != "WALK"
+          short_name = data[:routeShortName]
+          p total_stops = to_detail[:stopSequence].to_i - from_detail[:stopSequence].to_i
+        end
+        route_hash[index] = {
+            from: from_detail, to: to_detail, distance:distance, mode: mode,geo_point: geo_points,
+            short_name: short_name, total_stops: total_stops
+        }
+      end
+    end
+
+    tripData = Hash.new
+    tripData[:route_detail] = route_hash
+    tripData[:source] = source
+    p "Total distance ::::"
+    p total_distance =total_distance.round(2)
+    p transit_mode
+
+    trip = Trip.create(user_id: user_id, transit_mode: transit_mode,
+    depature_time: depature_time, arrival_time: arrival_time, distance: total_distance,fare: fare,
+    data: tripData,depart_latlng:start_latlng, arr_latlng: end_latlng,depature_name:depature_name,arrival_name:arrival_name)
+    trip = trip.save!
+
+     # trip_route
+    render json:{status:"ok"}
+  end
+
+  def get_trip
+    trips  = Trip.where(user_id: params[:user_id])
+    render json:{status:"ok",trips:trips}
   end
 
 end

@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
   has_many  :user_accounts
   has_many :car_action_logs
   has_many :places
-
+  has_many :trip
   has_many :user_fav_locations
 
   belongs_to :incident_history

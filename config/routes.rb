@@ -222,6 +222,8 @@ Rails.application.routes.draw do
     match "roundtrip/get_rt_privacy_policy"         => "roundtrip#get_rt_privacy_policy"    , via: [:get, :post]
     match "roundtrip/get_bus_arrival_time"         => "roundtrip#get_bus_arrival_time"    , via: [:get, :post]
     match "roundtrip/upload_rt_placeImage"   => "roundtrip#upload_rt_placeImage"    , via: [:get, :post]
+    match "roundtrip/save_trip"              => "roundtrip#save_trip"    , via: [:get, :post]
+    match "roundtrip/get_trip"              => "roundtrip#get_trip"    , via: [:get, :post]
   end
 
 end
