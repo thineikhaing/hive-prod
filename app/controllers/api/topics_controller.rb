@@ -736,8 +736,11 @@ class Api::TopicsController < ApplicationController
     if hive.present?
       topics = Topic.where(hiveapplication_id: hive.id, user_id: current_user.id)
       user_friend_list = UserFriendList.where(user_id: current_user.id)
+      trips = Trip.where(user_id: current_user.id)
 
-      render json: {topics: topics, topic_count: topics.count, user_friend_list: user_friend_list, friend_count: user_friend_list.count}, status: 200
+      render json: {topics: topics, topic_count: topics.count,
+                    trips: trips, trip_count: trips.count,
+                    user_friend_list: user_friend_list, friend_count: user_friend_list.count}, status: 200
     else
       render json: {message: "no topics"}
     end

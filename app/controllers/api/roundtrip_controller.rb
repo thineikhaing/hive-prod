@@ -964,8 +964,9 @@ class Api::RoundtripController < ApplicationController
     data: tripData,depart_latlng:start_latlng, arr_latlng: end_latlng,depature_name:depature_name,arrival_name:arrival_name)
     trip = trip.save!
 
+    user_trips  = Trip.where(user_id: user_id)
      # trip_route
-    render json:{status:"ok"}
+    render json:{status:"ok", trips: user_trips}
   end
 
   def get_trip
