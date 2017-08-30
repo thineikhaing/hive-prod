@@ -913,7 +913,8 @@ class Api::RoundtripController < ApplicationController
   end
 
   def save_trip
-    route_hash = Hash.new
+
+    route_hash = Hash.new []
     user_id = params[:user_id]
     auth_token = params[:auth_token]
     start_latlng = params[:start_latlng]
@@ -936,19 +937,22 @@ class Api::RoundtripController < ApplicationController
         distance = data[:distance].to_f
         total_distance = total_distance + distance
         mode = data[:mode]
-        from_detail = data[:from]
-        to_detail = data[:to]
+        p "from detail"
+        p from_detail = data[:from]
+        p from_detail[:name]
+        p "to detail"
+        p to_detail = data[:to]
         geo_points = data[:legGeometry][:points]
         short_name = ""
-        total_stops = ""
+        total_stops = 0
         if data[:mode] != "WALK"
           short_name = data[:routeShortName]
           p total_stops = to_detail[:stopSequence].to_i - from_detail[:stopSequence].to_i
         end
-        route_hash[index] = {
-            from: from_detail, to: to_detail, distance:distance, mode: mode,geo_point: geo_points,
-            short_name: short_name, total_stops: total_stops
-        }
+
+        route_hash[index] = { distance:distance, mode: mode,geo_point: geo_points,
+            short_name: short_name, total_stops: total_stops}
+
       end
     end
 
@@ -959,12 +963,18 @@ class Api::RoundtripController < ApplicationController
     p total_distance =total_distance.round(2)
     p transit_mode
 
+    # a.gsub!(/\"/, '\'')
+    #eval(a)
+
     trip = Trip.create(user_id: user_id, transit_mode: transit_mode,
     depature_time: depature_time, arrival_time: arrival_time, distance: total_distance,fare: fare,
     data: tripData,depart_latlng:start_latlng, arr_latlng: end_latlng,depature_name:depature_name,arrival_name:arrival_name)
     trip = trip.save!
 
-    user_trips  = Trip.where(user_id: user_id)
+     user_trips  = Trip.where(user_id: user_id)
+
+
+
      # trip_route
     render json:{status:"ok", trips: user_trips}
   end

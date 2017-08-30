@@ -733,12 +733,22 @@ class Api::TopicsController < ApplicationController
 
   def topics_by_user
     hive = HiveApplication.find_by_api_key(params[:app_key])
+    trip_detail =  []
     if hive.present?
       topics = Topic.where(hiveapplication_id: hive.id, user_id: current_user.id)
       user_friend_list = UserFriendList.where(user_id: current_user.id)
       trips = Trip.where(user_id: current_user.id)
+      
+      trips.each do |trip|
+        detail = trip.data["route_detail"]
+        detail = detail.gsub!(/\"/, '\'')
+        trip_detail.push(eval(detail))
+      end
 
-      render json: {topics: topics, topic_count: topics.count,
+      # a.gsub!(/\"/, '\'')
+      #eval(a)
+
+      render json: {trip_detail:trip_detail,topics: topics, topic_count: topics.count,
                     trips: trips, trip_count: trips.count,
                     user_friend_list: user_friend_list, friend_count: user_friend_list.count}, status: 200
     else
