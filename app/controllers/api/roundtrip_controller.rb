@@ -934,24 +934,44 @@ class Api::RoundtripController < ApplicationController
     if source == "onemap"
       trip_route = params[:trip_route][:legs]
       trip_route.each do |index,data|
+
+        f_detail =  Hash.new []
+        t_detail =  Hash.new []
+
         distance = data[:distance].to_f
         total_distance = total_distance + distance
         mode = data[:mode]
         p "from detail"
         p from_detail = data[:from]
-        p from_detail[:name]
+        from_name = from_detail[:name]
+        from_lat = from_detail[:lat]
+        from_lng = from_detail[:lon]
+
         p "to detail"
         p to_detail = data[:to]
+        to_name = to_detail[:name]
+        to_lat = to_detail[:lat]
+        to_lng = to_detail[:lon]
+
+        f_detail.merge!(name: from_name, lat: from_lat, lng: from_lng)
+        t_detail.merge!(name: to_name, lat: to_lat, lng: to_lng)
+
         geo_points = data[:legGeometry][:points]
         short_name = ""
         total_stops = 0
         if data[:mode] != "WALK"
+          total_stops = to_detail[:stopSequence].to_i - from_detail[:stopSequence].to_i
           short_name = data[:routeShortName]
-          p total_stops = to_detail[:stopSequence].to_i - from_detail[:stopSequence].to_i
+          from_stopSequence = from_detail[:stopSequence]
+          to_stopSequence = to_detail[:stopSequence]
+          f_detail.merge!(stopSequence: from_stopSequence)
+          t_detail.merge!(stopSequence: to_stopSequence)
         end
 
-        route_hash[index] = { distance:distance, mode: mode,geo_point: geo_points,
-            short_name: short_name, total_stops: total_stops}
+        route_hash[index] = {from:f_detail, to: t_detail,
+                             distance:distance, mode: mode,
+                             geo_point: geo_points,short_name: short_name,
+                             total_stops: total_stops}
 
       end
     end
@@ -970,7 +990,7 @@ class Api::RoundtripController < ApplicationController
     depature_time: depature_time, arrival_time: arrival_time, distance: total_distance,fare: fare,
     data: tripData,depart_latlng:start_latlng, arr_latlng: end_latlng,depature_name:depature_name,arrival_name:arrival_name)
     trip = trip.save!
-
+    #
      user_trips  = Trip.where(user_id: user_id)
 
 
