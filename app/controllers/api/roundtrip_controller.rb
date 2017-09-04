@@ -1036,6 +1036,7 @@ class Api::RoundtripController < ApplicationController
         tripData = Hash.new
         tripData[:route_detail] = route_hash
         tripData[:source] = source
+        tripData[:country] = country
         total_distance =total_distance.round(2)
         transit_mode
         # a.gsub!(/\"/, '\'')
