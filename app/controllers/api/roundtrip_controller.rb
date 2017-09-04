@@ -933,6 +933,7 @@ class Api::RoundtripController < ApplicationController
     arrival_time = params[:arrival_time].to_datetime
     fare = params[:fare]
     trip_route = params[:trip_route]
+    trip_eta = params[:trip_eta]
 
     category = ""
     locality=""
@@ -1037,8 +1038,9 @@ class Api::RoundtripController < ApplicationController
         tripData[:route_detail] = route_hash
         tripData[:source] = source
         tripData[:country] = country
-        total_distance =total_distance.round(2)
-        transit_mode
+        tripData[:trip_eta] = trip_eta
+        total_distance = total_distance.round(2)
+
         # a.gsub!(/\"/, '\'')
         #eval(a)
         trip = Trip.create(user_id: user_id,start_place_id: start_id,
