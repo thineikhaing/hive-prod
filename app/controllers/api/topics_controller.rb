@@ -741,7 +741,7 @@ class Api::TopicsController < ApplicationController
       
       trips.each do |trip|
         detail = trip.data["route_detail"]
-        detail = detail.gsub!(/\"/, '\'')
+        # detail = detail.gsub!(/\"/, '\'')
         trip_detail.push(eval(detail))
       end
 

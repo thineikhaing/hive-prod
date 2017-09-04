@@ -919,89 +919,180 @@ class Api::RoundtripController < ApplicationController
     auth_token = params[:auth_token]
     start_latlng = params[:start_latlng]
     end_latlng = params[:end_latlng]
-    depature_name = params[:depature_name]
-    arrival_name = params[:arrival_name]
-    transit_mode = params[:transit_mode]
-    p "depature_time"
-    p depature_time = params[:depature_time].to_datetime
-    p arrival_time = params[:arrival_time].to_datetime
-    fare = params[:fare]
 
-    trip_route = params[:trip_route]
+    s_lat = start_latlng.partition(',').first
+    s_lng = start_latlng.partition(',').last
+    e_lat = end_latlng.partition(',').first
+    e_lng = end_latlng.partition(',').last
+
+    arrival_name = params[:arrival_name]
+    depature_name = params[:depature_name]
     source=  params[:source]
+    transit_mode = params[:transit_mode]
+    depature_time = params[:depature_time].to_datetime
+    arrival_time = params[:arrival_time].to_datetime
+    fare = params[:fare]
+    trip_route = params[:trip_route]
+
+    category = ""
+    locality=""
+    country=""
+    postcode=""
+    img_url = nil
+    choice="others"
+    address = ""
+
+    start_id = 0
+    end_id = 0
     total_distance = 0.0
 
-    if source == "onemap"
-      trip_route = params[:trip_route][:legs]
-      trip_route.each do |index,data|
+ #    ActiveRecord::Base.connection.execute("TRUNCATE TABLE trips
+ # RESTART IDENTITY")
 
-        f_detail =  Hash.new []
-        t_detail =  Hash.new []
+    if params[:start_latlng]
+      p "start address"
+      p s_geo_localization = "#{s_lat},#{s_lng}"
+      s_query = Geocoder.search(s_geo_localization).first
+      p address = s_query.address
+      country = s_query.country
+      s_query.place_id
 
-        distance = data[:distance].to_f
-        total_distance = total_distance + distance
-        mode = data[:mode]
-        p "from detail"
-        p from_detail = data[:from]
-        from_name = from_detail[:name]
-        from_lat = from_detail[:lat]
-        from_lng = from_detail[:lon]
-
-        p "to detail"
-        p to_detail = data[:to]
-        to_name = to_detail[:name]
-        to_lat = to_detail[:lat]
-        to_lng = to_detail[:lon]
-
-        f_detail.merge!(name: from_name, lat: from_lat, lng: from_lng)
-        t_detail.merge!(name: to_name, lat: to_lat, lng: to_lng)
-
-        geo_points = data[:legGeometry][:points]
-        short_name = ""
-        total_stops = 0
-        if data[:mode] != "WALK"
-          total_stops = to_detail[:stopSequence].to_i - from_detail[:stopSequence].to_i
-          short_name = data[:routeShortName]
-          from_stopSequence = from_detail[:stopSequence]
-          to_stopSequence = to_detail[:stopSequence]
-          f_detail.merge!(stopSequence: from_stopSequence)
-          t_detail.merge!(stopSequence: to_stopSequence)
-        end
-
-        route_hash[index] = {from:f_detail, to: t_detail,
-                             distance:distance, mode: mode,
-                             geo_point: geo_points,short_name: short_name,
-                             total_stops: total_stops}
-
-      end
+      s_place = Place.new
+      start_place = s_place.add_record(depature_name, s_lat, s_lng, address, source,
+                                       "", nil, user_id, auth_token,
+                                       choice,img_url,category,locality,country,postcode)
+      p "start place info::::"
+      p start_id = start_place[:place].id
     end
 
-    tripData = Hash.new
-    tripData[:route_detail] = route_hash
-    tripData[:source] = source
-    p "Total distance ::::"
-    p total_distance =total_distance.round(2)
-    p transit_mode
+    if params[:end_latlng]
+      p "end address"
+      p e_geo_localization = "#{e_lat},#{e_lng}"
+      e_query = Geocoder.search(e_geo_localization).first
+      p address = e_query.address
+      country = e_query.country
+      e_query.place_id
 
-    # a.gsub!(/\"/, '\'')
-    #eval(a)
+      e_place = Place.new
+      end_place = e_place.add_record(arrival_name, e_lat, e_lng, address, source,
+                                     "", nil, user_id, auth_token,
+                                     choice,img_url,category,locality,country,postcode)
+      p "end end info::::"
+      p end_id = end_place[:place].id
 
-    trip = Trip.create(user_id: user_id, transit_mode: transit_mode,
-    depature_time: depature_time, arrival_time: arrival_time, distance: total_distance,fare: fare,
-    data: tripData,depart_latlng:start_latlng, arr_latlng: end_latlng,depature_name:depature_name,arrival_name:arrival_name)
-    trip = trip.save!
-    #
-     user_trips  = Trip.where(user_id: user_id)
+    end
+
+    prev_trip = Trip.where(user_id: user_id, start_place_id: start_id, end_place_id:end_id, transit_mode: transit_mode)
+
+    if prev_trip.present?
+      user_trips  = Trip.where(user_id: user_id)
+      render json:{status:"Trip is already exit.", trips: user_trips}
+    else
 
 
 
-     # trip_route
-    render json:{status:"ok", trips: user_trips}
+      if source.to_i == Place::ONEMAP
+        trip_route = params[:trip_route][:legs]
+        trip_route.each do |index,data|
+          f_detail =  Hash.new []
+          t_detail =  Hash.new []
+          distance = data[:distance].to_f
+          total_distance = total_distance + distance
+          mode = data[:mode]
+
+          from_detail = data[:from]
+          from_name = from_detail[:name]
+          from_lat = from_detail[:lat]
+          from_lng = from_detail[:lon]
+
+          to_detail = data[:to]
+          to_name = to_detail[:name]
+          to_lat = to_detail[:lat]
+          to_lng = to_detail[:lon]
+
+          f_detail.merge!(name: from_name, lat: from_lat, lng: from_lng)
+          t_detail.merge!(name: to_name, lat: to_lat, lng: to_lng)
+
+          geo_points = data[:legGeometry][:points]
+          short_name = ""
+          total_stops = 0
+
+          if data[:mode] != "WALK"
+            total_stops = to_detail[:stopSequence].to_i - from_detail[:stopSequence].to_i
+            short_name = data[:routeShortName]
+            from_stopSequence = from_detail[:stopSequence]
+            to_stopSequence = to_detail[:stopSequence]
+            f_detail.merge!(stopSequence: from_stopSequence)
+            t_detail.merge!(stopSequence: to_stopSequence)
+          end
+
+          route_hash[index] = {from:f_detail, to: t_detail,
+                               distance:distance, mode: mode,
+                               geo_point: geo_points,short_name: short_name,
+                               total_stops: total_stops}
+
+        end
+
+        tripData = Hash.new
+        tripData[:route_detail] = route_hash
+        tripData[:source] = source
+        total_distance =total_distance.round(2)
+        transit_mode
+        # a.gsub!(/\"/, '\'')
+        #eval(a)
+        trip = Trip.create(user_id: user_id,start_place_id: start_id,
+                           end_place_id: end_id,transit_mode: transit_mode,
+                           depature_time: depature_time, arrival_time: arrival_time,
+                           distance: total_distance, fare: fare, data: tripData,
+                           depart_latlng:start_latlng, arr_latlng: end_latlng,
+                           depature_name:depature_name,arrival_name:arrival_name)
+        trip = trip.save!
+
+        user_trips  = Trip.where(user_id: user_id)
+        render json:{status:"save user trip!", trips: user_trips}
+
+      else
+        user_trips  = Trip.where(user_id: user_id)
+        render json:{status:"saving google trip working in progess ...", trips: user_trips}
+      end
+
+
+
+    end
+
+
+
+
   end
 
   def get_trip
     trips  = Trip.where(user_id: params[:user_id])
     render json:{status:"ok",trips:trips}
+  end
+
+  def delete_trip
+    if current_user.present?
+      if params[:id].present?
+        trip_to_delete = Trip.find(params[:id])
+        if trip_to_delete.present?
+          trip_to_delete.destroy
+          trips = Trip.where(user_id: params[:user_id])
+          render json: {message: "Delete trip by id.", trips: trips}  , status: 200
+        end
+      elsif params[:ids].present?
+        p "selected id to delete"
+        p selected_ids = params[:ids].to_a
+
+        for i in 0..selected_ids.count-1
+          trip_id = selected_ids[i].to_i
+          Trip.find(trip_id).destroy
+        end
+        trips = Trip.where(user_id: params[:user_id])
+        render json: {message: "Delete trips by ids.", trips: trips}  , status: 200
+      end
+    else
+      render json:{error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
+    end
   end
 
 end

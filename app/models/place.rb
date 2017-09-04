@@ -244,7 +244,7 @@ class Place < ActiveRecord::Base
               latitude: latitude,
               longitude: longitude,
               address: address,
-              source: Place::OneMap,
+              source: 9,
               source_id: source_id,
               user_id: user_id,
               img_url: img_url,
@@ -268,7 +268,7 @@ class Place < ActiveRecord::Base
 
         return { place: place, status: 70 }
 
-      elsif source_id.present? && source.to_i == Place::GOTHERE
+      elsif source.to_i == Place::GOTHERE
 
         check_record = Place.find_by_postal_code(source_id)
 
@@ -299,7 +299,7 @@ class Place < ActiveRecord::Base
 
         return { place: place, status: 70 }
 
-      elsif source_id.present? && source.to_i == Place::FACTUAL
+      elsif source.to_i == Place::FACTUAL
         p "add record from factual"
 
         factual_result = factual.table("places").filters("factual_id" => "2e8e4a1a-3838-48a4-b8ed-f6d9c717a715").first
@@ -361,11 +361,10 @@ class Place < ActiveRecord::Base
 
         return { place: place, status: 70 }
 
-      elsif source_id.present? && source.to_i == Place::GOOGLE
+      elsif source.to_i == Place::GOOGLE
         p "add record from google"
         @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
         @spot = @client.spot(source_id.to_s)
-
         url = ""
 
         if img_url.present?
@@ -379,6 +378,7 @@ class Place < ActiveRecord::Base
           end
 
         end
+
         place = ""
 
         check_records = Place.where(name:@spot.name, source:7)
@@ -403,7 +403,6 @@ class Place < ActiveRecord::Base
               postal_code: @spot.postal_code,
               locality: locality)
         end
-
 
         p "place source id"
         p place
