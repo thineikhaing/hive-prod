@@ -1080,7 +1080,14 @@ class Api::RoundtripController < ApplicationController
         if trip_to_delete.present?
           trip_to_delete.destroy
           trips = Trip.where(user_id: params[:user_id])
-          render json: {message: "Delete trip by id.", trips: trips}  , status: 200
+
+          trip_detail =  []
+          trips.each do |trip|
+            detail = trip.data["route_detail"]
+            trip_detail.push(eval(detail))
+          end
+
+          render json: {message: "Delete trip by id.", trips: trips,trip_detail:trip_detail}  , status: 200
         end
       elsif params[:ids].present?
         p "selected id to delete"
@@ -1091,7 +1098,13 @@ class Api::RoundtripController < ApplicationController
           Trip.find(trip_id).destroy
         end
         trips = Trip.where(user_id: params[:user_id])
-        render json: {message: "Delete trips by ids.", trips: trips}  , status: 200
+        trip_detail =  []
+        trips.each do |trip|
+          detail = trip.data["route_detail"]
+          trip_detail.push(eval(detail))
+        end
+
+        render json: {message: "Delete trip by id.", trips: trips,trip_detail:trip_detail}  , status: 200
       end
     else
       render json:{error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400

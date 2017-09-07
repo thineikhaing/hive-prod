@@ -733,12 +733,12 @@ class Api::TopicsController < ApplicationController
 
   def topics_by_user
     hive = HiveApplication.find_by_api_key(params[:app_key])
-    trip_detail =  []
+
     if hive.present?
       topics = Topic.where(hiveapplication_id: hive.id, user_id: current_user.id)
       user_friend_list = UserFriendList.where(user_id: current_user.id)
       trips = Trip.where(user_id: current_user.id)
-      
+      trip_detail =  []
       trips.each do |trip|
         detail = trip.data["route_detail"]
         # detail = detail.gsub!(/\"/, '\'')
