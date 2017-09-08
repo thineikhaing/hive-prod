@@ -737,7 +737,7 @@ class Api::TopicsController < ApplicationController
     if hive.present?
       topics = Topic.where(hiveapplication_id: hive.id, user_id: current_user.id)
       user_friend_list = UserFriendList.where(user_id: current_user.id)
-      trips = Trip.where(user_id: current_user.id)
+      trips = Trip.where(user_id: current_user.id).order('id DESC')
       trip_detail =  []
       trips.each do |trip|
         detail = trip.data["route_detail"]

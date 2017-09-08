@@ -956,11 +956,12 @@ class Api::RoundtripController < ApplicationController
       s_query = Geocoder.search(s_geo_localization).first
       p address = s_query.address
       country = s_query.country
-      s_query.place_id
+      p "source_id?"
+      p s_query.place_id
 
       s_place = Place.new
-      start_place = s_place.add_record(depature_name, s_lat, s_lng, address, source,
-                                       "", nil, user_id, auth_token,
+      start_place = s_place.add_record(depature_name, s_lat, s_lng, address, 7,
+                                       s_query.place_id, nil, user_id, auth_token,
                                        choice,img_url,category,locality,country,postcode)
       p "start place info::::"
       p start_id = start_place[:place].id
@@ -975,8 +976,8 @@ class Api::RoundtripController < ApplicationController
       e_query.place_id
 
       e_place = Place.new
-      end_place = e_place.add_record(arrival_name, e_lat, e_lng, address, source,
-                                     "", nil, user_id, auth_token,
+      end_place = e_place.add_record(arrival_name, e_lat, e_lng, address, 7,
+                                     e_query.place_id, nil, user_id, auth_token,
                                      choice,img_url,category,locality,country,postcode)
       p "end end info::::"
       p end_id = end_place[:place].id
@@ -987,10 +988,9 @@ class Api::RoundtripController < ApplicationController
 
     if prev_trip.present?
       user_trips  = Trip.where(user_id: user_id)
-      render json:{status:"Trip is already exit.", trips: user_trips}
+      p "Trip already exit"
+      render json:{message:"Trip is already exit.", status: 20, trips: user_trips}
     else
-
-
 
       if source.to_i == Place::ONEMAP
         trip_route = params[:trip_route][:legs]
@@ -1034,37 +1034,88 @@ class Api::RoundtripController < ApplicationController
 
         end
 
-        tripData = Hash.new
-        tripData[:route_detail] = route_hash
-        tripData[:source] = source
-        tripData[:country] = country
-        tripData[:trip_eta] = trip_eta
-        total_distance = total_distance.round(2)
+      elsif source.to_i == Place::GOOGLE
+        trip_route = params[:trip_route][:legs]["0"][:steps]
+        trip_route.each do |index,data|
+          f_detail =  Hash.new []
+          t_detail =  Hash.new []
+          distance = data[:distance][:value].to_f
+          total_distance = total_distance + distance
+          travel_mode = data[:travel_mode]
 
-        # a.gsub!(/\"/, '\'')
-        #eval(a)
-        trip = Trip.create(user_id: user_id,start_place_id: start_id,
-                           end_place_id: end_id,transit_mode: transit_mode,
-                           depature_time: depature_time, arrival_time: arrival_time,
-                           distance: total_distance, fare: fare, data: tripData,
-                           depart_latlng:start_latlng, arr_latlng: end_latlng,
-                           depature_name:depature_name,arrival_name:arrival_name)
-        trip = trip.save!
+          from_detail = data[:start_location]
+          from_lat = from_detail[:lat]
+          from_lng = from_detail[:lng]
 
-        user_trips  = Trip.where(user_id: user_id)
-        render json:{status:"save user trip!", trips: user_trips}
+          to_detail = data[:end_location]
+          to_lat = to_detail[:lat]
+          to_lng = to_detail[:lng]
 
-      else
-        user_trips  = Trip.where(user_id: user_id)
-        render json:{status:"saving google trip working in progess ...", trips: user_trips}
+          f_detail.merge!(lat: from_lat, lng: from_lng)
+          t_detail.merge!(lat: to_lat, lng: to_lng)
+
+          geo_points = data[:polyline][:points]
+          short_name = ""
+          mode = ""
+          total_stops = 0
+
+          if travel_mode != "WALKING"
+            total_stops = data[:transit_details][:num_stops]
+            transit_name = data[:transit_details][:line][:name]
+            transit_color = data[:transit_details][:line][:color]
+            mode = data[:transit_details][:line][:vehicle][:type]
+
+            if mode == "SUBWAY"
+              if transit_name == "North South Line"
+                short_name = "NS"
+              elsif transit_name == "East West Line"
+                short_name = "EW"
+              elsif transit_name == "North Eest Line"
+                short_name = "NE"
+              elsif transit_name == "Circle Line"
+                short_name = "CC"
+              elsif transit_name == "Downtown Line"
+                short_name = "DT"
+              else
+                short_name = "LRT"
+              end
+            else
+              short_name = data[:transit_details][:line][:short_name]
+            end
+          else
+            mode = "WALK"
+          end
+
+          route_hash[index] = {from:f_detail, to: t_detail,
+                               distance:distance, mode: mode,
+                               geo_point: geo_points,short_name: short_name,
+                               transit_color:transit_color,total_stops: total_stops}
+
+        end
+
       end
 
+      tripData = Hash.new
+      tripData[:route_detail] = route_hash
+      tripData[:source] = source
+      tripData[:country] = country
+      tripData[:trip_eta] = trip_eta
+      total_distance = total_distance.round(2)
 
+      # a.gsub!(/\"/, '\'')
+      #eval(a)
+      trip = Trip.create(user_id: user_id,start_place_id: start_id,
+                         end_place_id: end_id,transit_mode: transit_mode,
+                         depature_time: depature_time, arrival_time: arrival_time,
+                         distance: total_distance, fare: fare, data: tripData,
+                         depart_latlng:start_latlng, arr_latlng: end_latlng,
+                         depature_name:depature_name,arrival_name:arrival_name)
+      trip = trip.save!
+
+      user_trips  = Trip.where(user_id: user_id)
+      render json:{status:"save user trip!",status: 21, trips: user_trips}
 
     end
-
-
-
 
   end
 
