@@ -1148,7 +1148,7 @@ class Api::RoundtripController < ApplicationController
           trip_id = selected_ids[i].to_i
           Trip.find(trip_id).destroy
         end
-        trips = Trip.where(user_id: params[:user_id])
+        trips = Trip.where(user_id: params[:user_id]).order('id DESC')
         trip_detail =  []
         trips.each do |trip|
           detail = trip.data["route_detail"]
