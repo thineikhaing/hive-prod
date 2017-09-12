@@ -83,7 +83,7 @@ class SgAccidentHistory < ActiveRecord::Base
 
       to_device_id = []
       user_id = []
-      time_allowance = Time.now - 30.minutes.ago
+      time_allowance = Time.now - 1.day.ago
       to_endpoint_arn = []
 
       users.each do |u|
