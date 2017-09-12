@@ -138,6 +138,7 @@ class SgAccidentHistory < ActiveRecord::Base
                     extra:  {
                         topic_id: topic.id,
                         topic_title: topic.title,
+                        place_name: topic.place_information[:name],
                         start_place: topic.rtplaces_information[:start_place][:name],
                         end_place:  topic.rtplaces_information[:end_place][:name],
                         topic_username: topic.username,
