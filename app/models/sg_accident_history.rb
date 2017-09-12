@@ -53,7 +53,7 @@ class SgAccidentHistory < ActiveRecord::Base
 
   def self.send_traffic_noti
     p "send traffic_noti"
-    sg_accident = SgAccidentHistory.where(notify: false).take
+    p sg_accident = SgAccidentHistory.where(notify: false).take
     if Rails.env.production?
       appID = PushWoosh_Const::RT_P_APP_ID
       round_key = RoundTrip_key::Production_Key
@@ -64,7 +64,7 @@ class SgAccidentHistory < ActiveRecord::Base
       appID = PushWoosh_Const::RT_S_APP_ID
       round_key = RoundTrip_key::Development_Key
     end
-
+    round_key = RoundTrip_key::Production_Key
 
     auth_hash = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
@@ -138,7 +138,7 @@ class SgAccidentHistory < ActiveRecord::Base
                     extra:  {
                         topic_id: topic.id,
                         topic_title: topic.title,
-                        place_name: topic.place_information[:name],
+                        place_name: topic.rtplaces_information[:start_place][:name],
                         start_place: topic.rtplaces_information[:start_place][:name],
                         end_place:  topic.rtplaces_information[:end_place][:name],
                         topic_username: topic.username,
@@ -158,6 +158,7 @@ class SgAccidentHistory < ActiveRecord::Base
                     extra:  {
                         topic_id: topic.id,
                         topic_title: topic.title,
+                        place_name: topic.rtplaces_information[:start_place][:name],
                         start_place: topic.rtplaces_information[:start_place][:name],
                         end_place:  topic.rtplaces_information[:end_place][:name],
                         topic_username: topic.username,
