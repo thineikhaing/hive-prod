@@ -1484,22 +1484,23 @@ class Topic < ActiveRecord::Base
     users_by_location.each do |u|
       p 'users by location'
       p u.id
-      if u.check_in_time.present?
-        time_difference = Time.now - u.check_in_time
-        if time_difference < time_allowance
-
-          hash_array = u.data
-          if hash_array.present? && u.id != self.user_id
-            p "user_id"
-            p u.id
-            device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-            endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
-            to_device_id.push(device_id)
-            to_endpoint_arn.push(endpoint_arn)
-            user_id.push(u.id)
-          end
-        end
+      hash_array = u.data
+      if hash_array.present? && u.id != self.user_id
+        p "user_id"
+        p u.id
+        device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+        endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
+        to_device_id.push(device_id)
+        to_endpoint_arn.push(endpoint_arn)
+        user_id.push(u.id)
       end
+      # if u.check_in_time.present?
+      #   time_difference = Time.now - u.check_in_time
+      #   if time_difference < time_allowance
+      #
+      #
+      #   end
+      # end
     end
 
     p "list of to_endpoint_arn"
