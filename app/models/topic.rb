@@ -1417,7 +1417,7 @@ class Topic < ActiveRecord::Base
         last_name = user_names[Integer(last_index)-1]
         last_name = last_name.gsub(/[^a-zA-Z ]/,'').gsub(/ +/,' ')
 
-        if last_name == url_two[Integer(url_two.length)-1]
+        if last_name.upcase == url_two[Integer(url_two.length)-1].upcase
           avatar_url = url
         end
 
