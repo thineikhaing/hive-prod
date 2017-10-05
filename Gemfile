@@ -69,6 +69,7 @@ gem 'sinatra', github: 'sinatra'
 gem 'rails_12factor', group: :production
 
 gem 'scout_apm'
+gem "rack-timeout"
 
 # gem 'request_store'
 

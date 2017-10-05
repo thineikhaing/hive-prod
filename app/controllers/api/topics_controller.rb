@@ -57,6 +57,9 @@ class Api::TopicsController < ApplicationController
         start_id = 0
         end_id = 0
 
+        p "params[:start_longitude]"
+        p params[:start_longitude]
+
         if params[:start_place_id] || params[:start_longitude]  || params[:start_longitude]  || params[:start_source_id]
           place = Place.new
           start_place = place.add_record(start_name, start_latitude, start_longitude, start_address, start_source, start_source_id, start_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
@@ -187,7 +190,7 @@ class Api::TopicsController < ApplicationController
           p params[:shared_rt]
           if params[:shared_rt].present? and hiveapplication.api_key == round_key
             p "notify to rt users"
-             topic.notify_roundtrip_users
+             topic.notify_ roundtrip_users
           end
 
           #increase like and dislike count
