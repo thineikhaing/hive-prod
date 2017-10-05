@@ -42,6 +42,8 @@ class Topic < ActiveRecord::Base
   #
   #enums for topic type
 
+  scope :this_month, -> { where(created_at: Time.now.beginning_of_month..Time.now.end_of_month) }
+
   enums %w(NORMAL IMAGE AUDIO VIDEO RPSGAME WEB POLL LUNCHEON FAVR CARMMUNICATE TRAINFAULT)
 
   enums %w(NONE FLARE BEACON STICKY PROMO COSHOOT QUESTION ERRAND)

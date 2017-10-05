@@ -51,7 +51,8 @@ class Place < ActiveRecord::Base
 
       places.each do |place|
         if place.start_places.present?
-          place.start_places.each do |topic|
+          topic_start_places = place.start_places.where("topics.created_at BETWEEN ? AND ?", Time.now.beginning_of_month, 2.months.from_now)
+          topic_start_places.each do |topic|
             if hive_id==1
               topics_array.push(topic)
             else
@@ -66,7 +67,8 @@ class Place < ActiveRecord::Base
 
       places.each do |place|
         if place.end_places.present?
-          place.end_places.each do |topic|
+          topic_end_places = place.end_places.where("topics.created_at BETWEEN ? AND ?", Time.now.beginning_of_month,  2.months.from_now)
+          topic_end_places.each do |topic|
             if hive_id==1
               topics_array.push(topic)
             else
@@ -82,7 +84,8 @@ class Place < ActiveRecord::Base
     else
       places.each do |place|
         if place.topics.present?
-          place.topics.each do |topic|
+          topic_places = place.topics.where("topics.created_at BETWEEN ? AND ?", Time.now.beginning_of_month,  2.months.from_now)
+          topic_places.each do |topic|
             if hive_id==1
               topics_array.push(topic)
             else
@@ -96,6 +99,8 @@ class Place < ActiveRecord::Base
       end
 
     end
+
+    p "1 year topics "
 
 
     if topics_array.present?
@@ -144,14 +149,16 @@ class Place < ActiveRecord::Base
     e_box = Geocoder::Calculations.bounding_box(e_center_point, radius, {units: :km})
     e_places = Place.where(latitude: e_box[0] .. e_box[2], longitude: e_box[1] .. e_box[3])
 
+    time_allowance = Time.now - 1.month.ago
+
     topics_array = [ ]
     e_places.each do |place|
       if place.start_places.present?
-        (topics_array << place.start_places.order("created_at asc")).flatten!
+        (topics_array << place.start_places.where("topics.created_at BETWEEN ? AND ?", Time.now.beginning_of_month, 2.months.from_now).order("created_at asc")).flatten!
       end
 
       if place.end_places.present?
-        (topics_array << place.end_places.order("created_at asc")).flatten!
+        (topics_array << place.end_places.where("topics.created_at BETWEEN ? AND ?", Time.now.beginning_of_month, 2.months.from_now).order("created_at asc")).flatten!
       end
 
       topics_array = topics_array.uniq{ |topic| [topic[:id]]}
@@ -159,12 +166,12 @@ class Place < ActiveRecord::Base
 
     s_places.each do |place|
       if place.start_places.present?
-        (topics_array << place.start_places.order("created_at asc")).flatten!
+        (topics_array << place.start_places.where("topics.created_at BETWEEN ? AND ?", Time.now.beginning_of_month, 2.months.from_now).order("created_at asc")).flatten!
       end
 
       if place.end_places.present?
         # topics_array.merge(place.end_places)
-        (topics_array << place.end_places.order("created_at asc")).flatten!
+        (topics_array << place.end_places.where("topics.created_at BETWEEN ? AND ?", Time.now.beginning_of_month, 2.months.from_now).order("created_at asc")).flatten!
       end
 
       topics_array = topics_array.uniq{ |topic| [topic[:id]]}
@@ -181,10 +188,10 @@ class Place < ActiveRecord::Base
 
       center_places.each do |place|
         if place.start_places.present?
-          (topics_array << place.start_places.order("created_at asc")).flatten!
+          (topics_array << place.start_places.where("topics.created_at BETWEEN ? AND ?", Time.now.beginning_of_month, 2.months.from_now).order("created_at asc")).flatten!
         end
         if place.end_places.present?
-          (topics_array << place.end_places.order("created_at asc")).flatten!
+          (topics_array << place.end_places.where("topics.created_at BETWEEN ? AND ?", Time.now.beginning_of_month, 2.months.from_now).order("created_at asc")).flatten!
         end
         topics_array = topics_array.uniq{ |topic| [topic[:id]]}
       end
