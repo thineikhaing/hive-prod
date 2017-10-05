@@ -43,7 +43,7 @@ class Place < ActiveRecord::Base
     radius = 1 if radius.nil?
     center_point = [latitude.to_f, longitude.to_f]
     box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
-    places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3]).last(50)
+    places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
 
     topics_array = [ ]
 
@@ -138,11 +138,11 @@ class Place < ActiveRecord::Base
 
     s_center_point = [s_latitude.to_f, s_longitude.to_f]
     s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
-    s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3]).last(50)
+    s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
 
     e_center_point = [e_latitude.to_f, e_longitude.to_f]
     e_box = Geocoder::Calculations.bounding_box(e_center_point, radius, {units: :km})
-    e_places = Place.where(latitude: e_box[0] .. e_box[2], longitude: e_box[1] .. e_box[3]).last(50)
+    e_places = Place.where(latitude: e_box[0] .. e_box[2], longitude: e_box[1] .. e_box[3])
 
     topics_array = [ ]
     e_places.each do |place|
@@ -177,7 +177,7 @@ class Place < ActiveRecord::Base
       p radius_between
       p centerpoint
       center_box = Geocoder::Calculations.bounding_box(centerpoint, radius, {units: :km})
-      center_places = Place.where(latitude: center_box[0] .. center_box[2], longitude: center_box[1] .. center_box[3]).last(50)
+      center_places = Place.where(latitude: center_box[0] .. center_box[2], longitude: center_box[1] .. center_box[3])
 
       center_places.each do |place|
         if place.start_places.present?
@@ -560,6 +560,7 @@ class Place < ActiveRecord::Base
     p "Place GEO lat|lng"
     p latitude
     p longitude
+    p current_user
 
 
     if geocoder.present? and geocoder.address.present?
