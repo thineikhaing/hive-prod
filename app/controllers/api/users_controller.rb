@@ -366,7 +366,7 @@ class Api::UsersController < ApplicationController
             endpoint_arn = current_user.data["endpoint_arn"]
 
             if endpoint_arn.present?
-              render json: {status: 2, message:"exit user"}, status: 200
+              render json: {status: 2,endpoint_arn: prev_arn, message:"exit user"}, status: 200
             else
               render json: {status: 1,endpoint_arn: prev_arn, message: "update arn"}, status: 200
             end
