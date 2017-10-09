@@ -358,6 +358,7 @@ class Api::UsersController < ApplicationController
       prev_user = prev_users.take
       p "previous user arn"
       p prev_arn = prev_user.data["endpoint_arn"]
+      prev_device_id = prev_user.data["device_id"]
 
 
       if prev_arn.nil?
@@ -385,8 +386,9 @@ class Api::UsersController < ApplicationController
                   p "EndpointDelete Exception"
                 end
 
-                current_user.data["endpoint_arn"] = prev_arn
-                current_user.save!
+                 current_user.data["endpoint_arn"] = prev_arn
+                 current_user.data["device_id"] = prev_device_id
+                 current_user.save!
               else
 
               end
