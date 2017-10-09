@@ -29,7 +29,6 @@ class Topic < ActiveRecord::Base
     Thread.current[:current_user]
   end
 
-
   # hstore_accessor :options,
   #                 color: :string,
   #     weight: :integer,

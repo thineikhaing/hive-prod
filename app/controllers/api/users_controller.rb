@@ -352,23 +352,47 @@ class Api::UsersController < ApplicationController
 
   def check_user_device_id
     prev_users = User.where("data->'device_id'=?",params[:device_id])
+
+
     if prev_users.present?
       prev_user = prev_users.take
-      prev_arn = prev_user.data["endpoint_arn"]
+      p "previous user arn"
+      p prev_arn = prev_user.data["endpoint_arn"]
+
+
       if prev_arn.nil?
-        render json: {status: 0}, status: 200
+        render json: {status: 0,message: "register arn2"}, status: 200
       else
         p current_user = User.find_by_authentication_token(params[:auth_token])
 
         if current_user.present?
 
           if !current_user.data.nil?
-            endpoint_arn = current_user.data["endpoint_arn"]
+            p "current user arn"
+            p endpoint_arn = current_user.data["endpoint_arn"]
 
             if endpoint_arn.present?
-              render json: {status: 2,endpoint_arn: prev_arn, message:"exit user"}, status: 200
+              if (prev_arn.to_s != endpoint_arn.to_s)
+                 p "delte and update arn"
+                sns = Aws::SNS::Client.new
+                begin
+                  sns.delete_endpoint({endpoint_arn: endpoint_arn})
+                  sns.set_endpoint_attributes({
+                    endpoint_arn: prev_arn.to_s,
+                    attributes: { CustomUserData: current_user.id.to_s},
+                                                        })
+                rescue
+                  p "EndpointDelete Exception"
+                end
+
+                current_user.data["endpoint_arn"] = prev_arn
+                current_user.save!
+              else
+
+              end
+              render json: {status: 2,endpoint_arn: prev_arn, current_user_arn: endpoint_arn, message:"exit user"}, status: 200
             else
-              render json: {status: 1,endpoint_arn: prev_arn, message: "update arn"}, status: 200
+              render json: {status: 1,endpoint_arn: prev_arn, current_user_arn: nil,message: "update arn"}, status: 200
             end
           else
             render json: {status: 1,endpoint_arn: prev_arn, message: "update arn"}, status: 200
