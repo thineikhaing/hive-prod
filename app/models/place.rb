@@ -81,6 +81,22 @@ class Place < ActiveRecord::Base
         end
       end
 
+      places.each do |place|
+        if place.topics.present?
+          topic_places = place.topics.where("topics.created_at BETWEEN ? AND ?",  3.months.ago, Time.now).order("created_at asc")
+          topic_places.each do |topic|
+            if hive_id==1
+              topics_array.push(topic)
+            else
+              if topic.hiveapplication_id == hive_id
+                topics_array.push(topic)
+              end
+            end
+
+          end
+        end
+      end
+
     else
       places.each do |place|
         if place.topics.present?
