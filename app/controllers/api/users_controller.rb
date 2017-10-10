@@ -428,6 +428,12 @@ class Api::UsersController < ApplicationController
         end
       end
 
+      if user_token.present?
+        user = User.find_by_authentication_token(params[:auth_token])
+        device_id = params[:push_token]
+        User.update_data_column("device_id", device_id, user.id)
+      end
+
       if params[:endpoint_arn].present?     #for amazon sns token
         user = User.find_by_authentication_token(params[:auth_token])
         endpoint_arn = params[:endpoint_arn]
@@ -717,6 +723,14 @@ class Api::UsersController < ApplicationController
 
         if params[:avatar_url].present?
           user.avatar_url = params[:avatar_url]
+        end
+
+        if params[:device_id].present?
+          User.update_data_column("device_id", params[:device_id], user.id)
+        end
+
+        if params[:endpoint_arn].present?
+          User.update_data_column("endpoint_arn", params[:endpoint_arn], user.id)
         end
 
         user.save!
