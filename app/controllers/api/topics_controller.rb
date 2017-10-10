@@ -57,7 +57,7 @@ class Api::TopicsController < ApplicationController
         start_id = 0
         end_id = 0
 
-        start_place = place.add_record("boon keng", "1.319582", "103.861938", "", 0, 0, nil, 1, "GsdaMJmx2uRjPcVsmuff", nil,nil,nil,nil,nil,nil)
+        # start_place = place.add_record("Marina South Pier MRT", "1.2713367", "103.8628598", "", 0, 0, nil, 1, "GsdaMJmx2uRjPcVsmuff", nil,nil,nil,nil,nil,nil)
 
 
         if params[:start_place_id] || params[:start_longitude]  || params[:start_longitude]  || params[:start_source_id]
