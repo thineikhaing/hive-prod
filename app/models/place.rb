@@ -463,14 +463,25 @@ class Place < ActiveRecord::Base
             place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, category: "Food and Dining",img_url: img_url,country: country,postal_code: postcode,locality: locality) unless place.present?
           else
 
+
             geocoder = Geocoder.search("#{latitude},#{longitude}").first
             if geocoder.present? and geocoder.address.present?
+
               check = Place.find_by_address(geocoder.address)
               check.present? ? place = check : place = Place.create(name: geocoder.address, latitude: latitude, longitude: longitude,
                   address: geocoder.address, source: source, source_id: source_id, user_id: user_id,
                   img_url: img_url,category: category,country: geocoder.country,
                   postal_code: geocoder.postal_code,locality: locality) unless place.present?
             end
+            p "check name"
+            p name
+
+            if name.include?("MRT")
+              place.name = name
+            else
+              place.name = geocoder.address
+            end
+            place.save!
 
             # if name.present?
             #   place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, img_url: img_url,category: category,country: country,postal_code: postcode,locality: locality) unless place.present?
