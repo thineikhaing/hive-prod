@@ -428,11 +428,11 @@ class Api::UsersController < ApplicationController
         end
       end
 
-      if user_token.present?
-        user = User.find_by_authentication_token(params[:auth_token])
-        device_id = params[:push_token]
-        User.update_data_column("device_id", device_id, user.id)
-      end
+      # if user_token.present?
+      #   user = User.find_by_authentication_token(params[:auth_token])
+      #   device_id = params[:push_token]
+      #   User.update_data_column("device_id", device_id, user.id)
+      # end
 
       if params[:endpoint_arn].present?     #for amazon sns token
         user = User.find_by_authentication_token(params[:auth_token])
@@ -725,13 +725,13 @@ class Api::UsersController < ApplicationController
           user.avatar_url = params[:avatar_url]
         end
 
-        if params[:device_id].present?
-          User.update_data_column("device_id", params[:device_id], user.id)
-        end
-
-        if params[:endpoint_arn].present?
-          User.update_data_column("endpoint_arn", params[:endpoint_arn], user.id)
-        end
+        # if params[:device_id].present?
+        #   User.update_data_column("device_id", params[:device_id], user.id)
+        # end
+        #
+        # if params[:endpoint_arn].present?
+        #   User.update_data_column("endpoint_arn", params[:endpoint_arn], user.id)
+        # end
 
         user.save!
         render json: { :user => user, local_avatar: Topic.get_avatar(user.username), :success => 30 }, status: 200
