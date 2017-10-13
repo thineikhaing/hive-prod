@@ -3,7 +3,6 @@ source 'https://rubygems.org'
 ruby '2.3.1'
 #gem 'rails', :git => 'git://github.com/rails/rails.git', :tag => 'v4.1.0.beta1'
 gem 'rails'
-# gem 'thin'
 gem 'puma'
 gem 'sprockets-rails'
 gem 'haml-rails'
@@ -49,7 +48,7 @@ gem 'rqrcode_png'
 gem 'rack-timeout'
 gem 'kaminari'
 gem "svy21"
-gem 'rufus-scheduler'
+# gem 'rufus-scheduler'
 gem 'gmaps4rails'
 gem 'sass'
 gem 'sass-rails'
@@ -68,7 +67,8 @@ gem 'sinatra', github: 'sinatra'
 
 gem 'rails_12factor', group: :production
 
-gem 'scout_apm'
+# gem 'scout_apm'
+gem 'twitter'
 
 # gem 'request_store'
 

@@ -225,6 +225,8 @@ Rails.application.routes.draw do
     match "roundtrip/save_trip"                     => "roundtrip#save_trip"    , via: [:get, :post]
     match "roundtrip/get_trip"                      => "roundtrip#get_trip"    , via: [:get, :post]
     match "roundtrip/delete_trip"                   => "roundtrip#delete_trip"    , via: [:get, :post]
+    match "roundtrip/get_smrt_tweets"               => "roundtrip#get_smrt_tweets"    , via: [:get, :post]
+
   end
 
 end

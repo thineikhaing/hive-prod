@@ -45,7 +45,7 @@ Hive::Application.configure do
   # Use a different cache store in production
   config.cache_store = :memory_store
 
-  config.active_record.raise_in_transactional_callbacks = true
+  # config.active_record.raise_in_transactional_callbacks = true
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"

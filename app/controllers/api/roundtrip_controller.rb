@@ -1,6 +1,7 @@
 class Api::RoundtripController < ApplicationController
   require 'google_maps_service'
-  after_filter  :set_access_control_headers
+  require 'twitter'
+  after_action  :set_access_control_headers
 
   def set_access_control_headers
     headers['Access-Control-Allow-Origin'] = '*'
@@ -1096,6 +1097,32 @@ class Api::RoundtripController < ApplicationController
     else
       render json:{error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
     end
+  end
+
+  def get_smrt_tweets
+    tweets = []
+    raw_tweets = []
+    $twitter_client.search("from:SMRT_Singapore", result_type: "recent").collect do |tweet|
+      raw_tweets.push(tweet)
+      screen_name = tweet.user.screen_name
+      text = tweet.text
+      p created_at = tweet.created_at
+      p created_at = tweet.created_at.dup.localtime.strftime("%Y-%m-%d %I:%M%P")
+      hashtags = tweet.hashtags
+      tags  = []
+      hashtags.each do |tag|
+        tags.push(tag.text)
+      end
+      # tweet_data = [text: text, created_at: created_at,hashtags:tags]
+
+      if((Date.today-7.days)) < Date.parse(created_at)
+        tweet_data = [text: text, created_at: created_at,hashtags:tags]
+        tweets.push(tweet_data)
+      end
+    end
+
+    render json: {tweets:tweets, count: tweets.count}  , status: 200
+
   end
 
 end
