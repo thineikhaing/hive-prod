@@ -1171,7 +1171,7 @@ class Api::RoundtripController < ApplicationController
       screen_name = tweet.user.screen_name
       text = tweet.text
       p created_at = tweet.created_at
-      p created_at = tweet.created_at.dup.localtime.strftime("%Y-%m-%d %I:%M%P")
+      p created_at = tweet.created_at.dup.localtime.strftime("%b-%d %I:%M%p %a")
       hashtags = tweet.hashtags
       tags  = []
       hashtags.each do |tag|
@@ -1186,8 +1186,8 @@ class Api::RoundtripController < ApplicationController
     end
 
     render json: {tweets:tweets, count: tweets.count}  , status: 200
-
   end
+
 
 end
 
