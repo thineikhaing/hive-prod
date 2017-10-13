@@ -70,6 +70,8 @@ gem 'rails_12factor', group: :production
 
 # gem 'scout_apm'
 gem 'twitter'
+gem 'tweetstream'
+
 
 gem "rack-timeout"
 

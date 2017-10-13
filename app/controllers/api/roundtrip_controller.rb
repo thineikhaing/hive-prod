@@ -1168,10 +1168,8 @@ class Api::RoundtripController < ApplicationController
     raw_tweets = []
     $twitter_client.search("from:SMRT_Singapore", result_type: "recent").collect do |tweet|
       raw_tweets.push(tweet)
-      screen_name = tweet.user.screen_name
       text = tweet.text
-      p created_at = tweet.created_at
-      p created_at = tweet.created_at.dup.localtime.strftime("%b-%d %I:%M%p %a")
+      created_at = tweet.created_at.dup.localtime.strftime("%b-%d %I:%M%p %a")
       hashtags = tweet.hashtags
       tags  = []
       hashtags.each do |tag|
@@ -1185,7 +1183,7 @@ class Api::RoundtripController < ApplicationController
       end
     end
 
-    render json: {tweets:tweets, count: tweets.count}  , status: 200
+    render json: {tweets:tweets, count: tweets.count,raw_tweets:raw_tweets}  , status: 200
   end
 
 

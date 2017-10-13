@@ -1,4 +1,5 @@
 require 'twitter'
+require 'tweetstream'
 $twitter_client = Twitter::REST::Client.new do |config|
   config.consumer_key = "hdMoJNMnJyeGwfkQBnJts4F68"
   config.consumer_secret = "swTNVaTZwt4ykzxX48s2VQv1X6FGjX0Q2WLr3ctF9IrWpGRd3z"
