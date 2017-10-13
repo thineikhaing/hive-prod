@@ -57,6 +57,7 @@
 #  CarActionLog.delete_all
 #end
 
+
 # scheduler.every 2.minutes do
 #   p "UAT remote test!"
 #   SgAccidentHistory.test_ygn_device_remotenoti

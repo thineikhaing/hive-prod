@@ -57,6 +57,9 @@ class Api::TopicsController < ApplicationController
         start_id = 0
         end_id = 0
 
+        # start_place = place.add_record("Marina South Pier MRT", "1.2713367", "103.8628598", "", 0, 0, nil, 1, "GsdaMJmx2uRjPcVsmuff", nil,nil,nil,nil,nil,nil)
+
+
         if params[:start_place_id] || params[:start_longitude]  || params[:start_longitude]  || params[:start_source_id]
           place = Place.new
           start_place = place.add_record(start_name, start_latitude, start_longitude, start_address, start_source, start_source_id, start_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
@@ -733,12 +736,12 @@ class Api::TopicsController < ApplicationController
 
   def topics_by_user
     hive = HiveApplication.find_by_api_key(params[:app_key])
-    trip_detail =  []
+
     if hive.present?
       topics = Topic.where(hiveapplication_id: hive.id, user_id: current_user.id)
       user_friend_list = UserFriendList.where(user_id: current_user.id)
-      trips = Trip.where(user_id: current_user.id)
-      
+      trips = Trip.where(user_id: current_user.id).order('id DESC')
+      trip_detail =  []
       trips.each do |trip|
         detail = trip.data["route_detail"]
         # detail = detail.gsub!(/\"/, '\'')

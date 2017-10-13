@@ -352,23 +352,49 @@ class Api::UsersController < ApplicationController
 
   def check_user_device_id
     prev_users = User.where("data->'device_id'=?",params[:device_id])
+
+
     if prev_users.present?
       prev_user = prev_users.take
-      prev_arn = prev_user.data["endpoint_arn"]
+      p "previous user arn"
+      p prev_arn = prev_user.data["endpoint_arn"]
+      prev_device_id = prev_user.data["device_id"]
+
+
       if prev_arn.nil?
-        render json: {status: 0}, status: 200
+        render json: {status: 0,message: "register arn2"}, status: 200
       else
         p current_user = User.find_by_authentication_token(params[:auth_token])
 
         if current_user.present?
 
           if !current_user.data.nil?
-            endpoint_arn = current_user.data["endpoint_arn"]
+            p "current user arn"
+            p endpoint_arn = current_user.data["endpoint_arn"]
 
             if endpoint_arn.present?
-              render json: {status: 2, message:"exit user"}, status: 200
+              if (prev_arn.to_s != endpoint_arn.to_s)
+                 p "delte and update arn"
+                sns = Aws::SNS::Client.new
+                begin
+                  sns.delete_endpoint({endpoint_arn: endpoint_arn})
+                  sns.set_endpoint_attributes({
+                    endpoint_arn: prev_arn.to_s,
+                    attributes: { CustomUserData: current_user.id.to_s},
+                                                        })
+                rescue
+                  p "EndpointDelete Exception"
+                end
+
+                 current_user.data["endpoint_arn"] = prev_arn
+                 current_user.data["device_id"] = prev_device_id
+                 current_user.save!
+              else
+
+              end
+              render json: {status: 2,endpoint_arn: prev_arn, current_user_arn: endpoint_arn, message:"exit user"}, status: 200
             else
-              render json: {status: 1,endpoint_arn: prev_arn, message: "update arn"}, status: 200
+              render json: {status: 1,endpoint_arn: prev_arn, current_user_arn: nil,message: "update arn"}, status: 200
             end
           else
             render json: {status: 1,endpoint_arn: prev_arn, message: "update arn"}, status: 200
@@ -401,6 +427,12 @@ class Api::UsersController < ApplicationController
 
         end
       end
+
+      # if user_token.present?
+      #   user = User.find_by_authentication_token(params[:auth_token])
+      #   device_id = params[:push_token]
+      #   User.update_data_column("device_id", device_id, user.id)
+      # end
 
       if params[:endpoint_arn].present?     #for amazon sns token
         user = User.find_by_authentication_token(params[:auth_token])
@@ -692,6 +724,14 @@ class Api::UsersController < ApplicationController
         if params[:avatar_url].present?
           user.avatar_url = params[:avatar_url]
         end
+
+        # if params[:device_id].present?
+        #   User.update_data_column("device_id", params[:device_id], user.id)
+        # end
+        #
+        # if params[:endpoint_arn].present?
+        #   User.update_data_column("endpoint_arn", params[:endpoint_arn], user.id)
+        # end
 
         user.save!
         render json: { :user => user, local_avatar: Topic.get_avatar(user.username), :success => 30 }, status: 200

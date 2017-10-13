@@ -43,7 +43,7 @@ class Place < ActiveRecord::Base
     radius = 1 if radius.nil?
     center_point = [latitude.to_f, longitude.to_f]
     box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
-    places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3]).last(50)
+    places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
 
     topics_array = [ ]
 
@@ -51,7 +51,8 @@ class Place < ActiveRecord::Base
 
       places.each do |place|
         if place.start_places.present?
-          place.start_places.each do |topic|
+          topic_start_places = place.start_places.where("topics.created_at BETWEEN ? AND ?", 3.months.ago, Time.now).order("created_at asc")
+          topic_start_places.each do |topic|
             if hive_id==1
               topics_array.push(topic)
             else
@@ -66,7 +67,24 @@ class Place < ActiveRecord::Base
 
       places.each do |place|
         if place.end_places.present?
-          place.end_places.each do |topic|
+          topic_end_places = place.end_places.where("topics.created_at BETWEEN ? AND ?",  3.months.ago, Time.now).order("created_at asc")
+          topic_end_places.each do |topic|
+            if hive_id==1
+              topics_array.push(topic)
+            else
+              if topic.hiveapplication_id == hive_id
+                topics_array.push(topic)
+              end
+            end
+
+          end
+        end
+      end
+
+      places.each do |place|
+        if place.topics.present?
+          topic_places = place.topics.where("topics.created_at BETWEEN ? AND ?",  3.months.ago, Time.now).order("created_at asc")
+          topic_places.each do |topic|
             if hive_id==1
               topics_array.push(topic)
             else
@@ -82,7 +100,8 @@ class Place < ActiveRecord::Base
     else
       places.each do |place|
         if place.topics.present?
-          place.topics.each do |topic|
+          topic_places = place.topics.where("topics.created_at BETWEEN ? AND ?",  3.months.ago, Time.now).order("created_at asc")
+          topic_places.each do |topic|
             if hive_id==1
               topics_array.push(topic)
             else
@@ -96,6 +115,8 @@ class Place < ActiveRecord::Base
       end
 
     end
+
+    p "1 year topics "
 
 
     if topics_array.present?
@@ -138,20 +159,22 @@ class Place < ActiveRecord::Base
 
     s_center_point = [s_latitude.to_f, s_longitude.to_f]
     s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
-    s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3]).last(50)
+    s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
 
     e_center_point = [e_latitude.to_f, e_longitude.to_f]
     e_box = Geocoder::Calculations.bounding_box(e_center_point, radius, {units: :km})
-    e_places = Place.where(latitude: e_box[0] .. e_box[2], longitude: e_box[1] .. e_box[3]).last(50)
+    e_places = Place.where(latitude: e_box[0] .. e_box[2], longitude: e_box[1] .. e_box[3])
+
+    time_allowance = Time.now - 1.month.ago
 
     topics_array = [ ]
     e_places.each do |place|
       if place.start_places.present?
-        (topics_array << place.start_places.order("created_at asc")).flatten!
+        (topics_array << place.start_places.where("topics.created_at BETWEEN ? AND ?",  3.months.ago, Time.now).order("created_at asc")).flatten!
       end
 
       if place.end_places.present?
-        (topics_array << place.end_places.order("created_at asc")).flatten!
+        (topics_array << place.end_places.where("topics.created_at BETWEEN ? AND ?",  3.months.ago, Time.now).order("created_at asc")).flatten!
       end
 
       topics_array = topics_array.uniq{ |topic| [topic[:id]]}
@@ -159,12 +182,12 @@ class Place < ActiveRecord::Base
 
     s_places.each do |place|
       if place.start_places.present?
-        (topics_array << place.start_places.order("created_at asc")).flatten!
+        (topics_array << place.start_places.where("topics.created_at BETWEEN ? AND ?",  3.months.ago, Time.now).order("created_at asc")).flatten!
       end
 
       if place.end_places.present?
         # topics_array.merge(place.end_places)
-        (topics_array << place.end_places.order("created_at asc")).flatten!
+        (topics_array << place.end_places.where("topics.created_at BETWEEN ? AND ?",  3.months.ago, Time.now).order("created_at asc")).flatten!
       end
 
       topics_array = topics_array.uniq{ |topic| [topic[:id]]}
@@ -177,14 +200,14 @@ class Place < ActiveRecord::Base
       p radius_between
       p centerpoint
       center_box = Geocoder::Calculations.bounding_box(centerpoint, radius, {units: :km})
-      center_places = Place.where(latitude: center_box[0] .. center_box[2], longitude: center_box[1] .. center_box[3]).last(50)
+      center_places = Place.where(latitude: center_box[0] .. center_box[2], longitude: center_box[1] .. center_box[3])
 
       center_places.each do |place|
         if place.start_places.present?
-          (topics_array << place.start_places.order("created_at asc")).flatten!
+          (topics_array << place.start_places.where("topics.created_at BETWEEN ? AND ?", Time.now.beginning_of_month, 2.months.from_now).order("created_at asc")).flatten!
         end
         if place.end_places.present?
-          (topics_array << place.end_places.order("created_at asc")).flatten!
+          (topics_array << place.end_places.where("topics.created_at BETWEEN ? AND ?", Time.now.beginning_of_month,  2.months.from_now).order("created_at asc")).flatten!
         end
         topics_array = topics_array.uniq{ |topic| [topic[:id]]}
       end
@@ -440,14 +463,25 @@ class Place < ActiveRecord::Base
             place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, category: "Food and Dining",img_url: img_url,country: country,postal_code: postcode,locality: locality) unless place.present?
           else
 
+
             geocoder = Geocoder.search("#{latitude},#{longitude}").first
             if geocoder.present? and geocoder.address.present?
+
               check = Place.find_by_address(geocoder.address)
               check.present? ? place = check : place = Place.create(name: geocoder.address, latitude: latitude, longitude: longitude,
                   address: geocoder.address, source: source, source_id: source_id, user_id: user_id,
                   img_url: img_url,category: category,country: geocoder.country,
                   postal_code: geocoder.postal_code,locality: locality) unless place.present?
             end
+            p "check name"
+            p name
+
+            if name.include?("MRT")
+              place.name = name
+            else
+              place.name = geocoder.address
+            end
+            place.save!
 
             # if name.present?
             #   place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, img_url: img_url,category: category,country: country,postal_code: postcode,locality: locality) unless place.present?
@@ -560,6 +594,7 @@ class Place < ActiveRecord::Base
     p "Place GEO lat|lng"
     p latitude
     p longitude
+    p current_user
 
 
     if geocoder.present? and geocoder.address.present?

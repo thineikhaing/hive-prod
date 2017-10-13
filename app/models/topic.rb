@@ -29,7 +29,6 @@ class Topic < ActiveRecord::Base
     Thread.current[:current_user]
   end
 
-
   # hstore_accessor :options,
   #                 color: :string,
   #     weight: :integer,
@@ -41,6 +40,8 @@ class Topic < ActiveRecord::Base
   # miles: :decimal
   #
   #enums for topic type
+
+  scope :this_month, -> { where(created_at: Time.now.beginning_of_month..Time.now.end_of_month) }
 
   enums %w(NORMAL IMAGE AUDIO VIDEO RPSGAME WEB POLL LUNCHEON FAVR CARMMUNICATE TRAINFAULT)
 
@@ -1417,7 +1418,7 @@ class Topic < ActiveRecord::Base
         last_name = user_names[Integer(last_index)-1]
         last_name = last_name.gsub(/[^a-zA-Z ]/,'').gsub(/ +/,' ')
 
-        if last_name == url_two[Integer(url_two.length)-1]
+        if last_name.upcase == url_two[Integer(url_two.length)-1].upcase
           avatar_url = url
         end
 
@@ -1463,45 +1464,25 @@ class Topic < ActiveRecord::Base
 
     users_by_location = users_by_location.uniq{ |user| [user[:id]]}
 
-    # users_by_location.each do |u|
-    #   hash_array = u.data
-    #   if hash_array.present? && u.id != self.user_id
-    #     device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-    #     endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
-    #     if !endpoint_arn.nil?
-    #       to_endpoint_arn.push(endpoint_arn)
-    #     end
-    #
-    #     user_id.push(u.id)
-    #
-    #   end
-    # end
-
-
-    #
     time_allowance = Time.now - 1.day.ago
 
     users_by_location.each do |u|
-      p 'users by location'
-      p u.id
       if u.check_in_time.present?
         time_difference = Time.now - u.check_in_time
         if time_difference < time_allowance
-
-          hash_array = u.data
-          if hash_array.present? && u.id != self.user_id
-            p "user_id"
-            p u.id
-            device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-            endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
-            to_device_id.push(device_id)
-            to_endpoint_arn.push(endpoint_arn)
-            user_id.push(u.id)
-          end
+            hash_array = u.data
+            if hash_array.present? && u.id != self.user_id
+              device_id = hash_array["device_id"] if  hash_array["device_id"].present?
+              endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
+              to_device_id.push(device_id)
+              to_endpoint_arn.push(endpoint_arn)
+              user_id.push(u.id)
+            end
         end
       end
     end
-
+    p "list of users"
+    p user_id
     p "list of to_endpoint_arn"
     p to_endpoint_arn
     p user_id

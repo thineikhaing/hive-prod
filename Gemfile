@@ -67,8 +67,11 @@ gem 'sinatra', github: 'sinatra'
 
 gem 'rails_12factor', group: :production
 
+
 # gem 'scout_apm'
 gem 'twitter'
+
+gem "rack-timeout"
 
 # gem 'request_store'
 
