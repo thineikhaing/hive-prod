@@ -15,7 +15,8 @@ class Tweet < ApplicationRecord
     tweet = create!(
         text: status.text,
         hashtags: station_tags,
-        posted_at: status.created_at
+        posted_at: status.created_at,
+        creator: status.user.screen_name
     )
 
     tags = tweet.hashtags["tags"]
@@ -38,6 +39,7 @@ class Tweet < ApplicationRecord
             sound: "default",
             badge: 0,
             extra:  {
+                topic_id: 0,
                 posted_at: tweet.posted_at,
                 text: tweet.text,
                 tags: tags
@@ -50,6 +52,7 @@ class Tweet < ApplicationRecord
             message:tweet.text,
             badge: 0,
             extra:  {
+                topic_id: 0,
                 posted_at: tweet.posted_at,
                 text: tweet.text,
                 tags: tags
