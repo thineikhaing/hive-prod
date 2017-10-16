@@ -1177,7 +1177,7 @@ class Api::RoundtripController < ApplicationController
       end
       # tweet_data = [text: text, created_at: created_at,hashtags:tags]
 
-      if((Date.today-7.days)) < Date.parse(created_at)
+      if((Date.today-20.days)) < Date.parse(created_at)
         tweet_data = [text: text, created_at: created_at,hashtags:tags]
         tweets.push(tweet_data)
       end
