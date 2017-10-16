@@ -44,11 +44,14 @@ daemon.follow(Twitter_Const::SMRT_ID,Twitter_Const::SBS_ID) do |status|
   puts "#{status.user.screen_name}"
   puts "#{status.user.id}"
   puts "#{status.user.profile_image_url}"
-
   tweet_user_id = status.user.id
-  if (tweet_user_id == Twitter_Const::SMRT_ID || tweet_user_id == Twitter_Const::SBS_ID)
+
+  if tweet_user_id.to_i == Twitter_Const::SMRT_ID.to_i
     ::Tweet.create_from_status(status)
-    puts "create tweet and send alert to RT users"
+    puts "create tweet from smrt and send alert to RT users"
+  elsif tweet_user_id.to_i == Twitter_Const::SBS_ID.to_i
+    ::Tweet.create_from_status(status)
+    puts "create tweet from sbs and send alert to RT users"
   else
     puts "tweet created by other users"
   end
