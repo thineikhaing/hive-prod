@@ -38,7 +38,7 @@ daemon.on_limit do |discarded_count|
 end
 
 
-daemon.filter(follow: 1075984819) do |status|
+daemon.filter(follow: 1075984819,track: "SMRT_Singapore") do |status|
   # ::Tweet.create_from_status(status)
   #smrt userID 307781209
   #personal userID 1075984819
