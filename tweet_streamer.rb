@@ -38,12 +38,20 @@ daemon.on_limit do |discarded_count|
 end
 
 
-daemon.follow(307781209,3087502272) do |status|
-  # ::Tweet.create_from_status(status)
-  #smrt userID 307781209
-  #sbs userID 3087502272
-  #personal userID 1075984819
-  ::Tweet.create_from_status(status)
+daemon.follow(Twitter_Const::SMRT_ID,Twitter_Const::SBS_ID) do |status|
+
   puts "#{status.text}"
+  puts "#{status.user.screen_name}"
+  puts "#{status.user.id}"
+  puts "#{status.user.profile_image_url}"
+
+  tweet_user_id = status.user.id
+  if (tweet_user_id == Twitter_Const::SMRT_ID || tweet_user_id == Twitter_Const::SBS_ID)
+    ::Tweet.create_from_status(status)
+    puts "create tweet and send alert to RT users"
+  else
+    puts "tweet created by other users"
+  end
+
 
 end

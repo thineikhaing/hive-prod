@@ -163,6 +163,10 @@ end
 #  FV_D_Secret = "xB8kEzjdT4WeqgEm3CKclQ"
 #  FV_D_Master_Secret="1EXyDmHxTNSZRV0raeCthA"
 #end
+module Twitter_Const
+  SMRT_ID = "307781209"
+  SBS_ID = "3087502272"
+end
 
 module SMRT_Const
   Sengkang_East_Loop  = "SE"

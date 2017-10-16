@@ -1,5 +1,6 @@
 class Tweet < ApplicationRecord
   def self.create_from_status(status)
+    p "create tweet from status ::::::"
     hashtags = status.hashtags
     tags  = []
     hashtags.each do |tag|
