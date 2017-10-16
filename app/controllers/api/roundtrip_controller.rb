@@ -1165,9 +1165,10 @@ class Api::RoundtripController < ApplicationController
 
   def get_smrt_tweets
     tweets = []
-    raw_tweets = []
+    smrt_tweets = []
+    sbs_tweets = []
     $twitter_client.search("from:SMRT_Singapore", result_type: "recent").collect do |tweet|
-      raw_tweets.push(tweet)
+      smrt_tweets.push(tweet)
       text = tweet.text
       created_at = tweet.created_at.dup.localtime.strftime("%b-%d %I:%M%p %a")
       hashtags = tweet.hashtags
@@ -1175,15 +1176,31 @@ class Api::RoundtripController < ApplicationController
       hashtags.each do |tag|
         tags.push(tag.text)
       end
-      # tweet_data = [text: text, created_at: created_at,hashtags:tags]
-
       if((Date.today-20.days)) <= Date.parse(created_at)
-        tweet_data = [text: text, created_at: tweet.created_at,hashtags:tags]
+        tweet_data = [text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name]
         tweets.push(tweet_data)
       end
     end
 
-    render json: {tweets:tweets, count: tweets.count,raw_tweets:raw_tweets}  , status: 200
+
+    $twitter_client.search("from:SBSTransit_Ltd", result_type: "recent").collect do |tweet|
+      sbs_tweets.push(tweet)
+      text = tweet.text
+      created_at = tweet.created_at.dup.localtime.strftime("%b-%d %I:%M%p %a")
+      hashtags = tweet.hashtags
+      tags  = []
+      hashtags.each do |tag|
+        tags.push(tag.text)
+      end
+      if((Date.today-20.days)) <= Date.parse(created_at)
+        tweet_data = [text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name]
+        tweets.push(tweet_data)
+      end
+    end
+
+    tweets = tweets.sort {|x,y| x.last[:created_at] <=> y.last[:created_at]}.reverse!
+
+    render json: {tweets:tweets, count: tweets.count,smrt_tweets:smrt_tweets,sbs_tweets:sbs_tweets}  , status: 200
   end
 
 
