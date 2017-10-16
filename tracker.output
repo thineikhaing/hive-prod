@@ -1,77 +1,58 @@
 "Listening..."
-"tags"
-"\"HRnews\",\"flooddisruption\""
-log writing failed. closed stream
-log writing failed. closed stream
-log writing failed. closed stream
-#HRnews: @SMRT_Singapore reshuffles staff after #flooddisruption. https://t.co/7kCOPpj9Fm
-"tags"
-""
-log writing failed. closed stream
-log writing failed. closed stream
-log writing failed. closed stream
-I'm at City Hall MRT Interchange (EW13/NS25) - @smrt_singapore in Singapore https://t.co/jemZ9dBfpG
-"tags"
-""
-log writing failed. closed stream
-log writing failed. closed stream
-log writing failed. closed stream
-smrt tweet
-"tags"
-""
-log writing failed. closed stream
-log writing failed. closed stream
-log writing failed. closed stream
-I'm at Bishan MRT Interchange (NS17/CC15) - @smrt_singapore in Singapore https://t.co/aHCuS22XUb
-"tags"
-""
-log writing failed. closed stream
-log writing failed. closed stream
-log writing failed. closed stream
-Ho Lee Sheet! Maybe @SMRT_Singapore engineers should do the same! https://t.co/iBxJZ45AjX
-"tags"
-""
-log writing failed. closed stream
-log writing failed. closed stream
-log writing failed. closed stream
-@SBSTransit_Ltd  DTL resume?
-on_reconnect: 0.25, 0
-"Listening..."
-"tags"
-""
-log writing failed. closed stream
-log writing failed. closed stream
-log writing failed. closed stream
-#<Twitter::Tweet:0x007fdc72ba1340>
-@SMRT_Singapore train waiting time is too long.
-on_reconnect: 0.25, 0
-"Listening..."
-on_reconnect: 0.25, 0
-"Listening..."
-"tags"
-""
-log writing failed. closed stream
-log writing failed. closed stream
-log writing failed. closed stream
-@SBSTransit_Ltd DTL train services resumed at yesterday.
+@SMRT_Singapore
 thin_ei
 1075984819
 http://pbs.twimg.com/profile_images/746193435871174657/uAHFn1El_normal.jpg
-on_reconnect: 0.25, 0
-"Listening..."
-@SBSTransit_Ltd ok.
-thin_ei
-1075984819
-http://pbs.twimg.com/profile_images/746193435871174657/uAHFn1El_normal.jpg
-on_reconnect: 0.25, 0
-"Listening..."
-@SMRT_Singapore  ok
-thin_ei
-1075984819
-http://pbs.twimg.com/profile_images/746193435871174657/uAHFn1El_normal.jpg
+"create tweet from status ::::::"
+"tags"
+""
+log writing failed. closed stream
+log writing failed. closed stream
+log writing failed. closed stream
 tweet created by other users
-RT @SBSTransit_Ltd: Downtown Line 3 opens for service on 21 Oct. Enjoy free rides on 21 &amp; 22 Oct, when you start &amp; end your journey at… 
-eugene_fu
-26879884
-http://pbs.twimg.com/profile_images/378800000016796041/a7d87508484f8208759db63028a672de_normal.jpeg
+@SBSTransit_Ltd
+thin_ei
+1075984819
+http://pbs.twimg.com/profile_images/746193435871174657/uAHFn1El_normal.jpg
+"create tweet from status ::::::"
+"tags"
+""
+log writing failed. closed stream
+log writing failed. closed stream
+log writing failed. closed stream
+tweet created by other users
+RT @SBSTransit_Ltd: Train services have resumed since 1.21pm. Free bus rides and bridging bus services have ceased. We are sorry.
+SasmitoAdibowo
+201766995
+http://pbs.twimg.com/profile_images/1143135789/adib-sephia_normal.jpg
+"create tweet from status ::::::"
+"tags"
+""
+log writing failed. closed stream
+log writing failed. closed stream
+log writing failed. closed stream
+tweet created by other users
+@SMRT_Singapore tek
+thin_ei
+1075984819
+http://pbs.twimg.com/profile_images/746193435871174657/uAHFn1El_normal.jpg
+"create tweet from status ::::::"
+"tags"
+""
+log writing failed. closed stream
+log writing failed. closed stream
+log writing failed. closed stream
+tweet created by other users
+on_reconnect: 0.25, 0
+"Listening..."
+@SMRT_Singapore  @SBSTransit_Ltd  tweet from thinei testing
+thin_ei
+1075984819
+http://pbs.twimg.com/profile_images/746193435871174657/uAHFn1El_normal.jpg
+"create tweet from status ::::::"
+"tags"
+""
+log writing failed. closed stream
+log writing failed. closed stream
+log writing failed. closed stream
 tweet created by other users

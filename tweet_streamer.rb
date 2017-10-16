@@ -8,10 +8,10 @@ require 'tweetstream'
 p "Initializing daemon..."
 
 TweetStream.configure do |config|
-  config.consumer_key = "XD8UGiHDUIdRDcdHK8VuOVYpW"
-  config.consumer_secret = "leSaoCAO3I47ttPgYVCmzr09wB9FFwhphyn6TWDifemMaTcuaw"
-  config.oauth_token = "1075984819-i2Jc1ZW3xx5KDJ3tiweBATjBVgMBg73q7gYauJN"
-  config.oauth_token_secret = "osAgvYZQYgiVnBSfGAYV9zm5Wgntg2LJ9kyYYUnX1G1p4"
+  config.consumer_key = "0h9yr5YQtXDOaPSAxOM9ugqxS"
+  config.consumer_secret = "Wl2NMbnmWPMsnDis1KPxSscdTIwp2n1139nJvWiiM57QqzUWKQ"
+  config.oauth_token = "918754322506162176-cBzO11YTuTvwAEknQ6ga8xgwByYMtkF"
+  config.oauth_token_secret = "QWx9TUcRv54CUITPLYrOC2dwtC5W0R1bKJLBhOTSazqJH"
   config.auth_method        = :oauth
 end
 
