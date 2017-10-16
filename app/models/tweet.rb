@@ -21,7 +21,15 @@ class Tweet < ApplicationRecord
     tags.gsub(/"/, "").split(',')
 
     sns = Aws::SNS::Client.new
-    target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
+
+    if Rails.env.development?
+      target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
+    elsif Rails.env.staging?
+      target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
+    else
+      target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_P_Broadcast_Noti'
+    end
+
 
     iphone_notification = {
         aps: {
