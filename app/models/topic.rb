@@ -1487,6 +1487,12 @@ class Topic < ActiveRecord::Base
     p to_endpoint_arn
     p user_id
 
+    place_name = self.place_information[:name]
+
+    if self.topic_type == 11
+      place_name =   self.rtplaces_information[:start_place][:name]
+    end
+
     to_endpoint_arn.each do |arn|
 
       if arn.present?
@@ -1504,7 +1510,7 @@ class Topic < ActiveRecord::Base
                     start_place: self.rtplaces_information[:start_place][:name],
                     end_place:  self.rtplaces_information[:end_place][:name],
                     topic_username: self.username,
-                    place_name: self.place_information[:name],
+                    place_name: place_name,
                     create_at: self.created_at,
                     shared: true
                 }
@@ -1522,7 +1528,7 @@ class Topic < ActiveRecord::Base
                     start_place: self.rtplaces_information[:start_place][:name],
                     end_place:  self.rtplaces_information[:end_place][:name],
                     topic_username: self.username,
-                    place_name: self.place_information[:name],
+                    place_name: place_name,
                     create_at: self.created_at,
                     shared: true
                 }

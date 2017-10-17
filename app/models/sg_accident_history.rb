@@ -13,7 +13,7 @@ class SgAccidentHistory < ActiveRecord::Base
     @request_payload = JSON.parse r.body
 
     @request_payload["value"].each do |data|
-      p type = data["Type"]
+      type = data["Type"]
       if type == "Accident" || type == "Vehicle breakdown" || type == "Heavy traffic"
         if type == "Heavy Traffic"
           type = "HeavyTraffic"
@@ -21,7 +21,7 @@ class SgAccidentHistory < ActiveRecord::Base
           type = "VehicleBreakdown"
         end
 
-       p message  = data["Message"]  # "(2/2)11:24 Vehicle breakdown on KJE (towards BKE) before Sungei Tengah Exit."
+       message  = data["Message"]  # "(2/2)11:24 Vehicle breakdown on KJE (towards BKE) before Sungei Tengah Exit."
         inc_datetime= message.match(" ").pre_match #(2/2)11:24
         message= message.match(" ").post_match
         inc_date = inc_datetime.scan(/\(([^\)]+)\)/).last.first   # "2/2"
