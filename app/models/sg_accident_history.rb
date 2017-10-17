@@ -10,19 +10,17 @@ class SgAccidentHistory < ActiveRecord::Base
     #con.use_ssl = true
     r = con.start {|http| http.request(req)}
     p "get incident list"
-
     @request_payload = JSON.parse r.body
 
     @request_payload["value"].each do |data|
-      type = data["Type"]
-      if type == "Accident" || type == "Vehicle Breakdown" || type == "Heavy Traffic"
+      p type = data["Type"]
+      if type == "Accident" || type == "Vehicle breakdown" || type == "Heavy traffic"
         if type == "Heavy Traffic"
           type = "HeavyTraffic"
-        elsif type == "Vehicle Breakdown"
+        elsif type == "Vehicle breakdown"
           type = "VehicleBreakdown"
         end
 
-       p "message"
        p message  = data["Message"]  # "(2/2)11:24 Vehicle breakdown on KJE (towards BKE) before Sungei Tengah Exit."
         inc_datetime= message.match(" ").pre_match #(2/2)11:24
         message= message.match(" ").post_match
@@ -41,32 +39,34 @@ class SgAccidentHistory < ActiveRecord::Base
 
         if sg_accident.nil?
           p "add new record"
-          SgAccidentHistory.create(type:type,message: message, accident_datetime: accidentDateTIme, latitude:latitude, longitude:longitude, summary:summary )
+          sg_accident =SgAccidentHistory.create(type:type,message: message, accident_datetime: accidentDateTIme, latitude:latitude, longitude:longitude, summary:summary )
         end
+
+
+        if(sg_accident.notify == false)
+          self.send_traffic_noti(sg_accident)
+        end
+
 
       end
 
     end
 
-    self.send_traffic_noti
+
   end
 
-  def self.send_traffic_noti
+  def self.send_traffic_noti(accident)
     p "send traffic_noti"
-    p sg_accident = SgAccidentHistory.where(notify: false).take
+    p sg_accident = accident
+    p sg_accident.notify
+    # p sg_accident = SgAccidentHistory.where(notify: false).take
     if Rails.env.production?
-      appID = PushWoosh_Const::RT_P_APP_ID
       round_key = RoundTrip_key::Production_Key
     elsif Rails.env.staging?
-      appID = PushWoosh_Const::RT_S_APP_ID
       round_key = RoundTrip_key::Staging_Key
     else
-      appID = PushWoosh_Const::RT_S_APP_ID
       round_key = RoundTrip_key::Development_Key
     end
-    # round_key = RoundTrip_key::Production_Key
-
-    auth_hash = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
 
     hive_application = HiveApplication.find_by_api_key(round_key)
 
@@ -99,7 +99,6 @@ class SgAccidentHistory < ActiveRecord::Base
               to_endpoint_arn.push(endpoint_arn)
               user_id.push(u.id)
             end
-
           end
         end
       end

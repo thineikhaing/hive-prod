@@ -49,6 +49,7 @@ gem 'rack-timeout'
 gem 'kaminari'
 gem "svy21"
 # gem 'rufus-scheduler'
+gem 'rufus-scheduler', '3.2'
 gem 'gmaps4rails'
 gem 'sass'
 gem 'sass-rails'
