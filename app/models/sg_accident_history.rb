@@ -117,7 +117,7 @@ class SgAccidentHistory < ActiveRecord::Base
       startplace = Place.create_place_by_lat_lng(sg_accident.latitude, sg_accident.longitude,User.first)
 
       topic = Topic.create(title:sg_accident.message, user_id: User.first.id, topic_type: 10 ,start_place_id: startplace.id ,  end_place_id: startplace.id  ,
-          topic_sub_type: 0, hiveapplication_id: hive_application.id, place_id: Place.first.id)
+          topic_sub_type: 0, hiveapplication_id: hive_application.id, place_id: startplace.id)
 
       topic.hive_broadcast
       topic.app_broadcast_with_content

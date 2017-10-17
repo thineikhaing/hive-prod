@@ -38,12 +38,13 @@ daemon.on_limit do |discarded_count|
 end
 
 
-daemon.follow(Twitter_Const::SMRT_ID,Twitter_Const::SBS_ID) do |status|
+daemon.follow(Twitter_Const::SMRT_ID,Twitter_Const::SBS_ID,1075984819) do |status|
 
   puts "#{status.text}"
   puts "#{status.user.screen_name}"
   puts "#{status.user.id}"
   puts "#{status.user.profile_image_url}"
+  puts "#########"
   tweet_user_id = status.user.id
 
   if tweet_user_id.to_i == Twitter_Const::SMRT_ID.to_i
