@@ -374,18 +374,19 @@ class Api::UsersController < ApplicationController
 
             if endpoint_arn.present?
               if (prev_arn.to_s != endpoint_arn.to_s)
-                 p "delte and update arn"
-                sns = Aws::SNS::Client.new
-                begin
-                  sns.delete_endpoint({endpoint_arn: endpoint_arn})
-                  sns.set_endpoint_attributes({
-                    endpoint_arn: prev_arn.to_s,
-                    attributes: { CustomUserData: current_user.id.to_s},
-                                                        })
-                rescue
-                  p "EndpointDelete Exception"
-                end
+                 # p "delte and update arn"
+                # sns = Aws::SNS::Client.new
+                # begin
+                #   sns.delete_endpoint({endpoint_arn: endpoint_arn})
+                #   sns.set_endpoint_attributes({
+                #     endpoint_arn: prev_arn.to_s,
+                #     attributes: { CustomUserData: current_user.id.to_s},
+                #                                         })
+                # rescue
+                #   p "EndpointDelete Exception"
+                # end
 
+                 p "update _arn"
                  current_user.data["endpoint_arn"] = prev_arn
                  current_user.data["device_id"] = prev_device_id
                  current_user.save!
