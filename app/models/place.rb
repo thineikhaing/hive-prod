@@ -476,12 +476,16 @@ class Place < ActiveRecord::Base
             p "check name"
             p name
 
-            if name.include?("MRT")
-              place.name = name
-            else
-              place.name = geocoder.address
+
+            if !name.nil?
+              if name.include?("MRT")
+                place.name = name
+              else
+                place.name = geocoder.address
+              end
+              place.save!
             end
-            place.save!
+
 
             # if name.present?
             #   place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, img_url: img_url,category: category,country: country,postal_code: postcode,locality: locality) unless place.present?
