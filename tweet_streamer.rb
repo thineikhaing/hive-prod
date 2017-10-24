@@ -38,7 +38,7 @@ daemon.on_limit do |discarded_count|
 end
 
 
-daemon.follow(Twitter_Const::SMRT_ID,Twitter_Const::SBS_ID,1075984819) do |status|
+daemon.follow(Twitter_Const::SMRT_ID,Twitter_Const::SBS_ID) do |status|
 
   puts "#{status.text}"
   puts "#{status.user.screen_name}"
@@ -47,15 +47,22 @@ daemon.follow(Twitter_Const::SMRT_ID,Twitter_Const::SBS_ID,1075984819) do |statu
   puts "#########"
   tweet_user_id = status.user.id
 
-  if tweet_user_id.to_i == Twitter_Const::SMRT_ID.to_i
-    ::Tweet.create_from_status(status)
-    puts "create tweet from smrt and send alert to RT users"
-  elsif tweet_user_id.to_i == Twitter_Const::SBS_ID.to_i
-    ::Tweet.create_from_status(status)
-    puts "create tweet from sbs and send alert to RT users"
+  if (status.text.include? "happy") || (status.text.include? "love") || (status.text.include? "wish")
+    puts "ignore tweet"
   else
-    puts "tweet created by other users"
+    if tweet_user_id.to_i == Twitter_Const::SMRT_ID.to_i
+      ::Tweet.create_from_status(status)
+      puts "create tweet from smrt and send alert to RT users"
+    elsif tweet_user_id.to_i == Twitter_Const::SBS_ID.to_i
+      ::Tweet.create_from_status(status)
+      puts "create tweet from sbs and send alert to RT users"
+    else
+      puts "tweet created by other users"
+    end
+
   end
+
+
 
 
 end

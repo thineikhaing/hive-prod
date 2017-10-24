@@ -445,7 +445,7 @@ class Place < ActiveRecord::Base
         p "add user custom record"
         place = ""
         private_place = ""
-        check_records = Place.nearest(latitude, longitude, 0.5)
+        p check_records = Place.nearest(latitude, longitude, 0.5)
 
         check_records.each do |cr|
 
