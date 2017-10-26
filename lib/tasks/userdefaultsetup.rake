@@ -84,6 +84,8 @@ namespace :userdefaultsetup do
   desc "Fetch bus stop data from data mall"
   task :fetch_busstop_data_from_data_mall  => :environment do
     # DatabaseCleaner.clean_with(:truncation, :only => ['sg_bus_stops'])
+
+    ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_bus_stops RESTART IDENTITY")
     result = []
     i = 0
     while i < 5300

@@ -1198,6 +1198,7 @@ class Api::RoundtripController < ApplicationController
       end
     end
 
+
     tweets = tweets.sort {|x,y| x.last[:created_at] <=> y.last[:created_at]}.reverse!
 
     render json: {tweets:tweets, count: tweets.count,smrt_tweets:smrt_tweets,sbs_tweets:sbs_tweets}  , status: 200
