@@ -117,11 +117,16 @@ namespace :userdefaultsetup do
       i += 50
     end
 
+    uniq_result = result.uniq{ |stop| [stop["BusStopCode"]]}
+    p uniq_result.count
+    p "result count ++++"
 
-    result.each do |data|
-      SgBusStop.create(bus_id: data["BusStopCode"],road_name: data["RoadName"],
-          description: data["Description"],latitude: data["Latitude"],longitude: data["Longitude"])
+    uniq_result.each do |data|
+      sg = SgBusStop.create(bus_id: data["BusStopCode"].to_s,road_name: data["RoadName"],
+                            description: data["Description"],latitude: data["Latitude"],longitude: data["Longitude"])
 
+      puts "#{sg}"
+      puts "#{sg.bus_id}"
     end
 
   end
