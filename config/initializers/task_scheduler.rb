@@ -4,51 +4,51 @@ scheduler = Rufus::Scheduler.new
 
 
 
-scheduler.cron '05 00 * * mon' do
-  CarActionLog.delete_all
-  SgAccidentHistory.delete_all
-
-  ActiveRecord::Base.connection.execute("TRUNCATE TABLE car_action_logs
- RESTART IDENTITY")
-
-  ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_accident_histories
- RESTART IDENTITY")
-
-  ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_mrt_stations
- RESTART IDENTITY")
-
-end
-
-
-scheduler.cron '05 00 * * *' do
-  p "update user daily points"
-  users = User.all
-  users.each do |user|
-    user.daily_points = 10
-    user.save
-  end
-
-  p "flash topic if there is no post within 24 hrs"
-
-  # Topic.where(created_at: 24.hours.ago..Time.now,topic_type: 10)
-
-  topics = Topic.where('updated_at > ? and topic_type = ?', 24.hours.ago,10)
-  if topics.present?
-    topics.each do |topic|
-      if topic.posts.present?
-        p "keep this topic"
-      else
-        topic.delete
-      end
-    end
-  end
-
-end
-
-scheduler.every 5.minutes do
- p "check accident!"
- SgAccidentHistory.get_incident_and_breakdown
-end
+# scheduler.cron '05 00 * * mon' do
+#   CarActionLog.delete_all
+#   SgAccidentHistory.delete_all
+#
+#   ActiveRecord::Base.connection.execute("TRUNCATE TABLE car_action_logs
+#  RESTART IDENTITY")
+#
+#   ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_accident_histories
+#  RESTART IDENTITY")
+#
+#   ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_mrt_stations
+#  RESTART IDENTITY")
+#
+# end
+#
+#
+# scheduler.cron '05 00 * * *' do
+#   p "update user daily points"
+#   users = User.all
+#   users.each do |user|
+#     user.daily_points = 10
+#     user.save
+#   end
+#
+#   p "flash topic if there is no post within 24 hrs"
+#
+#   # Topic.where(created_at: 24.hours.ago..Time.now,topic_type: 10)
+#
+#   topics = Topic.where('updated_at > ? and topic_type = ?', 24.hours.ago,10)
+#   if topics.present?
+#     topics.each do |topic|
+#       if topic.posts.present?
+#         p "keep this topic"
+#       else
+#         topic.delete
+#       end
+#     end
+#   end
+#
+# end
+#
+# scheduler.every 5.minutes do
+#  p "check accident!"
+#  SgAccidentHistory.get_incident_and_breakdown
+# end
 
 
 # command out
