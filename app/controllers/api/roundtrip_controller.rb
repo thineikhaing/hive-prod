@@ -1225,12 +1225,16 @@ class Api::RoundtripController < ApplicationController
 
   def get_user_fav_buses
     if current_user.present?
+      if params[:id]
+        UserFavBus.delete(params[:id])
+      end
       favbuses = UserFavBus.where(user_id: current_user.id)
       render json:{favbuses: favbuses, status: 200}
     else
       render json:{status: 400, message: "unauthorized."}
     end
   end
+
 
 
 end
