@@ -1204,6 +1204,34 @@ class Api::RoundtripController < ApplicationController
     render json: {tweets:tweets, count: tweets.count,smrt_tweets:smrt_tweets,sbs_tweets:sbs_tweets}  , status: 200
   end
 
+  def save_user_fav_buses
+    if current_user.present?
+      service = params[:service]
+      busid = params[:busid]
+      p check_dup = UserFavBus.where(user_id: current_user.id, service: service, busid: busid)
+
+      if check_dup.empty?
+        UserFavBus.create(user_id: current_user.id, service: service, busid: busid)
+      end
+      favbuses = UserFavBus.where(user_id: current_user.id)
+      render json:{favbuses: favbuses, status: 200}
+    else
+      render json:{status: 400, message: "unauthorized."}
+
+    end
+
+  end
+
+
+  def get_user_fav_buses
+    if current_user.present?
+      favbuses = UserFavBus.where(user_id: current_user.id)
+      render json:{favbuses: favbuses, status: 200}
+    else
+      render json:{status: 400, message: "unauthorized."}
+    end
+  end
+
 
 end
 

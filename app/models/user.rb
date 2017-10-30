@@ -15,6 +15,7 @@ class User < ActiveRecord::Base
   has_many :places
   has_many :trip
   has_many :user_fav_locations
+  has_many :user_fav_buses
 
   belongs_to :incident_history
 

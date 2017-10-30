@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171026035447) do
+ActiveRecord::Schema.define(version: 20171030061732) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -383,6 +383,14 @@ ActiveRecord::Schema.define(version: 20171026035447) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "hiveapplication_id"
+  end
+
+  create_table "user_fav_buses", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "service"
+    t.string "busid"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "user_fav_locations", id: :serial, force: :cascade do |t|
