@@ -138,10 +138,12 @@ namespace :userdefaultsetup do
 
     result = []
     i = 0
-    while i < 24657
+    while i < 24573
 
       p "result count"
       p result.count
+      p "loop i value :::"
+      p i
 
       uri = URI('http://datamall2.mytransport.sg/ltaodataservice/BusRoutes')
       params = { :$skip => i}
@@ -167,7 +169,14 @@ namespace :userdefaultsetup do
       i += 50
     end
 
-    result.each do |data|
+    uniqresults = result.uniq do |hash|
+      [hash["ServiceNo"],hash["BusStopCode"] ,hash["StopSequence"]]
+    end
+
+    p "uniqresult count"
+    p uniqresults.count
+
+    uniqresults.each do |data|
 
       rt = SgBusRoute.create(service_no: data["ServiceNo"],operator: data["Operator"],
                              direction: data["Direction"],stop_sequence: data["StopSequence"],
@@ -177,6 +186,10 @@ namespace :userdefaultsetup do
                              sun_firstbus: data["SUN_FirstBus"],sun_lastbus: data["SUN_LastBus"])
       p "create"
       puts "#{rt.id}"
+      puts "#{rt.bus_stop_code}"
+      puts "#{rt.service_no}"
+      puts "#{rt.stop_sequence}"
+      p "+++"
 
     end
   end
