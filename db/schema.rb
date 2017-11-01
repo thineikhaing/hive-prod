@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171030061732) do
+ActiveRecord::Schema.define(version: 20171101072948) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -263,8 +263,25 @@ ActiveRecord::Schema.define(version: 20171030061732) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "sg_bus_routes", force: :cascade do |t|
+    t.string "service_no"
+    t.string "operator"
+    t.integer "direction"
+    t.integer "stop_sequence"
+    t.string "bus_stop_code"
+    t.float "distance"
+    t.string "wd_firstbus"
+    t.string "wd_lastbus"
+    t.string "sat_firstbus"
+    t.string "sat_lastbus"
+    t.string "sun_firstbus"
+    t.string "sun_lastbus"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "sg_bus_stops", id: :serial, force: :cascade do |t|
-    t.string "bus_id", default: ""
+    t.string "bus_id"
     t.string "road_name"
     t.string "description"
     t.float "latitude"

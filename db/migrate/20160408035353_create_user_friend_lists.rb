@@ -1,4 +1,4 @@
-class CreateUserFriendLists < ActiveRecord::Migration
+class CreateUserFriendLists < ActiveRecord::Migration[5.1]
   def change
     create_table :user_friend_lists do |t|
       t.integer :user_id

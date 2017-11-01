@@ -1,4 +1,4 @@
-class CreateTaxiAvailabilities < ActiveRecord::Migration
+class CreateTaxiAvailabilities < ActiveRecord::Migration[5.1]
   def change
     create_table :taxi_availabilities do |t|
       t.float :latitude

@@ -1,4 +1,4 @@
-class CreateIncidentHistories < ActiveRecord::Migration
+class CreateIncidentHistories < ActiveRecord::Migration[5.1]
   def change
     create_table :incident_histories do |t|
       t.integer :host_id

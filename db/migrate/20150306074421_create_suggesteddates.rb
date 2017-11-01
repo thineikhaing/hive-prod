@@ -1,4 +1,4 @@
-class CreateSuggesteddates < ActiveRecord::Migration
+class CreateSuggesteddates < ActiveRecord::Migration[5.1]
   def change
     create_table :suggesteddates do |t|
       t.integer :topic_id

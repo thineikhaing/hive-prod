@@ -1,4 +1,4 @@
-class CreateFavractions < ActiveRecord::Migration
+class CreateFavractions < ActiveRecord::Migration[5.1]
   def up
     create_table :favractions do |t|
       t.integer :topic_id

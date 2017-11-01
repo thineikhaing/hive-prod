@@ -1,4 +1,4 @@
-class ChangeColumnsAdminConfirmToSuggesteddates < ActiveRecord::Migration
+class ChangeColumnsAdminConfirmToSuggesteddates < ActiveRecord::Migration[5.1]
   def up
     change_column :suggesteddates, :admin_confirm, :boolean, default: false
   end

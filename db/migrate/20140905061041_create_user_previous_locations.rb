@@ -1,4 +1,4 @@
-class CreateUserPreviousLocations < ActiveRecord::Migration
+class CreateUserPreviousLocations < ActiveRecord::Migration[5.1]
   def change
 
     create_table :userpreviouslocations do |t|

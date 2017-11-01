@@ -1,4 +1,4 @@
-class CreateHiveApplications < ActiveRecord::Migration
+class CreateHiveApplications < ActiveRecord::Migration[5.1]
   def change
     create_table :hive_applications do |t|
       t.string :app_name

@@ -131,6 +131,56 @@ namespace :userdefaultsetup do
 
   end
 
+  desc "Fetch bus stop data from data mall"
+  task :fetch_busroute_data_from_data_mall  => :environment do
+    ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_bus_routes
+ RESTART IDENTITY")
+
+    result = []
+    i = 0
+    while i < 24657
+
+      p "result count"
+      p result.count
+
+      uri = URI('http://datamall2.mytransport.sg/ltaodataservice/BusRoutes')
+      params = { :$skip => i}
+      uri.query = URI.encode_www_form(params)
+      p uri
+      res = Net::HTTP::Get.new(uri,
+                               initheader = {"accept" =>"application/json",
+                                             "AccountKey"=>"4G40nh9gmUGe8L2GTNWbgg==",
+                                             "UniqueUserID"=>"d52627a6-4bde-4fa1-bd48-c6270b02ffc0"})
+      con = Net::HTTP.new(uri.host, uri.port)
+      r = con.start {|http| http.request(res)}
+      new_results = JSON.parse(r.body)
+
+      p new_results["value"].last
+      p "+++++++++"
+
+      result += new_results["value"]
+
+      p "new_results"
+      p new_results["value"].count
+
+      # Increment.
+      i += 50
+    end
+
+    result.each do |data|
+
+      rt = SgBusRoute.create(service_no: data["ServiceNo"],operator: data["Operator"],
+                             direction: data["Direction"],stop_sequence: data["StopSequence"],
+                             bus_stop_code: data["BusStopCode"],distance: data["Distance"],
+                             wd_firstbus: data["WD_FirstBus"],wd_lastbus: data["WD_LastBus"],
+                             sat_firstbus: data["SAT_FirstBus"],sat_lastbus: data["SAT_LastBus"],
+                             sun_firstbus: data["SUN_FirstBus"],sun_lastbus: data["SUN_LastBus"])
+      p "create"
+      puts "#{rt.id}"
+
+    end
+  end
+
 
 
 

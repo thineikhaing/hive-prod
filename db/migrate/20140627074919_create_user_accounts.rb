@@ -1,4 +1,4 @@
-class CreateUserAccounts < ActiveRecord::Migration
+class CreateUserAccounts < ActiveRecord::Migration[5.1]
   def change
     create_table :user_accounts do |t|
       t.integer :user_id, null: false

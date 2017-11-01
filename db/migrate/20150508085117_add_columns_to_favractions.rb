@@ -1,4 +1,4 @@
-class AddColumnsToFavractions < ActiveRecord::Migration
+class AddColumnsToFavractions < ActiveRecord::Migration[5.1]
   def change
     add_column :favractions, :post_id, :integer
     add_column :favractions, :honor_to_owner, :integer, :default => 0

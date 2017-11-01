@@ -1,4 +1,4 @@
-class AddHiveApplicationIdToUserAccount < ActiveRecord::Migration
+class AddHiveApplicationIdToUserAccount < ActiveRecord::Migration[5.1]
   def change
     add_column :user_accounts, :hiveapplication_id, :integer
   end

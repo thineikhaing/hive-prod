@@ -1,4 +1,4 @@
-class CreateCheckinplaces < ActiveRecord::Migration
+class CreateCheckinplaces < ActiveRecord::Migration[5.1]
 
   def up
     create_table :checkinplaces do |t|

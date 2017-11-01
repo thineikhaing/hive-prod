@@ -1,4 +1,4 @@
-class CreateTopicInvitees < ActiveRecord::Migration
+class CreateTopicInvitees < ActiveRecord::Migration[5.1]
   def change
     create_table :topic_invitees do |t|
       t.integer :topic_id

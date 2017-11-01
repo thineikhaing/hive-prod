@@ -1,4 +1,4 @@
-class CreateCarActionLogs < ActiveRecord::Migration
+class CreateCarActionLogs < ActiveRecord::Migration[5.1]
   def change
     create_table :car_action_logs do |t|
       t.integer :user_id

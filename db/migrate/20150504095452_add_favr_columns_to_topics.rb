@@ -1,4 +1,4 @@
-class AddFavrColumnsToTopics < ActiveRecord::Migration
+class AddFavrColumnsToTopics < ActiveRecord::Migration[5.1]
   def change
     add_column :topics, :extra_info, :string
     add_column :topics, :valid_start_date, :datetime

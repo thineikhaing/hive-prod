@@ -1,4 +1,4 @@
-class CreateUserFavLocations < ActiveRecord::Migration
+class CreateUserFavLocations < ActiveRecord::Migration[5.1]
   def change
     create_table :user_fav_locations do |t|
       t.integer :user_id

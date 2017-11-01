@@ -1,4 +1,4 @@
-class CreateTopicWithTags < ActiveRecord::Migration
+class CreateTopicWithTags < ActiveRecord::Migration[5.1]
   def change
     create_table :topic_with_tags do |t|
       t.integer :topic_id, null: false

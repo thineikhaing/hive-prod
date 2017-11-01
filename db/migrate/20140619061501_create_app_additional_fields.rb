@@ -1,4 +1,4 @@
-class CreateAppAdditionalFields < ActiveRecord::Migration
+class CreateAppAdditionalFields < ActiveRecord::Migration[5.1]
   def change
     create_table :app_additional_fields do |t|
 

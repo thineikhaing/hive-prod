@@ -1,4 +1,4 @@
-class CreateSgAccidentHistories < ActiveRecord::Migration
+class CreateSgAccidentHistories < ActiveRecord::Migration[5.1]
   def change
     create_table :sg_accident_histories do |t|
       t.string :type

@@ -1,4 +1,4 @@
-class Createdata < ActiveRecord::Migration
+class Createdata < ActiveRecord::Migration[5.1]
   require 'securerandom'  #to generate api key for application
   def change
     Devuser.create(email: "info@raydiusapp.com", password: "p@ssw0rd!", password_confirmation: "p@ssw0rd!", username: "Hive Admin", verified: true)

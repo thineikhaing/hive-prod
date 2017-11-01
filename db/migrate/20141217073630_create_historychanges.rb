@@ -1,4 +1,4 @@
-class CreateHistorychanges < ActiveRecord::Migration
+class CreateHistorychanges < ActiveRecord::Migration[5.1]
   def up
     create_table :historychanges do |t|
       t.string :type_action,  :default => ""
