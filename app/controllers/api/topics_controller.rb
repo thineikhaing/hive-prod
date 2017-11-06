@@ -759,6 +759,26 @@ class Api::TopicsController < ApplicationController
     end
   end
 
+  def check_user_last_topic
+    p "checking user's last topic for topic type 11"
+
+    hive_app_key = HiveApplication.find_by_api_key(params[:app_key])
+
+    if hive_app_key.present?
+      p user_id = params["user_id"]
+      p topic_type = params["topic_type"]
+      p user_topic = Topic.where(user_id:user_id, topic_type:topic_type).last
+      if user_topic.nil?
+        p "no topic by current user"
+        render json: {message: "There is no topic created by the current user"}
+      else
+        p "topic exist"
+        p user_topic
+        render json: {topic: user_topic}, status: 200
+      end
+    end
+  end
+
 
   def favr_topics_by_user
 
