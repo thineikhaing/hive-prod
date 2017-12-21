@@ -1214,7 +1214,14 @@ class Api::RoundtripController < ApplicationController
         UserFavBus.create(user_id: current_user.id, service: service, busid: busid)
       end
       favbuses = UserFavBus.where(user_id: current_user.id)
-      render json:{favbuses: favbuses, status: 200}
+      busstops = []
+      favbuses.each do |stop|
+        bus = SgBusStop.where(bus_id: stop.busid).take
+        format_bus = {road_name: bus.road_name, description: bus.description}
+        busstops.push(format_bus)
+      end
+
+      render json:{favbuses: favbuses, bus_stops: busstops, status: 200}
     else
       render json:{status: 400, message: "unauthorized."}
 
@@ -1233,8 +1240,6 @@ class Api::RoundtripController < ApplicationController
       favbuses.each do |stop|
         bus = SgBusStop.where(bus_id: stop.busid).take
         format_bus = {road_name: bus.road_name, description: bus.description}
-        # route = SgBusRoute.where(bus_stop_code: stop.busid, service_no: stop.service)
-        # busroutes.push(route)
         busstops.push(format_bus)
       end
       render json:{favbuses: favbuses, bus_stops: busstops, status: 200}
