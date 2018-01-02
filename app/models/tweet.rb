@@ -32,10 +32,11 @@ class Tweet < ApplicationRecord
       target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_P_Broadcast_Noti'
     end
 
+    alert_message = "["+tweet.creator+"] "+tweet.text
 
     iphone_notification = {
         aps: {
-            alert: tweet.text,
+            alert: alert_message,
             sound: "default",
             badge: 0,
             extra:  {
@@ -49,7 +50,7 @@ class Tweet < ApplicationRecord
 
     android_notification = {
         data: {
-            message:tweet.text,
+            message:alert_message,
             badge: 0,
             extra:  {
                 topic_id: 0,
@@ -61,7 +62,7 @@ class Tweet < ApplicationRecord
     }
 
     sns_message = {
-        default: tweet.text,
+        default: alert_message,
         APNS_SANDBOX: iphone_notification.to_json,
         APNS: iphone_notification.to_json,
         GCM: android_notification.to_json
