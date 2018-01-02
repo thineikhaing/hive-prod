@@ -281,7 +281,7 @@ ActiveRecord::Schema.define(version: 20171101072948) do
   end
 
   create_table "sg_bus_stops", id: :serial, force: :cascade do |t|
-    t.string "bus_id"
+    t.string "bus_id", default: ""
     t.string "road_name"
     t.string "description"
     t.float "latitude"

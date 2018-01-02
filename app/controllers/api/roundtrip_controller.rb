@@ -1168,34 +1168,46 @@ class Api::RoundtripController < ApplicationController
     smrt_tweets = []
     sbs_tweets = []
     $twitter_client.search("from:SMRT_Singapore", result_type: "recent").collect do |tweet|
-      smrt_tweets.push(tweet)
       text = tweet.text
-      created_at = tweet.created_at.dup.localtime.strftime("%b-%d %I:%M%p %a")
-      hashtags = tweet.hashtags
-      tags  = []
-      hashtags.each do |tag|
-        tags.push(tag.text)
+      if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us")
+        p "found non alert"
+      else
+        smrt_tweets.push(tweet)
+
+        created_at = tweet.created_at.dup.localtime.strftime("%b-%d %I:%M%p %a")
+        hashtags = tweet.hashtags
+        tags  = []
+        hashtags.each do |tag|
+          tags.push(tag.text)
+        end
+
+        if((Date.today-20.days)) <= Date.parse(created_at)
+          tweet_data = [text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name]
+          tweets.push(tweet_data)
+        end
       end
-      if((Date.today-20.days)) <= Date.parse(created_at)
-        tweet_data = [text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name]
-        tweets.push(tweet_data)
-      end
+
     end
 
 
     $twitter_client.search("from:SBSTransit_Ltd", result_type: "recent").collect do |tweet|
-      sbs_tweets.push(tweet)
       text = tweet.text
-      created_at = tweet.created_at.dup.localtime.strftime("%b-%d %I:%M%p %a")
-      hashtags = tweet.hashtags
-      tags  = []
-      hashtags.each do |tag|
-        tags.push(tag.text)
+      if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us")
+        p "found non alert"
+      else
+        sbs_tweets.push(tweet)
+        created_at = tweet.created_at.dup.localtime.strftime("%b-%d %I:%M%p %a")
+        hashtags = tweet.hashtags
+        tags  = []
+        hashtags.each do |tag|
+          tags.push(tag.text)
+        end
+        if((Date.today-20.days)) <= Date.parse(created_at)
+          tweet_data = [text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name]
+          tweets.push(tweet_data)
+        end
       end
-      if((Date.today-20.days)) <= Date.parse(created_at)
-        tweet_data = [text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name]
-        tweets.push(tweet_data)
-      end
+
     end
 
 
