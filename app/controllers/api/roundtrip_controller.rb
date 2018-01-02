@@ -1169,7 +1169,7 @@ class Api::RoundtripController < ApplicationController
     sbs_tweets = []
     $twitter_client.search("from:SMRT_Singapore", result_type: "recent").collect do |tweet|
       text = tweet.text
-      if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us")
+      if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides")
         p "found non alert"
       else
         smrt_tweets.push(tweet)
@@ -1192,7 +1192,7 @@ class Api::RoundtripController < ApplicationController
 
     $twitter_client.search("from:SBSTransit_Ltd", result_type: "recent").collect do |tweet|
       text = tweet.text
-      if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us")
+      if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides")
         p "found non alert"
       else
         sbs_tweets.push(tweet)

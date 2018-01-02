@@ -49,7 +49,7 @@ daemon.follow(Twitter_Const::SMRT_ID,Twitter_Const::SBS_ID) do |status|
 
   if (status.text.downcase.include? "wishing") || (status.text.downcase.include? "love")
     || (status.text.downcase.include? "wish")|| (status.text.downcase.include? "watch")
-    || (status.text.downcase.include? "join us")
+    || (status.text.downcase.include? "join us") || (status.text.downcase.include? "our bus guides")
     puts "ignore tweet"
   else
     if tweet_user_id.to_i == Twitter_Const::SMRT_ID.to_i
