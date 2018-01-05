@@ -39,7 +39,6 @@ end
 
 
 daemon.follow(Twitter_Const::SMRT_ID,Twitter_Const::SBS_ID,Twitter_Const::RT_ID) do |status|
-
   puts "#{status.text}"
   puts "#{status.user.screen_name}"
   puts "#{status.user.id}"
@@ -47,7 +46,7 @@ daemon.follow(Twitter_Const::SMRT_ID,Twitter_Const::SBS_ID,Twitter_Const::RT_ID)
   puts "#########"
   tweet_user_id = status.user.id
 
-  if (status.text.include? "happy") || (status.text.include? "love") || (status.text.include? "wish") || (status.text.downcase.include? "join us") || (status.text.downcase.include? "our bus guides")
+  if (status.text.downcase.include? "wishing") || (status.text.downcase.include? "love") || (status.text.downcase.include? "wish") || (status.text.downcase.include? "join us") || (status.text.downcase.include? "our bus guides")
     puts "ignore tweet"
   else
     if tweet_user_id.to_i == Twitter_Const::SMRT_ID.to_i
@@ -57,12 +56,10 @@ daemon.follow(Twitter_Const::SMRT_ID,Twitter_Const::SBS_ID,Twitter_Const::RT_ID)
       ::Tweet.create_from_status(status)
       puts "create tweet from sbs and send alert to RT users"
     else
-      puts "tweet created by other users"
+      ::Tweet.create_from_status(status)
+      puts status
     end
 
   end
-
-
-
 
 end
