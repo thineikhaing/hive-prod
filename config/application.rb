@@ -166,6 +166,7 @@ end
 module Twitter_Const
   SMRT_ID = "307781209"
   SBS_ID = "3087502272"
+  RT_ID = "918754322506162176"
 end
 
 module SMRT_Const

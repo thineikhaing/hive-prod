@@ -38,7 +38,7 @@ daemon.on_limit do |discarded_count|
 end
 
 
-daemon.follow(Twitter_Const::SMRT_ID,Twitter_Const::SBS_ID) do |status|
+daemon.follow(Twitter_Const::SMRT_ID,Twitter_Const::SBS_ID,Twitter_Const::RT_ID) do |status|
 
   puts "#{status.text}"
   puts "#{status.user.screen_name}"
@@ -59,7 +59,8 @@ daemon.follow(Twitter_Const::SMRT_ID,Twitter_Const::SBS_ID) do |status|
       ::Tweet.create_from_status(status)
       puts "create tweet from sbs and send alert to RT users"
     else
-      puts "tweet created by other users"
+      ::Tweet.create_from_status(status)
+      puts status
     end
 
   end
