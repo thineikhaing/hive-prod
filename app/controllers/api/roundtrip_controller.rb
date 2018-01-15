@@ -1060,7 +1060,7 @@ class Api::RoundtripController < ApplicationController
           mode = ""
           total_stops = 0
 
-          if travel_mode != "WALKING"
+          if travel_mode != "WALKING" && travel_mode != "DRIVING"
             total_stops = data[:transit_details][:num_stops]
             transit_name = data[:transit_details][:line][:name]
             transit_color = data[:transit_details][:line][:color]
@@ -1084,7 +1084,12 @@ class Api::RoundtripController < ApplicationController
               short_name = data[:transit_details][:line][:short_name]
             end
           else
-            mode = "WALK"
+            if travel_mode == "WALKING"
+              mode = "WALK"
+            else
+              mode = "DRIVE"
+            end
+
           end
 
           route_hash[index] = {from:f_detail, to: t_detail,
