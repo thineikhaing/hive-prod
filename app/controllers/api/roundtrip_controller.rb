@@ -1036,7 +1036,7 @@ class Api::RoundtripController < ApplicationController
         end
 
       elsif source.to_i == Place::GOOGLE
-        trip_route = params[:trip_route][:legs]["0"][:steps]
+        trip_route = params[:trip_route][:steps]
         trip_route.each do |index,data|
           f_detail =  Hash.new []
           t_detail =  Hash.new []
