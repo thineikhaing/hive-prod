@@ -8,7 +8,12 @@ class Api::DownloaddataController < ApplicationController
       if hiveApplication.present?
         p "hive application present"
 
-        topics = Place.nearest_topics_within(params[:latitude], params[:longitude], radius, hiveApplication.id)
+        if params[:radius].to_i == 100
+          topics = Topic.where(hiveapplication_id:  hiveApplication.id)
+        else
+          topics = Place.nearest_topics_within(params[:latitude], params[:longitude], radius, hiveApplication.id)
+        end
+
         topics = topics.sort {|x,y| y["id"]<=>x["id"]}
 
         if hiveApplication.id ==1 #Hive Application
