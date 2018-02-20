@@ -740,7 +740,15 @@ class Api::TopicsController < ApplicationController
     if hive.present?
       topics = Topic.where(hiveapplication_id: hive.id, user_id: current_user.id)
       user_friend_list = UserFriendList.where(user_id: current_user.id)
-      trips = Trip.where(user_id: current_user.id).order('id DESC')
+      trips = Trip.where(user_id: current_user.id).order('id DESC').last(10)
+
+      if trips.count > 11
+        ids = trips.limit(10).order('id DESC').pluck(:id)
+        trips.where('id NOT IN (?)', ids).destroy_all
+      end
+
+
+
       trip_detail =  []
       trips.each do |trip|
         detail = trip.data["route_detail"]

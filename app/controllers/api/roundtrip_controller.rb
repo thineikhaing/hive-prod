@@ -1119,6 +1119,13 @@ class Api::RoundtripController < ApplicationController
       trip = trip.save!
 
       user_trips  = Trip.where(user_id: user_id)
+
+      if user_trips.count > 11
+        ids = user_trips.limit(10).order('id DESC').pluck(:id)
+        user_trips.where('id NOT IN (?)', ids).destroy_all
+      end
+
+      user_trips  = Trip.where(user_id: user_id)
       render json:{status:"save user trip!",status: 21, trips: user_trips}
 
     end
