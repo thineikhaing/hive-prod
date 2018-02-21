@@ -1184,7 +1184,7 @@ class Api::RoundtripController < ApplicationController
 
       text = tweet.text
       if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides")
-        p "found non alert"
+        # p "found non alert"
       else
         tweet_counter = tweet_counter + 1
         smrt_tweets.push(tweet)
@@ -1207,10 +1207,9 @@ class Api::RoundtripController < ApplicationController
 
     $twitter_client.search("from:SBSTransit_Ltd", result_type: "recent").collect do |tweet|
 
-      p tweet.id
       text = tweet.text
       if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides")
-        p "found non alert"
+        # p "found non alert"
       else
         tweet_counter = tweet_counter + 1
         sbs_tweets.push(tweet)
@@ -1229,7 +1228,7 @@ class Api::RoundtripController < ApplicationController
     end
 
 
-    # tweets = tweets.sort {|x,y| x.last[:created_at] <=> y.last[:created_at]}.reverse!
+    tweets = tweets.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
 
     render json: {tweets:tweets, count: tweets.count,smrt_tweets:smrt_tweets,sbs_tweets:sbs_tweets}  , status: 200
   end
@@ -1254,7 +1253,6 @@ class Api::RoundtripController < ApplicationController
       render json:{favbuses: favbuses, bus_stops: busstops, status: 200}
     else
       render json:{status: 400, message: "unauthorized."}
-
     end
 
   end
