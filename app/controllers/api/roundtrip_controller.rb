@@ -1176,7 +1176,7 @@ class Api::RoundtripController < ApplicationController
   end
 
   def get_smrt_tweets
-    tweets = []
+    transit_annoucement = []
     smrt_tweets = []
     sbs_tweets = []
     tweet_counter = 0
@@ -1198,7 +1198,7 @@ class Api::RoundtripController < ApplicationController
 
         if((Date.today-20.days)) <= Date.parse(created_at)
           tweet_data = {id: tweet_counter,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name}
-          tweets.push(tweet_data)
+          transit_annoucement.push(tweet_data)
         end
       end
 
@@ -1221,16 +1221,25 @@ class Api::RoundtripController < ApplicationController
         end
         if((Date.today-20.days)) <= Date.parse(created_at)
           tweet_data = {id: tweet_counter,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name}
-          tweets.push(tweet_data)
+          transit_annoucement.push(tweet_data)
         end
       end
 
     end
 
+    lta_status = SgAccidentHistory.last(5)
+    lta_status.each do |data|
+      tweet_counter = tweet_counter + 1
+      lta_data = {id: tweet_counter,text: data.message, created_at: data.accident_datetime,hashtags:data.type,name: "LTA"}
+      transit_annoucement.push(lta_data)
+    end
 
-    tweets = tweets.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
 
-    render json: {tweets:tweets, count: tweets.count,smrt_tweets:smrt_tweets,sbs_tweets:sbs_tweets}  , status: 200
+    transit_annoucement = transit_annoucement.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
+
+
+
+    render json: {tweets:transit_annoucement,lta_status:lta_status }  , status: 200
   end
 
   def save_user_fav_buses
