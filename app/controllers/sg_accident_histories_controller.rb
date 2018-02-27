@@ -31,6 +31,13 @@ class SgAccidentHistoriesController < ApplicationController
       @sg_accident_history.accident_datetime = Time.now
 
       if @sg_accident_history.save
+
+        startplace = Place.create_place_by_lat_lng(@sg_accident_history.latitude, @sg_accident_history.longitude,User.first)
+
+        topic = Topic.create(title:@sg_accident_history.message, user_id: User.first.id,
+          topic_type: 10 ,start_place_id: startplace.id ,  end_place_id: startplace.id  ,
+            special_type: @sg_accident_history.type, hiveapplication_id: 6, place_id: startplace.id)
+
         SgAccidentHistory.send_traffic_noti(@sg_accident_history)
 
         format.html { redirect_to sg_accident_histories_url, notice: 'Sg accident history was successfully created.' }

@@ -40,6 +40,12 @@ class SgAccidentHistory < ActiveRecord::Base
         if sg_accident.nil?
           p "add new record"
           sg_accident =SgAccidentHistory.create(type:type,message: message, accident_datetime: accidentDateTIme, latitude:latitude, longitude:longitude, summary:summary )
+
+          startplace = Place.create_place_by_lat_lng(latitude, longitude,User.first)
+
+          topic = Topic.create(title:message, user_id: User.first.id, topic_type: 10 ,start_place_id: startplace.id ,  end_place_id: startplace.id  ,
+              special_type: type, hiveapplication_id: hive_application.id, place_id: startplace.id)
+
         end
 
 
@@ -113,10 +119,7 @@ class SgAccidentHistory < ActiveRecord::Base
       sg_accident.save
       p sg_accident.message
 
-      startplace = Place.create_place_by_lat_lng(sg_accident.latitude, sg_accident.longitude,User.first)
-
-      topic = Topic.create(title:sg_accident.message, user_id: User.first.id, topic_type: 10 ,start_place_id: startplace.id ,  end_place_id: startplace.id  ,
-          special_type: sg_accident.type, hiveapplication_id: hive_application.id, place_id: startplace.id)
+      topic = Topic.find_by_title(sg_accident.message)
 
       topic.hive_broadcast
       topic.app_broadcast_with_content

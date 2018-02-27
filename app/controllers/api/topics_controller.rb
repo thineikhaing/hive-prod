@@ -134,17 +134,20 @@ class Api::TopicsController < ApplicationController
           params[:special_type].present? ? special_type = params[:special_type] : special_type = 0
           #check the profanity
 
-
+          topic_user = current_user.id
+          if params[:topic_type].to_i == 10
+            topic_user = 1
+          end
 
           if params[:image_url].present?
-            topic = Topic.create(title:title, user_id: current_user.id, topic_type: params[:topic_type],start_place_id: start_id, end_place_id: end_id,
+            topic = Topic.create(title:title, user_id: topic_user, topic_type: params[:topic_type],start_place_id: start_id, end_place_id: end_id,
                                  topic_sub_type:topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit],
                                  value: params[:value],place_id: place_id, data: result, image_url: params[:image_url],
                                  width: params[:width], height: params[:height], special_type: special_type,likes: likes, dislikes: dislikes)
 
             topic.delay.topic_image_upload_job  if params[:topic_type]== Topic::IMAGE.to_s
           else
-            topic = Topic.create(title:title, user_id: current_user.id, topic_type: params[:topic_type] ,start_place_id: start_id , end_place_id: end_id,
+            topic = Topic.create(title:title, user_id: topic_user, topic_type: params[:topic_type] ,start_place_id: start_id , end_place_id: end_id,
                                  topic_sub_type: topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit],
                                  value: params[:value], place_id: place_id, data: result, special_type: special_type,likes: likes, dislikes: dislikes)
           end
@@ -152,6 +155,7 @@ class Api::TopicsController < ApplicationController
 
           #create post if param post_content is passed
           if topic.present? and params[:post_content].present?
+            p "Post create"
             post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, place_id: place_id) if params[:post_type] == Post::TEXT.to_s
             #comment out as there is no image post for luncheon
             #post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height], place_id: place_id) if params[:post_type] == Post::IMAGE.to_s  or params[:post_type] == Post::AUDIO.to_s
@@ -219,7 +223,7 @@ class Api::TopicsController < ApplicationController
           if hiveapplication.id ==1 #Hive Application
             render json: { topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
           elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1 #All Applications under Herenow except Hive
-            render json: { topic: JSON.parse(topic.to_json(content: true)), profanity_counter: current_user.profanity_counter}
+            render json: { topic: JSON.parse(topic.to_json(content: true)),post:post, profanity_counter: current_user.profanity_counter}
           else #3rd party App
             render json: { topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
         end
@@ -244,7 +248,7 @@ class Api::TopicsController < ApplicationController
 
   def check_transit_topic
     if params[:title]
-      topic = Topic.find_by_title(params[:title])
+      topic = Topic.where(title: params[:title], )
       if topic.present?
         render json: {topic: JSON.parse(topic.to_json()), status: 200}
       else
