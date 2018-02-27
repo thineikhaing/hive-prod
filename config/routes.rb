@@ -165,7 +165,7 @@ Rails.application.routes.draw do
     match "topics/topics_within_two_points"         => "topics#topics_within_two_points"        , via: [:get, :post]
     match "topics/topics_by_user"                   => "topics#topics_by_user"                  , via: [:get, :post]
     match "topics/check_user_last_topic"            => "topics#check_user_last_topic"           , via: [:get, :post]
-
+    match "topics/check_transit_topic"              => "topics#check_transit_topic"           , via: [:get, :post]
 
     match "topics/topic_liked"                      => "topics#topic_liked"                     , via: [:get, :post]
     match "topics/topic_offensive"                  => "topics#topic_offensive"                 , via: [:get, :post]

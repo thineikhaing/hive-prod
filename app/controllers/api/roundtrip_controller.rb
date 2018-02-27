@@ -1207,7 +1207,13 @@ class Api::RoundtripController < ApplicationController
 
     $twitter_client.search("from:SBSTransit_Ltd", result_type: "recent").collect do |tweet|
 
-      text = tweet.text
+      check_retweet = tweet.retweeted_status.text.to_s
+      if check_retweet === ""
+        text = tweet.text
+      else
+        text = tweet.retweeted_status.text
+      end
+
       if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides")
         # p "found non alert"
       else
@@ -1227,10 +1233,11 @@ class Api::RoundtripController < ApplicationController
 
     end
 
-    lta_status = SgAccidentHistory.last(5)
+    lta_status = Topic.where(topic_type: 10).last(5)
     lta_status.each do |data|
       tweet_counter = tweet_counter + 1
-      lta_data = {id: tweet_counter,text: data.message, created_at: data.accident_datetime,hashtags:data.type,name: "LTA"}
+      lta_data = {id: tweet_counter,text: data.title, created_at: data.created_at,hashtags:data.special_type,name: "LTA",
+      topic_id: data.id}
       transit_annoucement.push(lta_data)
     end
 
@@ -1239,7 +1246,7 @@ class Api::RoundtripController < ApplicationController
 
 
 
-    render json: {tweets:transit_annoucement,lta_status:lta_status }  , status: 200
+    render json: {tweets:transit_annoucement,sbs_tweets:sbs_tweets}  , status: 200
   end
 
   def save_user_fav_buses
@@ -1288,4 +1295,3 @@ class Api::RoundtripController < ApplicationController
 
 
 end
-

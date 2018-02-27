@@ -242,6 +242,17 @@ class Api::TopicsController < ApplicationController
     end
   end
 
+  def check_transit_topic
+    if params[:title]
+      topic = Topic.find_by_title(params[:title])
+      if topic.present?
+        render json: {topic: JSON.parse(topic.to_json()), status: 200}
+      else
+        render json: {status: 201,message: 'create new transit topic'}
+      end
+    end
+  end
+
   def favtopic_create
     tag = Tag.new
     history = Historychange.new

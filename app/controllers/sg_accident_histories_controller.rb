@@ -31,7 +31,7 @@ class SgAccidentHistoriesController < ApplicationController
       @sg_accident_history.accident_datetime = Time.now
 
       if @sg_accident_history.save
-        SgAccidentHistory.send_traffic_noti
+        SgAccidentHistory.send_traffic_noti(@sg_accident_history)
 
         format.html { redirect_to sg_accident_histories_url, notice: 'Sg accident history was successfully created.' }
         format.json { render :index, status: :created, location: sg_accident_histories_url }
