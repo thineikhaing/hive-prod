@@ -1198,7 +1198,7 @@ class Api::RoundtripController < ApplicationController
 
         if((Date.today-20.days)) <= Date.parse(created_at)
           topic_id = 0
-          tweet_topic = Topic.where(title: text,created_at: tweet.created_at, topic_type:10).take
+          tweet_topic = Topic.find_by_title(text)
           if tweet_topic.present?
             topic_id = tweet_topic.id
           end
@@ -1232,7 +1232,7 @@ class Api::RoundtripController < ApplicationController
         end
         if((Date.today-20.days)) <= Date.parse(created_at)
           topic_id = 0
-          tweet_topic = Topic.where(title: text,created_at: tweet.created_at, topic_type:10).take
+          tweet_topic = Topic.find_by_title(text)
           if tweet_topic.present?
             topic_id = tweet_topic.id
           end
