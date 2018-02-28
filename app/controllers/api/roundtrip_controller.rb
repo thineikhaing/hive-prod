@@ -1243,19 +1243,23 @@ class Api::RoundtripController < ApplicationController
 
     end
 
-    lta_status = Topic.where(topic_type: 10).last(5)
+    lta_status = SgAccidentHistory.last(5)
     lta_status.each do |data|
       tweet_counter = tweet_counter + 1
-      lta_data = {id: tweet_counter,text: data.title, created_at: data.created_at,hashtags:data.special_type,name: "LTA",
+
+      topic_id = 0
+      tweet_topic = Topic.where(title: data.message , topic_type:10).take
+      if tweet_topic.present?
+        topic_id = tweet_topic.id
+      end
+
+      lta_data = {id: tweet_counter,text: data.message, created_at: data.created_at,hashtags:data.type,name: "LTA",
       topic_id: data.id}
       transit_annoucement.push(lta_data)
     end
 
 
     transit_annoucement = transit_annoucement.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
-
-
-
     render json: {tweets:transit_annoucement}  , status: 200
   end
 
