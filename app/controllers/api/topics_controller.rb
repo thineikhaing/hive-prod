@@ -153,6 +153,11 @@ class Api::TopicsController < ApplicationController
           end
 
 
+          if params[:created_by]
+            topic.created_at = params[:created_by]
+            topic.save
+          end
+
           #create post if param post_content is passed
           if topic.present? and params[:post_content].present?
             p "Post create"
