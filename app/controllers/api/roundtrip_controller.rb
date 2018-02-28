@@ -1197,7 +1197,12 @@ class Api::RoundtripController < ApplicationController
         end
 
         if((Date.today-20.days)) <= Date.parse(created_at)
-          tweet_data = {id: tweet_counter,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name}
+          topic_id = 0
+          tweet_topic = Topic.where(title: text, topic_type:10).take
+          if tweet_topic.present?
+            topic_id = tweet_topic.id
+          end
+          tweet_data = {id: tweet_counter,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id}
           transit_annoucement.push(tweet_data)
         end
       end
@@ -1226,7 +1231,12 @@ class Api::RoundtripController < ApplicationController
           tags.push(tag.text)
         end
         if((Date.today-20.days)) <= Date.parse(created_at)
-          tweet_data = {id: tweet_counter,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name}
+          topic_id = 0
+          tweet_topic = Topic.where(title: text, topic_type:10).take
+          if tweet_topic.present?
+            topic_id = tweet_topic.id
+          end
+          tweet_data = {id: tweet_counter,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id}
           transit_annoucement.push(tweet_data)
         end
       end
@@ -1246,7 +1256,7 @@ class Api::RoundtripController < ApplicationController
 
 
 
-    render json: {tweets:transit_annoucement,sbs_tweets:sbs_tweets}  , status: 200
+    render json: {tweets:transit_annoucement}  , status: 200
   end
 
   def save_user_fav_buses
