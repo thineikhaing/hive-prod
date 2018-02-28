@@ -37,6 +37,16 @@ class SgAccidentHistory < ActiveRecord::Base
 
         sg_accident = SgAccidentHistory.where(message: message).take if message.present?
 
+        if Rails.env.production?
+          round_key = RoundTrip_key::Production_Key
+        elsif Rails.env.staging?
+          round_key = RoundTrip_key::Staging_Key
+        else
+          round_key = RoundTrip_key::Development_Key
+        end
+
+        hive_application = HiveApplication.find_by_api_key(round_key)
+
         if sg_accident.nil?
           p "add new record"
           sg_accident =SgAccidentHistory.create(type:type,message: message, accident_datetime: accidentDateTIme, latitude:latitude, longitude:longitude, summary:summary )
@@ -66,6 +76,7 @@ class SgAccidentHistory < ActiveRecord::Base
     p sg_accident = accident
     p sg_accident.notify
     # p sg_accident = SgAccidentHistory.where(notify: false).take
+
     if Rails.env.production?
       round_key = RoundTrip_key::Production_Key
     elsif Rails.env.staging?
@@ -75,7 +86,6 @@ class SgAccidentHistory < ActiveRecord::Base
     end
 
     hive_application = HiveApplication.find_by_api_key(round_key)
-
 
     if sg_accident.present?
       latitude = sg_accident.latitude
