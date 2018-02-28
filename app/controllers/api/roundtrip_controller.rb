@@ -1198,11 +1198,14 @@ class Api::RoundtripController < ApplicationController
 
         if((Date.today-20.days)) <= Date.parse(created_at)
           topic_id = 0
+          post_count = 0
           tweet_topic = Topic.find_by_title(text)
           if tweet_topic.present?
             topic_id = tweet_topic.id
+            topic_posts = Post.where(topic_id: topic_id)
+            post_count = topic_posts.count
           end
-          tweet_data = {id: tweet_counter,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id}
+          tweet_data = {id: tweet_counter,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count}
           transit_annoucement.push(tweet_data)
         end
       end
@@ -1232,11 +1235,14 @@ class Api::RoundtripController < ApplicationController
         end
         if((Date.today-20.days)) <= Date.parse(created_at)
           topic_id = 0
+          post_count = 0
           tweet_topic = Topic.find_by_title(text)
           if tweet_topic.present?
             topic_id = tweet_topic.id
+            topic_posts = Post.where(topic_id: topic_id)
+            post_count = topic_posts.count
           end
-          tweet_data = {id: tweet_counter,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id}
+          tweet_data = {id: tweet_counter,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count:post_count}
           transit_annoucement.push(tweet_data)
         end
       end
@@ -1248,16 +1254,18 @@ class Api::RoundtripController < ApplicationController
       tweet_counter = tweet_counter + 1
 
       topic_id = 0
-
+      post_count = 0
       p tweet_topic = Topic.where(title: data.message, topic_type:10).last
       p "+++"
 
       if tweet_topic.present?
         topic_id = tweet_topic.id
+        topic_posts = Post.where(topic_id: topic_id)
+        post_count = topic_posts.count
       end
 
       lta_data = {id: tweet_counter,text: data.message, created_at: data.created_at,hashtags:data.type,name: "LTA",
-      topic_id: topic_id}
+      topic_id: topic_id, post_count: post_count}
       transit_annoucement.push(lta_data)
     end
 
