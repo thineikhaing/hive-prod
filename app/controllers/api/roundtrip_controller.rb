@@ -1205,7 +1205,19 @@ class Api::RoundtripController < ApplicationController
             topic_posts = Post.where(topic_id: topic_id)
             post_count = topic_posts.count
           end
-          tweet_data = {id: tweet_counter,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count}
+
+          header = "MRT"
+          if text.downcase.include?("NSL") || text.downcase.include?("North-South")
+            line_color = "#d32f2f"
+          elsif text.downcase.include?("EWL") || text.downcase.include?("East-West")
+            line_color = "#189e4a"
+          elsif text.downcase.include?("CCL")
+            line_color = "#FF9900"
+          else
+            line_color = "#5f57ba"
+          end
+
+          tweet_data = {id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color}
           transit_annoucement.push(tweet_data)
         end
       end
@@ -1234,6 +1246,26 @@ class Api::RoundtripController < ApplicationController
           tags.push(tag.text)
         end
         if((Date.today-20.days)) <= Date.parse(created_at)
+          header = ""
+          if text.downcase.include?("svcs") || text.downcase.include?("svc") || text.downcase.include?("services") ||text.downcase.include?("service")
+            header = "BUS"
+            line_color = "#22b5d0"
+          end
+          if text.downcase.include?("train fault") ||text.downcase.include?("dtl") || text.downcase.include?("nel") || text.downcase.include?("lrt")
+            header = "MRT|LRT"
+            line_color = "#5f57ba"
+          end
+
+          if text.downcase.include?("dtl")
+            header = "MRT"
+            line_color = "#0e56a3"
+          end
+
+          if text.downcase.include?("nel")
+            header = "MRT"
+            line_color = "purple"
+          end
+
           topic_id = 0
           post_count = 0
           tweet_topic = Topic.find_by_title(text)
@@ -1242,7 +1274,7 @@ class Api::RoundtripController < ApplicationController
             topic_posts = Post.where(topic_id: topic_id)
             post_count = topic_posts.count
           end
-          tweet_data = {id: tweet_counter,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count:post_count}
+          tweet_data = {id: tweet_counter,header:header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count:post_count,line_color:line_color}
           transit_annoucement.push(tweet_data)
         end
       end
