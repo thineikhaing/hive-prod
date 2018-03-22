@@ -1188,7 +1188,7 @@ class Api::RoundtripController < ApplicationController
     lta_tweets = []
     bus_tweets = []
     others_tweets = []
-
+    mrt_status = ''
     tweet_counter = 0
     $twitter_client.search("from:SMRT_Singapore", result_type: "recent").collect do |tweet|
 
@@ -1217,6 +1217,19 @@ class Api::RoundtripController < ApplicationController
           end
 
           header = "MRT"
+          mrt_status = 'alert'
+          if text.downcase.include?("update")
+            mrt_status = 'update'
+            header = 'MRT (UPDATE)'
+          elsif text.downcase.include?("cleared")
+            mrt_status = 'cleared'
+            header = 'MRT (ClEARED)'
+          elsif text.downcase.include?("alert")
+            mrt_status = 'alert'
+            header = 'MRT (ALERT)'
+          end
+
+
 
 
           if text.downcase.include?("nsl") || text.downcase.include?("north-south")
@@ -1236,7 +1249,7 @@ class Api::RoundtripController < ApplicationController
             others_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color})
           end
 
-          tweet_data = {id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color}
+          tweet_data = {id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status}
           transit_annoucement.push(tweet_data)
         end
       end
@@ -1375,7 +1388,7 @@ class Api::RoundtripController < ApplicationController
 
           end
 
-          tweet_data = {id: tweet_counter,header:header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count:post_count,line_color:line_color}
+          tweet_data = {id: tweet_counter,header:header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status}
           transit_annoucement.push(tweet_data)
         end
       end
@@ -1406,8 +1419,16 @@ class Api::RoundtripController < ApplicationController
 
 
     transit_annoucement = transit_annoucement.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
-    render json: {tweets:transit_annoucement,bus_tweets:bus_tweets,nsl_tweets:nsl_tweets,
-      ewl_tweets:ewl_tweets,ccl_tweets:ccl_tweets,nel_tweets: nel_tweets,dtl_tweets: dtl_tweets,lta_tweets: lta_tweets, lrt_tweets:lrt_tweets, others_tweets:others_tweets}  , status: 200
+    render json: {tweets:transit_annoucement,
+      bus_tweets:bus_tweets,
+      nsl_tweets:nsl_tweets,
+      ewl_tweets:ewl_tweets,
+      ccl_tweets:ccl_tweets,
+      nel_tweets: nel_tweets,
+      dtl_tweets: dtl_tweets,
+      lta_tweets: lta_tweets,
+      lrt_tweets:lrt_tweets,
+      others_tweets:others_tweets}  , status: 200
   end
 
   URI_REGEX = %r"((?:(?:[^ :/?#]+):)(?://(?:[^ /?#]*))(?:[^ ?#]*)(?:\?(?:[^ #]*))?(?:#(?:[^ ]*))?)"
