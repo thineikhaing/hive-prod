@@ -1416,7 +1416,7 @@ class Api::RoundtripController < ApplicationController
       transit_annoucement.push(lta_data)
       lta_tweets.push(lta_data)
     end
-
+    lta_tweets = lta_tweets.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
 
     transit_annoucement = transit_annoucement.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
     render json: {tweets:transit_annoucement,
