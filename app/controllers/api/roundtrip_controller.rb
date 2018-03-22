@@ -1179,11 +1179,21 @@ class Api::RoundtripController < ApplicationController
     transit_annoucement = []
     smrt_tweets = []
     sbs_tweets = []
+    nsl_tweets = []
+    ewl_tweets = []
+    ccl_tweets = []
+    nel_tweets = []
+    dtl_tweets = []
+    lrt_tweets = []
+    lta_tweets = []
+    bus_tweets = []
+    others_tweets = []
+
     tweet_counter = 0
     $twitter_client.search("from:SMRT_Singapore", result_type: "recent").collect do |tweet|
 
       text = tweet.text
-      if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides")
+      if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides")|| text.downcase.include?("enjoy")
         # p "found non alert"
       else
         tweet_counter = tweet_counter + 1
@@ -1207,14 +1217,23 @@ class Api::RoundtripController < ApplicationController
           end
 
           header = "MRT"
-          if text.downcase.include?("NSL") || text.downcase.include?("North-South")
+
+
+          if text.downcase.include?("nsl") || text.downcase.include?("north-south")
             line_color = "#d32f2f"
-          elsif text.downcase.include?("EWL") || text.downcase.include?("East-West")
+            nsl_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color})
+          elsif text.downcase.include?("ewl") || text.downcase.include?("east-west")
             line_color = "#189e4a"
-          elsif text.downcase.include?("CCL")
+            ewl_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color})
+          elsif text.downcase.include?("ccl")
             line_color = "#FF9900"
+            ccl_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color})
+          elsif text.downcase.include?("lrt")
+            line_color = "gray"
+            lrt_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color})
           else
             line_color = "#5f57ba"
+            others_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color})
           end
 
           tweet_data = {id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color}
@@ -1234,7 +1253,7 @@ class Api::RoundtripController < ApplicationController
         text = tweet.retweeted_status.text
       end
 
-      if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides")
+      if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides") || text.downcase.include?("enjoy")
         # p "found non alert"
       else
         tweet_counter = tweet_counter + 1
@@ -1246,26 +1265,6 @@ class Api::RoundtripController < ApplicationController
           tags.push(tag.text)
         end
         if((Date.today-20.days)) <= Date.parse(created_at)
-          header = ""
-          if text.downcase.include?("svcs") || text.downcase.include?("svc") || text.downcase.include?("services") ||text.downcase.include?("service")
-            header = "BUS"
-            line_color = "#22b5d0"
-          end
-          if text.downcase.include?("train fault") ||text.downcase.include?("dtl") || text.downcase.include?("nel") || text.downcase.include?("lrt")
-            header = "MRT|LRT"
-            line_color = "#5f57ba"
-          end
-
-          if text.downcase.include?("dtl")
-            header = "MRT"
-            line_color = "#0e56a3"
-          end
-
-          if text.downcase.include?("nel")
-            header = "MRT"
-            line_color = "purple"
-          end
-
           topic_id = 0
           post_count = 0
           tweet_topic = Topic.find_by_title(text)
@@ -1274,6 +1273,108 @@ class Api::RoundtripController < ApplicationController
             topic_posts = Post.where(topic_id: topic_id)
             post_count = topic_posts.count
           end
+
+          header = ""
+          if text.downcase.include?("svcs") || text.downcase.include?("svc") || text.downcase.include?("services") || text.downcase.include?("service")
+            tweet_text = text.to_s
+            if text.downcase.include?("svcs")
+              service_header = tweet_text.downcase.partition("svcs").last
+            elsif text.downcase.include?("svc")
+              service_header = tweet_text.downcase.partition("svc").last
+            elsif text.downcase.include?("services")
+              service_header = tweet_text.downcase.partition("services").last
+            elsif text.downcase.include?("service")
+              service_header = tweet_text.downcase.partition("service").last
+            end
+
+            service_no = ""
+
+            if text.downcase.include?("to operate")
+              service_no =   service_header.partition(" to operate ").first
+            elsif text.downcase.include?("to skip")
+              service_no =   service_header.partition(" to skip ").first
+            elsif text.downcase.include?("heading towards")
+              service_no =   service_header.partition(" heading towards ").first
+
+            elsif text.downcase.include?("continues to")
+              service_no =   service_header.partition(" continues to ").first
+            elsif text.downcase.include?("is still")
+              service_no =   service_header.partition(" is still ").first
+            elsif text.downcase.include?("along")
+              if text.downcase.include?("are delayed")
+                service_no =   service_header.partition(" are delayed ").first
+              elsif text.downcase.include?("will be diverted")
+                service_no =   service_header.partition("will be diverted").first
+              elsif text.downcase.include?("will skip")
+                service_no =   service_header.partition("will skip").first
+              else
+                service_no =   service_header.partition(" along ").first
+              end
+            elsif text.downcase.include?("are delayed")
+              service_no =   service_header.partition(" are delayed ").first
+            elsif text.downcase.include?("is back to")
+              service_no =   service_header.partition(" is back to ").first
+
+            elsif text.downcase.include?("will be diverted")
+
+            elsif text.downcase.include?("will skip")
+              service_no =   service_header.partition(" will skip ").first
+            else
+              service_no = " "+service_header.split(/[^\d]/).join
+            end
+
+
+           p "****"
+           p service_no
+           p "****"
+
+           if service_no === ""
+             header = "ANNOUNCEMENT"
+           else
+             header = "BUS" + remove_uris(service_no) #service_header.split(/[^\d]/).join
+             header = header.upcase
+           end
+
+
+            line_color = "#22b5d0"
+            if text.downcase.exclude?("dtl") && text.downcase.exclude?("lrt") && text.downcase.exclude?("train")
+              bus_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count:post_count,line_color:line_color})
+            end
+          end
+
+
+          if text.downcase.include?("lrt")
+              header = "MRT|LRT"
+              line_color = "#5f57ba"
+              lrt_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count:post_count,line_color:line_color})
+          end
+
+          if text.downcase.include?("dtl") || text.downcase.include?("expo")
+              header = "MRT"
+              line_color = "#0e56a3"
+              dtl_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count:post_count,line_color:line_color})
+          end
+
+          if text.downcase.include?("nel")
+            header = "MRT"
+            line_color = "purple"
+            nel_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count:post_count,line_color:line_color})
+          end
+
+          # if text.downcase.include?("bus")
+          #   header = "BUS"
+          #   line_color = "#22b5d0"
+          #   bus_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count:post_count,line_color:line_color})
+          # end
+          if header === ""
+            if text.downcase.include?("bus")
+                header = "BUS"
+                line_color = "#22b5d0"
+                bus_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count:post_count,line_color:line_color})
+            end
+
+          end
+
           tweet_data = {id: tweet_counter,header:header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count:post_count,line_color:line_color}
           transit_annoucement.push(tweet_data)
         end
@@ -1282,6 +1383,7 @@ class Api::RoundtripController < ApplicationController
     end
 
     lta_status = SgAccidentHistory.last(5)
+    line_color = "#5f57ba"
     lta_status.each do |data|
       tweet_counter = tweet_counter + 1
 
@@ -1296,15 +1398,27 @@ class Api::RoundtripController < ApplicationController
         post_count = topic_posts.count
       end
 
-      lta_data = {id: tweet_counter,text: data.message, created_at: data.created_at,hashtags:data.type,name: "LTA",
-      topic_id: topic_id, post_count: post_count}
+      lta_data = {id: tweet_counter,header:data.type,text: data.message, created_at: data.created_at,hashtags:data.type,name: "LTA",
+      topic_id: topic_id, post_count: post_count,line_color:line_color}
       transit_annoucement.push(lta_data)
+      lta_tweets.push(lta_data)
     end
 
 
     transit_annoucement = transit_annoucement.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
-    render json: {tweets:transit_annoucement}  , status: 200
+    render json: {tweets:transit_annoucement,bus_tweets:bus_tweets,nsl_tweets:nsl_tweets,
+      ewl_tweets:ewl_tweets,ccl_tweets:ccl_tweets,nel_tweets: nel_tweets,dtl_tweets: dtl_tweets,lta_tweets: lta_tweets, lrt_tweets:lrt_tweets, others_tweets:others_tweets}  , status: 200
   end
+
+  URI_REGEX = %r"((?:(?:[^ :/?#]+):)(?://(?:[^ /?#]*))(?:[^ ?#]*)(?:\?(?:[^ #]*))?(?:#(?:[^ ]*))?)"
+
+def remove_uris(text)
+  text.split(URI_REGEX).collect do |s|
+    unless s =~ URI_REGEX
+      s
+    end
+  end.join
+end
 
   def save_user_fav_buses
     if current_user.present?
