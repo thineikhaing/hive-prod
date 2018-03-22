@@ -1344,7 +1344,7 @@ class Api::RoundtripController < ApplicationController
            if service_no === ""
              header = "ANNOUNCEMENT"
            else
-             header = "BUS" + remove_uris(service_no) #service_header.split(/[^\d]/).join
+             header = "SERVICE" + remove_uris(service_no) #service_header.split(/[^\d]/).join
              header = header.upcase
            end
 
@@ -1381,7 +1381,7 @@ class Api::RoundtripController < ApplicationController
           # end
           if header === ""
             if text.downcase.include?("bus")
-                header = "BUS"
+                header = "ANNOUNCEMENT"
                 line_color = "#22b5d0"
                 bus_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count:post_count,line_color:line_color})
             end
