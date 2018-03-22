@@ -19,11 +19,14 @@ class Tweet < ApplicationRecord
         creator: status.user.screen_name
     )
 
+    Tweet.send_tweet_noti(tweet)
+  end
+
+  def self.send_tweet_noti(tweet)
     tags = tweet.hashtags["tags"]
     tags.gsub(/"/, "").split(',')
 
     sns = Aws::SNS::Client.new
-
     if Rails.env.development?
       target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
     elsif Rails.env.staging?
@@ -34,16 +37,23 @@ class Tweet < ApplicationRecord
 
     alert_message = "["+tweet.creator+"] "+tweet.text
 
+    tweet_topic = Topic.find_by_title(tweet.text)
+    topic_id = 0
+    if tweet_topic.present?
+      topic_id = tweet_topic.id
+    end
+
     iphone_notification = {
         aps: {
             alert: alert_message,
             sound: "default",
             badge: 0,
             extra:  {
-                topic_id: 0,
+                topic_id: topic_id,
                 posted_at: tweet.posted_at,
                 text: tweet.text,
-                tags: tags
+                tags: tags,
+                creator: tweet.creator
             }
         }
     }
@@ -53,10 +63,11 @@ class Tweet < ApplicationRecord
             message:alert_message,
             badge: 0,
             extra:  {
-                topic_id: 0,
+                topic_id: topic_id,
                 posted_at: tweet.posted_at,
                 text: tweet.text,
-                tags: tags
+                tags: tags,
+                creator: tweet.creator
             }
         }
     }
@@ -70,6 +81,5 @@ class Tweet < ApplicationRecord
 
 
     sns.publish(target_arn: target_topic, message: sns_message, message_structure:"json")
-
   end
 end
