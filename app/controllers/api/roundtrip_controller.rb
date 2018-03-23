@@ -1304,6 +1304,8 @@ class Api::RoundtripController < ApplicationController
 
             if text.downcase.include?("to operate")
               service_no =   service_header.partition(" to operate ").first
+            elsif text.downcase.include?("under the")
+              service_no =   service_header.partition(" under the ").first
             elsif text.downcase.include?("(towards")
               service_no =   service_header.partition(" (towards ").first
             elsif text.downcase.include?("to skip")
