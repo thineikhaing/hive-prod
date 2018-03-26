@@ -1192,7 +1192,7 @@ class Api::RoundtripController < ApplicationController
     tweet_counter = 0
     # $twitter_client.search("from:SMRT_Singapore", result_type: "recent").collect do |tweet|
 
-    Tweet.expiring_soon.where(creator: "SMRT_Singapore").collect do |tweet|
+    Tweet.expiring_soon.where(creator: "SMRT_Singapore").order("created_at desc").collect do |tweet|
       text = tweet.text
       if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides")|| text.downcase.include?("enjoy")
         # p "found non alert"
@@ -1263,7 +1263,7 @@ class Api::RoundtripController < ApplicationController
 
 
     # $twitter_client.search("from:SBSTransit_Ltd", result_type: "recent").collect do |tweet|
-    Tweet.expiring_soon.where(creator: "SBSTransit_Ltd").collect do |tweet|
+    Tweet.expiring_soon.where(creator: "SBSTransit_Ltd").order("created_at desc").collect do |tweet|
       text = tweet.text
       # check_retweet = tweet.retweeted_status.text.to_s
       # if check_retweet === ""
@@ -1426,6 +1426,7 @@ class Api::RoundtripController < ApplicationController
       transit_annoucement.push(lta_data)
       lta_tweets.push(lta_data)
     end
+
     lta_tweets = lta_tweets.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
 
     transit_annoucement = transit_annoucement.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
