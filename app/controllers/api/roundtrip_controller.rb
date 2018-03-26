@@ -1264,12 +1264,13 @@ class Api::RoundtripController < ApplicationController
 
     # $twitter_client.search("from:SBSTransit_Ltd", result_type: "recent").collect do |tweet|
     Tweet.expiring_soon.where(creator: "SBSTransit_Ltd").collect do |tweet|
-      check_retweet = tweet.retweeted_status.text.to_s
-      if check_retweet === ""
-        text = tweet.text
-      else
-        text = tweet.retweeted_status.text
-      end
+      text = tweet.text
+      # check_retweet = tweet.retweeted_status.text.to_s
+      # if check_retweet === ""
+      #
+      # else
+      #   text = tweet.retweeted_status.text
+      # end
 
       if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides") || text.downcase.include?("enjoy")
         # p "found non alert"
