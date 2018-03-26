@@ -1181,6 +1181,7 @@ class Api::RoundtripController < ApplicationController
     station_tags = Hash.new
     station_tags["tags"] = tags
     tweet = Tweet.create(text: params[:text], creator: "Admin",hashtags:station_tags,posted_at:Time.now)
+    Pusher["hive_channel"].trigger_async("new_tweet", tweet)
     if params[:shared].to_i == 1
         p "send noti"
         Tweet.send_tweet_noti(tweet)
@@ -1280,7 +1281,7 @@ class Api::RoundtripController < ApplicationController
         topic_posts = Post.where(topic_id: topic_id)
         post_count = topic_posts.count
       end
-      if text.downcase.include?("train") || text.downcase.include?("track") || text.downcase.include?("fault") || text.downcase.include?("stn") || text.downcase.include?("station")
+      if text.downcase.include?("train") || text.downcase.include?("ewl") || text.downcase.include?("nel") || text.downcase.include?("ccl") || text.downcase.include?("dtl") || text.downcase.include?("nel") || text.downcase.include?("lrt")
         header = "MRT"
         mrt_status = 'last'
         if text.downcase.include?("update")

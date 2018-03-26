@@ -23,7 +23,9 @@ class Tweet < ApplicationRecord
         creator: status.user.screen_name
     )
 
+    Pusher["hive_channel"].trigger_async("new_tweet", tweet)
     Tweet.send_tweet_noti(tweet)
+
   end
 
   def self.send_tweet_noti(tweet)
@@ -84,5 +86,7 @@ class Tweet < ApplicationRecord
 
 
     sns.publish(target_arn: target_topic, message: sns_message, message_structure:"json")
+
+
   end
 end
