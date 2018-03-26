@@ -2,8 +2,8 @@
   %h3
     Title:
     = @privacy_policy.title
-%p
-  = simple_format(@privacy_policy.content)
+%pre
+  =@privacy_policy.content
 
 
 = link_to 'Edit', edit_privacy_policy_path(@privacy_policy)

@@ -197,11 +197,21 @@ class HomeController < ApplicationController
        title= ''
        smrt = params[:topic][:smrt]
        start_place_id = params[:topic][:start_place_id]
-       end_place_id = params[:topic][:end_place_id]
-       toward_id = params[:topic][:toward]
+       if params[:topic][:end_place_id].present?
+         end_place_id = params[:topic][:end_place_id]
+       else
+          end_place_id = start_place_id
+       end
+
+       if params[:topic][:toward].present?
+         toward_id = params[:topic][:toward]
+       else
+          toward_id = start_place_id
+       end
+
+      
        reason = params[:topic][:reason]
        hiveapplication_id = params[:topic][:hiveapplication_id]
-
 
 
        station1 = Place.find(start_place_id)

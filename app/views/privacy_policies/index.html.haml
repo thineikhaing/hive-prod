@@ -1,5 +1,5 @@
 -#%h1 Listing privacy_policies
-= link_to 'New Privacy policy', new_privacy_policy_path , style: 'float: right;margin:20px;'
+
 -#- @privacy_policies.each do |privacy_policy|
 -#  %h3
 -#    Title:
@@ -13,27 +13,22 @@
 -#  = link_to 'Destroy', privacy_policy, :method => :delete, :data => { :confirm => 'Are you sure?' }
 -#
 -#
+
+%h4= link_to 'New Privacy policy', new_privacy_policy_path
 %br
 
-%table
-  %thead
-    %tr
-      %th Application
-      %th Title
-      %th Content
-      %th
-      %th
-
-  %tbody
-    - @privacy_policies.each do |privacy_policy|
-      %tr
-        %td=privacy_policy.application.app_name
-        %td= privacy_policy.title
-        %td= simple_format(privacy_policy.content)
-        %td= link_to 'Show', privacy_policy
-        %td= link_to 'Edit', edit_privacy_policy_path(privacy_policy)
+%ul
+  - @privacy_policies.each do |privacy_policy|
+    %li
+      %div
+        %h5= link_to privacy_policy.application.app_name , edit_privacy_policy_path(privacy_policy)
+        %p=privacy_policy.content
+      %div
+        = link_to 'Destroy', privacy_policy, :method => :delete, :data => { :confirm => 'Are you sure?' }
+      %hr  
 
 
-%br
 
 
+-#%td= link_to 'Show'
+-#%td= link_to 'Edit', edit_privacy_policy_path(privacy_policy)

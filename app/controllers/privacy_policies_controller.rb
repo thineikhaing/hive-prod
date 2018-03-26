@@ -28,7 +28,7 @@ class PrivacyPoliciesController < ApplicationController
 
     respond_to do |format|
       if @privacy_policy.save
-        format.html { redirect_to @privacy_policy, notice: 'Privacy policy was successfully created.' }
+        format.html { redirect_to privacy_policies_path, notice: 'Privacy policy was successfully created.' }
         format.json { render :show, status: :created, location: @privacy_policy }
       else
         format.html { render :new }
