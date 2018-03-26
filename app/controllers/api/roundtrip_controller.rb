@@ -1190,8 +1190,9 @@ class Api::RoundtripController < ApplicationController
     others_tweets = []
     mrt_status = ''
     tweet_counter = 0
-    $twitter_client.search("from:SMRT_Singapore", result_type: "recent").collect do |tweet|
+    # $twitter_client.search("from:SMRT_Singapore", result_type: "recent").collect do |tweet|
 
+    Tweet.where(creator: "SMRT_Singapore").collect do |tweet|
       text = tweet.text
       if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides")|| text.downcase.include?("enjoy")
         # p "found non alert"
@@ -1200,11 +1201,16 @@ class Api::RoundtripController < ApplicationController
         smrt_tweets.push(tweet)
 
         created_at = tweet.created_at.dup.localtime.strftime("%b-%d %I:%M%p %a")
-        hashtags = tweet.hashtags
-        tags  = []
-        hashtags.each do |tag|
-          tags.push(tag.text)
-        end
+        p "hashtag ++++"
+        p tags = tweet.hashtags
+        # tags  = []
+        #
+        # if hashtags["tags"] != ""
+        #    hashtags.each do |tag|
+        #   #  tags.push(tag.text)
+        #   end
+        # end
+
 
         if((Date.today-20.days)) <= Date.parse(created_at)
           topic_id = 0
@@ -1215,6 +1221,8 @@ class Api::RoundtripController < ApplicationController
             topic_posts = Post.where(topic_id: topic_id)
             post_count = topic_posts.count
           end
+
+
 
           header = "MRT"
           mrt_status = 'alert'
@@ -1229,27 +1237,24 @@ class Api::RoundtripController < ApplicationController
             header = 'MRT (ALERT)'
           end
 
-
-
-
           if text.downcase.include?("nsl") || text.downcase.include?("north-south")
             line_color = "#d32f2f"
-            nsl_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color})
+            nsl_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: "SMRT Transit",topic_id: topic_id,post_count: post_count,line_color:line_color})
           elsif text.downcase.include?("ewl") || text.downcase.include?("east-west")
             line_color = "#189e4a"
-            ewl_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color})
+            ewl_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: "SMRT Transit",topic_id: topic_id,post_count: post_count,line_color:line_color})
           elsif text.downcase.include?("ccl")
             line_color = "#FF9900"
-            ccl_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color})
+            ccl_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: "SMRT Transit",topic_id: topic_id,post_count: post_count,line_color:line_color})
           elsif text.downcase.include?("lrt")
             line_color = "gray"
-            lrt_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color})
+            lrt_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: "SMRT Transit",topic_id: topic_id,post_count: post_count,line_color:line_color})
           else
             line_color = "#5f57ba"
-            others_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color})
+            others_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: "SMRT Transit",topic_id: topic_id,post_count: post_count,line_color:line_color})
           end
 
-          tweet_data = {id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: tweet.user.name,topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status}
+          tweet_data = {id: tweet_counter,header: header,text: text, created_at: tweet.created_at,hashtags:tags,name: "SMRT Transit",topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status}
           transit_annoucement.push(tweet_data)
         end
       end

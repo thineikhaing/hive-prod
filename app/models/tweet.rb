@@ -36,7 +36,6 @@ class Tweet < ApplicationRecord
     end
 
     alert_message = "["+tweet.creator+"] "+tweet.text
-
     tweet_topic = Topic.find_by_title(tweet.text)
     topic_id = 0
     if tweet_topic.present?
