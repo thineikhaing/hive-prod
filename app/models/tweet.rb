@@ -1,4 +1,8 @@
 class Tweet < ApplicationRecord
+  scope :expiring_soon, -> {
+  date = Date.today >> 1
+  where(created_at: ( Date.today-60.days.. Date.today+1.day))
+  }
   def self.create_from_status(status)
     p "create tweet from status ::::::"
     hashtags = status.hashtags
