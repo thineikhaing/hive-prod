@@ -1369,6 +1369,8 @@ class Api::RoundtripController < ApplicationController
           service_no =   service_header.partition(", which plies ").first
         elsif text.downcase.include?("will be withdrawn")
           service_no =   service_header.partition(" will be withdrawn ").first
+        elsif text.downcase.include?("will call at a pair")
+          service_no =   service_header.partition(" will call at a pair ").first
         else
           service_no = " "+service_header.split(/[^\d]/).join
         end
@@ -1472,6 +1474,8 @@ class Api::RoundtripController < ApplicationController
               service_no =   service_header.partition(", which plies ").first
             elsif text.downcase.include?("will be withdrawn")
               service_no =   service_header.partition(" will be withdrawn ").first
+            elsif text.downcase.include?("will call at a pair")
+              service_no =   service_header.partition(" will call at a pair ").first
             else
               service_no = " "+service_header.split(/[^\d]/).join
             end

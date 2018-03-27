@@ -209,10 +209,9 @@ class HomeController < ApplicationController
           toward_id = start_place_id
        end
 
-      
+
        reason = params[:topic][:reason]
        hiveapplication_id = params[:topic][:hiveapplication_id]
-
 
        station1 = Place.find(start_place_id)
        station2 = Place.find(end_place_id)
