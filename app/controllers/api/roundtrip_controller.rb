@@ -1345,6 +1345,8 @@ class Api::RoundtripController < ApplicationController
           service_no =   service_header.partition(" continues to ").first
         elsif text.downcase.include?("is still")
           service_no =   service_header.partition(" is still ").first
+        elsif text.downcase.include?("will call at a pair")
+          service_no =   service_header.partition(" will call at a pair ").first
         elsif text.downcase.include?("along")
           if text.downcase.include?("are delayed")
             service_no =   service_header.partition(" are delayed ").first
@@ -1362,15 +1364,14 @@ class Api::RoundtripController < ApplicationController
         elsif text.downcase.include?("is back to")
           service_no =   service_header.partition(" is back to ").first
         elsif text.downcase.include?("will be diverted")
-
+          service_no =   service_header.partition(" will be diverted ").first
         elsif text.downcase.include?("will skip")
           service_no =   service_header.partition(" will skip ").first
         elsif text.downcase.include?("which plies")
           service_no =   service_header.partition(", which plies ").first
         elsif text.downcase.include?("will be withdrawn")
           service_no =   service_header.partition(" will be withdrawn ").first
-        elsif text.downcase.include?("will call at a pair")
-          service_no =   service_header.partition(" will call at a pair ").first
+
         else
           service_no = " "+service_header.split(/[^\d]/).join
         end
@@ -1450,6 +1451,8 @@ class Api::RoundtripController < ApplicationController
               service_no =   service_header.partition(" continues to ").first
             elsif text.downcase.include?("is still")
               service_no =   service_header.partition(" is still ").first
+            elsif text.downcase.include?("will call at a pair")
+              service_no =   service_header.partition(" will call at a pair ").first
             elsif text.downcase.include?("along")
               if text.downcase.include?("are delayed")
                 service_no =   service_header.partition(" are delayed ").first
@@ -1467,15 +1470,14 @@ class Api::RoundtripController < ApplicationController
             elsif text.downcase.include?("is back to")
               service_no =   service_header.partition(" is back to ").first
             elsif text.downcase.include?("will be diverted")
-
+              service_no =   service_header.partition("will be diverted").first
             elsif text.downcase.include?("will skip")
               service_no =   service_header.partition(" will skip ").first
             elsif text.downcase.include?("which plies")
               service_no =   service_header.partition(", which plies ").first
             elsif text.downcase.include?("will be withdrawn")
               service_no =   service_header.partition(" will be withdrawn ").first
-            elsif text.downcase.include?("will call at a pair")
-              service_no =   service_header.partition(" will call at a pair ").first
+
             else
               service_no = " "+service_header.split(/[^\d]/).join
             end
