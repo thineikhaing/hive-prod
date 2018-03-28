@@ -17,6 +17,17 @@ scheduler.cron '05 00 * * mon' do
   ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_mrt_stations
  RESTART IDENTITY")
 
+ vh_query = "Vehicle breakdown"
+ ac_query = "Accident"
+ ht_query = "Heavy traffic"
+ acc_topics = Topic.where("title LIKE ? or title LIKE ? or title LIKE ?", "%#{vh_query}%", "%#{ac_query}%", "%#{ht_query}%",)
+ acc_topics.each do |t|
+   if t.posts.count == 0
+     p "delete"
+     p t.delete
+   end
+ end
+
 end
 
 
@@ -48,6 +59,7 @@ end
 scheduler.every 5.minutes do
  p "check accident!"
  SgAccidentHistory.get_incident_and_breakdown
+ 
 end
 
 

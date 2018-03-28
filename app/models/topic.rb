@@ -1444,10 +1444,10 @@ class Topic < ActiveRecord::Base
     radius = 1 if radius.nil?
     center_users= ""
 
-    center_point = [self.place.latitude.to_f, self.place.longitude.to_f]
-    box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
-    center_users = User.where(last_known_latitude: box[0] .. box[2], last_known_longitude: box[1] .. box[3])
-    center_users_list = center_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+    # center_point = [self.place.latitude.to_f, self.place.longitude.to_f]
+    # box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
+    # center_users = User.where(last_known_latitude: box[0] .. box[2], last_known_longitude: box[1] .. box[3])
+    # center_users_list = center_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
 
     s_center_point = [self.start_place.latitude.to_f, self.start_place.longitude.to_f]
     s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
@@ -1460,7 +1460,7 @@ class Topic < ActiveRecord::Base
     end_users = end_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
 
 
-    users_by_location = center_users_list +start_users+end_users
+    users_by_location = start_users+end_users
 
     users_by_location = users_by_location.uniq{ |user| [user[:id]]}
 
