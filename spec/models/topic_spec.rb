@@ -7,9 +7,9 @@ describe Topic do
   it { should belong_to(:user)}
   it { should belong_to(:place)}
 
-  let (:user) {FactoryGirl.create(:devuser, email: "user1@example.com", username: "testuser",password:"password")}
-  let(:hiveapplication) {FactoryGirl.create(:hiveapplication, app_name: "test_app", app_type: "food",devuser_id:"#{user.id}",description: 'test description' )}
-  let(:topic) {FactoryGirl.create(:topic, title: "topic1", data: "{'weather' => 'Sunny'}",user_id:"#{user.id}",hiveapplication_id: "#{hiveapplication.id}" )}
+  let (:user) {FactoryBot.create(:devuser, email: "user1@example.com", username: "testuser",password:"password")}
+  let(:hiveapplication) {FactoryBot.create(:hiveapplication, app_name: "test_app", app_type: "food",devuser_id:"#{user.id}",description: 'test description' )}
+  let(:topic) {FactoryBot.create(:topic, title: "topic1", data: "{'weather' => 'Sunny'}",user_id:"#{user.id}",hiveapplication_id: "#{hiveapplication.id}" )}
 
   context "tag_information methods" do
     it "returns the tag information for the topic"  do

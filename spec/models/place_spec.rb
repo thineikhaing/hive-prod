@@ -10,8 +10,8 @@ describe Place do
 
     api_key = SecureRandom.hex
 
-    let (:user) {FactoryGirl.create(:devuser, email: "user1@example.com", username: "testuser",password:"password")}
-    let (:hiveapplication) {FactoryGirl.create(:hiveapplication, app_name: "test_app",
+    let (:user) {FactoryBot.create(:devuser, email: "user1@example.com", username: "testuser",password:"password")}
+    let (:hiveapplication) {FactoryBot.create(:hiveapplication, app_name: "test_app",
                                                app_type: "food",devuser_id:"#{user.id}",
                                                description: 'test description' ,
                                                api_key: api_key)}

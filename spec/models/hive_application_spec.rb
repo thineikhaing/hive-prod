@@ -8,8 +8,8 @@ describe HiveApplication do
 
   context "after_initialize" do
 
-    let (:user) {FactoryGirl.create(:devuser, email: "user1@example.com", username: "testuser",password:"password")}
-    let (:hiveapplication) {FactoryGirl.create(:hiveapplication, app_name: "test_app", app_type: "food",devuser_id:"#{user.id}",description: 'test description' )}
+    let (:user) {FactoryBot.create(:devuser, email: "user1@example.com", username: "testuser",password:"password")}
+    let (:hiveapplication) {FactoryBot.create(:hiveapplication, app_name: "test_app", app_type: "food",devuser_id:"#{user.id}",description: 'test description' )}
 
     describe "should generate verification code" do
       it "should generate verification code " do

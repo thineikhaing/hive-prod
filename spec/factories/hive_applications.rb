@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :hiveapplication, class: HiveApplication do
     sequence(:app_name)  { |n| "#{n}" }
     sequence(:app_type)  { |n| "#{n}" }

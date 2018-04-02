@@ -27,35 +27,18 @@
     -#%script{:src => "http://www.onemap.sg/API/JS/?accessKEY=20hJb9BMPUIBzwyZ1/m6fMK3ioaM+fzdwNpdOdYO0fCICsxRJI4527+gtsuFoVcrKIXAldas3XhtX2E0ZfaJtN0EfoFrJamMpsmC0dhopDEUQblJMXSdcA==|mv73ZvjFcSo=", :type => "text/JavaScript"}
 
     = javascript_include_tag "web"
-    = javascript_include_tag 'vendor/modernizr'
+    -# = javascript_include_tag 'vendor/modernizr'
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = stylesheet_link_tag   "web"
   %body
-
     #main_background
       %header
         = render 'layouts/navigation'
         -#%h3{style:'color: orange; margin-left:20px;'}
         -#  = session[:no_of_apps].to_s + " CONNECTED APPS"
-
       %main{role: "main"}
         = render 'layouts/messages'
 
         .row
           .large-12.columns
             = yield
-      -##map_content
--#
--#:javascript
--#   var mapOptions = {
--#      zoom: 18,
--#      center: new google.maps.LatLng(1.317907,103.843643),
--#      disableDefaultUI: true,
--#      mapTypeId: google.maps.MapTypeId.ROADMAP,
--#      scrollwheel: false,
--#      navigationControl: false,
--#      mapTypeControl: false,
--#      scaleControl: false,
--#      draggable: false,
--#    }
--#    var map1 = new google.maps.Map(document.getElementById("map_content"), mapOptions);

@@ -3,16 +3,16 @@
 #
 #describe User do
 #  if "has a unique email address"
-#    #FactoryGirl.create(:user).should be_valid
-#    FactoryGirl.build(:user, email: "user1@gmail.com").should be_valid
+#    #FactoryBot.create(:user).should be_valid
+#    FactoryBot.build(:user, email: "user1@gmail.com").should be_valid
 #  end
 #  it "is invalid without an email" do
-#    FactoryGirl.create(:user, email: nil).should_not be_valid
+#    FactoryBot.create(:user, email: nil).should_not be_valid
 #  end
 #
 #  it "user's email address must be unique" do
-#    FactoryGirl.create(:user, email: "user@gmail.com", username: "userA", password: "password", password_confirmation: "password").should be_valid
-#    FactoryGirl.create(:user, email: "user@gmail.com", username: "userA", password: "password", password_confirmation: "password").should_not be_valid
+#    FactoryBot.create(:user, email: "user@gmail.com", username: "userA", password: "password", password_confirmation: "password").should be_valid
+#    FactoryBot.create(:user, email: "user@gmail.com", username: "userA", password: "password", password_confirmation: "password").should_not be_valid
 #  end
 #end
 
@@ -25,9 +25,9 @@ describe User do
   #end
 
   context "after_initialize" do
-    #let(:user) { FactoryGirl.build(:user) } # Factory excludes authentication_token and username
+    #let(:user) { FactoryBot.build(:user) } # Factory excludes authentication_token and username
 
-    let(:user) { @user_attr = FactoryGirl.attributes_for(:user);User.create!(@user_attr)}
+    let(:user) { @user_attr = FactoryBot.attributes_for(:user);User.create!(@user_attr)}
     describe "#ensure_authentication_token" do
       it "sets authentication_token"do
         user.authentication_token.should_not be_blank

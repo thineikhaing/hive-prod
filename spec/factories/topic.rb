@@ -1,6 +1,6 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :topic, class: Topic do
     sequence(:title)  { |n| "#{n}" }
     sequence(:data)  { |n| "#{n}" }
