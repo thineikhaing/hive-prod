@@ -73,9 +73,6 @@ gem 'oauth1'
 gem 'twitter'
 gem 'tweetstream'
 
-
-gem "rack-timeout"
-
 # gem 'request_store'
 
 group :assets do
