@@ -78,7 +78,7 @@ module Hive
     }
 
     config.generators do |g|
-      g.factory_girl false
+      g.factory_bot false
     end
   end
 end
