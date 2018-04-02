@@ -77,7 +77,7 @@ gem 'tweetstream'
 
 group :assets do
   gem 'bourbon'
-  gem 'uglifier'
+  gem 'uglifier', '~> 2.6.1'
 end
 
 group :development do
