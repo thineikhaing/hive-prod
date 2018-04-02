@@ -68,7 +68,7 @@ gem 'sinatra', github: 'sinatra'
 
 gem 'rails_12factor', group: :production
 
-
+gem 'oauth1'
 # gem 'scout_apm'
 gem 'twitter'
 gem 'tweetstream'

@@ -1190,6 +1190,7 @@ class Api::RoundtripController < ApplicationController
     render json: {message: "Created new transit announcement",tweet:tweet}  , status: 200
   end
 
+
   def get_smrt_tweets
     transit_annoucement = []
     smrt_tweets = []
@@ -1205,8 +1206,21 @@ class Api::RoundtripController < ApplicationController
     others_tweets = []
     mrt_status = ''
     tweet_counter = 0
-    $twitter_client.search("from:SMRT_Singapore", result_type: "recent").collect do |tweet|
 
+    # domain_url = 'https://api.twitter.com'
+    # @consumer = OAuth::Consumer.new(Twitter_Config::Consumer_key, Twitter_Config::Consumer_secret, {:site=> domain_url})
+    # accesstoken = OAuth::AccessToken.new(@consumer, Twitter_Config::Access_token, Twitter_Config::Access_token_secret)
+    # smrt_request = accesstoken.request(:get, "https://api.twitter.com/1.1/search/tweets.json?from=SMRT_Singapore&result_type=recent").body
+    # sbs_request = accesstoken.request(:get, "https://api.twitter.com/1.1/search/tweets.json?from=SBSTransit_Ltd&result_type=recent").body
+    # smrt_results= JSON.parse(smrt_request)
+    # sbs_results = JSON.parse(sbs_request)
+    # smrt_recent_tweet = smrt_results["statuses"]
+    # sbs_recent_tweet = sbs_results["statuses"]
+
+    smrt_client = $twitter_client.search("from:SMRT_Singapore", result_type: "recent")
+    sbs_client = $twitter_client.search("from:SBSTransit_Ltd", result_type: "recent")
+
+    smrt_client.collect do |tweet|
     # Tweet.expiring_soon.where(creator: "SMRT_Singapore").order("created_at desc").collect do |tweet|
       text = tweet.text
       if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides")|| text.downcase.include?("enjoy")
@@ -1391,7 +1405,7 @@ class Api::RoundtripController < ApplicationController
     end
 
 
-    $twitter_client.search("from:SBSTransit_Ltd", result_type: "recent").collect do |tweet|
+    sbs_client.collect do |tweet|
     # Tweet.expiring_soon.where(creator: "SBSTransit_Ltd").order("created_at desc").collect do |tweet|
       mrt_status = ""
 
@@ -1424,7 +1438,11 @@ class Api::RoundtripController < ApplicationController
           end
 
           header = ""
+          p text
+          p "************"
           if text.downcase.include?("svcs") || text.downcase.include?("svc") || text.downcase.include?("services") || text.downcase.include?("service")
+
+
             tweet_text = text.to_s
             if text.downcase.include?("svcs")
               service_header = tweet_text.downcase.partition("svcs").last
@@ -1454,6 +1472,7 @@ class Api::RoundtripController < ApplicationController
             elsif text.downcase.include?("will call at a pair")
               service_no =   service_header.partition(" will call at a pair ").first
             elsif text.downcase.include?("along")
+
               if text.downcase.include?("are delayed")
                 service_no =   service_header.partition(" are delayed ").first
               elsif text.downcase.include?("(loop service) will be")
@@ -1463,7 +1482,7 @@ class Api::RoundtripController < ApplicationController
               elsif text.downcase.include?("will skip")
                 service_no =   service_header.partition("will skip").first
               else
-                service_no =   service_header.partition(" along ").first
+                service_no =   service_header.partition("along").first
               end
             elsif text.downcase.include?("are delayed")
               service_no =   service_header.partition(" are delayed ").first
@@ -1481,10 +1500,6 @@ class Api::RoundtripController < ApplicationController
             else
               service_no = " "+service_header.split(/[^\d]/).join
             end
-
-           p "****"
-           p service_no
-           p "****"
 
            if service_no === ""
              header = "ANNOUNCEMENT"
@@ -1540,8 +1555,8 @@ class Api::RoundtripController < ApplicationController
       tweet_counter = tweet_counter + 1
       topic_id = 0
       post_count = 0
-      p tweet_topic = Topic.where(title: data.message, topic_type:10).last
-      p "+++"
+      tweet_topic = Topic.where(title: data.message, topic_type:10).last
+
 
       if tweet_topic.present?
         topic_id = tweet_topic.id
@@ -1559,6 +1574,8 @@ class Api::RoundtripController < ApplicationController
 
     transit_annoucement = transit_annoucement.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
     render json: {tweets:transit_annoucement,
+      smrt_recent_tweet:smrt_client,
+      sbs_recent_tweet:sbs_client,
       bus_tweets:bus_tweets,
       nsl_tweets:nsl_tweets,
       ewl_tweets:ewl_tweets,

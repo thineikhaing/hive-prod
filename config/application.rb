@@ -130,6 +130,14 @@ module App_Password #constant variable to be used for encryption and decryption
   Size =1024
 end
 
+module Twitter_Config
+  Consumer_key = "0h9yr5YQtXDOaPSAxOM9ugqxS"
+  Consumer_secret = "Wl2NMbnmWPMsnDis1KPxSscdTIwp2n1139nJvWiiM57QqzUWKQ"
+  Access_token = "918754322506162176-cBzO11YTuTvwAEknQ6ga8xgwByYMtkF"
+  Access_token_secret = "QWx9TUcRv54CUITPLYrOC2dwtC5W0R1bKJLBhOTSazqJH"
+end
+
+
 #module Urbanairship_Const
 #  CM_S_Dev_Key = "0NEm0U0jRky2BdqtV6l3GQ"
 #  CM_S_Dev_Secret = "Y7y0bqs4Q-G7aFRmelnS4g"

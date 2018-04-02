@@ -59,7 +59,6 @@ class Api::DownloaddataController < ApplicationController
   end
 
 
-
   def retrieve_hiveapplications
     render json: {apps: JSON.parse(HiveApplication.all.to_json(:test => "true"))}
   end
