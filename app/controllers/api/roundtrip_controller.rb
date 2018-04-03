@@ -1385,6 +1385,8 @@ class Api::RoundtripController < ApplicationController
           service_no =   service_header.partition(" will skip ").first
         elsif text.downcase.include?("which plies")
           service_no =   service_header.partition(", which plies ").first
+        elsif text.downcase.include?("has also been affected")
+          service_no =   service_header.partition(" has also been affected ").first
         elsif text.downcase.include?("will be withdrawn")
           service_no =   service_header.partition(" will be withdrawn ").first
 
@@ -1498,6 +1500,8 @@ class Api::RoundtripController < ApplicationController
               service_no =   service_header.partition(" will skip ").first
             elsif text.downcase.include?("which plies")
               service_no =   service_header.partition(", which plies ").first
+            elsif text.downcase.include?("has also been affected")
+              service_no =   service_header.partition(" has also been affected ").first
             elsif text.downcase.include?("will be withdrawn")
               service_no =   service_header.partition(" will be withdrawn ").first
 
