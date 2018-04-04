@@ -1465,6 +1465,9 @@ class Api::RoundtripController < ApplicationController
               service_no =   service_header.partition(" under the ").first
             elsif text.downcase.include?("(towards")
               service_no =   service_header.partition(" (towards ").first
+              if text.downcase.include?("are delayed")
+                service_no =   service_header.partition(" are delayed ").first
+              end
             elsif text.downcase.include?("to skip")
               service_no =   service_header.partition(" to skip ").first
             elsif text.downcase.include?("heading towards")
