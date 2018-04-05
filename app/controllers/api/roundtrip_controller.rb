@@ -1382,6 +1382,9 @@ class Api::RoundtripController < ApplicationController
           service_no =   service_header.partition(" are delayed ").first
         elsif text.downcase.include?("is back to")
           service_no =   service_header.partition(" is back to ").first
+          if text.downcase.include?("along")
+            service_no =   service_header.partition(" along ").first
+          end
         elsif text.downcase.include?("are back to")
           service_no =   service_header.partition(" are back to ").first
         elsif text.downcase.include?("will be diverted")
@@ -1483,6 +1486,9 @@ class Api::RoundtripController < ApplicationController
               service_no =   service_header.partition(" is still ").first
             elsif text.downcase.include?("is back to")
               service_no =   service_header.partition(" is back to ").first
+              if text.downcase.include?("along")
+                service_no =   service_header.partition(" along ").first
+              end
             elsif text.downcase.include?("is being diverted")
               service_no =   service_header.partition(" is being diverted ").first
               if text.downcase.include?("from")
