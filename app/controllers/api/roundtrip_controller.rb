@@ -1499,6 +1499,11 @@ class Api::RoundtripController < ApplicationController
                 service_no =   service_header.partition("will be diverted").first
               elsif text.downcase.include?("will skip")
                 service_no =   service_header.partition("will skip").first
+              elsif text.downcase.include?("is being diverted")
+                service_no =   service_header.partition("is being diverted").first
+                if text.downcase.include?("from")
+                  service_no =   service_header.partition("from").first
+                end
               else
                 service_no =   service_header.partition("along").first
               end
