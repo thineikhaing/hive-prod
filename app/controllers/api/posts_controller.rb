@@ -65,7 +65,7 @@ class Api::PostsController < ApplicationController
                              height: params[:height],
                              place_id: place_id,
                              data: result)
-          post.delay.post_image_upload_delayed_job(params[:image_url]) if params[:post_type] == Post::IMAGE.to_s
+          # post.delay.post_image_upload_delayed_job(params[:image_url]) if params[:post_type] == Post::IMAGE.to_s
         end
 
 

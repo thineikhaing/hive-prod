@@ -1359,6 +1359,8 @@ class Api::RoundtripController < ApplicationController
           service_no =   service_header.partition(" continues to ").first
         elsif text.downcase.include?("is still")
           service_no =   service_header.partition(" is still ").first
+        elsif text.downcase.include?("is being diverted")
+          service_no =   service_header.partition(" is being diverted ").first
         elsif text.downcase.include?("will call at a pair")
           service_no =   service_header.partition(" will call at a pair ").first
         elsif text.downcase.include?("along")
@@ -1476,10 +1478,13 @@ class Api::RoundtripController < ApplicationController
               service_no =   service_header.partition(" continues to ").first
             elsif text.downcase.include?("is still")
               service_no =   service_header.partition(" is still ").first
+            elsif text.downcase.include?("is back to")
+              service_no =   service_header.partition(" is back to ").first
+            elsif text.downcase.include?("is being diverted")
+              service_no =   service_header.partition(" is being diverted ").first
             elsif text.downcase.include?("will call at a pair")
               service_no =   service_header.partition(" will call at a pair ").first
             elsif text.downcase.include?("along")
-
               if text.downcase.include?("are delayed")
                 service_no =   service_header.partition(" are delayed ").first
               elsif text.downcase.include?("(loop service) will be")
@@ -1498,8 +1503,7 @@ class Api::RoundtripController < ApplicationController
               end
             elsif text.downcase.include?("are delayed")
               service_no =   service_header.partition(" are delayed ").first
-            elsif text.downcase.include?("is back to")
-              service_no =   service_header.partition(" is back to ").first
+
             elsif text.downcase.include?("are back to")
               service_no =   service_header.partition(" are back to ").first
             elsif text.downcase.include?("will be diverted")
