@@ -29,7 +29,13 @@ class Post < ActiveRecord::Base
   end
 
   def avatar_url
-    avatar = User.find_by_id(self.user_id).avatar_url
+    # avatar = User.find_by_id(self.user_id).avatar_url
+
+    if self.user.avatar_url.nil?
+      avatar = Topic.get_avatar(username)
+    else
+      avatar = self.user.avatar_url
+    end
     # if avatar.nil?
     #   username = User.find_by_id(self.user_id).username
     #
