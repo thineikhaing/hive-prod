@@ -1383,6 +1383,9 @@ class Api::RoundtripController < ApplicationController
           service_no =   service_header.partition(" are delayed ").first
         elsif text.downcase.include?("is back to")
           service_no =   service_header.partition(" is back to ").first
+          if text.downcase.include?("along")
+            service_no =   service_header.partition(" along ").first
+          end
         elsif text.downcase.include?("are back to")
           service_no =   service_header.partition(" are back to ").first
         elsif text.downcase.include?("will be diverted")
@@ -1484,11 +1487,20 @@ class Api::RoundtripController < ApplicationController
               service_no =   service_header.partition(" is still ").first
             elsif text.downcase.include?("is back to")
               service_no =   service_header.partition(" is back to ").first
+              if text.downcase.include?("along")
+                service_no =   service_header.partition(" along ").first
+              end
             elsif text.downcase.include?("is being diverted")
+<<<<<<< HEAD
               if text.downcase.include?("from")
                 service_no =   service_header.partition(" from ").first
               else
                 service_no =   service_header.partition(" is being diverted ").first
+=======
+              service_no =   service_header.partition(" is being diverted ").first
+              if text.downcase.include?("from")
+                service_no =   service_header.partition(" from ").first
+>>>>>>> 6521f54f0b30c15007b1b6f6919da2d29a7b2d26
               end
             elsif text.downcase.include?("will call at a pair")
               service_no =   service_header.partition(" will call at a pair ").first
@@ -1501,6 +1513,11 @@ class Api::RoundtripController < ApplicationController
                 service_no =   service_header.partition("will be diverted").first
               elsif text.downcase.include?("will skip")
                 service_no =   service_header.partition("will skip").first
+              elsif text.downcase.include?("is being diverted")
+                service_no =   service_header.partition("is being diverted").first
+                if text.downcase.include?("from")
+                  service_no =   service_header.partition("from").first
+                end
               else
                 service_no =   service_header.partition("along").first
               end
