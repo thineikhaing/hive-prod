@@ -1491,16 +1491,12 @@ class Api::RoundtripController < ApplicationController
                 service_no =   service_header.partition(" along ").first
               end
             elsif text.downcase.include?("is being diverted")
-<<<<<<< HEAD
+
               if text.downcase.include?("from")
                 service_no =   service_header.partition(" from ").first
               else
                 service_no =   service_header.partition(" is being diverted ").first
-=======
-              service_no =   service_header.partition(" is being diverted ").first
-              if text.downcase.include?("from")
-                service_no =   service_header.partition(" from ").first
->>>>>>> 6521f54f0b30c15007b1b6f6919da2d29a7b2d26
+
               end
             elsif text.downcase.include?("will call at a pair")
               service_no =   service_header.partition(" will call at a pair ").first
