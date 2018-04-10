@@ -1491,7 +1491,6 @@ class Api::RoundtripController < ApplicationController
                 service_no =   service_header.partition(" along ").first
               end
             elsif text.downcase.include?("is being diverted")
-
               if text.downcase.include?("from")
                 service_no =   service_header.partition(" from ").first
               else
@@ -1667,7 +1666,7 @@ end
       busstops = []
       favbuses.each do |stop|
         bus = SgBusStop.where(bus_id: stop.busid).take
-        format_bus = {road_name: bus.road_name, description: bus.description}
+        format_bus = {busid: bus.busid, service: bus.service,road_name: bus.road_name, description: bus.description, lat: bus.latitude, lng: bus.longitude}
         busstops.push(format_bus)
       end
       render json:{favbuses: favbuses, bus_stops: busstops, status: 200}
