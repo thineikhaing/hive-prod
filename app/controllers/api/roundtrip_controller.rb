@@ -1666,7 +1666,7 @@ end
       busstops = []
       favbuses.each do |stop|
         bus = SgBusStop.where(bus_id: stop.busid).take
-        format_bus = {busid: stop.busid, service: stop.service,road_name: bus.road_name, description: bus.description, lat: bus.latitude, lng: bus.longitude}
+        format_bus = {id:stop.id, busid: stop.busid, service: stop.service,road_name: bus.road_name, description: bus.description, lat: bus.latitude, lng: bus.longitude}
         busstops.push(format_bus)
       end
       render json:{favbuses: favbuses, bus_stops: busstops, status: 200}
