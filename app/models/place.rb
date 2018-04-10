@@ -49,6 +49,9 @@ class Place < ActiveRecord::Base
 
     if hive.api_key == round_key
 
+      initial_topic = Topic.find_by_topic_sub_type(2)
+      topics_array.push(initial_topic)
+
       places.each do |place|
         if place.start_places.present?
           topic_start_places = place.start_places.order("created_at asc") #.where("topics.created_at BETWEEN ? AND ?",  3.months.ago, Time.now)
@@ -168,6 +171,10 @@ class Place < ActiveRecord::Base
     time_allowance = Time.now - 1.month.ago
 
     topics_array = [ ]
+
+    initial_topic = Topic.find_by_topic_sub_type(2)
+    topics_array.push(initial_topic)
+
     e_places.each do |place|
       if place.start_places.present?
         (topics_array << place.start_places.order("created_at asc")).flatten!
@@ -594,7 +601,8 @@ class Place < ActiveRecord::Base
     #
     #
     # end
-    # geocoder = Geocoder.search("1.31530223917614, 103.841052440723").first
+    #Place.create_place_by_lat_lng(1.38874082716249, 103.75661801598,1)
+    # geocoder = Geocoder.search("1.38874082716249, 103.75661801598").first
     geocoder = Geocoder.search("#{latitude},#{longitude}").first
     p "Place GEO lat|lng"
     p latitude
