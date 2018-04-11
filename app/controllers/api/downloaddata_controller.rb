@@ -23,9 +23,11 @@ class Api::DownloaddataController < ApplicationController
 
         elsif hiveApplication.devuser_id==1 and hiveApplication.id!=1 and params[:choice].nil? #All Applications under Herenow account except Hive
           p "All Applications under Herenow account except Hive"
+
+          initial_topic = Topic.find_by_topic_sub_type(2)
+          topics.prepend(initial_topic)
+
           t_count = topics.count rescue '0'
-
-
           render json: { topics: JSON.parse(topics.to_json(content: true)) , topic_count: t_count}
 
 

@@ -671,6 +671,9 @@ class Api::TopicsController < ApplicationController
 
      topics = topics.sort {|x,y| y["id"]<=>x["id"]}
 
+     initial_topic = Topic.find_by_topic_sub_type(2)
+     topics.prepend(initial_topic)
+
      tcount = topics.count rescue '0'
      p "get nearest topics"
      render json: {topics:topics, topic_count: tcount, status: "nearest topics within start and end"}
