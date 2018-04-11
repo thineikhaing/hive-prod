@@ -14,7 +14,7 @@ class Api::DownloaddataController < ApplicationController
           topics = Place.nearest_topics_within(params[:latitude], params[:longitude], radius, hiveApplication.id)
         end
 
-        topics = topics.sort {|x,y| y["id"]<=>x["id"]}
+        topics = topics.sort {|x,y| y["created_at"]<=>x["created_at"]}
 
         if hiveApplication.id ==1 #Hive Application
           p "Hive Application"

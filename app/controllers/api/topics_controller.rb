@@ -669,7 +669,7 @@ class Api::TopicsController < ApplicationController
 
      topics = Place.nearest_topics_within_start_and_end(s_latitude, s_longitude, e_latitude,e_longitude , nil, hive_app.id)
 
-     topics = topics.sort {|x,y| y["id"]<=>x["id"]}
+     topics = topics.sort {|x,y| y["created_at"]<=>x["created_at"]}
 
      initial_topic = Topic.find_by_topic_sub_type(2)
      topics.prepend(initial_topic)
