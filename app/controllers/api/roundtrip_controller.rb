@@ -1599,7 +1599,7 @@ class Api::RoundtripController < ApplicationController
         post_count = topic_posts.count
       end
 
-      lta_data = {id: tweet_counter,header:data.type,text: data.message, created_at: data.created_at,hashtags:data.type,name: "LTA",
+      lta_data = {id: tweet_counter, lta_id: data.id,header:data.type,text: data.message, created_at: data.created_at,hashtags:data.type,name: "LTA",
       topic_id: topic_id, post_count: post_count,line_color:line_color,mrt_status:""}
       transit_annoucement.push(lta_data)
       lta_tweets.push(lta_data)

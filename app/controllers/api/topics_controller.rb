@@ -26,7 +26,6 @@ class Api::TopicsController < ApplicationController
             Checkinplace.create(place_id: place.id, user_id: current_user.id)
           end
 
-
         end
 
         params[:start_name].present? ? start_name = params[:start_name] : start_name = nil
@@ -58,32 +57,31 @@ class Api::TopicsController < ApplicationController
         end_id = 0
 
         # start_place = place.add_record("Marina South Pier MRT", "1.2713367", "103.8628598", "", 0, 0, nil, 1, "GsdaMJmx2uRjPcVsmuff", nil,nil,nil,nil,nil,nil)
+        if params[:start_place_id].to_i >= 0
 
+          if params[:start_place_id] || params[:start_longitude]  || params[:start_longitude]  || params[:start_source_id]
+              place = Place.new
+              start_place = place.add_record(start_name, start_latitude, start_longitude, start_address, start_source, start_source_id, start_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
+              # p "start place info::::"
+              start_id = start_place[:place].id
+              start_place[:place].name
 
-        if params[:start_place_id] || params[:start_longitude]  || params[:start_longitude]  || params[:start_source_id]
-          place = Place.new
-          start_place = place.add_record(start_name, start_latitude, start_longitude, start_address, start_source, start_source_id, start_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
-          # p "start place info::::"
-          start_id = start_place[:place].id
-          start_place[:place].name
-
-          if params[:latitude].to_i == 0 && params[:longitude].to_i
-            place_id = start_id
+              if params[:latitude].to_i == 0 && params[:longitude].to_i
+                place_id = start_id
+              end
           end
 
-        end
+          if params[:end_place_id] || params[:end_longitude]  || params[:end_longitude]  || params[:end_source_id]
+            end_place = place.add_record(end_name, end_latitude, end_longitude, end_address, end_source, end_source_id, end_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
+            # p "end place info::::"
+            end_id = end_place[:place].id
+            end_place[:place].name
 
-        if params[:end_place_id] || params[:end_longitude]  || params[:end_longitude]  || params[:end_source_id]
-          end_place = place.add_record(end_name, end_latitude, end_longitude, end_address, end_source, end_source_id, end_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
-          # p "end place info::::"
-          end_id = end_place[:place].id
-          end_place[:place].name
-
-          if params[:latitude].to_i == 0 && params[:longitude].to_i
-            place_id = start_id
+            if params[:latitude].to_i == 0 && params[:longitude].to_i
+              place_id = start_id
+            end
           end
-
-        end
+      end
 
 
         data = params[:data] if data.present?
@@ -139,6 +137,14 @@ class Api::TopicsController < ApplicationController
             topic_user = 1
           end
 
+          if params[:lta_id].to_i > 0
+            sg_accident = SgAccidentHistory.find(params[:lta_id])
+            special_type = sg_accident.type
+            start_id = sg_accident.place_id
+            end_id = sg_accident.place_id
+            place_id = sg_accident.place_id
+          end
+
           if params[:image_url].present?
             topic = Topic.create(title:title, user_id: topic_user, topic_type: params[:topic_type],start_place_id: start_id, end_place_id: end_id,
                                  topic_sub_type:topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit],
@@ -151,7 +157,7 @@ class Api::TopicsController < ApplicationController
                                  topic_sub_type: topic_sub_type, hiveapplication_id: hiveapplication.id, unit: params[:unit],
                                  value: params[:value], place_id: place_id, data: result, special_type: special_type,likes: likes, dislikes: dislikes)
           end
-
+          topic.save
 
           if params[:created_by]
             topic.created_at = params[:created_by]

@@ -34,9 +34,9 @@ class SgAccidentHistoriesController < ApplicationController
 
         startplace = Place.create_place_by_lat_lng(@sg_accident_history.latitude, @sg_accident_history.longitude,User.first)
 
-        topic = Topic.create(title:@sg_accident_history.message, user_id: User.first.id,
-          topic_type: 10 ,start_place_id: startplace.id ,  end_place_id: startplace.id  ,
-            special_type: @sg_accident_history.type, hiveapplication_id: 6, place_id: startplace.id)
+        # topic = Topic.create(title:@sg_accident_history.message, user_id: User.first.id,
+        #   topic_type: 10 ,start_place_id: startplace.id ,  end_place_id: startplace.id  ,
+        #     special_type: @sg_accident_history.type, hiveapplication_id: 6, place_id: startplace.id)
 
         SgAccidentHistory.send_traffic_noti(@sg_accident_history)
 

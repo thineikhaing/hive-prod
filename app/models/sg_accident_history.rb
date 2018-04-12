@@ -49,20 +49,17 @@ class SgAccidentHistory < ActiveRecord::Base
 
         if sg_accident.nil?
           p "add new record"
-          sg_accident =SgAccidentHistory.create(type:type,message: message, accident_datetime: accidentDateTIme, latitude:latitude, longitude:longitude, summary:summary )
+          acc_place = Place.create_place_by_lat_lng(latitude, longitude,User.first)
+          sg_accident =SgAccidentHistory.create(type:type,message: message, accident_datetime: accidentDateTIme, latitude:latitude, longitude:longitude, summary:summary ,place_id:acc_place.id)
 
-          startplace = Place.create_place_by_lat_lng(latitude, longitude,User.first)
-
-          topic = Topic.create(title:message, user_id: User.first.id, topic_type: 10 ,start_place_id: startplace.id ,  end_place_id: startplace.id  ,
-              special_type: type, hiveapplication_id: hive_application.id, place_id: startplace.id)
+          # topic = Topic.create(title:message, user_id: User.first.id, topic_type: 10 ,start_place_id: startplace.id , end_place_id: startplace.id  ,
+          #     special_type: type, hiveapplication_id: hive_application.id, place_id: startplace.id)
 
         end
-
 
         if(sg_accident.notify == false)
           self.send_traffic_noti(sg_accident)
         end
-
 
       end
 
@@ -82,9 +79,9 @@ class SgAccidentHistory < ActiveRecord::Base
     elsif Rails.env.staging?
       round_key = RoundTrip_key::Staging_Key
     else
-      round_key = RoundTrip_key::Development_Key
+      round_key = RoundTrip_key::Production_Key
     end
-
+    p round_key
     hive_application = HiveApplication.find_by_api_key(round_key)
 
     if sg_accident.present?
@@ -129,10 +126,19 @@ class SgAccidentHistory < ActiveRecord::Base
       sg_accident.save
       p sg_accident.message
 
-      topic = Topic.find_by_title(sg_accident.message)
+      # topic = Topic.find_by_title(sg_accident.message)
+      #
+      # topic.hive_broadcast
+      # topic.app_broadcast_with_content
 
-      topic.hive_broadcast
-      topic.app_broadcast_with_content
+      accident_topic = Topic.find_by_title(sg_accident.message)
+      topic_id = 0
+      if accident_topic.present?
+        topic_id = accident_topic.id
+      end
+
+
+
       if to_endpoint_arn.count > 0
 
         to_endpoint_arn.each do |arn|
@@ -148,14 +154,10 @@ class SgAccidentHistory < ActiveRecord::Base
                     sound: "default",
                     badge: 0,
                     extra:  {
-                        topic_id: topic.id,
-                        topic_title: topic.title,
-                        place_name: topic.rtplaces_information[:start_place][:name],
-                        start_place: topic.rtplaces_information[:start_place][:name],
-                        end_place:  topic.rtplaces_information[:end_place][:name],
-                        topic_username: topic.username,
-                        create_at: topic.created_at,
-                        accident_datetime: sg_accident.accident_datetime,
+                        topic_id: topic_id,
+                        posted_at: sg_accident.accident_datetime,
+                        text: sg_accident.message,
+                        creator: "LTA",
                         latitude: sg_accident.latitude,
                         longitude: sg_accident.longitude,
                         type: sg_accident.type
@@ -168,20 +170,57 @@ class SgAccidentHistory < ActiveRecord::Base
                     message: sg_accident.message,
                     badge: 0,
                     extra:  {
-                        topic_id: topic.id,
-                        topic_title: topic.title,
-                        place_name: topic.rtplaces_information[:start_place][:name],
-                        start_place: topic.rtplaces_information[:start_place][:name],
-                        end_place:  topic.rtplaces_information[:end_place][:name],
-                        topic_username: topic.username,
-                        create_at: topic.created_at,
-                        accident_datetime: sg_accident.accident_datetime,
+                        topic_id: topic_id,
+                        posted_at: sg_accident.accident_datetime,
+                        text: sg_accident.message,
+                        creator: "LTA",
                         latitude: sg_accident.latitude,
                         longitude: sg_accident.longitude,
                         type: sg_accident.type
                     }
                 }
             }
+
+            # iphone_notification = {
+            #     aps: {
+            #         alert: sg_accident.message,
+            #         sound: "default",
+            #         badge: 0,
+            #         extra:  {
+            #             topic_id: topic.id,
+            #             topic_title: topic.title,
+            #             place_name: topic.rtplaces_information[:start_place][:name],
+            #             start_place: topic.rtplaces_information[:start_place][:name],
+            #             end_place:  topic.rtplaces_information[:end_place][:name],
+            #             topic_username: topic.username,
+            #             create_at: topic.created_at,
+            #             accident_datetime: sg_accident.accident_datetime,
+            #             latitude: sg_accident.latitude,
+            #             longitude: sg_accident.longitude,
+            #             type: sg_accident.type
+            #         }
+            #     }
+            # }
+
+            # android_notification = {
+            #     data: {
+            #         message: sg_accident.message,
+            #         badge: 0,
+            #         extra:  {
+            #             topic_id: topic.id,
+            #             topic_title: topic.title,
+            #             place_name: topic.rtplaces_information[:start_place][:name],
+            #             start_place: topic.rtplaces_information[:start_place][:name],
+            #             end_place:  topic.rtplaces_information[:end_place][:name],
+            #             topic_username: topic.username,
+            #             create_at: topic.created_at,
+            #             accident_datetime: sg_accident.accident_datetime,
+            #             latitude: sg_accident.latitude,
+            #             longitude: sg_accident.longitude,
+            #             type: sg_accident.type
+            #         }
+            #     }
+            # }
 
             sns_message = {
                 default: sg_accident.message,

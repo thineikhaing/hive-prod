@@ -10,8 +10,10 @@ class Api::DownloaddataController < ApplicationController
 
         if params[:radius].to_i == 100
           topics = Topic.where(hiveapplication_id:  hiveApplication.id)
+          topics = topics.where("topic_sub_type != 2")
         else
           topics = Place.nearest_topics_within(params[:latitude], params[:longitude], radius, hiveApplication.id)
+
         end
 
         topics = topics.sort {|x,y| y["created_at"]<=>x["created_at"]}
