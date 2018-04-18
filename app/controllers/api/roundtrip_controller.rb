@@ -1398,7 +1398,8 @@ class Api::RoundtripController < ApplicationController
           service_no =   service_header.partition(" has also been affected ").first
         elsif text.downcase.include?("will be withdrawn")
           service_no =   service_header.partition(" will be withdrawn ").first
-
+        elsif text.to_s.downcase.include?("https://")
+          service_no =   service_header.partition("https://").first
         else
           service_no = " "+service_header.split(/[^\d]/).join
         end
@@ -1531,7 +1532,8 @@ class Api::RoundtripController < ApplicationController
               service_no =   service_header.partition(" has also been affected ").first
             elsif text.downcase.include?("will be withdrawn")
               service_no =   service_header.partition(" will be withdrawn ").first
-
+            elsif text.to_s.downcase.include?("https://")
+              service_no =   service_header.partition("https://").first
             else
               service_no = " "+service_header.split(/[^\d]/).join
             end
