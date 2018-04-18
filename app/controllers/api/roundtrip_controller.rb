@@ -1496,7 +1496,6 @@ class Api::RoundtripController < ApplicationController
                 service_no =   service_header.partition(" from ").first
               else
                 service_no =   service_header.partition(" is being diverted ").first
-
               end
             elsif text.downcase.include?("will call at a pair")
               service_no =   service_header.partition(" will call at a pair ").first
@@ -1586,7 +1585,7 @@ class Api::RoundtripController < ApplicationController
 
     end
 
-    lta_status = SgAccidentHistory.last(5)
+    lta_status = SgAccidentHistory.last(3)
     line_color = "#5f57ba"
     lta_status.each do |data|
       tweet_counter = tweet_counter + 1
