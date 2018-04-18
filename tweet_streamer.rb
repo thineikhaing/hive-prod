@@ -54,7 +54,7 @@ daemon.follow(Twitter_Const::SMRT_ID,Twitter_Const::SBS_ID,Twitter_Const::RT_ID)
       ::Tweet.create_from_status(status)
       puts "create tweet from smrt and send alert to RT users"
     elsif tweet_user_id.to_i == Twitter_Const::SBS_ID.to_i
-      ::Tweet.create_from_status(status)
+      # ::Tweet.create_from_status(status)
       puts "create tweet from sbs and send alert to RT users"
     else
       puts "tweet created by other users"
