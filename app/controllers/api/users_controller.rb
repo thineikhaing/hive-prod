@@ -156,7 +156,7 @@ class Api::UsersController < ApplicationController
       p "facebook user account"
       fb_user = User.find_by_email(params[:email])
       p useracc = UserAccount.find_by_user_id(fb_user.id) if fb_user.present?
-      
+
       if current_user.present?
         if user.id == current_user.id
           checkEmail = User.find_by_email(params[:email])
@@ -202,12 +202,12 @@ class Api::UsersController < ApplicationController
             var.push(11)
             render json: { :error => var , :message => "You already register with facebook, please sign in with facebook!"}, status: 400 # Email already exist
           end
-          
+
         end
       else
         render json: { error_msg: "Invalid user id/ authentication token" }, status: 400
       end
-      
+
     elsif params[:hiveweb]
       p "sign up from web"
       p email= params[:email]
@@ -231,7 +231,7 @@ class Api::UsersController < ApplicationController
         render json: {message: "Email already exit." , status: 400}, status: 400
       end
     else
-      
+
       render json: { error_msg: "Param authentication token must be presented" }, status: 400
     end
   end
@@ -723,7 +723,12 @@ class Api::UsersController < ApplicationController
         end
 
         if params[:avatar_url].present?
-          user.avatar_url = params[:avatar_url]
+          if params[:avatar_url].to_s == "null"
+            user.avatar_url = nil
+          else
+            user.avatar_url = params[:avatar_url]
+          end
+
         end
 
         # if params[:device_id].present?

@@ -109,7 +109,7 @@ class Topic < ActiveRecord::Base
 
   def local_avatar
     avatar = User.find_by_id(self.user_id).avatar_url
-    if avatar.nil?
+    if avatar.nil? || avatar.to_s === "null"
       username = User.find_by_id(self.user_id).username
       if username  == "FavrBot"
         avatar = "assets/Avatars/Chat-Avatar-Admin.png"

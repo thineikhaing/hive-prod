@@ -31,7 +31,7 @@ class Post < ActiveRecord::Base
   def avatar_url
     # avatar = User.find_by_id(self.user_id).avatar_url
 
-    if self.user.avatar_url.nil?
+    if self.user.avatar_url.nil? || self.user.avatar_url.to_s === "null" 
       avatar = Topic.get_avatar(username)
     else
       avatar = self.user.avatar_url

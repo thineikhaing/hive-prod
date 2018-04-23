@@ -168,7 +168,7 @@ class Api::PostsController < ApplicationController
         post_avatar_url = Hash.new
         posts.each do |post|
           username = post.user.username
-          if post.user.avatar_url.nil? || post.user.avatar_url == "null"
+          if post.user.avatar_url.nil? || post.user.avatar_url.to_s === "null"
             p "post avatar url"
             p avatar = Topic.get_avatar(username)
             post_avatar_url[post.id] = avatar
