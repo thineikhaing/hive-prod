@@ -30,14 +30,14 @@ class Topic < ActiveRecord::Base
   end
 
   # hstore_accessor :options,
-  #                 color: :string,
+  #     color: :string,
   #     weight: :integer,
   #     price: :float,
   #     built_at: :datetime,
   #     build_date: :date,
   #     tags: :array, # deprecated
   #     ratings: :hash # deprecated
-  # miles: :decimal
+  #     miles: :decimal
   #
   #enums for topic type
 
@@ -53,7 +53,6 @@ class Topic < ActiveRecord::Base
   #Favr Actions
   enums %w(CREATE START FINISH ACKNOWLEDGE REJECT REVOKE REOPEN EXTEND REMINDER_TIMEUP TASK_TIMEUP FAVR_TIMEUP )
   enums %w(NO YES)
-
 
   paginates_per 5
 
