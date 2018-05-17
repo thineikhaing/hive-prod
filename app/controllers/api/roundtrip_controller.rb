@@ -1126,7 +1126,14 @@ class Api::RoundtripController < ApplicationController
       end
 
       user_trips  = Trip.where(user_id: user_id)
-      render json:{status:"save user trip!",status: 21, trips: user_trips}
+
+      trip_detail =  []
+      user_trips.each do |trip|
+        detail = trip.data["route_detail"]
+        trip_detail.push(eval(detail))
+      end
+
+      render json:{status:"save user trip!",status: 21, trips: user_trips,trip_detail:trip_detail}
 
     end
 
@@ -1676,6 +1683,43 @@ end
     end
   end
 
+  def demo_train_service_alert
+    alertHash = Hash.new
+    affectedSegments = []
+    messages = []
+
+  params[:line].present? ? line = params[:line] : line = "NEL"
+  params[:towards].present? ? towards = params[:towards] : towards = "HarbourFront"
+  params[:stations].present? ? stations = params[:stations] : stations = "NE9, NE8, NE7, NE6"
+  params[:free_stations].present? ? free_stations = params[:free_stations] : free_stations = "NE9, NE8, NE7, NE6"
+  params[:content].present? ? content = params[:content] : content = "1818hrs: NEL - Additional travelling time of 20 miutes between Boon Keng and Dhoby Ghaut stations towards HarbourFront station due to a signal fault."
+  params[:status].present? ? t_status = params[:status].to_i : t_status = 2
+
+    segment1 = {
+      Line: line,
+      Direction: towards,
+      Stations: stations,
+      FreePublicBus:  free_stations,
+      FreeMRTShuttle: free_stations,
+      MRTShuttleDirection:towards
+    }
+
+    message1 = {
+      Content:content,
+      CreatedDate: Time.now
+    }
+
+    affectedSegments.push(segment1)
+    if params[:show_content].to_i == 1
+      messages.push(message1)
+    end
+
+    alertHash["Status"]= t_status
+    alertHash["AffectedSegments"]= affectedSegments
+    alertHash["Message"]= messages
+
+    render json:{source: "hive", value: alertHash, status: 200}
+end
 
 
 end
