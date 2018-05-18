@@ -1592,6 +1592,10 @@ class Api::RoundtripController < ApplicationController
 
     end
 
+
+
+    transit_annoucement = transit_annoucement.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
+
     lta_status = SgAccidentHistory.last(3)
     line_color = "#5f57ba"
     lta_status.each do |data|
@@ -1609,14 +1613,13 @@ class Api::RoundtripController < ApplicationController
 
       lta_data = {id: tweet_counter, lta_id: data.id,header:data.type,text: data.message, created_at: data.created_at,hashtags:data.type,name: "LTA",
       topic_id: topic_id, post_count: post_count,line_color:line_color,mrt_status:""}
-      # transit_annoucement.push(lta_data)
+      transit_annoucement.push(lta_data)
       lta_tweets.push(lta_data)
     end
 
     lta_tweets = lta_tweets.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
-
-    transit_annoucement = transit_annoucement.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
-    transit_annoucement.push(lta_tweets)
+    
+    # transit_annoucement.push(lta_tweets)
     render json: {tweets:transit_annoucement,
       smrt_recent_tweet:smrt_client,
       sbs_recent_tweet:sbs_client,
