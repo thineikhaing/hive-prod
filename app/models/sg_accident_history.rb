@@ -59,7 +59,7 @@ class SgAccidentHistory < ActiveRecord::Base
         end
 
         if(sg_accident.notify == false)
-          self.send_traffic_noti(sg_accident)
+          # self.send_traffic_noti(sg_accident)
         end
 
       end
