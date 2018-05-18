@@ -1609,13 +1609,14 @@ class Api::RoundtripController < ApplicationController
 
       lta_data = {id: tweet_counter, lta_id: data.id,header:data.type,text: data.message, created_at: data.created_at,hashtags:data.type,name: "LTA",
       topic_id: topic_id, post_count: post_count,line_color:line_color,mrt_status:""}
-      transit_annoucement.push(lta_data)
+      # transit_annoucement.push(lta_data)
       lta_tweets.push(lta_data)
     end
 
     lta_tweets = lta_tweets.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
 
     transit_annoucement = transit_annoucement.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
+    transit_annoucement.push(lta_tweets)
     render json: {tweets:transit_annoucement,
       smrt_recent_tweet:smrt_client,
       sbs_recent_tweet:sbs_client,
@@ -1688,11 +1689,13 @@ end
     affectedSegments = []
     messages = []
 
+    curTime = Time.now.strftime("%H%M")
+
   params[:line].present? ? line = params[:line] : line = "NEL"
   params[:towards].present? ? towards = params[:towards] : towards = "HarbourFront"
   params[:stations].present? ? stations = params[:stations] : stations = "NE9, NE8, NE7, NE6"
   params[:free_stations].present? ? free_stations = params[:free_stations] : free_stations = "NE9, NE8, NE7, NE6"
-  params[:content].present? ? content = params[:content] : content = "1818hrs: NEL - Additional travelling time of 20 miutes between Boon Keng and Dhoby Ghaut stations towards HarbourFront station due to a signal fault."
+  params[:content].present? ? content = params[:content] : content = curTime+"hrs: NEL - Additional travelling time of 20 miutes between Boon Keng and Dhoby Ghaut stations towards HarbourFront station due to a signal fault."
   params[:status].present? ? t_status = params[:status].to_i : t_status = 2
 
     segment1 = {
