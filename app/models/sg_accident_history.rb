@@ -59,7 +59,7 @@ class SgAccidentHistory < ActiveRecord::Base
         end
 
         if(sg_accident.notify == false)
-          # self.send_traffic_noti(sg_accident)
+
         end
 
       end
@@ -181,48 +181,7 @@ class SgAccidentHistory < ActiveRecord::Base
                     }
                 }
             }
-
-            # iphone_notification = {
-            #     aps: {
-            #         alert: sg_accident.message,
-            #         sound: "default",
-            #         badge: 0,
-            #         extra:  {
-            #             topic_id: topic.id,
-            #             topic_title: topic.title,
-            #             place_name: topic.rtplaces_information[:start_place][:name],
-            #             start_place: topic.rtplaces_information[:start_place][:name],
-            #             end_place:  topic.rtplaces_information[:end_place][:name],
-            #             topic_username: topic.username,
-            #             create_at: topic.created_at,
-            #             accident_datetime: sg_accident.accident_datetime,
-            #             latitude: sg_accident.latitude,
-            #             longitude: sg_accident.longitude,
-            #             type: sg_accident.type
-            #         }
-            #     }
-            # }
-
-            # android_notification = {
-            #     data: {
-            #         message: sg_accident.message,
-            #         badge: 0,
-            #         extra:  {
-            #             topic_id: topic.id,
-            #             topic_title: topic.title,
-            #             place_name: topic.rtplaces_information[:start_place][:name],
-            #             start_place: topic.rtplaces_information[:start_place][:name],
-            #             end_place:  topic.rtplaces_information[:end_place][:name],
-            #             topic_username: topic.username,
-            #             create_at: topic.created_at,
-            #             accident_datetime: sg_accident.accident_datetime,
-            #             latitude: sg_accident.latitude,
-            #             longitude: sg_accident.longitude,
-            #             type: sg_accident.type
-            #         }
-            #     }
-            # }
-
+      
             sns_message = {
                 default: sg_accident.message,
                 APNS_SANDBOX: iphone_notification.to_json,

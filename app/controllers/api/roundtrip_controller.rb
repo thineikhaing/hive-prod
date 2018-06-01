@@ -1618,7 +1618,7 @@ class Api::RoundtripController < ApplicationController
     end
 
     lta_tweets = lta_tweets.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
-    
+
     # transit_annoucement.push(lta_tweets)
     render json: {tweets:transit_annoucement,
       smrt_recent_tweet:smrt_client,
@@ -1725,6 +1725,20 @@ end
     alertHash["Message"]= messages
 
     render json:{source: "hive", value: alertHash, status: 200}
+end
+
+def send_alight_noti
+  user = User.find_by_id(params[:id])
+  endpoint_arn = user.data["endpoint_arn"]
+  if !endpoint_arn.nil?
+    Trip.send_alight_noti(params[:message], endpoint_arn)
+  end
+  render json:{message: "send aligh noti", status: 200}
+end
+
+def locations
+  p params[:locations]
+  render json:{message: "got user location", status: 200}
 end
 
 

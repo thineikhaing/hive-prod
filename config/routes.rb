@@ -232,8 +232,8 @@ Rails.application.routes.draw do
     match "roundtrip/save_user_fav_buses"           => "roundtrip#save_user_fav_buses"    , via: [:get, :post]
     match "roundtrip/transit_annoucement_by_admin"  => "roundtrip#transit_annoucement_by_admin"    , via: [:get, :post]
     match "roundtrip/demo_train_service_alert"      => "roundtrip#demo_train_service_alert"    , via: [:get, :post]
-
-
+    match "roundtrip/send_alight_noti"              => "roundtrip#send_alight_noti"    , via: [:get, :post]
+    match 'roundtrip/locations'   => "roundtrip#locations"    , via: [:get, :post]
   end
 
 end
