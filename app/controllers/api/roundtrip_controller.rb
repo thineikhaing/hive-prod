@@ -1737,8 +1737,11 @@ def send_alight_noti
 end
 
 def locations
-  p params[:locations]
-  render json:{message: "got user location", status: 200}
+  p params[:location][:provider]
+  p latitude  = params[:location][:latitude]
+  p longitude  = params[:location][:longitude]
+
+  render json:{message: "got user location"}
 end
 
 

@@ -17,6 +17,8 @@ scheduler.cron '05 00 * * mon' do
   ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_mrt_stations
  RESTART IDENTITY")
 
+ # ActiveRecord::Base.connection.execute("TRUNCATE TABLE topics RESTART IDENTITY")
+
  vh_query = "Vehicle breakdown"
  ac_query = "Accident"
  ht_query = "Heavy traffic"
@@ -56,11 +58,10 @@ scheduler.cron '05 00 * * *' do
 
 end
 
-scheduler.every 5.minutes do
- p "check accident!"
- SgAccidentHistory.get_incident_and_breakdown
- 
-end
+# scheduler.every 5.minutes do
+#  p "check accident!"
+#  SgAccidentHistory.get_incident_and_breakdown
+# end
 
 
 # command out
