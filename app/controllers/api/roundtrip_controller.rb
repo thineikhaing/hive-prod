@@ -1582,7 +1582,7 @@ class Api::RoundtripController < ApplicationController
               else
                 header = "ANNOUNCEMENT"
                 line_color = "#22b5d0"
-                lta_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
+                bus_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
             end
 
           end
