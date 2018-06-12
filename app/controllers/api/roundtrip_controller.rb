@@ -1462,8 +1462,6 @@ class Api::RoundtripController < ApplicationController
           p text
           p "************"
           if text.downcase.include?("svcs") || text.downcase.include?("svc") || text.downcase.include?("services") || text.downcase.include?("service")
-
-
             tweet_text = text.to_s
             if text.downcase.include?("svcs")
               service_header = tweet_text.downcase.partition("svcs").last
@@ -1581,6 +1579,10 @@ class Api::RoundtripController < ApplicationController
                 header = "ANNOUNCEMENT"
                 line_color = "#22b5d0"
                 bus_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
+              else
+                header = "ANNOUNCEMENT"
+                line_color = "#22b5d0"
+                lta_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
             end
 
           end

@@ -181,7 +181,7 @@ class SgAccidentHistory < ActiveRecord::Base
                     }
                 }
             }
-      
+
             sns_message = {
                 default: sg_accident.message,
                 APNS_SANDBOX: iphone_notification.to_json,
