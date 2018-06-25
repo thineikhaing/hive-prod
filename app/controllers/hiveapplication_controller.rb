@@ -125,18 +125,12 @@ class HiveapplicationController < ApplicationController
       redirect_to root_url, alert: "Not authorized. Please login..."
     else
       @users = User.all.order("id desc").page params[:page]
-      if params[:app_id].present?
-        if (params[:app_id].to_i != 0)
-          hive = HiveApplication.find(params[:app_id])
+      if params[:application].present?
+        if (params[:application].to_i != 0)
+          hive = HiveApplication.find(params[:application])
           @users = User.where("app_data ->'app_id#{hive.id}' = '#{hive.api_key}'").order("id desc").page params[:page]
         end
-
       end
-      respond_to do |format|
-        format.html
-        format.js
-      end
-
     end
 
   end

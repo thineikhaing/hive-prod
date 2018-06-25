@@ -1,8 +1,8 @@
 .row
   .large-4.columns{style:'float:right'}
-    %label{style:'color:orange;font-size:18px;'} Filter User by Application
-    =select_tag "application", options_for_select(HiveApplication.all.map{|h|[h.app_name, h.id]}), prompt: "All Users",
-    onchange: "update_list()", style:'margin-bottom:0px;'
+    = form_tag hiveapplication_users_path, method: "get", id: "filter", class: "filter" do
+      %label{style:'color:orange;font-size:18px;'} Filter User by Application
+      =select_tag "application", options_for_select(HiveApplication.all.map{|h|[h.app_name, h.id]},selected: params[:application]), prompt: "All Users", onchange: "$('#filter').submit();"
 
 
 .row#display_user_list
@@ -32,29 +32,3 @@
     = paginate @users
 
 =link_to "back", hiveapplication_dev_portal_path , style:'float:right;margin-top:15px;', class:'button tiny warning'
-
-:javascript
-  function update_list(){
-    var element = document.getElementById("application");
-    var selectedText = element.options[element.selectedIndex].text;
-    var selectedValue = element.options[element.selectedIndex].value;
-    console.log(selectedText,selectedValue)
-
-    if(selectedText == "All Users"){
-      selectedValue = 0
-    }
-
-    $.ajax({
-          url: "#{hiveapplication_users_url}",
-          type: "GET",
-          data: {app_id:selectedValue},
-          success:function(html){
-            var htmlobject = $(html);
-            var output = htmlobject.find("#display_user_list")[0];
-            var testing = new XMLSerializer().serializeToString(output);
-            $("#display_user_list").replaceWith(testing);
-
-          }
-      });
-
-  }

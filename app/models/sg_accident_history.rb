@@ -63,10 +63,8 @@ class SgAccidentHistory < ActiveRecord::Base
   end
 
   def self.send_traffic_noti(accident)
-    p "send traffic_noti"
-    p sg_accident = accident
-    p sg_accident.notify
-    # p sg_accident = SgAccidentHistory.where(notify: false).take
+    sg_accident = accident
+    sg_accident.notify
 
     if Rails.env.production?
       round_key = RoundTrip_key::Production_Key

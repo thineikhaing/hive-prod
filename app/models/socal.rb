@@ -37,17 +37,12 @@ class Socal
     end
 
     topic = Topic.create(title: event_name, data: result,user_id: user.id,hiveapplication_id: app_id)
-
     #topic.data = { "host_code" => Socal.generate_invitation_code }
     #topic.data = { "latitude" => ""}
     #topic.data = { "longitude" => "" }
-    #topic.data = { "address" => ""  }
     #topic.data = { "place_name" => "" }
-    #topic.data = { "confirm_state" => 0 }
-    #topic.data = { "confirmed_date" => ''}
 
     topic.save!
-
     temp_array = []
      p datetime
     if datetime.present?
