@@ -64,7 +64,6 @@ module Hive
     config.serve_static_assets = true
 
     # Assets
-    config.assets.initialize_on_precompile = false
     config.assets.precompile += %w(web.css web.js mobile.css mobile.js)
 
     config.action_dispatch.default_headers.merge!({
