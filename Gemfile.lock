@@ -997,6 +997,9 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+    sprockets-redirect (1.0.0)
+      activesupport (>= 3.1.0)
+      rack
     svy21 (1.0.1)
     temple (0.8.0)
     thor (0.19.4)
@@ -1120,6 +1123,7 @@ DEPENDENCIES
   shoulda-matchers
   sinatra!
   sprockets-rails
+  sprockets-redirect
   svy21
   time_difference
   turbo-sprockets-rails4

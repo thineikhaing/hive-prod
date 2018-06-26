@@ -73,6 +73,10 @@ gem 'oauth1'
 gem 'twitter'
 gem 'tweetstream'
 
+group :production, :staging do
+  gem "sprockets-redirect"
+end
+
 # gem 'request_store'
 
 group :assets do
