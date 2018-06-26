@@ -1011,6 +1011,7 @@ GEM
       addressable
     obscenity (1.0.2)
     orm_adapter (0.5.0)
+    parallel (1.12.1)
     parslet (1.8.2)
     pg (1.0.0)
     pivotal_git_scripts (1.4.0)
@@ -1145,6 +1146,10 @@ GEM
     toml (0.2.0)
       parslet (~> 1.8.0)
     trollop (2.1.2)
+    turbo-sprockets-rails4 (1.2.5)
+      parallel (~> 1.0)
+      railties (>= 4)
+      sprockets (~> 3.0)
     turbolinks (5.1.0)
       turbolinks-source (~> 5.1)
     turbolinks-source (5.1.0)
@@ -1257,6 +1262,7 @@ DEPENDENCIES
   sprockets-rails
   svy21
   time_difference
+  turbo-sprockets-rails4
   turbolinks
   tweetstream
   twitter

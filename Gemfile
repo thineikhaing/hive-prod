@@ -78,6 +78,7 @@ gem 'tweetstream'
 group :assets do
   gem 'bourbon'
   gem 'uglifier', '~> 2.6.1'
+  gem 'turbo-sprockets-rails4'
 end
 
 group :development do
