@@ -49,10 +49,11 @@
                         %img{height: "120px", width: "120px",src:@application.icon_url}
                     %td{width: "50%"}
                       #btn_upload_icon
-                        .wrapper
-                          = f.file_field :application_icon
-                        .button.tiny.warning
+
+                        .button.tiny.warning{style: "margin-bottom: 0px;"}
                           Choose File
+                        .wrapper1{style: "cursor:pointer;position: absolute;margin-top: -32px;height: 30px;opacity: 0;width: 100px;"}
+                          = f.file_field :application_icon
                   %tr
                     %td
                       #text_container
