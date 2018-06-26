@@ -9,7 +9,6 @@
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
-/public/assets
 /.idea
 /.idea *
 /public/system/*

@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.3.1'
+ruby '2.5.1'
 #gem 'rails', :git => 'git://github.com/rails/rails.git', :tag => 'v4.1.0.beta1'
 gem 'rails'
 gem 'puma'
@@ -24,7 +24,7 @@ gem 'em-http-request'
 gem 'gon'
 gem "cloudfiles"
 gem "carrierwave"
-gem "fog"
+gem 'fog-aws'
 gem "koala"
 gem 'factual-api'
 gem 'obscenity'

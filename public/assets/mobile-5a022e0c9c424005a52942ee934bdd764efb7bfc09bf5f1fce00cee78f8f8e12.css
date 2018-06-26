@@ -1,0 +1,304 @@
+@font-face {
+  font-family: 'Labrador-A-Medium';
+  src: url(/assets/Labrador-A-Medium-361db381afec8837be03fc1912ee2fbf7b75f73b0fca9108e0a61f825a6d75f0.otf) format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Labrador-A-Light';
+  src: url(/assets/Labrador-A-Light-c412ac8bacbb407385c93bdae639c2e61c6bfbc6112b22dd96cd8e760c04144d.otf) format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Labrador-A-Hairline';
+  src: url(/assets/Labrador-A-Hairline-faca9ff205bab5431d544d1da3236b4fc96970bafdabee557e33176570669d64.otf) format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+ */
+/* line 6, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/common/reset.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  /*vertical-align: top;*/
+}
+
+/* HTML5 display-role reset for older browsers */
+/* line 27, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/common/reset.scss */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+/* line 31, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/common/reset.scss */
+body {
+  line-height: 1;
+}
+
+/* line 35, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/common/reset.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 38, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/common/reset.scss */
+blockquote, q {
+  quotes: none;
+}
+
+/* line 41, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/common/reset.scss */
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+
+/* line 46, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/common/reset.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+/* line 1, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/application_list.scss */
+#application_list_container {
+  height: 670px;
+  width: 840px;
+  margin: 0 auto;
+  margin-top: 260px;
+}
+/* line 8, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/application_list.scss */
+#application_list_container #application_list {
+  margin: 0 auto;
+  height: 90px;
+  width: 840px;
+  background: #FF9B00;
+  color: white;
+  line-height: 90px;
+  font-size: 44px;
+  font-weight: bold;
+  padding-left: 10px;
+}
+
+/* line 23, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/application_list.scss */
+#list_of_applications_container {
+  height: 560px;
+  width: 848px;
+  border: solid #FF9B00 1px;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
+/* line 33, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/application_list.scss */
+div#table_list {
+  overflow: auto !important;
+}
+
+/* line 38, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/application_list.scss */
+table.app_list td {
+  text-align: center;
+  font-size: 44px;
+}
+/* line 43, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/application_list.scss */
+table.app_list tr {
+  border-bottom: solid #FF9B00 1px;
+  height: 80px;
+}
+/* line 48, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/application_list.scss */
+table.app_list tr:hover {
+  cursor: pointer;
+}
+
+/* line 53, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/application_list.scss */
+.individual_app_cell {
+  height: 30px;
+  text-transform: uppercase;
+  line-height: 30px;
+  vertical-align: middle;
+}
+
+/* line 61, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/application_list.scss */
+#application_list_footer {
+  height: 80px;
+  width: 850px;
+  color: white;
+  padding: 5px 0px 0px 0px;
+  font-size: 44px;
+  background: #FF9B00;
+}
+/* line 69, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/application_list.scss */
+#application_list_footer #app_icon_container {
+  height: 60px;
+  width: 200px;
+  margin: 0 auto;
+}
+/* line 74, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/application_list.scss */
+#application_list_footer #app_icon_container #add_app_icon {
+  height: 60px;
+  width: 60px;
+  background-image: url("new_app.png");
+  background-size: cover;
+  margin-top: 8px;
+}
+/* line 82, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/application_list.scss */
+#application_list_footer #app_icon_container #add_app_icon #add_app_label {
+  height: 60px;
+  width: 240px;
+  margin-left: 80px;
+  color: white;
+  line-height: 60px;
+}
+/* line 90, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/application_list.scss */
+#application_list_footer #app_icon_container #add_app_icon #add_app_label a {
+  color: white;
+  text-decoration: none !important;
+}
+
+/* line 1, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/index.scss */
+#sign_in_form {
+  height: 300px;
+  width: 800px;
+  color: white;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+/* line 9, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/index.scss */
+#sign_up {
+  display: inline-block;
+  height: 70px;
+  width: 180px;
+  font-size: 34px;
+  background-color: #FF9B00;
+  text-align: center;
+  line-height: 70px;
+  margin-left: 12px;
+}
+
+/* line 20, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/index.scss */
+#sign_up a {
+  color: white;
+  text-decoration: none !important;
+}
+
+/* line 25, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/index.scss */
+#email_label, #password_label {
+  font-size: 34px;
+  color: #FF9B00;
+}
+
+/* line 30, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/index.scss */
+.sign_in_input {
+  height: 75px;
+  width: 750px;
+  color: #FF9B00;
+  font-size: 34px;
+  margin-bottom: 30px;
+  border: 1px solid #FF9B00;
+}
+
+/* line 39, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/index.scss */
+.submit_button {
+  height: 70px;
+  width: 220px;
+  font-size: 34px;
+  color: white;
+  background-color: #FF9B00;
+  margin-left: 12px;
+  border: none;
+  -webkit-appearance: none;
+}
+
+/* line 50, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/index.scss */
+#forgot_password {
+  display: inline-block;
+  height: 70px;
+  width: 350px;
+  font-size: 12px;
+  font-size: 34px;
+  color: white;
+  text-align: center;
+  line-height: 70px;
+  background-color: #FF9B00;
+}
+
+/* line 62, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/index.scss */
+#forgot_password a {
+  color: white;
+  text-decoration: none !important;
+}
+
+/* line 67, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/index.scss */
+#home_notice {
+  width: 735px;
+  color: red;
+  font-size: 34px;
+  text-align: center;
+  margin: 0 auto;
+  margin-top: 380px;
+}
+
+/* line 1, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/layout.scss */
+html {
+  height: 100%;
+}
+
+/* line 5, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/layout.scss */
+body {
+  width: 100%;
+  height: 100%;
+}
+
+/* line 11, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/layout.scss */
+.container {
+  width: 100%;
+  padding: 25px 0px 25px 0px;
+  font-size: 12px;
+  color: #FF9B00;
+}
+
+/* line 18, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/layout.scss */
+#main_background {
+  height: 100%;
+  width: 100%;
+  background-image: url("BG.jpg");
+}
+
+/* line 28, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/layout.scss */
+#header {
+  height: 110px;
+  width: 100%;
+}
+/* line 32, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/layout.scss */
+#header #logo {
+  height: 145px;
+  width: 500px;
+  display: block;
+  background-image: url("Hive-Dev-Web-Logo.png");
+  background-size: cover;
+  margin: 0 auto;
+}
+/* line 41, /Users/enterprise/Documents/workspace/bzz-web/app/assets/stylesheets/mobile/layout.scss */
+#header #header_info {
+  font-size: 20px;
+  height: 87px;
+  display: block;
+  width: 300px;
+  text-align: right;
+}
