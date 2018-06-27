@@ -690,7 +690,8 @@ class Api::UsersController < ApplicationController
         checkUsername = User.search_data(params[:username])
         var.push(33) if Obscenity.profane?(params["username"]) == true
         #checkName.map { |cN| var.push(33) unless var.include?(33) if cN.downcase == "cunt" or cN.downcase == "shit" or cN.downcase == "cocksucker" or cN.downcase == "piss" or cN.downcase == "tits" or cN.downcase == "fuck" or cN.downcase == "motherfucker" or cN.downcase == "suck" or cN.downcase == "cheebye" }
-        checkName = User.find_by_username(params[:username])
+        username = params[:username]
+        checkName = User.where("LOWER(username)  =?", username.downcase).take
         if checkName.present?
           var.push(32) #if checkUsername.present?
         end
