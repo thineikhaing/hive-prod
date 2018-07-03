@@ -20,4 +20,3 @@ class UserFriendList < ActiveRecord::Base
   # end
 
 end
-
