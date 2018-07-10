@@ -84,6 +84,8 @@ class Tweet < ApplicationRecord
         GCM: android_notification.to_json
     }.to_json
 
+    s_arn = "arn:aws:sns:ap-southeast-1:378631322826:endpoint/GCM/Roundtrip_S/da5aacf6-7de3-3c0a-baa5-d86fad965ff3"
+
 
     sns.publish(target_arn: target_topic, message: sns_message, message_structure:"json")
 
