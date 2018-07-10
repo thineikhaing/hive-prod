@@ -57,31 +57,30 @@ class Api::TopicsController < ApplicationController
         end_id = 0
 
         # start_place = place.add_record("Marina South Pier MRT", "1.2713367", "103.8628598", "", 0, 0, nil, 1, "GsdaMJmx2uRjPcVsmuff", nil,nil,nil,nil,nil,nil)
-        if params[:start_place_id].to_i >= 0
 
-          if params[:start_place_id] || params[:start_longitude]  || params[:start_longitude]  || params[:start_source_id]
-              place = Place.new
-              start_place = place.add_record(start_name, start_latitude, start_longitude, start_address, start_source, start_source_id, start_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
-              # p "start place info::::"
-              start_id = start_place[:place].id
-              start_place[:place].name
-
-              if params[:latitude].to_i == 0 && params[:longitude].to_i
-                place_id = start_id
-              end
-          end
-
-          if params[:end_place_id] || params[:end_longitude]  || params[:end_longitude]  || params[:end_source_id]
-            end_place = place.add_record(end_name, end_latitude, end_longitude, end_address, end_source, end_source_id, end_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
-            # p "end place info::::"
-            end_id = end_place[:place].id
-            end_place[:place].name
+        if params[:start_place_id] || params[:start_longitude]  || params[:start_longitude]  || params[:start_source_id]
+            place = Place.new
+            start_place = place.add_record(start_name, start_latitude, start_longitude, start_address, start_source, start_source_id, start_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
+            # p "start place info::::"
+            start_id = start_place[:place].id
+            start_place[:place].name
 
             if params[:latitude].to_i == 0 && params[:longitude].to_i
               place_id = start_id
             end
+        end
+
+        if params[:end_place_id] || params[:end_longitude]  || params[:end_longitude]  || params[:end_source_id]
+          end_place = place.add_record(end_name, end_latitude, end_longitude, end_address, end_source, end_source_id, end_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
+          # p "end place info::::"
+          end_id = end_place[:place].id
+          end_place[:place].name
+
+          if params[:latitude].to_i == 0 && params[:longitude].to_i
+            place_id = start_id
           end
-      end
+        end
+
 
 
         data = params[:data] if data.present?
@@ -777,8 +776,6 @@ class Api::TopicsController < ApplicationController
         trips.where('id NOT IN (?)', ids).destroy_all
       end
 
-
-
       trip_detail =  []
       trips.each do |trip|
         detail = trip.data["route_detail"]
@@ -786,12 +783,20 @@ class Api::TopicsController < ApplicationController
         trip_detail.push(eval(detail))
       end
 
+      posts = []
+      if current_user.posts.count > 0
+        current_user.posts.map{|pst| posts.push({topic_id: pst.topic_id,id: pst.id,content: pst.content})}
+      end
+
       # a.gsub!(/\"/, '\'')
       #eval(a)
 
-      render json: {trip_detail:trip_detail,topics: topics, topic_count: topics.count,
+      render json: {trip_detail:trip_detail,
+                  topics: topics, posts: posts,
+                  topic_count: topics.count,
                     trips: trips, trip_count: trips.count,
-                    user_friend_list: user_friend_list, friend_count: user_friend_list.count}, status: 200
+                    user_friend_list: user_friend_list,
+                    friend_count: user_friend_list.count}, status: 200
     else
       render json: {message: "no topics"}
     end

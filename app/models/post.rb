@@ -31,7 +31,7 @@ class Post < ActiveRecord::Base
   def avatar_url
     # avatar = User.find_by_id(self.user_id).avatar_url
 
-    if self.user.avatar_url.nil? || self.user.avatar_url.to_s === "null" 
+    if self.user.avatar_url.nil? || self.user.avatar_url.to_s === "null"
       avatar = Topic.get_avatar(username)
     else
       avatar = self.user.avatar_url
@@ -189,6 +189,11 @@ class Post < ActiveRecord::Base
   end
 
   def broadcast_hive
+   total_posts = self.topic.posts
+   post_users = []
+   total_posts.map {|pst| post_users.push(pst.user_id)}
+    p "post_users"
+    p post_users
     data = {
         id: self.id,
         topic_id: self.topic_id,
@@ -207,10 +212,16 @@ class Post < ActiveRecord::Base
         offensive: self.offensive,
         created_at: created_at,
         data: self.data,
-        special_type: self.special_type
+        special_type: self.special_type,
+        post_users: post_users
     }
     channel_name = "hive_topic_" + self.topic_id.to_s+ "_channel"
     Pusher[channel_name].trigger_async("broadcast", data)
+
+
+    channel_name = "rt_comment_follow_channel"
+    Pusher[channel_name].trigger_async("broadcast", data)
+
   end
 
   def update_event_broadcast_hive
@@ -306,7 +317,7 @@ class Post < ActiveRecord::Base
         likes: self.likes,
         dislikes: self.dislikes,
         offensive: self.offensive,
-        created_at: created_at,
+        created_at: self.created_at,
         data: self.data ,
         special_type: self.special_type
     }
@@ -314,6 +325,9 @@ class Post < ActiveRecord::Base
     channel_name = "topic_" + self.topic_id.to_s+ "_channel"
     Pusher[channel_name].trigger_async("delete_post", data)
   end
+
+
+
 
   # Search the database for related contents
 
