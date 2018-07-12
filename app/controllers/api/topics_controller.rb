@@ -784,11 +784,13 @@ class Api::TopicsController < ApplicationController
       end
 
       posts_topics = []
+      p current_user
       if current_user.posts.count > 0
         current_user.posts.map{|pst| posts_topics.push(pst.topic_id)}
       end
-
-      posts_topics = posts_topics.uniq!
+      if posts_topics.count > 1
+        posts_topics = posts_topics.uniq!
+      end
 
       # a.gsub!(/\"/, '\'')
       #eval(a)
