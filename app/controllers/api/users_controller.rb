@@ -1242,7 +1242,7 @@ class Api::UsersController < ApplicationController
       if params[:id].present?
         loc_to_delete = UserFavLocation.find(params[:id])
         if loc_to_delete.present?
-          loc_to_delete.destroy
+
 
           file_name = loc_to_delete.img_url
           if file_name.present?
@@ -1251,6 +1251,8 @@ class Api::UsersController < ApplicationController
               key: file_name,
             })
           end
+
+          loc_to_delete.destroy
 
           fav_locations = UserFavLocation.where(user_id: params[:user_id])
           render json: {message: "Delete favourite location by id.", userfavlocation: fav_locations}  , status: 200
@@ -1261,7 +1263,7 @@ class Api::UsersController < ApplicationController
 
         for i in 0..selected_ids.count-1
           fav_id = selected_ids[i].to_i
-          UserFavLocation.find(fav_id).destroy
+
 
           file_name = UserFavLocation.find(fav_id).img_url
           if file_name.present?
@@ -1270,6 +1272,8 @@ class Api::UsersController < ApplicationController
               key: file_name,
             })
           end
+
+          UserFavLocation.find(fav_id).destroy
 
         end
 
