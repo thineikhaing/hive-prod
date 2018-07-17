@@ -1083,24 +1083,31 @@ class Topic < ActiveRecord::Base
   end
 
   def delete_S3_file(bucket_name, file_name,topic_type)
-    s3= AWS::S3::new(
-        :access_key_id      => 'AKIAIJMZ5RLXRO6LJHPQ',     # required
-        :secret_access_key  => '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',    # required
-        :region => "ap-southeast-1",
-    )
-    bucket = s3.buckets[bucket_name]
-    object = bucket.objects[file_name]
-    object.delete
+    
+    s3 = Aws::S3::Client.new
+    resp = s3.delete_object({
+      bucket: bucket_name,
+      key: file_name,
+    })
+
     if topic_type == Topic::IMAGE    #delete medium and small version
       names = file_name.split(".")
       sfilename = names[0] +  "_s." +  names[1]
       mfilename =  names[0] +  "_m." + names[1]
+      resp = s3.delete_objects({
+        bucket: bucket_name,
+        delete: {
+          objects: [
+            {
+              key: sfilename,
+            },
+            {
+              key: mfilename,
+            },
+          ],
+        },
+      })
 
-      object = bucket.objects[sfilename]
-      object.delete
-
-      object = bucket.objects[mfilename]
-      object.delete
     end
   end
 
@@ -1154,17 +1161,7 @@ class Topic < ActiveRecord::Base
         to_device_id.push(device_id)
         user_id.push(u.id)
       end
-      # if u.check_in_time.present?
-      #   time_difference = Time.now - u.check_in_time
-      #   unless time_difference.to_i > time_allowance.to_i
-      #     if u.data.present? && u.id != self.user_id
-      #       hash_array = u.data
-      #       device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-      #       to_device_id.push(device_id)
-      #       user_id.push(u.id)
-      #     end
-      #   end
-      # end
+
     end
     p "user to push"
     p user_id
