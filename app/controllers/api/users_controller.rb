@@ -1229,10 +1229,29 @@ class Api::UsersController < ApplicationController
 
   def delete_user_fav_location
     if current_user.present?
+
+      s3 = Aws::S3::Client.new
+      if Rails.env.development?
+        bucket_name = AWS_Bucket::Image_D
+      elsif Rails.env.staging?
+        bucket_name = AWS_Bucket::Image_S
+      else
+        bucket_name = AWS_Bucket::Image_P
+      end
+
       if params[:id].present?
         loc_to_delete = UserFavLocation.find(params[:id])
         if loc_to_delete.present?
           loc_to_delete.destroy
+
+          file_name = loc_to_delete.img_url
+          if file_name.present?
+            resp = s3.delete_object({
+              bucket: bucket_name,
+              key: file_name,
+            })
+          end
+
           fav_locations = UserFavLocation.where(user_id: params[:user_id])
           render json: {message: "Delete favourite location by id.", userfavlocation: fav_locations}  , status: 200
         end
@@ -1240,10 +1259,18 @@ class Api::UsersController < ApplicationController
         p "selected id to delete"
         p selected_ids = params[:ids].to_a
 
-
         for i in 0..selected_ids.count-1
           fav_id = selected_ids[i].to_i
           UserFavLocation.find(fav_id).destroy
+
+          file_name = UserFavLocation.find(fav_id).img_url
+          if file_name.present?
+            resp = s3.delete_object({
+              bucket: bucket_name,
+              key: file_name,
+            })
+          end
+
         end
 
         fav_locations = UserFavLocation.where(user_id: params[:user_id])
