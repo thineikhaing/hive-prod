@@ -791,14 +791,15 @@ class Api::TopicsController < ApplicationController
       if current_user.posts.count > 0
         current_user.posts.map{|pst| posts_topics.push(pst.topic_id)}
       end
-
-      posts_topics = posts_topics.uniq!
+      if posts_topics.count > 0
+        posts_topics = posts_topics.uniq!
+      end
 
       # a.gsub!(/\"/, '\'')
       #eval(a)
 
       render json: {trip_detail:trip_detail,
-                  topics: topics, posts: posts,
+                  topics: topics, posts: posts_topics,
                   topic_count: topics.count,
                     trips: trips, trip_count: trips.count,
                     user_friend_list: user_friend_list,
