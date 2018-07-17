@@ -626,10 +626,14 @@ class Api::TopicsController < ApplicationController
             topic.delete_event_broadcast_hive
             topic.delete_event_broadcast_other_app
           end
-
+          topics = []
+          if current_user.present?
+            topics = Topic.where(user_id: current_user.id)
+          end
           topic.delete
 
-          render json: { status: true }
+
+          render json: { status: true,topics: topics }
         else
           render json: { error_msg: "Invalid topic_id" }
         end
@@ -784,21 +788,18 @@ class Api::TopicsController < ApplicationController
       end
 
       posts_topics = []
-      p current_user
       if current_user.posts.count > 0
         current_user.posts.map{|pst| posts_topics.push(pst.topic_id)}
       end
-      if posts_topics.count > 1
-        posts_topics = posts_topics.uniq!
-      end
+
+      posts_topics = posts_topics.uniq!
 
       # a.gsub!(/\"/, '\'')
       #eval(a)
 
       render json: {trip_detail:trip_detail,
-                    posts_topics: posts_topics,
-                    topics: topics,
-                    topic_count: topics.count,
+                  topics: topics, posts: posts,
+                  topic_count: topics.count,
                     trips: trips, trip_count: trips.count,
                     user_friend_list: user_friend_list,
                     friend_count: user_friend_list.count}, status: 200

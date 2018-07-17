@@ -512,6 +512,23 @@ class Post < ActiveRecord::Base
       cop.delete
     end
 
+    s3 = Aws::S3::Client.new
+    if Rails.env.development?
+      bucket_name = AWS_Bucket::Image_D
+    elsif Rails.env.staging?
+      bucket_name = AWS_Bucket::Image_S
+    else
+      bucket_name = AWS_Bucket::Image_P
+    end
+    
+    if self.img_url.present?
+      file_name = self.img_url
+      resp = s3.delete_object({
+        bucket: bucket_name,
+        key: file_name,
+      })
+    end
+
   end
 
   def delete_S3_file(bucket_name, file_name,post_type)
