@@ -25,11 +25,10 @@ class Tweet < ApplicationRecord
 
     Pusher["hive_channel"].trigger_async("new_tweet", tweet)
     if status.user.screen_name  === 'SBSTransit_Ltd'
-      tweet_status = status.text.downcase
-      if tweet_status.include?("lrt") || if tweet_status.include?("nel") || tweet_status.include?("dtl") || tweet_status.include?("punggol lrt") || tweet_status.include?("sengkang lrt")
+      tweet_status = tweet.text.downcase
+      if tweet_status.include?("lrt") || tweet_status.include?("nel") || tweet_status.include?("dtl") || tweet_status.include?("punggol lrt") || tweet_status.include?("sengkang lrt")
+        Tweet.send_tweet_noti(tweet)
       end
-
-
     else
       Tweet.send_tweet_noti(tweet)
     end
