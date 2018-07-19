@@ -1220,7 +1220,7 @@ class Api::UsersController < ApplicationController
 
   def get_user_fav_location
     if params[:app_key].present?
-      @userFav = UserFavLocation.where(user_id: params[:user_id])
+      @userFav = UserFavLocation.where(user_id: params[:user_id]).order('id desc')
       render json: { userfavlocation: @userFav}
     else
       render json:{error_msg: "Params app_key must be presented"} , status: 400
