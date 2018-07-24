@@ -188,7 +188,7 @@ class Api::UsersController < ApplicationController
             name = user.username
             id = user.id
             avatar = Topic.get_avatar(user.username)
-            userFav = UserFavLocation.where(user_id: user.id)
+            userFav = UserFavLocation.where(user_id: user.id).order('id desc')
             friend_lists = UserFriendList.where(user_id: user.id)
 
             render json: {:user => user,userfavlocation: userFav,friend_list: friend_lists,:name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
@@ -538,7 +538,7 @@ class Api::UsersController < ApplicationController
           id = user.id
           avatar = Topic.get_avatar(user.username)
 
-          userFav = UserFavLocation.where(user_id: user.id)
+          userFav = UserFavLocation.where(user_id: user.id).order('id desc')
 
           friend_lists = UserFriendList.where(user_id: user.id)
 
@@ -606,7 +606,7 @@ class Api::UsersController < ApplicationController
           id = user.id
           avatar = Topic.get_avatar(user.username)
 
-          userFav = UserFavLocation.where(user_id: user.id)
+          userFav = UserFavLocation.where(user_id: user.id).order('id desc')
 
           friend_lists = UserFriendList.where(user_id: user.id)
 
@@ -1152,13 +1152,13 @@ class Api::UsersController < ApplicationController
 
       user = User.find_by_authentication_token (params[:auth_token]) if params[:auth_token].present?
 
-      userfav = UserFavLocation.where(user_id: user.id , place_id: place_id)
+      userfav = UserFavLocation.where(user_id: user.id , place_id: place_id).order('id desc')
 
       if userfav.count == 0
         UserFavLocation.create(user_id: current_user.id, place_id: place_id,
             place_type: params[:place_type],name: name,img_url: img_url)
 
-        @fav_locations = UserFavLocation.where(user_id: current_user.id)
+        @fav_locations = UserFavLocation.where(user_id: current_user.id).order('id desc')
         render json:{ userfavlocation: @fav_locations, status: 'user fav location successfully added.'}
 
       else
@@ -1205,7 +1205,7 @@ class Api::UsersController < ApplicationController
 
       if userfav.present?
 
-        @fav_locations = UserFavLocation.where(user_id: current_user.id)
+        @fav_locations = UserFavLocation.where(user_id: current_user.id).order('id desc')
         render json:{ userfavlocation: @fav_locations, status: 'user fav location successfully added.'}
 
       else
@@ -1254,7 +1254,7 @@ class Api::UsersController < ApplicationController
 
           loc_to_delete.destroy
 
-          fav_locations = UserFavLocation.where(user_id: params[:user_id])
+          fav_locations = UserFavLocation.where(user_id: params[:user_id]).order('id desc')
           render json: {message: "Delete favourite location by id.", userfavlocation: fav_locations}  , status: 200
         end
       elsif params[:ids].present?
@@ -1277,7 +1277,7 @@ class Api::UsersController < ApplicationController
 
         end
 
-        fav_locations = UserFavLocation.where(user_id: params[:user_id])
+        fav_locations = UserFavLocation.where(user_id: params[:user_id]).order('id desc')
         render json: {message: "Delete favourite location by id.", userfavlocation: fav_locations}  , status: 200
 
 
