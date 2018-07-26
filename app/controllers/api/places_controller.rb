@@ -186,11 +186,11 @@ class Api::PlacesController < ApplicationController
                 end
               end
             end
-          else
-            query.each do |q|
-              data = { name: q["name"], latitude: q["latitude"], longitude: q["longitude"], address: q["address"], source: 3, user_id: nil, username: nil, source_id: q["factual_id"] }
-              factual_data_array.push(data)
-            end
+          # else
+          #   query.each do |q|
+          #     data = { name: q["name"], latitude: q["latitude"], longitude: q["longitude"], address: q["address"], source: 3, user_id: nil, username: nil, source_id: q["factual_id"] }
+          #     factual_data_array.push(data)
+          #   end
           end
 
           data_array.each do |da|
