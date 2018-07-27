@@ -5,8 +5,7 @@ class Api::SocalController < ApplicationController
 
     invitee_array = []
 
-    hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
-
+    p hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
     topic = Socal.new
     topic = topic.create_event(
         params[:event_name],

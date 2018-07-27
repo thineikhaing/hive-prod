@@ -15,10 +15,14 @@ class Socal
     user.username = name
     user.password = '12345678'
     user.save!
-
+    p "data :::::"
+    p data
+    p "app_id"
+    p app_id
 
     #get all extra columns that define in app setting
-    appAdditionalField = AppAdditionalField.where(:app_id => app_id, :table_name => "Topic")
+    p appAdditionalField = AppAdditionalField.where(:app_id => app_id, :table_name => "Topic")
+
     if appAdditionalField.present?
       defined_Fields = Hash.new
       appAdditionalField.each do |field|
@@ -35,6 +39,8 @@ class Socal
         result = defined_Fields
       end
     end
+    p "result"
+    p result
 
     topic = Topic.create(title: event_name, data: result,user_id: user.id,hiveapplication_id: app_id)
     #topic.data = { "host_code" => Socal.generate_invitation_code }
@@ -50,7 +56,8 @@ class Socal
 
       p "temp array"
       temp_array.each do |dt|
-        Suggesteddate.create(topic_id: topic.id, user_id: user.id,suggested_datetime: dt, invitation_code: inv_code)
+        p dt
+        Suggesteddate.create(topic_id: topic.id, user_id: user.id,suggested_datetime: dt.to_time, invitation_code: inv_code)
       end
     end
 

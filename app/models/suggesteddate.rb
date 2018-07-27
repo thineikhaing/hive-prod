@@ -1,4 +1,4 @@
-class Suggesteddate < ActiveRecord::Base
+class Suggesteddate < ApplicationRecord
   belongs_to :topic
   belongs_to :user
   has_many :votes
