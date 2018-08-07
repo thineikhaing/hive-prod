@@ -5,14 +5,17 @@ class Api::SocalController < ApplicationController
 
     invitee_array = []
 
-    p hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+    # p hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+    p hiveapplication = HiveApplication.find_by_app_name("Socal")
     topic = Socal.new
     topic = topic.create_event(
         params[:event_name],
         params[:datetime],
         params[:email],
         params[:name],
-        data, hiveapplication.id,params[:invitation_code])
+        data,
+        hiveapplication.id,
+        params[:invitation_code])
 
     p "Create event"
     p data
@@ -30,14 +33,12 @@ class Api::SocalController < ApplicationController
     #  mail.deliver
     #end
 
-
-
     user = User.find(topic.user_id)
 
     first_sug = Suggesteddate.find_by_topic_id(topic.id)
     suggesteddates = Suggesteddate.where(topic_id: topic.id)
     if topic.valid?
-      render json: {status: true, topic: topic, user: user,first_sug:first_sug, suggesteddates: suggesteddates}
+      render json: {status: true, topic: topic.retrieve_data, user: user,first_sug:first_sug, suggesteddates: suggesteddates}
     else
       render json: {status: false}
     end
@@ -47,144 +48,148 @@ class Api::SocalController < ApplicationController
     render json:{invitation_code: Socal.generate_invitation_code, host_code: Socal.generate_invitation_code}
   end
 
+  # def retrieve_event
+  #   p_invite_code = params[:invitation_code].to_s
+  #
+  #   p_topic = Topic.where("data -> 'invitation_code' = ? or data -> 'host_code' = ?", p_invite_code,p_invite_code).take
+  #   if p_topic.present?
+  #
+  #     #personalized code
+  #     #n_invite_code = "" + p_invite_code
+  #     #n_invite_code[16,4] = ""
+  #     #
+  #     #p_user_code= p_invite_code.slice(16,4)
+  #
+  #     if p_topic.data["invitation_code"] == p_invite_code
+  #
+  #       p_creator = User.find(p_topic.user_id)
+  #
+  #       render json:{status: 'host', topic: p_topic.retrieve_data, invitee_name: p_creator.username, invitee_email: p_creator.email }
+  #
+  #     else
+  #       p_invitee = Invitee.find_by_invitation_code(p_invite_code)
+  #       p_topic = Topic.find(p_invitee.topic_id)
+  #       p_user = User.find(p_invitee.user_id)
+  #       votes = Vote.where(user_id: p_user.id, topic_id: p_topic.id)
+  #
+  #       if votes.present?
+  #         render json: {status: 'host', topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_states: 1 }
+  #       else
+  #         render json: { status: 'host', topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_state: 0 }
+  #       end
+  #
+  #     end
+  #
+  #   end
+  #
+  #   #else
+  #   #  #normal code
+  #   #  p "retrieve topic"
+  #   #  p p_topic = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
+  #   #  p p_topic.retrieve_data
+  #   #  p "retrieve data by topic"
+  #   #  render json: { status: 'invitee',topic: p_topic.retrieve_data }
+  #   #end
+  #
+  # end
+
   def retrieve_event
-    p_invite_code = params[:invitation_code].to_s
+   p_invite_code = params[:invitation_code].to_s
 
-    p_topic = Topic.where("data -> 'invitation_code' = ? or data -> 'host_code' = ?", p_invite_code,p_invite_code).take
-    if p_topic.present?
+   if p_invite_code.length == 22
 
-      #personalized code
-      #n_invite_code = "" + p_invite_code
-      #n_invite_code[16,4] = ""
-      #
-      #p_user_code= p_invite_code.slice(16,4)
+     #personalized code
+     n_invite_code = "" + p_invite_code
+     n_invite_code[16,4] = ""
 
-      if p_topic.data["invitation_code"] == p_invite_code
+     p_user_code= p_invite_code.slice(16,4)
 
-        p_creator = User.find(p_topic.user_id)
+     if p_user_code == "0000"
+       p_topic = Topic.where("data -> 'invitation_code' = ? ", n_invite_code).take
+       p_creator = User.find(p_topic.user_id)
 
-        render json:{status: 'host', topic: p_topic.retrieve_data, invitee_name: p_creator.username, invitee_email: p_creator.email }
+       render json:{status: 'host', topic: p_topic.retrieve_data, invitee_name: p_creator.username, invitee_email: p_creator.email }
 
-      else
-        p_invitee = Invitee.find_by_invitation_code(p_invite_code)
-        p_topic = Topic.find(p_invitee.topic_id)
-        p_user = User.find(p_invitee.user_id)
-        votes = Vote.where(user_id: p_user.id, topic_id: p_topic.id)
+     else
+       p_invitee = Invitee.find_by_invitation_code(p_invite_code)
+       p_topic = Topic.find(p_invitee.topic_id)
+       p_user = User.find(p_invitee.user_id)
+       votes = Vote.where(user_id: p_user.id, topic_id: p_topic.id)
 
-        if votes.present?
-          render json: {status: 'host', topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_states: 1 }
-        else
-          render json: { status: 'host', topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_state: 0 }
-        end
+       if votes.present?
+         render json: {status: 'host', topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_states: 1 }
+       else
+         render json: { status: 'host', topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_state: 0 }
+       end
 
-      end
-
-    end
-
-    #else
-    #  #normal code
-    #  p "retrieve topic"
-    #  p p_topic = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
-    #  p p_topic.retrieve_data
-    #  p "retrieve data by topic"
-    #  render json: { status: 'invitee',topic: p_topic.retrieve_data }
-    #end
+     end
+   else
+     #normal code
+     p "retrieve topic"
+     p p_topic = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
+     if p_topic.present?
+       p p_topic.retrieve_data
+       p "retrieve data by topic"
+       render json: { status: 'invitee',topic: p_topic.retrieve_data , code: 200}
+     else
+       render json: { code: 400 }
+     end
+   end
 
   end
 
-  #def retrieve_event
-  #  p_invite_code = params[:invitation_code].to_s
-  #
-  #  if p_invite_code.length == 22
-  #
-  #    #personalized code
-  #    n_invite_code = "" + p_invite_code
-  #    n_invite_code[16,4] = ""
-  #
-  #    p_user_code= p_invite_code.slice(16,4)
-  #
-  #    if p_user_code == "0000"
-  #      p_topic = Topic.where("data -> 'invitation_code' = ? ", n_invite_code).take
-  #      p_creator = User.find(p_topic.user_id)
-  #
-  #      render json:{status: 'host', topic: p_topic.retrieve_data, invitee_name: p_creator.username, invitee_email: p_creator.email }
-  #
-  #    else
-  #      p_invitee = Invitee.find_by_invitation_code(p_invite_code)
-  #      p_topic = Topic.find(p_invitee.topic_id)
-  #      p_user = User.find(p_invitee.user_id)
-  #      votes = Vote.where(user_id: p_user.id, topic_id: p_topic.id)
-  #
-  #      if votes.present?
-  #        render json: {status: 'host', topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_states: 1 }
-  #      else
-  #        render json: { status: 'host', topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_state: 0 }
-  #      end
-  #
-  #    end
-  #  else
-  #    #normal code
-  #    p "retrieve topic"
-  #    p p_topic = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
-  #    p p_topic.retrieve_data
-  #    p "retrieve data by topic"
-  #    render json: { status: 'invitee',topic: p_topic.retrieve_data }
-  #  end
-  #
-  #end
-
   def vote_date
-    #confirm_date = params[:id]
-    #invitee_email = params[:invitee_email]
-    #
-    #suggesteddate = Suggesteddate.find(confirm_date)
-    #suggesteddate.vote +=1
-    #suggesteddate.save!
-    #
-    #user = User.find(suggesteddate.user_id)
-    #
-    #vote = Vote.find_by_topic_id_and_suggesteddate_id_and_user_id(suggesteddate.topic_id, suggesteddate.id, user.id)
-    #if vote.present?
-    #  vote.vote = Vote::YES
-    #  vote.save!
-    #else
-    #  Vote.create(topic_id: suggesteddate.topic_id, selected_datetime: suggesteddate.suggested_datetime, suggesteddate_id: suggesteddate.id, vote: Vote::YES, user_id: user.id)
-    #end
-    #
-    #if !invitee_email.nil?
-    #  t_inv = TopicInvitees.where(topic_id: suggesteddate.topic_id, invitee_email: invitee_email)
-    #  if t_inv.count == 0
-    #    t_inv = TopicInvitees.new
-    #    t_inv.topic_id = suggesteddate.topic_id
-    #    t_inv.invitee_email = invitee_email
-    #    t_inv.save!
-    #  end
-    #end
-    #
-    #topic = Topic.find(suggesteddate.topic_id)
-    #topic.broadcast_event(confirm_date)
-    #
-    #render json:{status: true}
+    confirm_date = params[:id]
+    invitee_email = params[:invitee_email]
 
-    temp_votes = params[:votes].split("{")
-    user = User.find_by_email(params[:email])
-    temp_votes.each do |v|
-      v_array= v.split(",")
-      suggesteddate = Suggesteddate.find(v_array[0])
-      vote = Vote.find_by_topic_id_and_suggesteddate_id_and_user_id(suggesteddate.topic_id, suggesteddate.id, user.id)
+    suggesteddate = Suggesteddate.find(confirm_date)
+    suggesteddate.vote +=1
+    suggesteddate.save!
 
-      if vote.present?
-        vote.vote = v_array[1]
-        vote.save!
-      else
-        Vote.create(topic_id: suggesteddate.topic_id, selected_datetime: suggesteddate.suggested_datetime, suggesteddate_id: suggesteddate.id, vote: v_array[1], user_id: user.id)
-      end
+    user = User.find(suggesteddate.user_id)
+
+    vote = Vote.find_by_topic_id_and_suggesteddate_id_and_user_id(suggesteddate.topic_id, suggesteddate.id, user.id)
+    if vote.present?
+     vote.vote = Vote::YES
+     vote.save!
+    else
+     Vote.create(topic_id: suggesteddate.topic_id, selected_datetime: suggesteddate.suggested_datetime, suggesteddate_id: suggesteddate.id, vote: Vote::YES, user_id: user.id)
     end
 
-    topic =  Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
-    topic.broadcast_event(nil)
+    if !invitee_email.nil?
+     t_inv = TopicInvitees.where(topic_id: suggesteddate.topic_id, invitee_email: invitee_email)
+     if t_inv.count == 0
+       t_inv = TopicInvitees.new
+       t_inv.topic_id = suggesteddate.topic_id
+       t_inv.invitee_email = invitee_email
+       t_inv.save!
+     end
+    end
 
-    render json: { status: true }
+    topic = Topic.find(suggesteddate.topic_id)
+    topic.broadcast_event(confirm_date)
+
+    render json:{status: true}
+
+    # temp_votes = params[:votes].split("{")
+    # user = User.find_by_email(params[:email])
+    # temp_votes.each do |v|
+    #   v_array= v.split(",")
+    #   suggesteddate = Suggesteddate.find(v_array[0])
+    #   vote = Vote.find_by_topic_id_and_suggesteddate_id_and_user_id(suggesteddate.topic_id, suggesteddate.id, user.id)
+    #
+    #   if vote.present?
+    #     vote.vote = v_array[1]
+    #     vote.save!
+    #   else
+    #     Vote.create(topic_id: suggesteddate.topic_id, selected_datetime: suggesteddate.suggested_datetime, suggesteddate_id: suggesteddate.id, vote: v_array[1], user_id: user.id)
+    #   end
+    # end
+    #
+    # topic =  Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
+    # topic.broadcast_event(nil)
+    #
+    # render json: { status: true }
 
   end
 

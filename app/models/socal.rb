@@ -8,20 +8,17 @@ class Socal
     if user.nil?
       user = User.new
       user.email = email
-    else
-      user.username = name
     end
     p name
     user.username = name
-    user.password = '12345678'
+    hiveapp = HiveApplication.find_by_app_name("Socal")
+    app_data = Hash.new
+    app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
+    user.app_data = user.app_data.merge(app_data)
     user.save!
-    p "data :::::"
-    p data
-    p "app_id"
-    p app_id
 
     #get all extra columns that define in app setting
-    p appAdditionalField = AppAdditionalField.where(:app_id => app_id, :table_name => "Topic")
+    appAdditionalField = AppAdditionalField.where(:app_id => app_id, :table_name => "Topic")
 
     if appAdditionalField.present?
       defined_Fields = Hash.new
@@ -39,24 +36,14 @@ class Socal
         result = defined_Fields
       end
     end
-    p "result"
-    p result
 
     topic = Topic.create(title: event_name, data: result,user_id: user.id,hiveapplication_id: app_id)
-    #topic.data = { "host_code" => Socal.generate_invitation_code }
-    #topic.data = { "latitude" => ""}
-    #topic.data = { "longitude" => "" }
-    #topic.data = { "place_name" => "" }
-
     topic.save!
-    temp_array = []
-     p datetime
-    if datetime.present?
-      p temp_array = datetime.split(",")
 
-      p "temp array"
+    temp_array = []
+    if datetime.present?
+      temp_array = datetime.split(",")
       temp_array.each do |dt|
-        p dt
         Suggesteddate.create(topic_id: topic.id, user_id: user.id,suggested_datetime: dt.to_time, invitation_code: inv_code)
       end
     end
@@ -65,14 +52,15 @@ class Socal
   end
 
   def self.generate_invitation_code(contact = "")
-    #a = rand(10)
-    #b = rand(10)
-    #c = rand(10)
-    #d = rand(10)
-    #
-    #a.to_s + b.to_s + Time.now.to_formatted_s(:number) + c.to_s + d.to_s
+    a = rand(10)
+    b = rand(10)
+    c = rand(10)
+    d = rand(10)
 
-    [*('A'..'Z'),*('0'..'9')].shuffle[0,6].join
+    a.to_s + b.to_s + Time.now.to_formatted_s(:number) + c.to_s + d.to_s
+
+    # [*('A'..'Z'),*('0'..'9')].shuffle[0,6].join
+
   end
 
 
