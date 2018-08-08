@@ -2,20 +2,9 @@ require 'value_enums'
 
 class Socal
 
-  def create_event (event_name,datetime,email, name,data,app_id, inv_code)
-
-    user = User.find_by_email(email)
-    if user.nil?
-      user = User.new
-      user.email = email
-    end
-    p name
-    user.username = name
-    hiveapp = HiveApplication.find_by_app_name("Socal")
+  def create_event (event_name,datetime,data,app_id, inv_code,user_id)
     app_data = Hash.new
-    app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
-    user.app_data = user.app_data.merge(app_data)
-    user.save!
+
 
     #get all extra columns that define in app setting
     appAdditionalField = AppAdditionalField.where(:app_id => app_id, :table_name => "Topic")
@@ -37,15 +26,22 @@ class Socal
       end
     end
 
-    topic = Topic.create(title: event_name, data: result,user_id: user.id,hiveapplication_id: app_id)
+    topic = Topic.create(title: event_name, data: result,user_id: user_id ,hiveapplication_id: app_id)
     topic.save!
 
     temp_array = []
     if datetime.present?
-      temp_array = datetime.split(",")
-      temp_array.each do |dt|
-        Suggesteddate.create(topic_id: topic.id, user_id: user.id,suggested_datetime: dt.to_time, invitation_code: inv_code)
+      p datetime = JSON.parse(datetime)
+      datetime.each do |dt|
+        s_date = s_Time = dt["date"].to_time
+
+        if dt["time"] == "00:00:00"
+          s_Time = nil
+        end
+
+        Suggesteddate.create(topic_id: topic.id, user_id: user_id,suggested_datetime: s_date,suggesttime: s_Time , invitation_code: inv_code)
       end
+
     end
 
     return topic

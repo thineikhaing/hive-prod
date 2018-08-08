@@ -1083,7 +1083,7 @@ class Topic < ActiveRecord::Base
   end
 
   def delete_S3_file(bucket_name, file_name,topic_type)
-    
+
     s3 = Aws::S3::Client.new
     resp = s3.delete_object({
       bucket: bucket_name,
@@ -1855,7 +1855,7 @@ class Topic < ActiveRecord::Base
         end
       end
 
-      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no , vote: sd.vote , admin_confirm: sd.admin_confirm })
+      datetime.push({id: sd.id, date_time: sd.suggested_datetime,time: sd.suggesttime, maybe: vote_maybe, yes: vote_yes, no: vote_no , vote: sd.vote , admin_confirm: sd.admin_confirm })
 
       vote_maybe = 0
       vote_yes = 0

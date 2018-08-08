@@ -1,97 +1,48 @@
 class Api::SocalController < ApplicationController
 
   def create_event
+    app_data = Hash.new
     data = getHashValuefromString(params[:data]) if params[:data].present?
+    user = User.find_by_email(params[:email])
+    if user.nil?
+      user = User.new
+      user.email = email
+      user.password = [*('A'..'Z'),*('0'..'9')].shuffle[0,8].join+"socal"
+      user.app_data = app_data
+    end
 
-    invitee_array = []
+    user.username = params[:name]
+    hiveapp = HiveApplication.find_by_app_name("Socal")
+    app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
+    user.app_data = user.app_data.merge(app_data)
+    user.save!
 
-    # p hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+    # hiveapp = HiveApplication.find_by_api_key(params[:app_key])
     p hiveapplication = HiveApplication.find_by_app_name("Socal")
     topic = Socal.new
     topic = topic.create_event(
         params[:event_name],
-        params[:datetime],
-        params[:email],
-        params[:name],
-        data,
-        hiveapplication.id,
-        params[:invitation_code])
+        params[:datetime],data,
+        hiveapp.id,
+        params[:invitation_code],user.id)
 
     p "Create event"
     p data
-
-    #invitee_list = params[:invitees].split("{")
-    #
-    #invitee_list.each_with_index do |i, index|
-    #  temp = i.split(",")
-    #  invitee_array.push({name: temp[0], email: temp[1]})
-    #
-    #  inv_code = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
-    #  inv_code = inv_code.data["invitation_code"]
-    #
-    #  mail = UserMailer.delay.send_invitation({ name: temp[0], email: temp[1] }, params[:invitation_code], inv_code, params[:event_name], index+1)
-    #  mail.deliver
-    #end
-
     user = User.find(topic.user_id)
-
     first_sug = Suggesteddate.find_by_topic_id(topic.id)
     suggesteddates = Suggesteddate.where(topic_id: topic.id)
+
     if topic.valid?
-      render json: {status: true, topic: topic.retrieve_data, user: user,first_sug:first_sug, suggesteddates: suggesteddates}
+      render json: {status: true, topic: topic.retrieve_data, user: user, suggesteddates: suggesteddates}
     else
       render json: {status: false}
     end
+
   end
 
   def retrieve_invitation_code
     render json:{invitation_code: Socal.generate_invitation_code, host_code: Socal.generate_invitation_code}
   end
-
-  # def retrieve_event
-  #   p_invite_code = params[:invitation_code].to_s
-  #
-  #   p_topic = Topic.where("data -> 'invitation_code' = ? or data -> 'host_code' = ?", p_invite_code,p_invite_code).take
-  #   if p_topic.present?
-  #
-  #     #personalized code
-  #     #n_invite_code = "" + p_invite_code
-  #     #n_invite_code[16,4] = ""
-  #     #
-  #     #p_user_code= p_invite_code.slice(16,4)
-  #
-  #     if p_topic.data["invitation_code"] == p_invite_code
-  #
-  #       p_creator = User.find(p_topic.user_id)
-  #
-  #       render json:{status: 'host', topic: p_topic.retrieve_data, invitee_name: p_creator.username, invitee_email: p_creator.email }
-  #
-  #     else
-  #       p_invitee = Invitee.find_by_invitation_code(p_invite_code)
-  #       p_topic = Topic.find(p_invitee.topic_id)
-  #       p_user = User.find(p_invitee.user_id)
-  #       votes = Vote.where(user_id: p_user.id, topic_id: p_topic.id)
-  #
-  #       if votes.present?
-  #         render json: {status: 'host', topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_states: 1 }
-  #       else
-  #         render json: { status: 'host', topic: p_topic.retrieve_data, invitee_name: p_user.username, invitee_email: p_user.email, user_voted_state: 0 }
-  #       end
-  #
-  #     end
-  #
-  #   end
-  #
-  #   #else
-  #   #  #normal code
-  #   #  p "retrieve topic"
-  #   #  p p_topic = Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
-  #   #  p p_topic.retrieve_data
-  #   #  p "retrieve data by topic"
-  #   #  render json: { status: 'invitee',topic: p_topic.retrieve_data }
-  #   #end
-  #
-  # end
 
   def retrieve_event
    p_invite_code = params[:invitation_code].to_s
@@ -204,7 +155,7 @@ class Api::SocalController < ApplicationController
     data={
         id: post.id,
         content: post.content,
-        invitation_code: topic.data["]invitation_code"],
+        invitation_code: topic.data["invitation_code"],
         username: user.username,
         created_at: post.created_at
     }
