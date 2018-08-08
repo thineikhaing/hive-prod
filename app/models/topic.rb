@@ -1797,7 +1797,7 @@ class Topic < ActiveRecord::Base
         end
       end
 
-      datetime.push({id: sd.id, dateNtime: sd.suggested_datetime, maybe: vote_maybe, yes: vote_yes, no: vote_no, vote: sd.vote , admin_confirm: sd.admin_confirm})
+      datetime.push({id: sd.id, date_time: sd.suggested_datetime,time: sd.suggesttime, maybe: vote_maybe, yes: vote_yes, no: vote_no , vote: sd.vote , admin_confirm: sd.admin_confirm })
     end
 
     confirmed_event_date = nil
@@ -1824,6 +1824,7 @@ class Topic < ActiveRecord::Base
         description: self.data["content"],
         datetime: datetime,
         invitation_code: self.data["invitation_code"],
+        host_id: user.id,
         creator_name: user.username,
         creator_email: user.email,
         confirm_state: self.data["confirm_state"],

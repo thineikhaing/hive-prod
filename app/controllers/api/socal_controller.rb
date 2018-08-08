@@ -1,4 +1,5 @@
 class Api::SocalController < ApplicationController
+  skip_before_action :verify_authenticity_token
 
   def create_event
     app_data = Hash.new
@@ -6,19 +7,21 @@ class Api::SocalController < ApplicationController
     user = User.find_by_email(params[:email])
     if user.nil?
       user = User.new
-      user.email = email
-      user.password = [*('A'..'Z'),*('0'..'9')].shuffle[0,8].join+"socal"
+      user.email = params[:email]
+      user.password = Devise.friendly_token
       user.app_data = app_data
+      user.save(validate: false)
     end
 
     user.username = params[:name]
     hiveapp = HiveApplication.find_by_app_name("Socal")
     app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
     user.app_data = user.app_data.merge(app_data)
+
     user.save!
 
     # hiveapp = HiveApplication.find_by_api_key(params[:app_key])
-    p hiveapplication = HiveApplication.find_by_app_name("Socal")
+    hiveapplication = HiveApplication.find_by_app_name("Socal")
     topic = Socal.new
     topic = topic.create_event(
         params[:event_name],
@@ -96,57 +99,93 @@ class Api::SocalController < ApplicationController
   end
 
   def vote_date
-    confirm_date = params[:id]
-    invitee_email = params[:invitee_email]
+    votes = params[:votes]
+    user_name = params[:post_name]
+    email = user_name+"-socal"+"@socal.com"
+    user = User.find_by_email(email)
 
-    suggesteddate = Suggesteddate.find(confirm_date)
-    suggesteddate.vote +=1
-    suggesteddate.save!
-
-    user = User.find(suggesteddate.user_id)
-
-    vote = Vote.find_by_topic_id_and_suggesteddate_id_and_user_id(suggesteddate.topic_id, suggesteddate.id, user.id)
-    if vote.present?
-     vote.vote = Vote::YES
-     vote.save!
-    else
-     Vote.create(topic_id: suggesteddate.topic_id, selected_datetime: suggesteddate.suggested_datetime, suggesteddate_id: suggesteddate.id, vote: Vote::YES, user_id: user.id)
+    if user.blank?
+      app_data = Hash.new
+      hiveapp = HiveApplication.find_by_app_name("Socal")
+      user = User.create!(username: user_name,email: email, password: Devise.friendly_token)
+      app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
+      user.app_data = app_data
     end
 
-    if !invitee_email.nil?
-     t_inv = TopicInvitees.where(topic_id: suggesteddate.topic_id, invitee_email: invitee_email)
-     if t_inv.count == 0
-       t_inv = TopicInvitees.new
-       t_inv.topic_id = suggesteddate.topic_id
-       t_inv.invitee_email = invitee_email
-       t_inv.save!
-     end
+    votes = JSON.parse(votes)
+    votes.each do |v|
+      p "vote id"
+      p v
+      suggesteddate = Suggesteddate.find(v)
+      vote = Vote.find_by_topic_id_and_suggesteddate_id_and_user_id(suggesteddate.topic_id, v, user.id)
+      if vote.present?
+        vote.vote = Vote::YES
+        vote.save!
+      else
+        p "create_new"
+        Vote.create(topic_id: suggesteddate.topic_id, selected_datetime: suggesteddate.suggested_datetime, suggesteddate_id: suggesteddate.id, vote: Vote::YES, user_id: user.id)
+      end
+
     end
 
-    topic = Topic.find(suggesteddate.topic_id)
-    topic.broadcast_event(confirm_date)
+    topic =  Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
 
-    render json:{status: true}
+    render json: { status: true , topic: topic.retrieve_data, user: user}
 
-    # temp_votes = params[:votes].split("{")
-    # user = User.find_by_email(params[:email])
-    # temp_votes.each do |v|
-    #   v_array= v.split(",")
-    #   suggesteddate = Suggesteddate.find(v_array[0])
-    #   vote = Vote.find_by_topic_id_and_suggesteddate_id_and_user_id(suggesteddate.topic_id, suggesteddate.id, user.id)
+  end
+
+  def vote_date1
+    # confirm_date = params[:id]
+    # invitee_email = params[:invitee_email]
     #
-    #   if vote.present?
-    #     vote.vote = v_array[1]
-    #     vote.save!
-    #   else
-    #     Vote.create(topic_id: suggesteddate.topic_id, selected_datetime: suggesteddate.suggested_datetime, suggesteddate_id: suggesteddate.id, vote: v_array[1], user_id: user.id)
-    #   end
+    # suggesteddate = Suggesteddate.find(confirm_date)
+    # suggesteddate.vote +=1
+    # suggesteddate.save!
+    #
+    # user = User.find(suggesteddate.user_id)
+    #
+    # vote = Vote.find_by_topic_id_and_suggesteddate_id_and_user_id(suggesteddate.topic_id, suggesteddate.id, user.id)
+    # if vote.present?
+    #  vote.vote = Vote::YES
+    #  vote.save!
+    # else
+    #  Vote.create(topic_id: suggesteddate.topic_id, selected_datetime: suggesteddate.suggested_datetime, suggesteddate_id: suggesteddate.id, vote: Vote::YES, user_id: user.id)
     # end
     #
-    # topic =  Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
-    # topic.broadcast_event(nil)
+    # if !invitee_email.nil?
+    #  t_inv = TopicInvitees.where(topic_id: suggesteddate.topic_id, invitee_email: invitee_email)
+    #  if t_inv.count == 0
+    #    t_inv = TopicInvitees.new
+    #    t_inv.topic_id = suggesteddate.topic_id
+    #    t_inv.invitee_email = invitee_email
+    #    t_inv.save!
+    #  end
+    # end
     #
-    # render json: { status: true }
+    # topic = Topic.find(suggesteddate.topic_id)
+    # topic.broadcast_event(confirm_date)
+    #
+    # render json:{status: true}
+
+    temp_votes = params[:votes].split("{")
+    user = User.find_by_email(params[:email])
+    temp_votes.each do |v|
+      v_array= v.split(",")
+      suggesteddate = Suggesteddate.find(v_array[0])
+      vote = Vote.find_by_topic_id_and_suggesteddate_id_and_user_id(suggesteddate.topic_id, suggesteddate.id, user.id)
+
+      if vote.present?
+        vote.vote = v_array[1]
+        vote.save!
+      else
+        Vote.create(topic_id: suggesteddate.topic_id, selected_datetime: suggesteddate.suggested_datetime, suggesteddate_id: suggesteddate.id, vote: v_array[1], user_id: user.id)
+      end
+    end
+
+    topic =  Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
+    topic.broadcast_event(nil)
+
+    render json: { status: true }
 
   end
 
@@ -320,7 +359,6 @@ class Api::SocalController < ApplicationController
     end
 
     if params[:update_id]
-
       updatesug = Suggesteddate.find(params[:update_id])
       c_date = params[:rawdate] +" " + params[:time] + "+800"
       strdate = Time.parse(c_date).to_s
