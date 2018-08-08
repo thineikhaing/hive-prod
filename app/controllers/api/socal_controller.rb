@@ -26,6 +26,12 @@ class Api::SocalController < ApplicationController
         hiveapp.id,
         params[:invitation_code],user.id)
 
+    topic.data["address"] = params[:address]
+    topic.data["place_name"] = params[:place_name]
+    topic.data["content"] = params[:content]
+
+    topic.save!
+
     p "Create event"
     p data
     user = User.find(topic.user_id)

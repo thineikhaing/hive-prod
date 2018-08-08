@@ -1889,6 +1889,7 @@ class Topic < ActiveRecord::Base
         description: self.data["content"],
         datetime: datetime,
         invitation_code: self.data["invitation_code"],
+        host_id: user.id,
         creator_name: user.username,
         creator_email: user.email,
         confirm_state: self.data["confirm_state"],
