@@ -57,13 +57,10 @@ class Api::SocalController < ApplicationController
    p_invite_code = params[:invitation_code].to_s
 
    if p_invite_code.length == 22
-
      #personalized code
      n_invite_code = "" + p_invite_code
      n_invite_code[16,4] = ""
-
      p_user_code= p_invite_code.slice(16,4)
-
      if p_user_code == "0000"
        p_topic = Topic.where("data -> 'invitation_code' = ? ", n_invite_code).take
        p_creator = User.find(p_topic.user_id)
@@ -90,7 +87,7 @@ class Api::SocalController < ApplicationController
      if p_topic.present?
        p p_topic.retrieve_data
        p "retrieve data by topic"
-       render json: { status: 'invitee',topic: p_topic.retrieve_data , code: 200}
+       render json: { status: 'invitee',topic: p_topic.retrieve_data, posts: p_topic.posts , code: 200}
      else
        render json: { code: 400 }
      end
@@ -101,7 +98,7 @@ class Api::SocalController < ApplicationController
   def vote_date
     votes = params[:votes]
     user_name = params[:post_name]
-    email = user_name+"-socal"+"@socal.com"
+    email = params[:email]
     user = User.find_by_email(email)
 
     if user.blank?
@@ -112,10 +109,9 @@ class Api::SocalController < ApplicationController
       user.app_data = app_data
     end
 
+    Vote.where(user_id: user.id).delete_all
     votes = JSON.parse(votes)
     votes.each do |v|
-      p "vote id"
-      p v
       suggesteddate = Suggesteddate.find(v)
       vote = Vote.find_by_topic_id_and_suggesteddate_id_and_user_id(suggesteddate.topic_id, v, user.id)
       if vote.present?
@@ -125,13 +121,10 @@ class Api::SocalController < ApplicationController
         p "create_new"
         Vote.create(topic_id: suggesteddate.topic_id, selected_datetime: suggesteddate.suggested_datetime, suggesteddate_id: suggesteddate.id, vote: Vote::YES, user_id: user.id)
       end
-
     end
-
     topic =  Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
-
+    topic.broadcast_event(nil)
     render json: { status: true , topic: topic.retrieve_data, user: user}
-
   end
 
   def vote_date1
@@ -344,7 +337,7 @@ class Api::SocalController < ApplicationController
     sug.admin_confirm = true
     sug.save
 
-    Suggesteddate.where(topic_id: topic, admin_confirm: false).delete_all
+    # Suggesteddate.where(topic_id: topic, admin_confirm: false).delete_all
 
     status ='ok'
     render json: {status: status}

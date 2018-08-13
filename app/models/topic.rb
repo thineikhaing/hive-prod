@@ -1798,6 +1798,9 @@ class Topic < ActiveRecord::Base
       end
 
       datetime.push({id: sd.id, date_time: sd.suggested_datetime,time: sd.suggesttime, maybe: vote_maybe, yes: vote_yes, no: vote_no , vote: sd.vote , admin_confirm: sd.admin_confirm })
+      vote_maybe = 0
+      vote_yes = 0
+      vote_no = 0
     end
 
     confirmed_event_date = nil
@@ -1831,6 +1834,7 @@ class Topic < ActiveRecord::Base
         confirmed_date: confirmed_event_date
     }
 
+    p "#{self.data["invitation_code"]}_channel"
     Pusher["#{self.data["invitation_code"]}_channel"].trigger_async("broadcast_event", data)
   end
 
@@ -1857,7 +1861,6 @@ class Topic < ActiveRecord::Base
       end
 
       datetime.push({id: sd.id, date_time: sd.suggested_datetime,time: sd.suggesttime, maybe: vote_maybe, yes: vote_yes, no: vote_no , vote: sd.vote , admin_confirm: sd.admin_confirm })
-
       vote_maybe = 0
       vote_yes = 0
       vote_no = 0
@@ -1879,6 +1882,13 @@ class Topic < ActiveRecord::Base
 
     user = User.find(self.user_id)
 
+    vote_data = []
+    self.votes.each do |vote|
+        vote_data.push({date_id: vote.suggesteddate_id,  user_id: vote.user_id, user_name: vote.user.username})
+    end
+
+    vote_data = vote_data.group_by { |d| d[:date_id] }
+
     data = {
         topic_id: self.id,
         host: user.username,
@@ -1893,8 +1903,10 @@ class Topic < ActiveRecord::Base
         host_id: user.id,
         creator_name: user.username,
         creator_email: user.email,
+        host_token: user.authentication_token,
         confirm_state: self.data["confirm_state"],
-        confirmed_date: Time.now
+        confirmed_date: Time.now,
+        votes: vote_data
     }
   end
 

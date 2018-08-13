@@ -91,7 +91,7 @@ class Api::PostsController < ApplicationController
           post.broadcast_hive
           post.broadcast_other_app(params[:temp_id])
         end
-        render json: { post: post,temp_id: params[:temp_id],  profanity_counter: current_user.profanity_counter}
+        render json: { post: post,temp_id: params[:temp_id],  profanity_counter: current_user.profanity_counter,posts: topic.posts}
       else
         render json: { error_msg: "Invalid topic id" } , status: 400
       end
