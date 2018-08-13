@@ -109,6 +109,9 @@ class Api::SocalController < ApplicationController
       user.app_data = app_data
     end
 
+    user.user_name = params[:post_name]
+    user.save!
+    
     Vote.where(user_id: user.id).delete_all
     votes = JSON.parse(votes)
     votes.each do |v|
