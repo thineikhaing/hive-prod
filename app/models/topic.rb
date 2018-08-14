@@ -1786,18 +1786,23 @@ class Topic < ActiveRecord::Base
 
     self.suggesteddates.each do |sd|
       votes = sd.votes
+      vote_users = []
 
       votes.each do |v|
         if v.vote == Vote::MAYBE
           vote_maybe = vote_maybe + 1
         elsif v.vote == Vote::YES
           vote_yes = vote_yes + 1
+          vote_users.push({user_name: v.user.username})
         elsif v.vote == Vote::NO
           vote_no = vote_no + 1
         end
       end
 
-      datetime.push({id: sd.id, date_time: sd.suggested_datetime,time: sd.suggesttime, maybe: vote_maybe, yes: vote_yes, no: vote_no , vote: sd.vote , admin_confirm: sd.admin_confirm })
+      datetime.push({id: sd.id, date_time: sd.suggested_datetime,
+        time: sd.suggesttime, maybe: vote_maybe, yes: vote_yes, no: vote_no ,
+        vote: sd.vote , admin_confirm: sd.admin_confirm,vote_users: vote_users
+        })
       vote_maybe = 0
       vote_yes = 0
       vote_no = 0
@@ -1850,17 +1855,22 @@ class Topic < ActiveRecord::Base
     self.suggesteddates.each do |sd|
       votes = sd.votes
 
+      vote_users = []
       votes.each do |v|
         if v.vote == Vote::MAYBE
           vote_maybe = vote_maybe + 1
         elsif v.vote == Vote::YES
           vote_yes = vote_yes + 1
+          vote_users.push({user_name: v.user.username})
         elsif v.vote == Vote::NO
           vote_no = vote_no + 1
         end
       end
 
-      datetime.push({id: sd.id, date_time: sd.suggested_datetime,time: sd.suggesttime, maybe: vote_maybe, yes: vote_yes, no: vote_no , vote: sd.vote , admin_confirm: sd.admin_confirm })
+      datetime.push({id: sd.id, date_time: sd.suggested_datetime,time: sd.suggesttime,
+        maybe: vote_maybe, yes: vote_yes, no: vote_no , vote: sd.vote ,
+        admin_confirm: sd.admin_confirm ,vote_users: vote_users})
+        
       vote_maybe = 0
       vote_yes = 0
       vote_no = 0
