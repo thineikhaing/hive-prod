@@ -17,7 +17,6 @@ class Api::SocalController < ApplicationController
     hiveapp = HiveApplication.find_by_app_name("Socal")
     app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
     user.app_data = user.app_data.merge(app_data)
-
     user.save!
 
     # hiveapp = HiveApplication.find_by_api_key(params[:app_key])
@@ -99,7 +98,7 @@ class Api::SocalController < ApplicationController
     votes = params[:votes]
     user_name = params[:post_name]
     email = params[:email]
-    user = User.find_by_email(email)
+    p user = User.find_by_email(email)
     hiveapp = HiveApplication.find_by_app_name("Socal")
 
     app_data = Hash.new
@@ -107,10 +106,10 @@ class Api::SocalController < ApplicationController
 
     if user.blank?
       user = User.create!(username: user_name,email: email, password: Devise.friendly_token)
-      user.app_data = Hash.new
     end
 
     user.username = params[:post_name]
+    user.app_data = Hash.new if user.app_data.nil?
     user.app_data = user.app_data.merge(app_data)
     user.save!
 
