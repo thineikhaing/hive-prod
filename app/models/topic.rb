@@ -1756,7 +1756,10 @@ class Topic < ActiveRecord::Base
     confirmed_event_date = nil
 
     if (self.data["confirmed_date"] != nil)
-      confirmed_event_date = Suggesteddate.find(self.data["confirmed_date"]).suggested_datetime
+      sug = Suggesteddate.find(self.data["confirmed_date"])
+      confirmed_event_date = sug.suggested_datetime.to_date
+      sug.suggesttime.nil? ? event_time = "all day" : event_time =sug.suggesttime
+      confirmed_event_date = confirmed_event_date << " " << event_time
     end
     user = User.find(self.user_id)
 
@@ -1815,8 +1818,11 @@ class Topic < ActiveRecord::Base
 
     if (self.data["confirmed_date"] != "")
 
-      if ! confirm_date.nil?
-        confirmed_event_date = Suggesteddate.find(confirm_date).suggested_datetime
+      if !confirm_date.nil?
+        sug = Suggesteddate.find(confirm_date).suggested_datetime.to_date
+        confirmed_event_date = sug.suggested_datetime.to_date
+        sug.suggesttime.nil? ? event_time = "all day" : event_time =sug.suggesttime
+        confirmed_event_date = confirmed_event_date << " " << event_time
       end
 
 
@@ -1870,7 +1876,7 @@ class Topic < ActiveRecord::Base
       datetime.push({id: sd.id, date_time: sd.suggested_datetime,time: sd.suggesttime,
         maybe: vote_maybe, yes: vote_yes, no: vote_no , vote: sd.vote ,
         admin_confirm: sd.admin_confirm ,vote_users: vote_users})
-        
+
       vote_maybe = 0
       vote_yes = 0
       vote_no = 0
@@ -1886,7 +1892,10 @@ class Topic < ActiveRecord::Base
         p "confirm date is not 0"
         p self.data["confirmed_date"]
         p self.data["confirmed_date"]
-      confirmed_event_date = Suggesteddate.find(self.data["confirmed_date"]).suggested_datetime
+      sug = Suggesteddate.find(self.data["confirmed_date"])
+      confirmed_event_date = sug.suggested_datetime.to_date
+      sug.suggesttime.nil? ? event_time = "all day" : event_time =sug.suggesttime
+      p confirmed_event_date = confirmed_event_date.to_s << " at " << event_time
       end
     end
 
@@ -1915,7 +1924,7 @@ class Topic < ActiveRecord::Base
         creator_email: user.email,
         host_token: user.authentication_token,
         confirm_state: self.data["confirm_state"],
-        confirmed_date: Time.now,
+        confirmed_date: confirmed_event_date,
         votes: vote_data
     }
   end

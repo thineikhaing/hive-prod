@@ -520,7 +520,7 @@ class Post < ActiveRecord::Base
     else
       bucket_name = AWS_Bucket::Image_P
     end
-    
+
     if self.img_url.present?
       file_name = self.img_url
       resp = s3.delete_object({
