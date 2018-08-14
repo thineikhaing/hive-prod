@@ -128,7 +128,7 @@ class Api::SocalController < ApplicationController
     end
     topic =  Topic.where("data -> 'invitation_code' = ? ", params[:invitation_code]).take
     topic.broadcast_event(nil)
-    render json: { status: true , topic: topic.retrieve_data, user: user}
+    render json: { status: true , topic: topic.retrieve_data, user: user,posts: topic.posts}
   end
 
   def vote_date1
