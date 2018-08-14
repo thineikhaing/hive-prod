@@ -4,8 +4,6 @@ class Socal
 
   def create_event (event_name,datetime,data,app_id, inv_code,user_id)
     app_data = Hash.new
-
-
     #get all extra columns that define in app setting
     appAdditionalField = AppAdditionalField.where(:app_id => app_id, :table_name => "Topic")
 

@@ -100,18 +100,20 @@ class Api::SocalController < ApplicationController
     user_name = params[:post_name]
     email = params[:email]
     user = User.find_by_email(email)
+    hiveapp = HiveApplication.find_by_app_name("Socal")
+
+    app_data = Hash.new
+    app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
 
     if user.blank?
-      app_data = Hash.new
-      hiveapp = HiveApplication.find_by_app_name("Socal")
       user = User.create!(username: user_name,email: email, password: Devise.friendly_token)
-      app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
-      user.app_data = app_data
+      user.app_data = Hash.new
     end
 
-    user.user_name = params[:post_name]
+    user.username = params[:post_name]
+    user.app_data = user.app_data.merge(app_data)
     user.save!
-    
+
     Vote.where(user_id: user.id).delete_all
     votes = JSON.parse(votes)
     votes.each do |v|
