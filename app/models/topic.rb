@@ -1753,13 +1753,14 @@ class Topic < ActiveRecord::Base
       vote_no = 0
     end
 
-    confirmed_event_date = nil
+    datetime = datetime.sort_by! { |x,y| x[:date_time] }
 
+    confirmed_event_date = nil
     if (self.data["confirmed_date"] != nil)
       sug = Suggesteddate.find(self.data["confirmed_date"])
-      confirmed_event_date = sug.suggested_datetime.to_date
-      sug.suggesttime.nil? ? event_time = "all day" : event_time =sug.suggesttime
-      confirmed_event_date = confirmed_event_date << " " << event_time
+      date_str = sug.suggested_datetime.to_date.strftime("%A, %d %B")
+      sug.suggesttime.nil? ? event_time = " at All Day" : event_time = sug.suggesttime.to_time.strftime("%I:%M %p")
+      confirmed_event_date = date_str << " at " << event_time
     end
     user = User.find(self.user_id)
 
@@ -1811,18 +1812,19 @@ class Topic < ActiveRecord::Base
       vote_no = 0
     end
 
+    datetime = datetime.sort_by! { |x,y| x[:date_time] }
+
     confirmed_event_date = nil
 
     p "confirmed date"
     p self.data["confirmed_date"]
 
     if (self.data["confirmed_date"] != "")
-
       if !confirm_date.nil?
-        sug = Suggesteddate.find(confirm_date).suggested_datetime.to_date
-        confirmed_event_date = sug.suggested_datetime.to_date
-        sug.suggesttime.nil? ? event_time = "all day" : event_time =sug.suggesttime
-        confirmed_event_date = confirmed_event_date << " " << event_time
+        sug = Suggesteddate.find(confirm_date)
+        date_str = sug.suggested_datetime.to_date.strftime("%A, %d %B")
+        sug.suggesttime.nil? ? event_time = " at All Day" : event_time = sug.suggesttime.to_time.strftime("%I:%M %p")
+        confirmed_event_date = date_str << " at " << event_time
       end
 
 
@@ -1858,6 +1860,7 @@ class Topic < ActiveRecord::Base
     vote_yes = 0
     vote_no = 0
 
+    voter_emails = []
     self.suggesteddates.each do |sd|
       votes = sd.votes
 
@@ -1868,6 +1871,8 @@ class Topic < ActiveRecord::Base
         elsif v.vote == Vote::YES
           vote_yes = vote_yes + 1
           vote_users.push({user_name: v.user.username})
+          voter_emails.push( v.user.email)
+
         elsif v.vote == Vote::NO
           vote_no = vote_no + 1
         end
@@ -1882,20 +1887,22 @@ class Topic < ActiveRecord::Base
       vote_no = 0
     end
 
+    datetime = datetime.sort_by! { |x,y| x[:date_time] }
+
+    if voter_emails.count > 0
+      voter_emails = voter_emails.uniq!
+    end
+
     confirmed_event_date = nil
-    p "confirm date :::"
-    p self.data["confirmed_date"]
-    if (self.data["confirmed_date"] != nil)
-      if (self.data["confirmed_date"] == "0")
-        p "confirm date is 0, do nothing"
-      else
-        p "confirm date is not 0"
-        p self.data["confirmed_date"]
-        p self.data["confirmed_date"]
-      sug = Suggesteddate.find(self.data["confirmed_date"])
-      confirmed_event_date = sug.suggested_datetime.to_date
-      sug.suggesttime.nil? ? event_time = "all day" : event_time =sug.suggesttime
-      p confirmed_event_date = confirmed_event_date.to_s << " at " << event_time
+    confirm_date_id = 0
+
+    if (self.data["confirm_state"] != nil)
+      if (self.data["confirm_state"] == "1")
+        sug = Suggesteddate.find(self.data["confirmed_date"])
+        confirm_date_id = sug.id
+        date_str = sug.suggested_datetime.to_date.strftime("%A, %d %B")
+        sug.suggesttime.nil? ? event_time = " at All Day" : event_time = sug.suggesttime.to_time.strftime("%I:%M %p")
+        confirmed_event_date = date_str << " at " << event_time
       end
     end
 
@@ -1903,7 +1910,7 @@ class Topic < ActiveRecord::Base
 
     vote_data = []
     self.votes.each do |vote|
-        vote_data.push({date_id: vote.suggesteddate_id,  user_id: vote.user_id, user_name: vote.user.username})
+        vote_data.push({date_id: vote.suggesteddate_id,  user_id: vote.user_id, user_name: vote.user.username, email: vote.user.email})
     end
 
     vote_data = vote_data.group_by { |d| d[:date_id] }
@@ -1925,7 +1932,9 @@ class Topic < ActiveRecord::Base
         host_token: user.authentication_token,
         confirm_state: self.data["confirm_state"],
         confirmed_date: confirmed_event_date,
-        votes: vote_data
+        votes: vote_data,
+        voter_emails:voter_emails,
+        confirm_date_id:confirm_date_id
     }
   end
 
