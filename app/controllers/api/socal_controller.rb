@@ -12,6 +12,7 @@ class Api::SocalController < ApplicationController
       user.app_data = app_data
       user.save(validate: false)
     end
+    user.app_data = Hash.new if user.app_data.nil?
 
     user.username = params[:name]
     hiveapp = HiveApplication.find_by_app_name("Socal")
