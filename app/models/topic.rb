@@ -1759,8 +1759,8 @@ class Topic < ActiveRecord::Base
     if (self.data["confirmed_date"] != nil)
       sug = Suggesteddate.find(self.data["confirmed_date"])
       date_str = sug.suggested_datetime.to_date.strftime("%A, %d %B")
-      sug.suggesttime.nil? ? event_time = " at All Day" : event_time = sug.suggesttime.to_time.strftime("%I:%M %p")
-      confirmed_event_date = date_str << " at " << event_time
+      sug.suggesttime.nil? ? event_time = "" : event_time = " at "+ sug.suggesttime.to_time.strftime("%I:%M %p")
+      confirmed_event_date = date_str << "" << event_time
     end
     user = User.find(self.user_id)
 
@@ -1823,8 +1823,8 @@ class Topic < ActiveRecord::Base
       if !confirm_date.nil?
         sug = Suggesteddate.find(confirm_date)
         date_str = sug.suggested_datetime.to_date.strftime("%A, %d %B")
-        sug.suggesttime.nil? ? event_time = " at All Day" : event_time = sug.suggesttime.to_time.strftime("%I:%M %p")
-        confirmed_event_date = date_str << " at " << event_time
+        sug.suggesttime.nil? ? event_time = "" : event_time = " at "+ sug.suggesttime.to_time.strftime("%I:%M %p")
+        confirmed_event_date = date_str << "" << event_time
       end
 
 
@@ -1901,8 +1901,8 @@ class Topic < ActiveRecord::Base
         sug = Suggesteddate.find(self.data["confirmed_date"])
         confirm_date_id = sug.id
         date_str = sug.suggested_datetime.to_date.strftime("%A, %d %B")
-        sug.suggesttime.nil? ? event_time = " at All Day" : event_time = sug.suggesttime.to_time.strftime("%I:%M %p")
-        confirmed_event_date = date_str << " at " << event_time
+        sug.suggesttime.nil? ? event_time = "" : event_time = " at "+ sug.suggesttime.to_time.strftime("%I:%M %p")
+        confirmed_event_date = date_str << "" << event_time
       end
     end
 
