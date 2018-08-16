@@ -19,9 +19,8 @@ class Api::SocalController < ApplicationController
     app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
     user.app_data = user.app_data.merge(app_data)
     user.save!
+    hiveapp = HiveApplication.find_by_api_key(params[:app_key])
 
-    # hiveapp = HiveApplication.find_by_api_key(params[:app_key])
-    hiveapplication = HiveApplication.find_by_app_name("Socal")
     topic = Socal.new
     topic = topic.create_event(
         params[:event_name],

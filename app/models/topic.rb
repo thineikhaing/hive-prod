@@ -1889,7 +1889,7 @@ class Topic < ActiveRecord::Base
 
     datetime = datetime.sort_by! { |x,y| x[:date_time] }
 
-    if voter_emails.count > 0
+    if voter_emails.uniq!
       voter_emails = voter_emails.uniq!
     end
 
@@ -1918,6 +1918,7 @@ class Topic < ActiveRecord::Base
     data = {
         topic_id: self.id,
         host: user.username,
+        host_email: user.email,
         title: self.title,
         latitude: self.data["latitude"],
         longitude: self.data["longitude"],
