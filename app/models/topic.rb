@@ -1888,11 +1888,13 @@ class Topic < ActiveRecord::Base
     end
 
     datetime = datetime.sort_by! { |x,y| x[:date_time] }
-
-    if voter_emails.uniq!
+    if voter_emails.count > 1
       voter_emails = voter_emails.uniq!
+      # if voter_emails.uniq!
+      #   p "uniq"
+      #
+      # end
     end
-
     confirmed_event_date = nil
     confirm_date_id = 0
 

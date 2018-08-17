@@ -109,10 +109,10 @@ class Api::SocalController < ApplicationController
       if user.blank?
         user = User.create!(username: user_name,email: email, password: Devise.friendly_token)
       end
-      user.username = params[:post_name]
+      p user.username = params[:post_name]
       user.app_data = Hash.new if user.app_data.nil?
       user.app_data = user.app_data.merge(app_data)
-      user.save!
+      p user.save!
 
       Vote.where(user_id: user.id).delete_all
       votes = JSON.parse(votes)

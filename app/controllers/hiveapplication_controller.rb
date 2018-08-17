@@ -68,7 +68,7 @@ class HiveapplicationController < ApplicationController
           #redirect_to HIVEAPPLICATION_APPLICATION_LIST_PATH
         else
           # Redirects back to index view if user hasn't verified account.
-          flash[:notice] = error_notice
+          flash[:notice] = "Verify your email, you need to verify your e-mail address first."
           redirect_to hiveapplication_index_path
         end
       end

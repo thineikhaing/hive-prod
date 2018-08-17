@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180412014506) do
+ActiveRecord::Schema.define(version: 20180817031911) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,8 +18,8 @@ ActiveRecord::Schema.define(version: 20180412014506) do
   enable_extension "pg_stat_statements"
 
   create_table "action_logs", id: :serial, force: :cascade do |t|
-    t.string "action_type", limit: 255, null: false
-    t.string "type_name", limit: 255, null: false
+    t.string "action_type", null: false
+    t.string "type_name", null: false
     t.integer "type_id", null: false
     t.integer "action_user_id", null: false
     t.datetime "created_at"
@@ -28,8 +28,8 @@ ActiveRecord::Schema.define(version: 20180412014506) do
 
   create_table "app_additional_fields", id: :serial, force: :cascade do |t|
     t.integer "app_id"
-    t.string "table_name", limit: 255
-    t.string "additional_column_name", limit: 255
+    t.string "table_name"
+    t.string "additional_column_name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -40,8 +40,8 @@ ActiveRecord::Schema.define(version: 20180412014506) do
     t.integer "direction"
     t.float "latitude"
     t.float "longitude"
-    t.string "activity", limit: 255
-    t.string "heartrate", limit: 255
+    t.string "activity"
+    t.string "heartrate"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -54,19 +54,19 @@ ActiveRecord::Schema.define(version: 20180412014506) do
   end
 
   create_table "countries", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 255
-    t.string "locale_name", limit: 255
-    t.string "cca2", limit: 255
-    t.string "ccn3", limit: 255
-    t.string "cca3", limit: 255
-    t.string "tld", limit: 255
-    t.string "currency", limit: 255
+    t.string "name"
+    t.string "locale_name"
+    t.string "cca2"
+    t.string "ccn3"
+    t.string "cca3"
+    t.string "tld"
+    t.string "currency"
     t.integer "calling_code"
-    t.string "capital", limit: 255
-    t.string "alt_spellings", limit: 255
+    t.string "capital"
+    t.string "alt_spellings"
     t.float "relevance"
-    t.string "region", limit: 255
-    t.string "subregion", limit: 255
+    t.string "region"
+    t.string "subregion"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -79,34 +79,34 @@ ActiveRecord::Schema.define(version: 20180412014506) do
     t.datetime "run_at"
     t.datetime "locked_at"
     t.datetime "failed_at"
-    t.string "locked_by", limit: 255
-    t.string "queue", limit: 255
+    t.string "locked_by"
+    t.string "queue"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
   create_table "devices", id: :serial, force: :cascade do |t|
-    t.string "push_token", limit: 255
+    t.string "push_token"
     t.integer "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "devusers", id: :serial, force: :cascade do |t|
-    t.string "email", limit: 255, default: "", null: false
-    t.string "encrypted_password", limit: 255, default: "", null: false
-    t.string "reset_password_token", limit: 255
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
     t.integer "sign_in_count", default: 0, null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string "current_sign_in_ip", limit: 255
-    t.string "last_sign_in_ip", limit: 255
-    t.string "username", limit: 255
-    t.string "email_verification_code", limit: 255, default: "", null: false
-    t.string "default", limit: 255, default: "", null: false
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
+    t.string "username"
+    t.string "email_verification_code", default: "", null: false
+    t.string "default", default: "", null: false
     t.hstore "data"
     t.boolean "verified", default: false
     t.datetime "created_at"
@@ -130,8 +130,8 @@ ActiveRecord::Schema.define(version: 20180412014506) do
   end
 
   create_table "historychanges", id: :serial, force: :cascade do |t|
-    t.string "type_action", limit: 255, default: ""
-    t.string "type_name", limit: 255, default: ""
+    t.string "type_action", default: ""
+    t.string "type_name", default: ""
     t.integer "type_id", default: 0
     t.integer "parent_id", default: 0
     t.datetime "created_at"
@@ -139,12 +139,12 @@ ActiveRecord::Schema.define(version: 20180412014506) do
   end
 
   create_table "hive_applications", id: :serial, force: :cascade do |t|
-    t.string "app_name", limit: 255
-    t.string "app_type", limit: 255, null: false
-    t.string "api_key", limit: 255, null: false
-    t.string "description", limit: 255, default: ""
-    t.string "icon_url", limit: 255
-    t.string "theme_color", limit: 255, default: "#451734"
+    t.string "app_name"
+    t.string "app_type", null: false
+    t.string "api_key", null: false
+    t.string "description", default: ""
+    t.string "icon_url"
+    t.string "theme_color", default: "#451734"
     t.integer "devuser_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -160,7 +160,7 @@ ActiveRecord::Schema.define(version: 20180412014506) do
   end
 
   create_table "invitees", id: :serial, force: :cascade do |t|
-    t.string "invitation_code", limit: 255
+    t.string "invitation_code"
     t.integer "topic_id"
     t.integer "user_id"
     t.datetime "created_at"
@@ -176,19 +176,19 @@ ActiveRecord::Schema.define(version: 20180412014506) do
   end
 
   create_table "places", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 255
-    t.string "category", limit: 255, default: ""
-    t.string "address", limit: 255, default: "", null: false
-    t.string "locality", limit: 255, default: ""
-    t.string "region", limit: 255, default: ""
-    t.string "neighbourhood", limit: 255, default: ""
-    t.string "country", limit: 255, default: ""
-    t.string "postal_code", limit: 255, default: ""
-    t.string "website_url", limit: 255, default: ""
-    t.string "chain_name", limit: 255, default: ""
-    t.string "contact_number", limit: 255, default: ""
-    t.string "img_url", limit: 255
-    t.string "source", limit: 255, default: ""
+    t.string "name"
+    t.string "category", default: ""
+    t.string "address", default: "", null: false
+    t.string "locality", default: ""
+    t.string "region", default: ""
+    t.string "neighbourhood", default: ""
+    t.string "country", default: ""
+    t.string "postal_code", default: ""
+    t.string "website_url", default: ""
+    t.string "chain_name", default: ""
+    t.string "contact_number", default: ""
+    t.string "img_url"
+    t.string "source", default: ""
     t.string "source_id", default: "0"
     t.integer "user_id"
     t.hstore "data"
@@ -200,8 +200,8 @@ ActiveRecord::Schema.define(version: 20180412014506) do
   end
 
   create_table "posts", id: :serial, force: :cascade do |t|
-    t.string "content", limit: 255, null: false
-    t.string "img_url", limit: 255
+    t.string "content", null: false
+    t.string "img_url"
     t.integer "width", default: 0
     t.integer "height", default: 0
     t.integer "post_type", default: 0, null: false
@@ -294,7 +294,7 @@ ActiveRecord::Schema.define(version: 20180412014506) do
   create_table "suggesteddates", id: :serial, force: :cascade do |t|
     t.integer "topic_id"
     t.integer "user_id"
-    t.string "invitation_code", limit: 255
+    t.string "invitation_code"
     t.datetime "suggested_datetime"
     t.time "suggesttime"
     t.integer "vote", default: 0
@@ -305,7 +305,7 @@ ActiveRecord::Schema.define(version: 20180412014506) do
 
   create_table "tags", id: :serial, force: :cascade do |t|
     t.integer "tag_type", null: false
-    t.string "keyword", limit: 255, default: "", null: false
+    t.string "keyword", default: "", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -320,7 +320,7 @@ ActiveRecord::Schema.define(version: 20180412014506) do
 
   create_table "topic_invitees", id: :serial, force: :cascade do |t|
     t.integer "topic_id"
-    t.string "invitee_email", limit: 255
+    t.string "invitee_email"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -333,16 +333,16 @@ ActiveRecord::Schema.define(version: 20180412014506) do
   end
 
   create_table "topics", id: :serial, force: :cascade do |t|
-    t.string "title", limit: 255, null: false
-    t.string "image_url", limit: 255
+    t.string "title", null: false
+    t.string "image_url"
     t.integer "width", default: 0
     t.integer "height", default: 0
     t.integer "topic_type", default: 0, null: false
     t.integer "topic_sub_type", default: 0
-    t.string "special_type", limit: 255, default: ""
+    t.string "special_type", default: ""
     t.integer "place_id", default: 0
     t.float "value", default: 0.0
-    t.string "unit", limit: 255, default: ""
+    t.string "unit", default: ""
     t.integer "dislikes", default: 0
     t.integer "likes", default: 0
     t.integer "offensive", default: 0
@@ -352,13 +352,13 @@ ActiveRecord::Schema.define(version: 20180412014506) do
     t.datetime "updated_at"
     t.integer "hiveapplication_id"
     t.integer "user_id"
-    t.string "extra_info", limit: 255
+    t.string "extra_info"
     t.datetime "valid_start_date"
     t.datetime "valid_end_date"
     t.integer "points"
     t.integer "free_points"
     t.integer "state"
-    t.string "title_indexes", limit: 255
+    t.string "title_indexes"
     t.integer "checker"
     t.integer "given_time"
     t.integer "start_place_id", default: 0
@@ -395,8 +395,8 @@ ActiveRecord::Schema.define(version: 20180412014506) do
 
   create_table "user_accounts", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
-    t.string "account_type", limit: 255, null: false
-    t.string "linked_account_id", limit: 255, null: false
+    t.string "account_type", null: false
+    t.string "linked_account_id", null: false
     t.integer "priority", default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -430,7 +430,7 @@ ActiveRecord::Schema.define(version: 20180412014506) do
 
   create_table "user_push_tokens", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
-    t.string "push_token", limit: 255, null: false
+    t.string "push_token", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -445,21 +445,21 @@ ActiveRecord::Schema.define(version: 20180412014506) do
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
-    t.string "email", limit: 255, default: "", null: false
-    t.string "encrypted_password", limit: 255, default: "", null: false
-    t.string "reset_password_token", limit: 255
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
     t.integer "sign_in_count", default: 0, null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string "current_sign_in_ip", limit: 255
-    t.string "last_sign_in_ip", limit: 255
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
     t.datetime "token_expiry_date"
-    t.string "username", limit: 255, default: "", null: false
-    t.string "device_id", limit: 255
-    t.string "authentication_token", limit: 255
-    t.string "avatar_url", limit: 255
+    t.string "username", default: "", null: false
+    t.string "device_id"
+    t.string "authentication_token"
+    t.string "avatar_url"
     t.integer "role"
     t.integer "points", default: 0
     t.integer "flareMode", default: 0
@@ -480,6 +480,8 @@ ActiveRecord::Schema.define(version: 20180412014506) do
     t.integer "socal_id"
     t.integer "daily_points", default: 10
     t.hstore "app_data"
+    t.string "email_verification_code"
+    t.boolean "verified", default: false
     t.index ["authentication_token"], name: "index_users_on_authentication_token", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
