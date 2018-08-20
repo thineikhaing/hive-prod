@@ -1887,26 +1887,25 @@ class Topic < ActiveRecord::Base
       vote_no = 0
     end
 
-    datetime = datetime.sort_by! { |x,y| x[:date_time] }
+    # datetime = datetime.sort_by! { |x,y| x[:date_time] }
     if voter_emails.count > 1
       voter_emails = voter_emails.uniq!
-      # if voter_emails.uniq!
-      #   p "uniq"
-      #
-      # end
+
     end
     confirmed_event_date = nil
     confirm_date_id = 0
-
-    if (self.data["confirm_state"] != nil)
-      if (self.data["confirm_state"] == "1")
-        sug = Suggesteddate.find(self.data["confirmed_date"])
-        confirm_date_id = sug.id
-        date_str = sug.suggested_datetime.to_date.strftime("%A, %d %B")
-        sug.suggesttime.nil? ? event_time = "" : event_time = " at "+ sug.suggesttime.to_time.strftime("%I:%M %p")
-        confirmed_event_date = date_str << "" << event_time
+    if self.data != nil
+      if (self.data["confirm_state"] != nil)
+        if (self.data["confirm_state"] == "1")
+          sug = Suggesteddate.find(self.data["confirmed_date"])
+          confirm_date_id = sug.id
+          date_str = sug.suggested_datetime.to_date.strftime("%A, %d %B")
+          sug.suggesttime.nil? ? event_time = "" : event_time = " at "+ sug.suggesttime.to_time.strftime("%I:%M %p")
+          confirmed_event_date = date_str << "" << event_time
+        end
       end
     end
+
 
     user = User.find(self.user_id)
 
@@ -1937,7 +1936,8 @@ class Topic < ActiveRecord::Base
         confirmed_date: confirmed_event_date,
         votes: vote_data,
         voter_emails:voter_emails,
-        confirm_date_id:confirm_date_id
+        confirm_date_id:confirm_date_id,
+        created_at: self.created_at
     }
   end
 

@@ -15,7 +15,8 @@ class Api::SocalController < ApplicationController
     user.app_data = Hash.new if user.app_data.nil?
 
     user.username = params[:name]
-    hiveapp = HiveApplication.find_by_app_name("Socal")
+
+    hiveapp = HiveApplication.find_by_api_key(params[:app_key])
     app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
     user.app_data = user.app_data.merge(app_data)
     user.save!
@@ -103,7 +104,8 @@ class Api::SocalController < ApplicationController
       user_name = params[:post_name]
       email = params[:email]
       user = User.find_by_email(email)
-      hiveapp = HiveApplication.find_by_app_name("Socal")
+
+      hiveapp = HiveApplication.find_by_api_key(params[:app_key])
       app_data = Hash.new
       app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
       if user.blank?
@@ -178,6 +180,71 @@ class Api::SocalController < ApplicationController
     render json:{post: data}
   end
 
+  def signup
+
+    new_user = false
+
+    user = User.find_by_email(params[:email])
+    if user.present?
+      if user.socal_register
+        render json: { status: 201 }
+      else
+        new_user = true
+      end
+    end
+
+    if new_user
+      hiveapp = HiveApplication.find_by_api_key(params[:app_key])
+      app_data = Hash.new
+      app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
+
+      if user.nil?
+        user = User.new(email: params[:email])
+      end
+
+      user.username = params[:name]
+      user.password = params[:password]
+      user.app_data = Hash.new if user.app_data.nil?
+      user.app_data = user.app_data.merge(app_data)
+      user.socal_register = true
+      user.save!
+
+      render json: { user: user, status: 200 }
+
+    end
+
+  end
+
+  def signin
+    if params[:email].present? and params[:password].present?
+      user = User.find_by_email(params[:email])
+      if user.present?
+
+        if user.valid_password?(params[:password])
+          render json: { user: user, status: 200 }
+
+        else
+          render json: { status: 201, message: 'Wrong Password. Please try again.'}
+        end
+
+      else
+        render json: { status: 201, message: 'No account found with those details. Reset your password or sign up for a new account.'}
+      end
+    end
+  end
+
+  def get_events
+    if params[:user_id].present?
+      user_topics = []
+      hiveapp = HiveApplication.find_by_api_key(params[:app_key])
+      topics = Topic.where(user_id: params[:user_id], hiveapplication_id: hiveapp.id)
+      net_topics = topics.where.not(data: nil).order("id desc")
+      net_topics.map{|t| user_topics.push(t.retrieve_data) }
+
+      render json: { status: 200, topics: user_topics }
+    end
+  end
+
 
   def create_user
     user = User.find_by_email(params[:email])
@@ -232,9 +299,7 @@ class Api::SocalController < ApplicationController
     topic.data["confirm_state"] = params[:confirm_state]
     topic.data["confirmed_date"] = params[:confirmed_date_id]
     topic.save!
-
     topic.broadcast_event(params[:confirmed_date_id])
-
     render json:{status: true}
 
   end
