@@ -116,7 +116,7 @@ class Api::SocalController < ApplicationController
       user.app_data = user.app_data.merge(app_data)
       p user.save!
 
-      Vote.where(user_id: user.id).delete_all
+      Vote.where(user_id: user.id, topic_id:params[:topic_id]).delete_all
       votes = JSON.parse(votes)
       votes.each do |v|
         suggesteddate = Suggesteddate.find(v)
@@ -257,7 +257,18 @@ class Api::SocalController < ApplicationController
 
       }
 
-      render json: { status: 200, topics: confirm_topics, active_topics: active_topics }
+      vote_topic_ids = Vote.where(user_id: params[:user_id]).pluck("topic_id").uniq
+      vote_topics = []
+      count = 0
+      vote_topic_ids.each do |vt|
+        topic = Topic.find(vt)
+        count = count+1
+        t_index = { "index" => count}
+        vote_topics.push(topic.retrieve_data.merge(t_index))
+      end
+
+
+      render json: { status: 200, topics: confirm_topics, active_topics: active_topics ,vote_topics: vote_topics}
     end
   end
 
