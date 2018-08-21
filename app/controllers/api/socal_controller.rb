@@ -182,17 +182,16 @@ class Api::SocalController < ApplicationController
 
   def signup
 
-    new_user = false
+    new_user = true
 
     user = User.find_by_email(params[:email])
     if user.present?
       if user.socal_register
         render json: { status: 201 }
-      else
-        new_user = true
+        new_user = false
       end
     end
-
+    p new_user
     if new_user
       hiveapp = HiveApplication.find_by_api_key(params[:app_key])
       app_data = Hash.new
@@ -235,13 +234,30 @@ class Api::SocalController < ApplicationController
 
   def get_events
     if params[:user_id].present?
-      user_topics = []
+      confirm_topics = []
+      active_topics = []
+
       hiveapp = HiveApplication.find_by_api_key(params[:app_key])
       topics = Topic.where(user_id: params[:user_id], hiveapplication_id: hiveapp.id)
       net_topics = topics.where.not(data: nil).order("id desc")
-      net_topics.map{|t| user_topics.push(t.retrieve_data) }
 
-      render json: { status: 200, topics: user_topics }
+      count = 0
+      active_count = 0
+      net_topics.map{|t,i|
+
+        if t.data["confirm_state"] == "1"
+          count = count+1
+          t_index = { "index" => count}
+          confirm_topics.push(t.retrieve_data.merge(t_index))
+        else
+          active_count = active_count+1
+          t_index = { "index" => active_count}
+          active_topics.push(t.retrieve_data.merge(t_index))
+        end
+
+      }
+
+      render json: { status: 200, topics: confirm_topics, active_topics: active_topics }
     end
   end
 
