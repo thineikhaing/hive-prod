@@ -31,7 +31,7 @@ class Socal
     if datetime.present?
       p datetime = JSON.parse(datetime)
       datetime.each do |dt|
-        p s_date = s_Time = dt["date"].to_time
+        p s_date = s_Time = dt["date"].gsub(" ", "+").to_time
 
         if dt["time"] == "00:00:00"
           s_Time = nil
