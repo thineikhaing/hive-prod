@@ -1777,7 +1777,8 @@ class Topic < ActiveRecord::Base
         creator_name: user.username,
         creator_email: user.email,
         confirm_state: self.data["confirm_state"],
-        confirmed_date: confirmed_event_date
+        confirmed_date: confirmed_event_date,
+        valid_end_date: self.valid_end_date
     }
   end
 
@@ -1844,7 +1845,8 @@ class Topic < ActiveRecord::Base
         creator_name: user.username,
         creator_email: user.email,
         confirm_state: self.data["confirm_state"],
-        confirmed_date: confirmed_event_date
+        confirmed_date: confirmed_event_date,
+        valid_end_date: self.valid_end_date
     }
 
     p "#{self.data["invitation_code"]}_channel"
@@ -1937,7 +1939,8 @@ class Topic < ActiveRecord::Base
         votes: vote_data,
         voter_emails:voter_emails,
         confirm_date_id:confirm_date_id,
-        created_at: self.created_at
+        created_at: self.created_at,
+        valid_end_date: self.valid_end_date
     }
   end
 

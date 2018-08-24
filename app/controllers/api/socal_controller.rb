@@ -27,7 +27,7 @@ class Api::SocalController < ApplicationController
         params[:event_name],
         params[:datetime],data,
         hiveapp.id,
-        params[:invitation_code],user.id)
+        params[:invitation_code],user.id,params[:valid_date])
 
     topic.data["address"] = params[:address]
     topic.data["place_name"] = params[:place_name]

@@ -2,7 +2,7 @@ require 'value_enums'
 
 class Socal
 
-  def create_event (event_name,datetime,data,app_id, inv_code,user_id)
+  def create_event (event_name,datetime,data,app_id, inv_code,user_id,valid_date)
     app_data = Hash.new
     #get all extra columns that define in app setting
     appAdditionalField = AppAdditionalField.where(:app_id => app_id, :table_name => "Topic")
@@ -24,7 +24,7 @@ class Socal
       end
     end
 
-    topic = Topic.create(title: event_name, data: result,user_id: user_id ,hiveapplication_id: app_id)
+    topic = Topic.create(title: event_name, data: result,user_id: user_id ,hiveapplication_id: app_id, valid_end_date:valid_date.to_time)
     topic.save!
 
     temp_array = []
