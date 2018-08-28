@@ -1890,10 +1890,15 @@ class Topic < ActiveRecord::Base
     end
 
     # datetime = datetime.sort_by! { |x,y| x[:date_time] }
+    p "voter emails"
+    p voter_emails
+    
     if voter_emails.count > 1
-      voter_emails = voter_emails.uniq!
-
+      if voter_emails.uniq!
+        voter_emails = voter_emails.uniq!
+     end
     end
+
     confirmed_event_date = nil
     confirm_date_id = 0
     if self.data != nil
