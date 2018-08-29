@@ -116,6 +116,7 @@ class Api::SocalController < ApplicationController
       user.app_data = user.app_data.merge(app_data)
       p user.save!
 
+
       Vote.where(user_id: user.id, topic_id:params[:topic_id]).delete_all
       votes = JSON.parse(votes)
       votes.each do |v|

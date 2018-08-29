@@ -1889,15 +1889,10 @@ class Topic < ActiveRecord::Base
       vote_no = 0
     end
 
+    usermails = voter_emails.to_set
+
     # datetime = datetime.sort_by! { |x,y| x[:date_time] }
-    p "voter emails"
-    p voter_emails
-    
-    if voter_emails.count > 1
-      if voter_emails.uniq!
-        voter_emails = voter_emails.uniq!
-     end
-    end
+
 
     confirmed_event_date = nil
     confirm_date_id = 0
@@ -1942,7 +1937,7 @@ class Topic < ActiveRecord::Base
         confirm_state: self.data["confirm_state"],
         confirmed_date: confirmed_event_date,
         votes: vote_data,
-        voter_emails:voter_emails,
+        voter_emails:usermails.to_a,
         confirm_date_id:confirm_date_id,
         created_at: self.created_at,
         valid_end_date: self.valid_end_date
