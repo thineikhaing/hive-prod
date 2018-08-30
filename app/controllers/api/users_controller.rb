@@ -353,7 +353,6 @@ class Api::UsersController < ApplicationController
   def check_user_device_id
     prev_users = User.where("data->'device_id'=?",params[:device_id])
 
-
     if prev_users.present?
       prev_user = prev_users.take
       p "previous user arn"
@@ -374,18 +373,6 @@ class Api::UsersController < ApplicationController
 
             if endpoint_arn.present?
               if (prev_arn.to_s != endpoint_arn.to_s)
-                 # p "delte and update arn"
-                # sns = Aws::SNS::Client.new
-                # begin
-                #   sns.delete_endpoint({endpoint_arn: endpoint_arn})
-                #   sns.set_endpoint_attributes({
-                #     endpoint_arn: prev_arn.to_s,
-                #     attributes: { CustomUserData: current_user.id.to_s},
-                #                                         })
-                # rescue
-                #   p "EndpointDelete Exception"
-                # end
-
                  p "update _arn"
                  current_user.data["endpoint_arn"] = prev_arn
                  current_user.data["device_id"] = prev_device_id
@@ -642,6 +629,19 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def get_reset_password_token
+    user = User.find_by_email(params[:email])
+    if user.present?
+      user.reset_password_sent_at = Time.zone.now
+      user.reset_password_token =  SecureRandom.urlsafe_base64
+      user.save!
+      render json:{status:"OK",username: user.username,token: user.reset_password_token}, status: 200
+    else
+      render json:{status:"No user"}
+    end
+
+  end
+
   def forget_password
     # Sends email for user to change PASSWORD
     if params[:email].present?
@@ -657,27 +657,26 @@ class Api::UsersController < ApplicationController
 
   def update_password
     # Updates PASSWORD
-    @user = User.find_by_reset_password_token!(params[:token])
-    p "password status"
-    p status =  @user.valid_password?(params[:password])
+    @user = User.find_by_reset_password_token(params[:token])
+
 
     if @user.present?
-      if @user.reset_password_sent_at < 2.hours.ago
+      p "password status"
+      p status =  @user.valid_password?(params[:password])
 
-        render json:{ message: "Password reset has expired."}, status: 400
-
+      if @user.reset_password_sent_at < 7.days.ago
+        render json:{ message: "Password reset has expired.",status: 400}, status: 400
       else
         @user.password = params[:password]
         @user.password_confirmation = params[:password_confirmation]
         @user.save
 
-        render json:{ message: "Password has been reset!"}, status: 200
+        render json:{ message: "Password has been reset!", user: @user,status: 200}, status: 200
       end
 
     else
-      render  json:{ message: "token invalid"}, status: 400  #err in saving password, show on reset_password page
+      render  json:{ message: "token invalid",status: 400}, status: 400  #err in saving password, show on reset_password page
     end
-
 
   end
 
