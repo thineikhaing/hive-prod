@@ -628,10 +628,9 @@ class Api::TopicsController < ApplicationController
           end
           topics = []
           if current_user.present?
-            topics = Topic.where(user_id: current_user.id)
+            topics = Topic.where(user_id: current_user.id,hiveapplication_id: hiveapplication.id)
           end
           topic.delete
-
 
           render json: { status: true,topics: topics }
         else
