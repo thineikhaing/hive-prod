@@ -1,6 +1,6 @@
 class Api::UsersController < ApplicationController
 
-  force_ssl if: :ssl_configured?
+  # force_ssl if: :ssl_configured?
 
   respond_to :json
 
