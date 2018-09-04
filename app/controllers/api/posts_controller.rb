@@ -91,9 +91,9 @@ class Api::PostsController < ApplicationController
           post.broadcast_hive
           post.broadcast_other_app(params[:temp_id])
         end
-        render json: { post: post,temp_id: params[:temp_id],  profanity_counter: current_user.profanity_counter,posts: topic.posts}
+        render json: { status:200, message: "Post create successfully",post: post,temp_id: params[:temp_id],  profanity_counter: current_user.profanity_counter,posts: topic.posts}
       else
-        render json: { error_msg: "Invalid topic id" } , status: 400
+        render json: { status:201, message:"Invalid topic id",error_msg: "Invalid topic id" } , status: 400
       end
     elsif params[:auth_token]
       currentuser = User.find_by_authentication_token(params[:auth_token])
@@ -130,14 +130,14 @@ class Api::PostsController < ApplicationController
         post.broadcast_to_topic(params[:topic_id])
         p 'broadcast_to_topic'
 
-        render json: { post: post, temp_id: params[:temp_id], profanity_counter: currentuser.profanity_counter, offence_date: currentuser.offence_date }
+        render json: { status: 200, message:"create topic successfully",post: post, temp_id: params[:temp_id], profanity_counter: currentuser.profanity_counter, offence_date: currentuser.offence_date }
 
       else
-        render json: { error_msg: "Params user id and/ or  authentication token must be presented" } , status: 400
+        render json: { status:201, message:"Params user id and/ or  authentication token must be presented", error_msg: "Params user id and/ or  authentication token must be presented" } , status: 400
       end
 
     else
-      render json: { error_msg: "Params user id and/ or  authentication token must be presented" } , status: 400
+      render json: { status:201, message: "Params user id and/ or  authentication token must be presented", error_msg: "Params user id and/ or  authentication token must be presented" } , status: 400
     end
   end
 
@@ -179,12 +179,12 @@ class Api::PostsController < ApplicationController
           #get the post location
         end
 
-        render json: {posts: posts,topic:topic,post_avatar_url:post_avatar_url}
+        render json: {status:200, message:"Post list",posts: posts,topic:topic,post_avatar_url:post_avatar_url}
       else
-        render json: { error_msg: "Invalid application key" }, status: 400
+        render json: {status: 201, message: "Invalid application key", error_msg: "Invalid application key" }, status: 400
       end
     else
-      render json: { error_msg: "Params application key and topic id must be presented" } , status: 400
+      render json: {status: 201, message: "Params application key and topic id must be presented",error_msg: "Params application key and topic id must be presented" } , status: 400
     end
   end
 

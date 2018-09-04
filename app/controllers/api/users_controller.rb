@@ -1,9 +1,7 @@
 class Api::UsersController < ApplicationController
 
   # force_ssl if: :ssl_configured?
-
   respond_to :json
-
   skip_before_action :verify_authenticity_token
 
   def ssl_configured?
@@ -12,8 +10,8 @@ class Api::UsersController < ApplicationController
 
   def get_user
     if params[:auth_token].present? && params[:user_id].present?
-      p user =User.find_by_id(params[:id])
-      render json: {user: user}
+      user =User.find_by_id(params[:id])
+      render json: {status:200, message: "",user: user}
     end
   end
 
@@ -63,16 +61,13 @@ class Api::UsersController < ApplicationController
         #device_id already existed in system
         user = User.where(device_id: params[:device_id]).take
         avatar = Topic.get_avatar(user.username)
-        render json: { user: user,local_avatar: avatar,message: "device_id already existed in system", status: false }
+        render json: { user: user,local_avatar: avatar,message: "device_id already existed in system", status: 201 }
       else
         user = User.create!(device_id: params[:device_id], password: Devise.friendly_token)
         user.token_expiry_date= Date.today + 6.months
 
         app_data = Hash.new
         result = Hash.new
-        # p "API KEY FROM APP"
-        # p params[:api_key]
-
         hiveapp = HiveApplication.find_by_api_key(app_key)
 
         if hiveapp.present?
@@ -85,7 +80,6 @@ class Api::UsersController < ApplicationController
         # p "user by app_key"
         # p users = users.where("app_data ->'app_id#{app.id}' = '#{app.api_key}'")
         # users = User.where("app_data ->'app_id7' =?", "800d7dc5f6d074c679375801086d2f0f")
-
         user.app_data = app_data
         if params[:app_name]
           result[:device_id] = params[:device_id]
@@ -95,13 +89,13 @@ class Api::UsersController < ApplicationController
         p avatar = Topic.get_avatar(user.username)
         user.save!
 
-        render json: { :user => user, :success => 20 , local_avatar: avatar, daily_point: user.daily_points}, status: 200
+        render json: { status:200, message:"Created user successfully." ,:user => user, :success => 20 , local_avatar: avatar, daily_point: user.daily_points}, status: 200
       end
 
 
 
     else
-      render json: { error_msg: "Invalid application key" } , status: 400
+      render json: { status:201, message: "Invalid application key", error_msg: "Invalid application key" } , status: 400
     end
   end
 
@@ -191,16 +185,16 @@ class Api::UsersController < ApplicationController
             userFav = UserFavLocation.where(user_id: user.id).order('id desc')
             friend_lists = UserFriendList.where(user_id: user.id)
 
-            render json: {:user => user,userfavlocation: userFav,friend_list: friend_lists,:name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
+            render json: {status:200, message: "User sign up successfully", :user => user,userfavlocation: userFav,friend_list: friend_lists,:name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
             # render json: { :user => user, :user_account => user_account, :success => 10 }, status: 200
 
           elsif useracc.nil?
               var.push(11)
-              render json: { :error => var , :error_msg => "Email already exist!"}, status: 400 # Email already exist
+              render json: { status:201, message: "Email already exist!", :error => var , :error_msg => "Email already exist!"}, status: 400 # Email already exist
 
           else
             var.push(11)
-            render json: { :error => var , :message => "You already register with facebook, please sign in with facebook!"}, status: 400 # Email already exist
+            render json: { status:201, message: "You already register with facebook, please sign in with facebook!", :error => var , :message => "You already register with facebook, please sign in with facebook!"}, status: 400 # Email already exist
           end
 
         end
@@ -332,21 +326,21 @@ class Api::UsersController < ApplicationController
               end
             end
           end
-          render json: { users: activeUsersArray}
+          render json: { status:200, message: "Check in OK.", users: activeUsersArray}
         else
-          render json: { error_msg: "Invalid application key" }, status:400
+          render json: { status:201, message: "Invalid application key",error_msg: "Invalid application key" }, status:400
           return
         end
       else
         # time_allowance = Time.now - 10.minutes.ago
-        render json: { error_msg: "Param Application key must be presented"}, status: 400
+        render json: { status:201, message: "Param Application key must be presented", error_msg: "Param Application key must be presented"}, status: 400
       end
 
       #create_car_action_logs(user.id, params[:latitude], params[:longitude], speed, direction, activity, heartrate)
 
 
     else
-      render json: { error_msg: "Param user id, authentication token, latitude and longitude must be presented"}, status: 400
+      render json: { status:201, message: "Param user id, authentication token, latitude and longitude must be presented", error_msg: "Param user id, authentication token, latitude and longitude must be presented"}, status: 400
     end
   end
 
@@ -393,39 +387,24 @@ class Api::UsersController < ApplicationController
 
 
   def register_apn
-    # for pushwoosh token
     if params[:push_token].present?  && current_user.present?
 
       user_token = UserPushToken.find_by(user_id: current_user.id,push_token: params[:push_token])
       push_user = UserPushToken.create(user_id: current_user.id,push_token: params[:push_token]) unless user_token.present?
 
-
-      if user_token.nil?
-        user = User.find_by_authentication_token(params[:auth_token])
-        if user.present?
-          device_id= params[:push_token]
-          User.update_data_column("device_id", device_id, user.id)
-        end
-      end
-
-      # if user_token.present?
-      #   user = User.find_by_authentication_token(params[:auth_token])
-      #   device_id = params[:push_token]
-      #   User.update_data_column("device_id", device_id, user.id)
-      # end
-
       if params[:endpoint_arn].present?     #for amazon sns token
         user = User.find_by_authentication_token(params[:auth_token])
         endpoint_arn = params[:endpoint_arn]
+        device_id= params[:push_token]
         User.update_data_column("endpoint_arn", endpoint_arn, user.id)
+        User.update_data_column("device_id", device_id, user.id)
       end
 
       user = User.find(user.id)
       if push_user.present?  or user_token.present?
-        render json: { status: true , user: user}
+        render json: { status: 200, message: "User token register" , user: user}
       else
-        p 'There is no pusher token for the user'
-        render json: { error_msg: "There is no pusher token for the user" }, status: 400
+        render json: { status: 201, message: "There is no pusher token for the user", error_msg: "There is no pusher token for the user" }, status: 400
       end
 
     elsif params[:device_token].present?
@@ -437,45 +416,21 @@ class Api::UsersController < ApplicationController
 
         user.save!
 
-        render json: { status: true}
+        render json: { status: 200, message: "User token register" , user: user}
       end
-
     else
-      p 'Param user id, authentication token, pusher token must be presented'
-      render json: { error_msg: "Param user id, authentication token, pusher token must be presented" }, status: 400
+      render json: { status: 200, message: "Param user id, authentication token, pusher token must be presented",error_msg: "Param user id, authentication token, pusher token must be presented" }, status: 400
     end
-
 
 
   end
 
-  # def register_apn
-  #   if params[:auth_token].present? and params[:push_token].present?
-  #     user = User.find_by_authentication_token(params[:auth_token])
-  #     if user.present? & current_user.present?
-  #       if user.id == current_user.id
-  #         user_pusher =  UserPushToken.find_by(:user_id => user.id, :push_token => params[:push_token])
-  #         if user_pusher.present?
-  #           render json: { :user => user, :user_push_token => user_pusher}
-  #         else
-  #           render json:{:status=> false}
-  #         end
-  #       end
-  #     else
-  #       render json:{error_msg: "Invalid user id/ authentication token"}, status: 400
-  #     end
-  #   else
-  #     render json:{error_msg: "Params authentication token and pusher token must be presented"} , status: 400
-  #   end
-  # end
 
   def create_car_action_logs(user_id, lat, lng, speed, direction, activity, heartrate)
     old_log = CarActionLog.last
-
     if old_log.present?
-      p "time difference"
       time_diff_hr = (Time.parse(DateTime.now.to_s) - Time.parse(old_log.created_at.to_s))/3600
-      p time_diff_min = (time_diff_hr * 3600) / 60
+      time_diff_min = (time_diff_hr * 3600) / 60
       if (time_diff_min >= 0.5)
         new_log = CarActionLog.create(user_id:  user_id,latitude: lat, longitude: lng, speed: speed, direction: direction,activity: activity, heartrate: heartrate)
       end
@@ -491,16 +446,10 @@ class Api::UsersController < ApplicationController
 
     if params[:email].present? and params[:password].present?
       var = [ ]
-      p "find user by email"
       user = User.find_by_email(params[:email])
-      # p user.id
-      # p user.username
 
       if user.present?
-        p "present?"
         if user.valid_password?(params[:password])
-        #if user.present?
-          p "valid_password?"
           if params[:app_key]
             hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
             user_account = UserAccount.where(user_id: user.id, hiveapplication_id: hiveapplication.id)
@@ -512,7 +461,6 @@ class Api::UsersController < ApplicationController
 
           user_accounts = UserAccount.where(:user_id => user.id)
 
-
           name = user.username
           id = user.id
           avatar = Topic.get_avatar(user.username)
@@ -523,19 +471,15 @@ class Api::UsersController < ApplicationController
 
           activeUsersArray = [ ]
           friend_lists.each do |data|
-            p data
             activeuser = User.find(data.friend_id)
             usersArray= {id: user.id, username: activeuser.username,last_known_latitude:activeuser.last_known_latitude,last_known_longitude:activeuser.last_known_longitude,avatar_url:activeuser.avatar_url,local_avatar: Topic.get_avatar(activeuser.username)}
             activeUsersArray.push(usersArray)
           end
-           p "return user"
-           p user.id
-          p user.username
 
-          render json: {:user => user, user_accounts: user_accounts,userfavlocation: userFav,friend_list: activeUsersArray, :name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
+          render json: {status:200, message: "sign in successfully",:user => user, user_accounts: user_accounts,userfavlocation: userFav,friend_list: activeUsersArray, :name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
         else
           var.push(22)
-          render json: { :error => var}, status: 400 # User password wrong
+          render json: {status:201, message: "User password mismatched.", :error => var}, status: 400 # User password wrong
         end
 
 
@@ -556,9 +500,6 @@ class Api::UsersController < ApplicationController
         user = User.new(device_id: params[:device_id], password: Devise.friendly_token)
         user.save
       end
-
-      p "favr user :::"
-      p user
       avatar = Topic.get_avatar(user.username)
       render json: { :user => user, :success => 20 , avatar: avatar, daily_point: user.daily_points}, status: 200
     else
@@ -640,9 +581,9 @@ class Api::UsersController < ApplicationController
       user = User.find_by_email(params[:email])
       if user.present?
         user.send_password_reset_to_app
-        render json:{ message: "Email sent with password reset instructions."}, status: 200
+        render json:{ status:200, message: "Email sent with password reset instructions."}, status: 200
       else
-        render json:{ message: "There is no user with this email."}, status: 400
+        render json:{ status: 201,message: "There is no user with this email."}, status: 400
       end
     end
   end
@@ -657,17 +598,17 @@ class Api::UsersController < ApplicationController
       p status =  @user.valid_password?(params[:password])
 
       if @user.reset_password_sent_at < 7.days.ago
-        render json:{ message: "Password reset has expired.",status: 400}, status: 400
+        render json:{ status: 201, message: "Password reset has expired."}, status: 400
       else
         @user.password = params[:password]
         @user.password_confirmation = params[:password_confirmation]
         @user.save
 
-        render json:{ message: "Password has been reset!", user: @user,status: 200}, status: 200
+        render json:{ status:200, message: "Password has been reset!", user: @user,status: 200}, status: 200
       end
 
     else
-      render  json:{ message: "token invalid",status: 400}, status: 400  #err in saving password, show on reset_password page
+      render  json:{stauts: 201, message: "token invalid"}, status: 400  #err in saving password, show on reset_password page
     end
 
   end
@@ -676,42 +617,49 @@ class Api::UsersController < ApplicationController
     if current_user.present?
       user = User.find_by_id(current_user.id)
       var = [ ]
-      #history = Historychange.new
-      if params[:username].present?
-        checkUsername = User.search_data(params[:username])
-        var.push(33) if Obscenity.profane?(params["username"]) == true
-        #checkName.map { |cN| var.push(33) unless var.include?(33) if cN.downcase == "cunt" or cN.downcase == "shit" or cN.downcase == "cocksucker" or cN.downcase == "piss" or cN.downcase == "tits" or cN.downcase == "fuck" or cN.downcase == "motherfucker" or cN.downcase == "suck" or cN.downcase == "cheebye" }
-        username = params[:username]
-        checkName = User.where("LOWER(username)  =?", username.downcase).take
-        if checkName.present?
-          var.push(32) #if checkUsername.present?
-        end
-
-      end
+      message = ""
 
       if params[:email].present?
         checkEmail = User.find_by_email(params[:email])
         if checkEmail != nil
           var.push(31)
+          message = "Email doesn't exit"
         end
       end
-      p "var value"
-      p var
+
+      if params[:password].present?
+        p user.email
+        p user.password
+        p params[:password]
+        if user.password != params[:password]
+          var.push(32)
+          message = "Password mismatched"
+        end
+      end
+
+      if params[:username].present?
+        checkUsername = User.search_data(params[:username])
+        var.push(33) if Obscenity.profane?(params["username"]) == true
+        username = params[:username]
+        checkName = User.where("LOWER(username)  =?", username.downcase).take
+        if checkName.present?
+          var.push(32) #if checkUsername.present?
+          message = "The username has already been taken"
+        end
+      end
 
       if var.empty?
         if params[:username].present?
           user.username = params[:username]
-          #user.posts.map { |post| history.create_record("post", post.id, "update", post.topic.id) } if user.posts.present?
-          #user.topics.map { |topic| history.create_record("topic", topic.id, "update", nil) } if user.topics.present?
-        end
-
-        if params[:password].present?
-          user.password = params[:password]
-          user.password_confirmation = params[:password]
         end
 
         if params[:email].present?
           user.email = params[:email]
+        end
+
+        if params[:password].present?
+          user.password = params[:update_password]
+          user.password_confirmation = params[:update_password]
         end
 
         if params[:avatar_url].present?
@@ -723,64 +671,11 @@ class Api::UsersController < ApplicationController
 
         end
 
-        # if params[:device_id].present?
-        #   User.update_data_column("device_id", params[:device_id], user.id)
-        # end
-        #
-        # if params[:endpoint_arn].present?
-        #   User.update_data_column("endpoint_arn", params[:endpoint_arn], user.id)
-        # end
-
         user.save!
-        render json: { :user => user, local_avatar: Topic.get_avatar(user.username), :success => 30 }, status: 200
-      elsif params[:username].to_s == user.username
-        render json: { :user => user, local_avatar: Topic.get_avatar(user.username), :success => 30 }, status: 200
+        render json: { status: 200, message: "Edit Success",:user => user, local_avatar: Topic.get_avatar(user.username), :success => 30 }, status: 200
       else
-        render json: { :error => var, message: 'This username has already been taken.' }, status: 400
+        render json: {status: 201, message: message, :error => var}, status: 400
       end
-    else
-      #render json:{ error_msg: "Param authentication token/ user id must be presented" } , status: 400
-      user = User.find_by_authentication_token(params[:auth_token])
-      checkUsername = User.search_data(params[:username])
-      checkEmail = User.find_by_email(params[:email])
-      var = [ ]
-      history = Historychange.new
-
-      if params[:username].present?
-        #checkName = params[:username].split(" ")
-        var.push(33) if Obscenity.profane?(params["username"]) == true
-        #checkName.map { |cN| var.push(33) unless var.include?(33) if cN.downcase == "cunt" or cN.downcase == "shit" or cN.downcase == "cocksucker" or cN.downcase == "piss" or cN.downcase == "tits" or cN.downcase == "fuck" or cN.downcase == "motherfucker" or cN.downcase == "suck" or cN.downcase == "cheebye" }
-        var.push(32) if checkUsername.present?
-      end
-
-      if params[:email].present?
-        if checkEmail != nil
-          var.push(31)
-        end
-      end
-
-      if var.empty?
-        if params[:username].present?
-          user.username = params[:username]
-          user.posts.map { |post| history.create_record("post", post.id, "update", post.topic.id) } if user.posts.present?
-          user.topics.map { |topic| history.create_record("topic", topic.id, "update", nil) } if user.topics.present?
-        end
-
-        if params[:password].present?
-          user.password = params[:password]
-          user.password_confirmation = params[:password]
-        end
-
-        if params[:email].present?
-          user.email = params[:email]
-        end
-
-        user.save!
-        render json: { :user => user, :success => 30 }, status: 200
-      else
-        render json: { :error => var}, status: 400
-      end
-
     end
   end
 
@@ -1150,14 +1045,14 @@ class Api::UsersController < ApplicationController
             place_type: params[:place_type],name: name,img_url: img_url)
 
         @fav_locations = UserFavLocation.where(user_id: current_user.id).order('id desc')
-        render json:{ userfavlocation: @fav_locations, status: 'user fav location successfully added.'}
+        render json:{ status:200, message: "Location added successfully.", userfavlocation: @fav_locations}
 
       else
-        render json:{error_msg: 'location already exit!'}
+        render json:{status:201, message: "Duplicate location",error_msg: 'location already exit!'}
       end
 
     else
-      render json:{error_msg: "Params app_key must be presented"} , status: 400
+      render json:{status:201, message: "Params app_key must be presented",error_msg: "Params app_key must be presented"} , status: 400
     end
   end
 
@@ -1197,14 +1092,14 @@ class Api::UsersController < ApplicationController
       if userfav.present?
 
         @fav_locations = UserFavLocation.where(user_id: current_user.id).order('id desc')
-        render json:{ userfavlocation: @fav_locations, status: 'user fav location successfully added.'}
+        render json:{ status:200, message:"Upate Location",userfavlocation: @fav_locations}
 
       else
-        render json:{status: 'location already exit!'}
+        render json:{status:201, message: 'location already exit!'}
       end
 
     else
-      render json:{error_msg: "Params app_key must be presented"} , status: 400
+      render json:{status:201, message: "Params app_key must be presented" ,error_msg: "Params app_key must be presented"} , status: 400
     end
 
   end
@@ -1212,9 +1107,9 @@ class Api::UsersController < ApplicationController
   def get_user_fav_location
     if params[:app_key].present?
       @userFav = UserFavLocation.where(user_id: params[:user_id]).order('id desc')
-      render json: { userfavlocation: @userFav}
+      render json: { status: 200, message:"Favourite locatio list",userfavlocation: @userFav}
     else
-      render json:{error_msg: "Params app_key must be presented"} , status: 400
+      render json:{status:201, message: "Params app_key must be presented", error_msg: "Params app_key must be presented"} , status: 400
     end
   end
 
@@ -1246,7 +1141,7 @@ class Api::UsersController < ApplicationController
           loc_to_delete.destroy
 
           fav_locations = UserFavLocation.where(user_id: params[:user_id]).order('id desc')
-          render json: {message: "Delete favourite location by id.", userfavlocation: fav_locations}  , status: 200
+          render json: {status:200, message: "Delete favourite location by id.", userfavlocation: fav_locations}  , status: 200
         end
       elsif params[:ids].present?
         p "selected id to delete"
@@ -1269,14 +1164,14 @@ class Api::UsersController < ApplicationController
         end
 
         fav_locations = UserFavLocation.where(user_id: params[:user_id]).order('id desc')
-        render json: {message: "Delete favourite location by id.", userfavlocation: fav_locations}  , status: 200
+        render json: {status:200, message: "Delete favourite location by id.", userfavlocation: fav_locations}  , status: 200
 
 
       end
 
 
     else
-      render json:{error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
+      render json:{status:201, message: "Params auth_token and user_id must be presented and valid", error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
     end
   end
 
@@ -1290,9 +1185,9 @@ class Api::UsersController < ApplicationController
         usersArray= {id: user.id, username: user.username,last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,avatar_url:user.avatar_url,local_avatar: Topic.get_avatar(user.username)}
         activeUsersArray.push(usersArray)
       end
-      render json: {message: "User's friend list", friend_list: activeUsersArray}  , status: 200
+      render json: {status:200, message: "Friend list", friend_list: activeUsersArray}  , status: 200
     else
-      render json:{error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
+      render json:{status:201, message: "Params auth_token and user_id must be presented and valid.", error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
     end
   end
 
@@ -1310,13 +1205,13 @@ class Api::UsersController < ApplicationController
            usersArray= {id: user.id, username: user.username,last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,avatar_url:user.avatar_url,local_avatar: Topic.get_avatar(user.username)}
            activeUsersArray.push(usersArray)
          end
-         render json: {message: "Saved user's friend list", friend_list: activeUsersArray}  , status: 200
+         render json: {status: 200, message: "Saved user's friend list", friend_list: activeUsersArray}  , status: 200
        else
-         render json: {message: "There is no user to saved", friend_list: activeUsersArray}  , status: 200
+         render json: {status: 200, message: "There is no user to saved", friend_list: activeUsersArray}  , status: 200
        end
 
     else
-      render json:{error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
+      render json:{status:201, message: "Params auth_token and user_id must be presented and valid.", error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
     end
   end
 
@@ -1337,14 +1232,14 @@ class Api::UsersController < ApplicationController
           usersArray= {id: user.id, username: user.username,last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,avatar_url:user.avatar_url,local_avatar: Topic.get_avatar(user.username)}
           activeUsersArray.push(usersArray)
         end
-        render json: {message: "Deleted user's friend list", friend_list: activeUsersArray}  , status: 200
+        render json: {status:200,message: "Deleted user's friend list", friend_list: activeUsersArray}  , status: 200
 
       else
-        render json: {message: "There is no user to delete"}  , status: 200
+        render json: {status:200, message: "There is no user to delete"}  , status: 200
       end
 
     else
-      render json:{error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
+      render json:{status:201, message: "Params auth_token and user_id must be presented and valid.", error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
     end
   end
 
@@ -1354,47 +1249,5 @@ class Api::UsersController < ApplicationController
     params.require(:user).permit(:username, :email, :password, :password_confirmation, :authentication_token, :avatar_url, :role, :points, :honor_rating, :created_at, :data, :device_id,:socal_id,:daily_points)
   end
 
-
-  def juice_sign_in
-    if params[:email].present? and params[:password].present?
-      email = params[:email]
-      password = params[:password]
-      # Check for user authentication
-      user = Devuser.find_by_email(email)
-      error_notice = "WE COULDN'T FIND AN ACCOUNT WITH THAT USER ID/PASSWORD COMBINATION. PLEASE TRY AGAIN"
-
-      if user.present?
-        unless user.valid_password?(password)
-          # Redirects back to index if password is wrong
-          render json:  { error: error_notice }
-
-        else
-          if user.verified == true
-            dev_user_id = user.id
-            applications = user.hive_applications
-            app_key = nil
-            user_id=nil
-            auth_token = nil
-            applications.each do |application|
-              app_key = application.api_key if application.app_name.casecmp("juice app")
-              user = User.find_by_username("JuiceAppBoard")
-              if user.present?
-                user_id = user.id
-                auth_token = user.authentication_token
-              end
-            end
-            render json: {user_id: dev_user_id, app_key: app_key, board_id: user_id, auth_token: auth_token}
-          else
-            #if user hasn't verified account.
-            render json:{ error: error_notice }
-          end
-        end
-      else
-        # if user enters the wrong email address.
-        render json:{ error: error_notice }
-      end
-
-    end
-  end
 
 end

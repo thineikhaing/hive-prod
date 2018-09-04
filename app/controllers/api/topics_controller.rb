@@ -56,8 +56,6 @@ class Api::TopicsController < ApplicationController
         start_id = 0
         end_id = 0
 
-        # start_place = place.add_record("Marina South Pier MRT", "1.2713367", "103.8628598", "", 0, 0, nil, 1, "GsdaMJmx2uRjPcVsmuff", nil,nil,nil,nil,nil,nil)
-
         if params[:start_place_id] || params[:start_longitude]  || params[:start_longitude]  || params[:start_source_id]
             place = Place.new
             start_place = place.add_record(start_name, start_latitude, start_longitude, start_address, start_source, start_source_id, start_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
@@ -231,11 +229,11 @@ class Api::TopicsController < ApplicationController
           end
 
           if hiveapplication.id ==1 #Hive Application
-            render json: { topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
+            render json: { status:200, "Topic create successfully", topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
           elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1 #All Applications under Herenow except Hive
-            render json: { topic: JSON.parse(topic.to_json(content: true)),post:post, profanity_counter: current_user.profanity_counter}
+            render json: { status:200, "Topic create successfully", topic: JSON.parse(topic.to_json(content: true)),post:post, profanity_counter: current_user.profanity_counter}
           else #3rd party App
-            render json: { topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
+            render json: { status:200, "Topic create successfully", topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
         end
 
           if check_banned_profanity(topic.title)
@@ -246,13 +244,13 @@ class Api::TopicsController < ApplicationController
           end
 
         else
-          render json: { error_msg: "Params user_id and auth_token must be presented" }
+          render json: { status:201, "Params user_id and auth_token must be presented", error_msg: "Params user_id and auth_token must be presented" }
         end
       else
-        render json: { error_msg: "Invalid app_key" }
+        render json: { status:200, "Invalid app_key", error_msg: "Invalid app_key" }
       end
     else
-      render json: { error_msg: "Param app_key must be presented" }
+      render json: {status:200, "Param app_key must be presented", error_msg: "Param app_key must be presented" }
     end
   end
 
@@ -632,15 +630,15 @@ class Api::TopicsController < ApplicationController
           end
           topic.delete
 
-          render json: { status: true,topics: topics }
+          render json: { status: 200, message: "Delete topic by id",topics: topics }
         else
-          render json: { error_msg: "Invalid topic_id" }
+          render json: { status: 201, message: "Invalid Topic Id",error_msg: "Invalid Topic Id" }
         end
       else
-        render json: { error_msg: "Invalid app_key" }
+        render json: { status: 201, message: "Invalid App Key", error_msg: "Invalid app_key" }
       end
     else
-      render json: { error_msg: "Params topic_id and app_key must be presented" }
+      render json: { status:201, message:"Params topic_id and app_key must be presented", error_msg: "Params topic_id and app_key must be presented" }
     end
   end
 
@@ -796,9 +794,10 @@ class Api::TopicsController < ApplicationController
       # a.gsub!(/\"/, '\'')
       #eval(a)
 
-      render json: {trip_detail:trip_detail,
-                  topics: topics, posts: posts_topics,
-                  topic_count: topics.count,
+      render json: {status:200, message: "User datas"
+                    trip_detail:trip_detail,
+                    topics: topics, posts: posts_topics,
+                    topic_count: topics.count,
                     trips: trips, trip_count: trips.count,
                     user_friend_list: user_friend_list,
                     friend_count: user_friend_list.count}, status: 200

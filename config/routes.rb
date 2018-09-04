@@ -125,11 +125,10 @@ Rails.application.routes.draw do
     match "downloaddata/incident_and_breakdown" => "downloaddata#incident_and_breakdown"   , via: [:get, :post]
     match "downloaddata/retrieve_user_data" => "downloaddata#retrieve_user_data"   , via: [:get, :post]
 
-    match "users/get_user"             => "users#get_user"            , via: [:get, :post]
+    match "users/get_user"                          => "users#get_user"            , via: [:get, :post]
     match "users/create_anonymous_user"             => "users#create_anonymous_user"            , via: [:get, :post]
     match "users/sign_up"                           => "users#sign_up"                          , via: [:get, :post]
     match "users/sign_in"                           => "users#sign_in"                          , via: [:get, :post]
-    match "users/juice_sign_in"                     => "users#juice_sign_in"                    , via: [:get, :post]
     match "users/facebook_login"                    => "users#facebook_login"                   , via: [:get, :post]
     match "users/forget_password"                   => "users#forget_password"                  , via: [:get, :post]
     match "users/update_password"                   => "users#update_password"                  , via: [:get, :post]
@@ -220,16 +219,8 @@ Rails.application.routes.draw do
 
     match "topics/get_topic_by_image"               => "topics#topic_by_image"                  , via: [:get, :post]
 
-    match "roundtrip/get_route_by_travelMode"       => "roundtrip#get_route_by_travelMode"      , via: [:get, :post]
-    match "roundtrip/driving_route_mode"            => "roundtrip#driving_route_mode"           , via: [:get, :post]
-    match "roundtrip/bicycling_route_mode"          => "roundtrip#bicycling_route_mode"         , via: [:get, :post]
-    match "roundtrip/walking_route_mode"            => "roundtrip#walking_route_mode"           , via: [:get, :post]
-    match "roundtrip/broadcast_trainfault"          => "roundtrip#broadcast_trainfault"         , via: [:get, :post]
-    match "roundtrip/get_nearby_taxi"               => "roundtrip#get_nearby_taxi"              , via: [:get, :post]
-    match "roundtrip/broadcast_roundtrip_users"     => "roundtrip#broadcast_roundtrip_users"    , via: [:get, :post]
+
     match "roundtrip/get_rt_privacy_policy"         => "roundtrip#get_rt_privacy_policy"    , via: [:get, :post]
-    match "roundtrip/get_bus_arrival_time"          => "roundtrip#get_bus_arrival_time"    , via: [:get, :post]
-    match "roundtrip/upload_rt_placeImage"          => "roundtrip#upload_rt_placeImage"    , via: [:get, :post]
     match "roundtrip/save_trip"                     => "roundtrip#save_trip"    , via: [:get, :post]
     match "roundtrip/get_trip"                      => "roundtrip#get_trip"    , via: [:get, :post]
     match "roundtrip/delete_trip"                   => "roundtrip#delete_trip"    , via: [:get, :post]
@@ -239,8 +230,6 @@ Rails.application.routes.draw do
     match "roundtrip/save_user_fav_buses"           => "roundtrip#save_user_fav_buses"    , via: [:get, :post]
     match "roundtrip/transit_annoucement_by_admin"  => "roundtrip#transit_annoucement_by_admin"    , via: [:get, :post]
     match "roundtrip/demo_train_service_alert"      => "roundtrip#demo_train_service_alert"    , via: [:get, :post]
-    match "roundtrip/send_alight_noti"              => "roundtrip#send_alight_noti"    , via: [:get, :post]
-    match 'roundtrip/locations'   => "roundtrip#locations"    , via: [:get, :post]
   end
 
 end

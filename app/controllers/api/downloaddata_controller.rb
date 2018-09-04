@@ -23,38 +23,33 @@ class Api::DownloaddataController < ApplicationController
           render json: { topics: JSON.parse(topics.to_json())}
 
 
-        elsif hiveApplication.devuser_id==1 and hiveApplication.id!=1 and params[:choice].nil? #All Applications under Herenow account except Hive
+        elsif hiveApplication.devuser_id == 1 and hiveApplication.id!=1 and params[:choice].nil? #All Applications under Herenow account except Hive
           p "All Applications under Herenow account except Hive"
 
           initial_topic = Topic.find_by_topic_sub_type(2)
           topics.prepend(initial_topic)
 
           t_count = topics.count rescue '0'
-          render json: { topics: JSON.parse(topics.to_json(content: true)) , topic_count: t_count}
-
+          render json: { status: 200, message: "Topic within radius" ,topics: JSON.parse(topics.to_json(content: true)) , topic_count: t_count}
 
         elsif params[:choice].present? and params[:choice] == "favr"
-         p "favr Application"
 
           favr_topics = [ ]
-
           topics.each do |topic|
             favr_topics.push(topic) if topic.topic_type == Topic::FAVR && topic.state != Topic::ACKNOWLEDGED && topic.state != Topic::EXPIRED && topic.state != Topic::REVOKED
           end
 
-          p "today date"
-          p Date.today
-          render json: { topics: favr_topics , date: Date.today}
+          render json: { status: 200, message: "Topic within radius" , topics: favr_topics , date: Date.today}
 
         else #3rd party App
-          render json: { topics: JSON.parse(topics.to_json())}
+          render json: { status: 200, message: "Topic within radius" ,topics: JSON.parse(topics.to_json())}
         end
       else
-        render json: { error_msg: "Invalid application key" }, status: 400
+        render json: {  status: 201, message: "Invalid application key", error_msg: "Invalid application key" }, status: 400
       end
 
     else
-      render json: { error_msg: "Params application key must be presented" } , status: 400
+      render json: { status: 201, message: "Params application key must be presented", error_msg: "Params application key must be presented" } , status: 400
     end
   end
 
@@ -96,6 +91,8 @@ class Api::DownloaddataController < ApplicationController
         activeUsersArray.push(usersArray)
       end
       render json: {
+                  status: 200,
+                  message: "Initial User data" ,
                   topics: topics, posts: posts_topics,
                   topic_count: topics.count,
                   trips: trips, trip_count: trips.count,
