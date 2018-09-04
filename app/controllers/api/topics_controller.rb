@@ -229,7 +229,7 @@ class Api::TopicsController < ApplicationController
           end
 
           if hiveapplication.id ==1 #Hive Application
-            render json: { status :200, message: "Topic create successfully", topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
+            render json: { status: 200, message: "Topic create successfully", topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
           elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1 #All Applications under Herenow except Hive
             render json: { status:200, message: "Topic create successfully", topic: JSON.parse(topic.to_json(content: true)),post:post, profanity_counter: current_user.profanity_counter}
           else #3rd party App
