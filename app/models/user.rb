@@ -36,6 +36,22 @@ class User < ActiveRecord::Base
 
   enums %w(BOT ADMIN VENDOR NORMAL)
 
+  def self.sns_arn(device_type)
+    Rails.env == 'production'
+    platform_type = Rails.env == 'development' ? 'APNS_SANDBOX' : 'APNS'
+    platform_type = 'GCM' if device_type == 'Android'
+    app_name =
+    if Rails.env.development?
+      app_name = "Roundtrip_D"
+    elsif Rails.env.staging?
+      app_name = "Roundtrip_S"
+    else
+      app_name = "Roundtrip"
+    end
+
+    "arn:aws:sns:ap-southeast-1:378631322826:app/#{platform_type}/#{app_name}"
+  end
+
   def self.generate_new_username
     prefix = %w(
       Angry Anxious Befuddled Bemused Bewildered Bored Bright-eyed Cheerful Cool Cranky Ecstatic Excited
@@ -52,6 +68,25 @@ class User < ActiveRecord::Base
     username
   end
 
+  def self.create_endpoint(device_type, device_token,user_id)
+    begin
+      sns_client = Aws::SNS::Client.new
+      endpoint = sns_client.create_platform_endpoint(
+        platform_application_arn: User.sns_arn(device_type),
+        token: device_token,
+        custom_user_data: user_id.to_s
+        )
+        p endpoint_arn = endpoint[:endpoint_arn]
+        User.update_data_column("endpoint_arn", endpoint_arn, user_id)
+        User.update_data_column("device_id", device_token, user_id)
+
+    rescue => e
+      result = e.message.match(/Endpoint(.*)already/)
+      if result.present?
+        endpoint_arn = result[1].strip
+      end
+    end
+  end
 
   def send_password_reset
     p generate_token(:reset_password_token)
@@ -74,20 +109,6 @@ class User < ActiveRecord::Base
       self[column] = SecureRandom.urlsafe_base64
     end while User.exists?(column => self[column])
   end
-
-  # def self.generate_invitation_code(contact = "")
-  #   #a = rand(10)
-  #   #b = rand(10)
-  #   #c = rand(10)
-  #   #d = rand(10)
-  #   #
-  #   #a.to_s + b.to_s + Time.now.to_formatted_s(:number) + c.to_s + d.to_s
-  #
-  #   [*('A'..'Z'),*('0'..'9')].shuffle[0,6].join
-  # end
-  # def self.search_data(search)
-  #   where("lower(username) like ?", "%#{search.downcase}%")
-  # end
 
   def self.search_data(search)
     where("lower(username) = ?", "#{search.downcase}%")
@@ -208,12 +229,14 @@ class User < ActiveRecord::Base
   def self.update_data_column(name, value, user_id)
     u = User.find(user_id)
     unless u.data.present?
+      p "have data"
       data_hash = {}
       data_hash[name] = value
       u.data = data_hash
       u.save!
     else
-      if u.data.has_key?(name)== false
+      if u.data.has_key?(name) == false
+        p "don't have key"
         data_hash = u.data
         data_hash[name] = value
         u.data = data_hash
@@ -253,37 +276,6 @@ class User < ActiveRecord::Base
       a1.save
 
     end
-
-
-    #@users.each do |user|
-    #  p "upate"
-    #  p user.last_known_latitude += 0.3
-    #  p user.last_known_longitude += 0.3
-    #  user.save
-    #end
-
-    #@places.each do |place|
-    #  @users.each do |user|
-    #    p "upate"
-    #    p user.last_known_latitude = place.latitude
-    #    p user.last_known_longitude = place.longitude
-    #    user.save
-    #  end
-    #end
-
-    #@users.zip(@places) do |user,place|
-    #  if !user.nil?
-    #    if user.last_known_latitude != place.latitude
-    #      p "update lat and lng"
-    #      user.last_known_latitude = place.latitude
-    #      user.last_known_longitude = place.longitude
-    #      user.save
-    #    else
-    #      p "nothing change"
-    #    end
-    #  end
-    #end
-
   end
 
   private

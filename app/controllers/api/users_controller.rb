@@ -48,56 +48,47 @@ class Api::UsersController < ApplicationController
   end
 
   def create_anonymous_user
-
     if params[:device_id].present?
-
-      app_key = params[:api_key] if params[:api_key].present?
-
-      if params[:app_key]
-        app_key = params[:app_key]
-      end
-
+      app_key = params[:app_key] if params[:app_key].present?
       if User.find_by_device_id(params[:device_id]).present?
-        #device_id already existed in system
+
         user = User.where(device_id: params[:device_id]).take
         avatar = Topic.get_avatar(user.username)
+        
+        push_token = params[:push_token]
+
+        if push_token.present?
+          p "create delay job for end points"
+          User.delay.create_endpoint(params[:device_type], push_token,user.id)
+        end
+
         render json: { user: user,local_avatar: avatar,message: "device_id already existed in system", status: 201 }
       else
-        user = User.create!(device_id: params[:device_id], password: Devise.friendly_token)
-        user.token_expiry_date= Date.today + 6.months
-
+        user = User.create!(device_id: params[:device_id], password: Devise.friendly_token,token_expiry_date: Date.today + 6.months)
         app_data = Hash.new
-        result = Hash.new
         hiveapp = HiveApplication.find_by_api_key(app_key)
-
-        if hiveapp.present?
-          app_data['app_id'+hiveapp.id.to_s] = app_key
-        end
-
-        if hiveapp.present?
-          app_data['app_id'+hiveapp.id.to_s] = app_key
-        end
-        # p "user by app_key"
-        # p users = users.where("app_data ->'app_id#{app.id}' = '#{app.api_key}'")
-        # users = User.where("app_data ->'app_id7' =?", "800d7dc5f6d074c679375801086d2f0f")
+        app_data['app_id'+hiveapp.id.to_s] = app_key
         user.app_data = app_data
-        if params[:app_name]
-          result[:device_id] = params[:device_id]
-          user.data = result
+        user.save!
+        avatar = Topic.get_avatar(user.username)
+        push_token = params[:push_token]
+
+        if push_token.present?
+          p "create delay job for end points"
+          User.delay.create_endpoint(params[:device_type], push_token,user.id)
         end
 
-        p avatar = Topic.get_avatar(user.username)
-        user.save!
-
-        render json: { status:200, message:"Created user successfully." ,:user => user, :success => 20 , local_avatar: avatar, daily_point: user.daily_points}, status: 200
+        render json: { status:200, message:"Created user successfully.",
+          :user => user, :success => 20 ,
+          local_avatar: avatar,
+          daily_point: user.daily_points}, status: 200
       end
-
-
-
     else
       render json: { status:201, message: "Invalid application key", error_msg: "Invalid application key" } , status: 400
     end
   end
+
+
 
   def update_carmmunicate_user
     if current_user.present? and params[:app_key].present?
@@ -165,18 +156,12 @@ class Api::UsersController < ApplicationController
 
             if params[:app_key]
               hiveapp = HiveApplication.find_by_api_key(params[:app_key])
-
               if hiveapp.present?
                 app_data = Hash.new
                 app_data['app_id'+hiveapp.id.to_s] = params[:app_key]
-                p user.app_data
-                p "Merge data"
-                p user.app_data = user.app_data.merge(app_data)
+                user.app_data = user.app_data.merge(app_data)
               end
             end
-
-
-
             user.save!
 
             name = user.username
@@ -235,7 +220,6 @@ class Api::UsersController < ApplicationController
     # We are not using the before_action with :authenticate_user! here because
     # We want to handle the error ourselves, and not let Devise display a sign in box
     warden.authenticate(:scope => :user, :auth_token => params[:auth_token])
-
     usersArray = [ ]
     activeUsersArray = [ ]
 
@@ -336,8 +320,6 @@ class Api::UsersController < ApplicationController
         render json: { status:201, message: "Param Application key must be presented", error_msg: "Param Application key must be presented"}, status: 400
       end
 
-      #create_car_action_logs(user.id, params[:latitude], params[:longitude], speed, direction, activity, heartrate)
-
 
     else
       render json: { status:201, message: "Param user id, authentication token, latitude and longitude must be presented", error_msg: "Param user id, authentication token, latitude and longitude must be presented"}, status: 400
@@ -421,7 +403,6 @@ class Api::UsersController < ApplicationController
     else
       render json: { status: 200, message: "Param user id, authentication token, pusher token must be presented",error_msg: "Param user id, authentication token, pusher token must be presented" }, status: 400
     end
-
 
   end
 
@@ -623,7 +604,7 @@ class Api::UsersController < ApplicationController
         checkEmail = User.find_by_email(params[:email])
         if checkEmail != nil
           var.push(31)
-          message = "Email doesn't exit"
+          message = "Email already exit."
         end
       end
 

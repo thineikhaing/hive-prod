@@ -229,11 +229,11 @@ class Api::TopicsController < ApplicationController
           end
 
           if hiveapplication.id ==1 #Hive Application
-            render json: { status:200, "Topic create successfully", topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
+            render json: { status :200, message: "Topic create successfully", topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
           elsif hiveapplication.devuser_id==1 and hiveapplication.id!=1 #All Applications under Herenow except Hive
-            render json: { status:200, "Topic create successfully", topic: JSON.parse(topic.to_json(content: true)),post:post, profanity_counter: current_user.profanity_counter}
+            render json: { status:200, message: "Topic create successfully", topic: JSON.parse(topic.to_json(content: true)),post:post, profanity_counter: current_user.profanity_counter}
           else #3rd party App
-            render json: { status:200, "Topic create successfully", topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
+            render json: { status:200, message: "Topic create successfully", topic: JSON.parse(topic.to_json()), profanity_counter: current_user.profanity_counter}
         end
 
           if check_banned_profanity(topic.title)
@@ -244,13 +244,13 @@ class Api::TopicsController < ApplicationController
           end
 
         else
-          render json: { status:201, "Params user_id and auth_token must be presented", error_msg: "Params user_id and auth_token must be presented" }
+          render json: { status:201, message: "Params user_id and auth_token must be presented", error_msg: "Params user_id and auth_token must be presented" }
         end
       else
-        render json: { status:200, "Invalid app_key", error_msg: "Invalid app_key" }
+        render json: { status:200, message: "Invalid app_key", error_msg: "Invalid app_key" }
       end
     else
-      render json: {status:200, "Param app_key must be presented", error_msg: "Param app_key must be presented" }
+      render json: {status:200, message: "Param app_key must be presented", error_msg: "Param app_key must be presented" }
     end
   end
 

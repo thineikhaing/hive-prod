@@ -41,7 +41,7 @@ gem 'jbuilder'
 gem "rmagick"
 gem 'browser' , '0.5.0'
 gem 'clockwork'
-gem 'aws-sdk'
+gem 'aws-sdk', '~> 2'
 gem 'jquery-minicolors-rails'
 gem 'rqrcode_png'
 # gem "loofah-activerecord"
