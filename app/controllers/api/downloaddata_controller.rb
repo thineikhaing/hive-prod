@@ -58,6 +58,57 @@ class Api::DownloaddataController < ApplicationController
     end
   end
 
+  def retrieve_user_data
+
+    hive = HiveApplication.find_by_api_key(params[:app_key])
+    if hive.present? && current_user.present?
+      topics = Topic.where(hiveapplication_id: hive.id, user_id: current_user.id)
+      user_friend_list = UserFriendList.where(user_id: current_user.id)
+      trips = Trip.where(user_id: current_user.id).order('id DESC').last(10)
+
+      if trips.count > 11
+        ids = trips.limit(10).order('id DESC').pluck(:id)
+        trips.where('id NOT IN (?)', ids).destroy_all
+      end
+
+      trip_detail =  []
+      trips.each do |trip|
+        detail = trip.data["route_detail"]
+        trip_detail.push(eval(detail))
+      end
+
+      posts_topics = []
+      if current_user.posts.count > 0
+        current_user.posts.map{|pst| posts_topics.push(pst.topic_id)}
+      end
+
+      if posts_topics.count > 0
+        posts_topics = posts_topics.uniq!
+      end
+
+      userplaces = UserFavLocation.where(user_id: params[:user_id]).order('id desc')
+      friend_lists = UserFriendList.where(user_id: current_user.id)
+
+      activeUsersArray = [ ]
+      friend_lists.each do |data|
+        user = User.find(data.friend_id)
+        usersArray= {id: user.id, username: user.username,last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,avatar_url:user.avatar_url,local_avatar: Topic.get_avatar(user.username)}
+        activeUsersArray.push(usersArray)
+      end
+      render json: {
+                  topics: topics, posts: posts_topics,
+                  topic_count: topics.count,
+                  trips: trips, trip_count: trips.count,
+                  trip_detail:trip_detail,
+                  user_friend_list: user_friend_list,
+                  userfavlocation: userplaces,
+                  friend_count: user_friend_list.count,
+                  friend_list: activeUsersArray}, status: 200
+    else
+      render json: {},status: 400
+    end
+  end
+
 
   def retrieve_hiveapplications
     render json: {apps: JSON.parse(HiveApplication.all.to_json(:test => "true"))}

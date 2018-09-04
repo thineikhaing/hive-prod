@@ -355,38 +355,30 @@ class Api::UsersController < ApplicationController
 
     if prev_users.present?
       prev_user = prev_users.take
-      p "previous user arn"
       p prev_arn = prev_user.data["endpoint_arn"]
       prev_device_id = prev_user.data["device_id"]
-
 
       if prev_arn.nil?
         render json: {status: 0,message: "register arn2"}, status: 200
       else
-        p current_user = User.find_by_authentication_token(params[:auth_token])
-
+        current_user = User.find_by_authentication_token(params[:auth_token])
         if current_user.present?
-
           if !current_user.data.nil?
-            p "current user arn"
-            p endpoint_arn = current_user.data["endpoint_arn"]
-
+            endpoint_arn = current_user.data["endpoint_arn"]
             if endpoint_arn.present?
               if (prev_arn.to_s != endpoint_arn.to_s)
                  p "update _arn"
                  current_user.data["endpoint_arn"] = prev_arn
                  current_user.data["device_id"] = prev_device_id
                  current_user.save!
-              else
-
               end
               render json: {status: 2,endpoint_arn: prev_arn, current_user_arn: endpoint_arn, message:"exit user"}, status: 200
             else
               render json: {status: 1,endpoint_arn: prev_arn, current_user_arn: nil,message: "update arn"}, status: 200
             end
+
           else
             render json: {status: 1,endpoint_arn: prev_arn, message: "update arn"}, status: 200
-
           end
 
         end
@@ -395,16 +387,17 @@ class Api::UsersController < ApplicationController
 
     else
       render json: {status: 0,message: "register arn2"}, status: 200
-
     end
   end
+
+
 
   def register_apn
     # for pushwoosh token
     if params[:push_token].present?  && current_user.present?
 
       user_token = UserPushToken.find_by(user_id: current_user.id,push_token: params[:push_token])
-      push_user = UserPushToken.create(user_id: current_user.id,push_token: params[:push_token])   unless user_token.present?
+      push_user = UserPushToken.create(user_id: current_user.id,push_token: params[:push_token]) unless user_token.present?
 
 
       if user_token.nil?
@@ -412,7 +405,6 @@ class Api::UsersController < ApplicationController
         if user.present?
           device_id= params[:push_token]
           User.update_data_column("device_id", device_id, user.id)
-
         end
       end
 
@@ -1294,7 +1286,6 @@ class Api::UsersController < ApplicationController
 
       activeUsersArray = [ ]
       friend_lists.each do |data|
-        p data
         user = User.find(data.friend_id)
         usersArray= {id: user.id, username: user.username,last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,avatar_url:user.avatar_url,local_avatar: Topic.get_avatar(user.username)}
         activeUsersArray.push(usersArray)

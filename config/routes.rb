@@ -123,6 +123,7 @@ Rails.application.routes.draw do
     match "downloaddata/retrieve_carmic_user"       => "downloaddata#retrieve_carmic_user"      , via: [:get, :post]
 
     match "downloaddata/incident_and_breakdown" => "downloaddata#incident_and_breakdown"   , via: [:get, :post]
+    match "downloaddata/retrieve_user_data" => "downloaddata#retrieve_user_data"   , via: [:get, :post]
 
     match "users/get_user"             => "users#get_user"            , via: [:get, :post]
     match "users/create_anonymous_user"             => "users#create_anonymous_user"            , via: [:get, :post]
@@ -133,7 +134,7 @@ Rails.application.routes.draw do
     match "users/forget_password"                   => "users#forget_password"                  , via: [:get, :post]
     match "users/update_password"                   => "users#update_password"                  , via: [:get, :post]
     match "users/get_reset_password_token"          => "users#get_reset_password_token"                  , via: [:get, :post]
-    
+
     match "users/verify_user_account"               => "users#verify_user_account"              , via: [:get, :post]
     match "users/user_info"                         => "users#user_info"                        , via: [:get, :post]
     match "users/favourite_user"                    => "users#favourite_user"                   , via: [:get, :post]
