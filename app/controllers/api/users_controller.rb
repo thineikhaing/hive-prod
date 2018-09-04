@@ -54,7 +54,7 @@ class Api::UsersController < ApplicationController
 
         user = User.where(device_id: params[:device_id]).take
         avatar = Topic.get_avatar(user.username)
-        
+
         push_token = params[:push_token]
 
         if push_token.present?
@@ -86,6 +86,15 @@ class Api::UsersController < ApplicationController
     else
       render json: { status:201, message: "Invalid application key", error_msg: "Invalid application key" } , status: 400
     end
+  end
+
+  def register_push_token
+    if current_user.present?
+      User.create_endpoint(params[:device_type], params[:device_token],params[:user_id])
+      user = User.find(params[:user_id])
+      render json: { status: 200, message: "User token register" , user: user}
+    end
+
   end
 
 

@@ -794,7 +794,7 @@ class Api::TopicsController < ApplicationController
       # a.gsub!(/\"/, '\'')
       #eval(a)
 
-      render json: {status:200, message: "User datas"
+      render json: {status:200, message: "User Data",
                     trip_detail:trip_detail,
                     topics: topics, posts: posts_topics,
                     topic_count: topics.count,
