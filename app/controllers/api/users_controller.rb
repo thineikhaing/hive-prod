@@ -66,7 +66,7 @@ class Api::UsersController < ApplicationController
       end
       if user.present?
         if push_token.present?
-          User.delay.create_endpoint(params[:device_type], push_token ,user.id)
+          User.create_endpoint(params[:device_type], push_token ,user.id)
         end
         user_apps = UserHiveapp.find_by(user_id: user.id,hive_application_id: hiveapp.id)
         UserHiveapp.create(user_id: user.id,hive_application_id: hiveapp.id) unless user_apps.present?

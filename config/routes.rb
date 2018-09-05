@@ -88,8 +88,6 @@ Rails.application.routes.draw do
     match "socal/signin"                            => "socal#signin"                     , via: [:get, :post]
     match "socal/get_events"                        => "socal#get_events"                     , via: [:get, :post]
 
-
-
     match "hiveweb/get_all_topics_for_web"          => "hiveweb#get_all_topics_for_web"         , via: [:get, :post]
     match "hiveweb/get_all_posts_for_web"           => "hiveweb#get_all_posts_for_web"          , via: [:get, :post]
     match "hiveweb/create_post"                     => "hiveweb#create_post"                    , via: [:get, :post]
@@ -104,7 +102,6 @@ Rails.application.routes.draw do
     match "hiveweb/get_topics_for_mealbox"          => "hiveweb#get_topics_for_mealbox"         , via: [:get, :post]
     match "hiveweb/get_topics_for_car"              => "hiveweb#get_topics_for_car"             , via: [:get, :post]
     match "hiveweb/get_topics_by_tag"               => "hiveweb#get_topics_by_tag"              , via: [:get, :post]
-
 
     match "downloaddata/initial_retrieve"           => "downloaddata#initial_retrieve"          , via: [:get, :post]
     match "downloaddata/retrieve_hiveapplications"  => "downloaddata#retrieve_hiveapplications" , via: [:get, :post]
@@ -159,7 +156,6 @@ Rails.application.routes.draw do
     match "users/save_user_friend_list"             => "users#save_user_friend_list"            , via: [:get, :post]
     match "users/delete_user_friend_list"           => "users#delete_user_friend_list"          , via: [:get, :post]
     match "users/get_user_friend_list"              => "users#get_user_friend_list"             , via: [:get, :post]
-    match "users/check_user_device_id"              => "users#check_user_device_id"             , via: [:get, :post]
 
     match "topics/create"                           => "topics#create"                          , via: [:get, :post]
     match "topics/search"                           => "topics#search"                          , via: [:get, :post]
@@ -177,12 +173,9 @@ Rails.application.routes.draw do
     match "topics/topic_favourited"                 => "topics#topic_favourited"                , via: [:get, :post]
     match "topics/topics_by_ids"                    => "topics#topics_by_ids"                   , via: [:get, :post]
     match "topics/delete"                           => "topics#delete"                          , via: [:get, :post]
-    match "topics/get_topic"                        => "topics#get_topic"                       , via: [:get, :post]
-    match "topics/get_alltopic"                     => "topics#get_alltopic"                    , via: [:get, :post]
 
     match "topics/update_topic"                     => "topics#update_topic"                    , via: [:get, :post]
     match "topics/favtopic_create"                  => "topics#favtopic_create"                 , via: [:get, :post]
-    match "topics/get_topic_by_image"               => "topics#topic_by_image"                  , via: [:get, :post]
 
     match "posts/create"                            => "posts#create"                           , via: [:get, :post]
     match "posts/retrieve_post"                     => "posts#retrieve_post"                    , via: [:get, :post]
