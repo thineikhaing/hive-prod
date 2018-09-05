@@ -1,7 +1,7 @@
 class Tweet < ApplicationRecord
   scope :expiring_soon, -> {
-  date = Date.today >> 1
-  where(created_at: ( Date.today-60.days.. Date.today+1.day))
+    date = Date.today >> 1
+    where(created_at: ( Date.today-60.days.. Date.today+1.day))
   }
   def self.create_from_status(status)
     p "create tweet from status ::::::"
@@ -94,9 +94,6 @@ class Tweet < ApplicationRecord
     s_arn = "arn:aws:sns:ap-southeast-1:378631322826:endpoint/GCM/Roundtrip_S/da5aacf6-7de3-3c0a-baa5-d86fad965ff3"
 
     sns.publish(target_arn: target_topic, message: sns_message, message_structure:"json")
-
-  end
-
 
   end
 end
