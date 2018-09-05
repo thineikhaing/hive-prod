@@ -1432,11 +1432,8 @@ class Topic < ActiveRecord::Base
 
     hiveapplication = HiveApplication.find(self.hiveapplication_id)
     user_id = []
-    to_device_id = []
     to_endpoint_arn = []
-
     users_by_location = []
-
     radius = 1 if radius.nil?
     center_users= ""
 
@@ -1445,6 +1442,7 @@ class Topic < ActiveRecord::Base
     # center_users = User.where(last_known_latitude: box[0] .. box[2], last_known_longitude: box[1] .. box[3])
     # center_users_list = center_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
 
+    
     s_center_point = [self.start_place.latitude.to_f, self.start_place.longitude.to_f]
     s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
     start_users = User.where(last_known_latitude: s_box[0] .. s_box[2], last_known_longitude: s_box[1] .. s_box[3])
@@ -1454,6 +1452,8 @@ class Topic < ActiveRecord::Base
     e_box = Geocoder::Calculations.bounding_box(e_center_point, radius, {units: :km})
     end_users = User.where(last_known_latitude: e_box[0] .. e_box[2], last_known_longitude: e_box[1] .. e_box[3])
     end_users = end_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+
+
 
 
     users_by_location = start_users+end_users
@@ -1466,22 +1466,20 @@ class Topic < ActiveRecord::Base
       if u.check_in_time.present?
         time_difference = Time.now - u.check_in_time
         if time_difference < time_allowance
-            hash_array = u.data
-            if hash_array.present? && u.id != self.user_id
-              device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-              endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
-              to_device_id.push(device_id)
-              to_endpoint_arn.push(endpoint_arn)
-              user_id.push(u.id)
-            end
+          push_tokens = UserPushToken.where(user_id: u.id)
+          if push_tokens.count > 0
+            user_id.push(u.id)
+            push_tokens.map{|pt| to_endpoint_arn.push(pt.endpoint_arn) }
+          end
         end
       end
     end
+
     p "list of users"
     p user_id
     p "list of to_endpoint_arn"
     p to_endpoint_arn
-    p user_id
+
 
     place_name = self.place_information[:name]
 
@@ -1490,7 +1488,6 @@ class Topic < ActiveRecord::Base
     end
 
     to_endpoint_arn.each do |arn|
-
       if arn.present?
         user_arn = arn
         sns = Aws::SNS::Client.new
@@ -1555,71 +1552,6 @@ class Topic < ActiveRecord::Base
 
 
   def notify_train_fault_to_roundtrip_users(name, station1, station2, towards)
-
-    # p "start added active users"
-    # hiveapplication = HiveApplication.find(self.hiveapplication_id)
-    # to_device_id = []
-    #  user_id = []
-    # users = User.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
-    #
-    # time_allowance = Time.now - 10.minutes.ago
-    # users.each do |u|
-    #   if u.check_in_time.present?
-    #     time_difference = Time.now - u.check_in_time
-    #     unless time_difference.to_i > time_allowance.to_i
-    #       hash_array = u.data
-    #       device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-    #       to_device_id.push(device_id)
-    #       user_id.push(u.id)
-    #     end
-    #   end
-    # end
-
-    # notification_options = {
-    #     send_date: "now",
-    #     badge: "1",
-    #     sound: "default",
-    #     content:{
-    #         fr:self.title,
-    #         en:self.title
-    #     },
-    #     data:{
-    #         trainfault_datetime: Time.now,
-    #         smrtline: name,
-    #         station1: station1,
-    #         station2: station2,
-    #         towards: towards,
-    #         topic: self,
-    #         topic_id: self.id,
-    #         topic_title: self.title,
-    #         type: "train fault"
-    #     },
-    #     devices: to_device_id
-    # }
-    #
-    # p "after noti options"
-    #
-    # p "Push Woosh Authentication"
-    # if Rails.env.production?
-    #   appID = PushWoosh_Const::RT_P_APP_ID
-    #   hyID = PushWoosh_Const::TE_RTS_APP_ID
-    # elsif Rails.env.staging?
-    #   appID = PushWoosh_Const::RT_S_APP_ID
-    #   hyID = PushWoosh_Const::TE_RTS_APP_ID
-    # else
-    #   appID = PushWoosh_Const::RT_D_APP_ID
-    #   hyID = PushWoosh_Const::TE_RTS_APP_ID
-    # end
-    #
-    # native_rtauth = {:application  => appID ,:auth => PushWoosh_Const::API_ACCESS}
-    # auth_hash = {:application  => hyID ,:auth => PushWoosh_Const::API_ACCESS}
-    #
-    # if to_device_id.count > 0
-    #   Pushwoosh::PushNotification.new(auth_hash).notify_devices(self.title, to_device_id, notification_options)
-    #   # Pushwoosh::PushNotification.new(native_rtauth).notify_devices(self.title, to_device_id, notification_options)
-    #   p "pushwoosh"
-    # end
-
 
     sns = Aws::SNS::Client.new
     target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'

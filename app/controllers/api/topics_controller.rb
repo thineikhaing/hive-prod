@@ -9,23 +9,13 @@ class Api::TopicsController < ApplicationController
       if hiveapplication.present?
 
         place_id = nil
-        #check the place_id presents
         if params[:place_id]
           place_id = params[:place_id].to_i
         else
-          #create place first if the place_id is null
           if params[:latitude].present?
            place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
-          # else
-          #   place = Place.create_place_by_lat_lng(1.352083, 103.819836,current_user)
+           place_id = place.id
           end
-
-
-          if place.present?
-            place_id = place.id
-            Checkinplace.create(place_id: place.id, user_id: current_user.id)
-          end
-
         end
 
         params[:start_name].present? ? start_name = params[:start_name] : start_name = nil
@@ -688,82 +678,6 @@ class Api::TopicsController < ApplicationController
     end
   end
 
-  #private
-  #def restrict_access
-  #  hiveapplication = HiveApplication.find_by(api_key: params[:api_key])
-  #  render json: {error_msg: "unauthorized access"} unless hiveapplication
-  #end
-
-#for now juice app only used this following 2 api's
-
-  def get_topic
-    if params[:topic_id].present? and params[:app_key].present?
-      hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
-      if hiveapplication.present?
-        topic = Topic.find_by_id(params[:topic_id])
-        if topic.present?
-          render json: { topic: JSON.parse(topic.to_json(content: true))}
-        end
-      else
-        render json: { error_msg: "Invalid app_key" }
-      end
-    else
-      render json: { error_msg: "Params app_key and topic_ids must be presented" }
-    end
-  end
-
-  def get_alltopic
-    topic = Topic.all.where("hiveapplication_id != 4").order(:hiveapplication_id)
-    if topic.present?
-      render json: { topic: JSON.parse(topic.to_json(content: true))}
-
-    else
-      render json: { error_msg: "No Topic" }
-    end
-  end
-
-  def update_topic
-    if params[:app_key].present?
-      application = HiveApplication.find_by_api_key(params[:app_key])
-      #@Topicfields = table_list(params[:app_id], "Topic")
-      #save the updated Application information
-      if application.present?
-        topics = Topic.where('hiveapplication_id = ?', application.id)
-        topic = topics.select{|top|  top.id == params[:app_id].to_i}.last
-        data = getHashValuefromString(params[:data]) if params[:data].present?
-        data["serving"] = data["serving"].present? ? data["serving"] : topic.data["serving"]
-        data["ingredients"] = data["ingredients"].present? ? data["ingredients"] : topic.data["ingredients"]
-        data["advantages"] = data["advantages"].present? ? data["advantages"] : topic.data["advantages"]
-        data["weather"] = data["weather"].present? ? data["weather"] : topic.data["weather"]
-
-        # topic.update_attributes(:title => params["title"], :image_url => params["image_url"].present? ? params["image_url"] : topic.image_url, :data => data)
-
-        topic.title = params["title"]
-        topic.image_url = params["image_url"] if params["image_url"].present?
-        topic.data = data
-        topic.save
-
-
-        render json: { topic: JSON.parse(topic.to_json(content: true))}
-      end
-    else
-      render json: { error_msg: "Params app_key and topic_ids must be presented" }
-    end
-  end
-
-  def search
-    if params[:title].present?
-      topic = Topic.find_by_topic_type_and_title(Topic::WEB, params[:title])
-      if topic.present?
-        render json: { topic_id: topic.id }
-      else
-        render json: { topic_id: nil }
-      end
-    else
-      render json: { status: false }
-    end
-  end
-
   def topics_by_user
     hive = HiveApplication.find_by_api_key(params[:app_key])
     if hive.present?
@@ -825,7 +739,6 @@ class Api::TopicsController < ApplicationController
       end
     end
   end
-
 
   def favr_topics_by_user
 
@@ -973,7 +886,6 @@ class Api::TopicsController < ApplicationController
       render json: { likes: check_like, dislikes: check_dislike }
     end
   end
-
 
   # *********** for Socal ***********
 
@@ -1890,118 +1802,5 @@ class Api::TopicsController < ApplicationController
     p endtime
     job =Delayed::Job.enqueue FavrTaskReminderJob.new(favr_action_id),:priority => 0,:run_at => endtime.minutes.from_now
   end
-
-end
-
-
-def ok
-  sns = AWS::SNS.new(
-      access_key_id: "AKIAIJMZ5RLXRO6LJHPQ",
-      secret_access_key: "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",
-      region: "ap-southeast-1"
-  )
-  client = sns.client
-
-
-  begin
-    response = client.create_platform_endpoint(
-        platform_application_arn: 'arn:aws:sns:ap-southeast-1:378631322826:app/GCM/Roundtrip_S',
-        token: device_token
-    )
-    p endpoint_arn = response[:endpoint_arn]
-  rescue => e
-    result = e.message.match(/Endpoint(.*)already/)
-    if result.present?
-      endpoint_arn = result[1].strip
-    end
-  end
-
-  data = {
-      'aps' => {
-          'alert' => 'Hi there!',
-          'badge' => 1,
-          'sound' => 'default'
-      }
-  }
-
-  ios_endpoint_arn = 'arn:aws:sns:ap-southeast-1:378631322826:endpoint/APNS/Roundtrip_S/1ab611da-e4ec-38cb-8758-f63c63d6f2ce'
-
-# double json encode
-  message_json = {
-      'APNS' => data.to_json
-  }.to_json
-
-  sns.publish(
-      target_arn: ios_endpoint_arn,
-      message: message_json,
-      message_structure: 'json',
-      GCM: "okay"
-  )
-
-  topic = client.create_topic(name: 'RoundTrip_Topic')
-  topic_arn = topic[:topic_arn]
-
-  client.subscribe(
-      topic_arn: topic_arn,
-      protocol: 'application',
-      endpoint: endpoint_arn
-  )
-
-  data = {
-      'aps' => {
-          'alert' => 'Hi there!',
-          'badge' => 1,
-          'sound' => 'default'
-      }
-  }
-
-# double json encode
-  message_json = {
-      'default' => 'Hi there!',
-      'APNS' => data.to_json
-  }.to_json
-
-  client.publish(
-      target_arn: topic_arn,
-      message: message_json,
-      message_structure: 'json'
-  )
-
-
-  #send noti message to iphone
-
-  sns = Aws::SNS::Client.new
-  target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
-
-
-  iphone_notification = {
-      aps: {
-          alert: "Send message to ios from hive",
-          sound: "default",
-          badge: 0,
-          extra:  {a: 1, b: 2}
-      }
-  }
-
-
-  android_notification = {
-      data: {
-          message: "Send message to android from hive" ,
-          badge: 0,
-          extra:  {a: 1, b: 2}
-      }
-  }
-
-  sns_message = {
-      default: "Hi there",
-      APNS_SANDBOX: iphone_notification.to_json,
-      APNS: iphone_notification.to_json,
-      GCM: android_notification.to_json
-  }.to_json
-
-
-  noti_message = sns.publish(target_arn: target_topic,
-                         message: sns_message, message_structure:"json")
-
 
 end

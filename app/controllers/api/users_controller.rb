@@ -64,23 +64,19 @@ class Api::UsersController < ApplicationController
         user.save!
         message = "Created user successfully"
       end
-
       if user.present?
         if push_token.present?
           User.delay.create_endpoint(params[:device_type], push_token ,user.id)
         end
         user_apps = UserHiveapp.find_by(user_id: user.id,hive_application_id: hiveapp.id)
         UserHiveapp.create(user_id: user.id,hive_application_id: hiveapp.id) unless user_apps.present?
-
         render json: { status:200,
           message:message,
           :user => user,
           :success => 20 ,
           local_avatar:  Topic.get_avatar(user.username),
           daily_point: user.daily_points}, status: 200
-
       end
-
     else
       render json: { status:201, message: "Invalid application key", error_msg: "Invalid application key" } , status: 400
     end
@@ -90,7 +86,6 @@ class Api::UsersController < ApplicationController
     if current_user.present?
       if params[:device_token].present?
         p "register token"
-        User.update_data_column("device_id", params[:device_token], params[:user_id])
         User.create_endpoint(params[:device_type], params[:device_token],params[:user_id])
         render json: { status: 200, message: "User token register"}
       else

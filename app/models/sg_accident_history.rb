@@ -86,7 +86,7 @@ class SgAccidentHistory < ActiveRecord::Base
       users = User.where(last_known_latitude: box[0] .. box[2], last_known_longitude: box[1] .. box[3])
       users = users.where("app_data ->'app_id#{hive_application.id}' = '#{hive_application.api_key}'")
 
-      to_device_id = []
+
       user_id = []
       time_allowance = Time.now - 1.day.ago
       to_endpoint_arn = []
@@ -95,41 +95,23 @@ class SgAccidentHistory < ActiveRecord::Base
         if u.check_in_time.present?
           time_difference = Time.now - u.check_in_time
           if time_difference < time_allowance
-
-            hash_array = u.data
-            if hash_array.present?
-              device_id = hash_array["device_id"] if  hash_array["device_id"].present?
-              endpoint_arn = hash_array["endpoint_arn"] if  hash_array["endpoint_arn"].present?
-              to_device_id.push(device_id)
-              to_endpoint_arn.push(endpoint_arn)
+            push_tokens = UserPushToken.where(user_id: u.id)
+            if push_tokens.count > 0
               user_id.push(u.id)
+              push_tokens.map{|pt| to_endpoint_arn.push(pt.endpoint_arn) }
             end
           end
         end
       end
 
-      p "total user near by count"
-      p user_id
-      p user_id.count
-      p "end point arn"
-      p to_endpoint_arn
-
       sg_accident.notify = true
       sg_accident.save
-      p sg_accident.message
-
-      # topic = Topic.find_by_title(sg_accident.message)
-      #
-      # topic.hive_broadcast
-      # topic.app_broadcast_with_content
 
       accident_topic = Topic.find_by_title(sg_accident.message)
       topic_id = 0
       if accident_topic.present?
         topic_id = accident_topic.id
       end
-
-
 
       if to_endpoint_arn.count > 0
 

@@ -91,10 +91,9 @@ class User < ActiveRecord::Base
       end
     end
     if !user_endpoint_arn.nil?
-        User.update_data_column("endpoint_arn", user_endpoint_arn, user_id)
         User.subscribe_to_topic(user_endpoint_arn)
-        user_token = UserPushToken.find_by(user_id: user_id,push_token: user_endpoint_arn)
-        UserPushToken.create(user_id: user_id,push_token: user_endpoint_arn) unless user_token.present?
+        user_token = UserPushToken.find_by(user_id: user_id,endpoint_arn:user_endpoint_arn,push_token: device_token)
+        UserPushToken.create(user_id: user_id,endpoint_arn:user_endpoint_arn,push_token: device_token) unless user_token.present?
     end
   end
 

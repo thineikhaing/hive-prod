@@ -35,12 +35,6 @@ class SgAccidentHistoriesController < ApplicationController
       if @sg_accident_history.save
 
 
-        # topic = Topic.create(title:@sg_accident_history.message, user_id: User.first.id,
-        #   topic_type: 10 ,start_place_id: startplace.id ,  end_place_id: startplace.id  ,
-        #     special_type: @sg_accident_history.type, hiveapplication_id: 6, place_id: startplace.id)
-
-        # SgAccidentHistory.send_traffic_noti(@sg_accident_history)
-
         format.html { redirect_to sg_accident_histories_url, notice: 'Sg accident history was successfully created.' }
         format.json { render :index, status: :created, location: sg_accident_histories_url }
       else

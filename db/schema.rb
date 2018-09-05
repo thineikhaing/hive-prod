@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180905061833) do
+ActiveRecord::Schema.define(version: 20180905075927) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -437,9 +437,10 @@ ActiveRecord::Schema.define(version: 20180905061833) do
 
   create_table "user_push_tokens", id: :serial, force: :cascade do |t|
     t.integer "user_id", null: false
-    t.string "push_token", null: false
+    t.string "push_token"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string "endpoint_arn"
   end
 
   create_table "userpreviouslocations", id: :serial, force: :cascade do |t|
