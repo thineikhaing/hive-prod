@@ -10,14 +10,14 @@ class User < ActiveRecord::Base
   has_many :checkinplaces
   has_many :posts
   has_many :user_push_tokens
-  has_many  :user_accounts
+  has_many :user_accounts
   has_many :car_action_logs
   has_many :places
   has_many :trips
   has_many :user_fav_locations
   has_many :user_fav_buses
   has_many :user_friend_lists
-
+  has_many :user_hiveapps
   belongs_to :incident_history
 
   # Setup hstore
@@ -37,9 +37,9 @@ class User < ActiveRecord::Base
   enums %w(BOT ADMIN VENDOR NORMAL)
 
   def self.sns_arn(device_type)
-    Rails.env == 'production'
+
     platform_type = Rails.env == 'development' ? 'APNS_SANDBOX' : 'APNS'
-    platform_type = 'GCM' if device_type == 'Android'
+
     app_name =
     if Rails.env.development?
       app_name = "Roundtrip_D"
@@ -48,6 +48,8 @@ class User < ActiveRecord::Base
     else
       app_name = "Roundtrip"
     end
+    platform_type = 'GCM' if device_type == 'Android'
+    app_name = "Roundtrip_S" if device_type == 'Android'
 
     "arn:aws:sns:ap-southeast-1:378631322826:app/#{platform_type}/#{app_name}"
   end
@@ -69,22 +71,46 @@ class User < ActiveRecord::Base
   end
 
   def self.create_endpoint(device_type, device_token,user_id)
+    user_endpoint_arn = nil
     begin
+      p "Create end point at SNS"
       sns_client = Aws::SNS::Client.new
       endpoint = sns_client.create_platform_endpoint(
         platform_application_arn: User.sns_arn(device_type),
         token: device_token,
         custom_user_data: user_id.to_s
         )
-        p endpoint_arn = endpoint[:endpoint_arn]
-        User.update_data_column("endpoint_arn", endpoint_arn, user_id)
-        User.update_data_column("device_id", device_token, user_id)
+        user_endpoint_arn = endpoint[:endpoint_arn]
 
     rescue => e
       result = e.message.match(/Endpoint(.*)already/)
       if result.present?
-        endpoint_arn = result[1].strip
+        p "endpoint"
+        p user_endpoint_arn = result[1].strip
+
       end
+    end
+    if !user_endpoint_arn.nil?
+        User.update_data_column("endpoint_arn", user_endpoint_arn, user_id)
+        User.subscribe_to_topic(user_endpoint_arn)
+        user_token = UserPushToken.find_by(user_id: user_id,push_token: user_endpoint_arn)
+        UserPushToken.create(user_id: user_id,push_token: user_endpoint_arn) unless user_token.present?
+    end
+  end
+
+  def self.subscribe_to_topic(endpoint_arn)
+    p "subscribe_to_topic"
+    topic_arn = Rails.env == 'production' ? "arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_P_Broadcast_Noti" : "arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti"
+    begin
+       p "subscribe to roundtrip topic"
+        sns_client = Aws::SNS::Client.new
+        subscription = sns_client.subscribe(
+          topic_arn: topic_arn,
+          protocol: 'application',
+          endpoint: endpoint_arn)
+        subscription.subscription_arn
+    rescue => e
+      p 'Topic subscription failed.'
     end
   end
 
@@ -244,9 +270,9 @@ class User < ActiveRecord::Base
         u.save!
       else
         if value.length > 0
-          p data_hash = u.data.except(name)
+          data_hash = u.data.except(name)
           data_hash[name] = value
-          p u.data = data_hash
+          u.data = data_hash
           u.data_will_change!
           u.save!
         end

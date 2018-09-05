@@ -142,7 +142,6 @@ Rails.application.routes.draw do
     match "users/user_action_logs"                  => "users#user_action_logs"                 , via: [:get, :post]
     match "users/facebook_friends"                  => "users#facebook_friends"                 , via: [:get, :post]
     match "users/check_in"                          => "users#check_in"                         , via: [:get, :post]
-    match "users/register_apn"                      => "users#register_apn"                     , via: [:get, :post]
     match "users/edit_profile"                      => "users#edit_profile"                     , via: [:get, :post]
     match "users/update_carmmunicate_user"          => "users#update_carmmunicate_user"         , via: [:get, :post]
     match "users/status"                            => "users#status"                           , via: [:get, :post]
@@ -183,6 +182,7 @@ Rails.application.routes.draw do
 
     match "topics/update_topic"                     => "topics#update_topic"                    , via: [:get, :post]
     match "topics/favtopic_create"                  => "topics#favtopic_create"                 , via: [:get, :post]
+    match "topics/get_topic_by_image"               => "topics#topic_by_image"                  , via: [:get, :post]
 
     match "posts/create"                            => "posts#create"                           , via: [:get, :post]
     match "posts/retrieve_post"                     => "posts#retrieve_post"                    , via: [:get, :post]
@@ -190,8 +190,6 @@ Rails.application.routes.draw do
     match "posts/post_offensive"                    => "posts#post_offensive"                   , via: [:get, :post]
     match "posts/posts_by_ids"                      => "posts#posts_by_ids"                     , via: [:get, :post]
     match "posts/delete"                            => "posts#delete"                           , via: [:get, :post]
-
-    match "userpushtokens/create"                   => "userpushtokens#create"                  , via: [:get, :post]
 
     match "places/create"                           => "places#create"                          , via: [:get, :post]
     match "places/retrieve_places"                  => "places#retrieve_places"                 , via: [:get, :post]
@@ -206,19 +204,10 @@ Rails.application.routes.draw do
     match "places/get_meal_suggestion"              => "places#get_meal_suggestion"             , via: [:get, :post]
     match "places/search_place_by_keyword"          => "places#search_place_by_keyword"         , via: [:get, :post]
 
-    match "demo/test"                               => "demo#test"                              , via: [:get, :post]
-    match "demo/test2"                              => "demo#test2"                             , via: [:get, :post]
-    match "demo/test3"                              => "demo#test3"                             , via: [:get, :post]
-    match "demo/test4"                              => "demo#test4"                             , via: [:get, :post]
-    match "demo/sign_in"                            => "demo#sign_in"                           , via: [:get, :post]
-
     match "tags/delete"                             => "tags#delete"                            , via: [:get, :post]
     match "tags/within_location"                    => "tags#within_location"                   , via: [:get, :post]
     match "tags/retrieve_all_tags"                  => "tags#retrieve_all_tags"                 , via: [:get, :post]
     match "tags/retrieve_meal_tags"                 => "tags#retrieve_meal_tags"                , via: [:get, :post]
-
-    match "topics/get_topic_by_image"               => "topics#topic_by_image"                  , via: [:get, :post]
-
 
     match "roundtrip/get_rt_privacy_policy"         => "roundtrip#get_rt_privacy_policy"    , via: [:get, :post]
     match "roundtrip/save_trip"                     => "roundtrip#save_trip"    , via: [:get, :post]

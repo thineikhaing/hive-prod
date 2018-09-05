@@ -1538,8 +1538,6 @@ class Topic < ActiveRecord::Base
             GCM: android_notification.to_json
         }.to_json
 
-        p "endpoint arn"
-        p arn
 
         begin
           sns.publish(target_arn: user_arn, message: sns_message, message_structure:"json")
