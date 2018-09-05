@@ -90,13 +90,15 @@ class Api::UsersController < ApplicationController
 
   def register_push_token
     if current_user.present?
-      User.create_endpoint(params[:device_type], params[:device_token],params[:user_id])
-      user = User.find(params[:user_id])
-      render json: { status: 200, message: "User token register" , user: user}
+      if params[:device_token].present?
+        p "register token"
+        User.delay.create_endpoint(params[:device_type], params[:device_token],params[:user_id])
+        render json: { status: 200, message: "User token register"}
+      else
+        render json: { status: 201, message: "Need device token parameter for SNS register"}
+      end
     end
-
   end
-
 
 
   def update_carmmunicate_user

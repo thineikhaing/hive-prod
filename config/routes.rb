@@ -155,7 +155,7 @@ Rails.application.routes.draw do
     match "users/get_user_fav_location"             => "users#get_user_fav_location"            , via: [:get, :post]
     match "users/delete_user_fav_location"          => "users#delete_user_fav_location"         , via: [:get, :post]
     match "users/update_user_fav_location"          => "users#update_user_fav_location"         , via: [:get, :post]
-
+    match "users/register_push_token"               => "users#register_push_token"         , via: [:get, :post]
 
     match "users/save_user_friend_list"             => "users#save_user_friend_list"            , via: [:get, :post]
     match "users/delete_user_friend_list"           => "users#delete_user_friend_list"          , via: [:get, :post]
