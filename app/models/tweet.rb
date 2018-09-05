@@ -94,14 +94,7 @@ class Tweet < ApplicationRecord
     s_arn = "arn:aws:sns:ap-southeast-1:378631322826:endpoint/GCM/Roundtrip_S/da5aacf6-7de3-3c0a-baa5-d86fad965ff3"
 
     sns.publish(target_arn: target_topic, message: sns_message, message_structure:"json")
-    users.each do |u|
-    if !u.data.nil?
-      p device_token = u.data["device_id"] rescue ""
-      p endpoint_arn = u.data["endpoint_arn"]
-      user_token = UserPushToken.find_by(user_id: u.id,endpoint_arn:endpoint_arn,push_token: device_token)
-      UserPushToken.create(user_id: u.id,endpoint_arn:endpoint_arn,push_token: device_token) unless user_token.present?      
-      p '+++'
-    end
+
   end
 
 
