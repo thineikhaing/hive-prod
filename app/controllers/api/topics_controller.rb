@@ -682,39 +682,9 @@ class Api::TopicsController < ApplicationController
     hive = HiveApplication.find_by_api_key(params[:app_key])
     if hive.present?
       topics = Topic.where(hiveapplication_id: hive.id, user_id: current_user.id)
-      user_friend_list = UserFriendList.where(user_id: current_user.id)
-      trips = Trip.where(user_id: current_user.id).order('id DESC').last(10)
-
-      if trips.count > 11
-        ids = trips.limit(10).order('id DESC').pluck(:id)
-        trips.where('id NOT IN (?)', ids).destroy_all
-      end
-
-      trip_detail =  []
-      trips.each do |trip|
-        detail = trip.data["route_detail"]
-        # detail = detail.gsub!(/\"/, '\'')
-        trip_detail.push(eval(detail))
-      end
-
-      posts_topics = []
-      if current_user.posts.count > 0
-        current_user.posts.map{|pst| posts_topics.push(pst.topic_id)}
-      end
-      if posts_topics.count > 0
-        posts_topics = posts_topics.uniq!
-      end
-
-      # a.gsub!(/\"/, '\'')
-      #eval(a)
-
-      render json: {status:200, message: "User Data",
-                    trip_detail:trip_detail,
-                    topics: topics, posts: posts_topics,
-                    topic_count: topics.count,
-                    trips: trips, trip_count: trips.count,
-                    user_friend_list: user_friend_list,
-                    friend_count: user_friend_list.count}, status: 200
+      render json: {status:200,
+                    message: "User Topics",
+                    topics: topics}, status: 200
     else
       render json: {message: "no topics"}
     end

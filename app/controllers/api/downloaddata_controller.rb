@@ -54,7 +54,6 @@ class Api::DownloaddataController < ApplicationController
   end
 
   def retrieve_user_data
-
     hive = HiveApplication.find_by_api_key(params[:app_key])
     if hive.present? && current_user.present?
       topics = Topic.where(hiveapplication_id: hive.id, user_id: current_user.id)
