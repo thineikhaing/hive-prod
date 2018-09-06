@@ -91,50 +91,8 @@ class Api::UsersController < ApplicationController
       else
         render json: { status: 201, message: "Need device token parameter for SNS register"}
       end
-    end
-  end
-
-  def update_carmmunicate_user
-    if current_user.present? and params[:app_key].present?
-      hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
-      if hiveapplication.present?
-        user = User.find(current_user.id)
-        #covert the params data to hash
-        data = getHashValuefromString(params[:data]) if params[:data].present?
-
-        #get predefined addtional columns from table and match with the params value
-        appAdditionalField = AppAdditionalField.where(:app_id => hiveapplication.id, :table_name => "User")
-        result = Hash.new
-        if appAdditionalField.present?
-          defined_Fields = Hash.new
-          appAdditionalField.each do |field|
-            if field.additional_column_name == "speed" or   field.additional_column_name == "direction" #default value of speed and direction is -1
-              defined_Fields[field.additional_column_name] = "-1"
-            else
-              defined_Fields[field.additional_column_name] = ""
-            end
-          end
-          #get all extra columns that define in app setting against with the params data
-          if data.present?
-            data = defined_Fields.deep_merge(data)
-            defined_Fields.keys.each do |key|
-              result.merge!(data.extract! (key))
-            end
-          else
-            result = defined_Fields
-          end
-        end
-        result = nil unless result.present?
-
-        data_hash = {}
-        user.data = result
-        user.save!
-        render json: { user: user }
-      else
-        render json: { error_msg: "Invalid application key" }, status: 400
-      end
     else
-      render json: { error_msg: "Param user id, authentication token and application key must be presented" }, status: 400
+      render json: { status: 201, message: "Need user id and auth token to access api"}
     end
   end
 
@@ -176,6 +134,22 @@ class Api::UsersController < ApplicationController
             userFav = UserFavLocation.where(user_id: user.id).order('id desc')
             friend_lists = UserFriendList.where(user_id: user.id)
 
+            p "previous user"
+            p previous_user = User.find(current_user.id)
+            previous_token = UserPushToken.find_by_user_id(current_user.id)
+            if previous_token.present?
+              p previous_token.endpoint_arn
+              #update push token user id in hive and aws sns
+              previous_token.update(user_id: user.id)
+              sns_client = Aws::SNS::Client.new
+              resp = sns_client.set_endpoint_attributes({
+                      endpoint_arn: previous_token.endpoint_arn, # required
+                      attributes: { # required
+                        "CustomUserData" => user.id.to_s,
+                      },
+                    })
+            end
+
             render json: {status:200,
               message: "User sign up successfully",
               user: user,
@@ -203,6 +177,260 @@ class Api::UsersController < ApplicationController
     else
 
       render json: { error_msg: "Param authentication token must be presented" }, status: 400
+    end
+  end
+
+  def sign_in
+    params[:bt_mac_address].present? ? bt_mac_address = params[:bt_mac_address] : bt_mac_address = ""
+    if params[:email].present? and params[:password].present?
+      var = [ ]
+      user = User.find_by_email(params[:email])
+      if user.present?
+        if user.valid_password?(params[:password])
+          userFav = UserFavLocation.where(user_id: user.id).order('id desc')
+
+          if current_user.present?
+            p "previous user"
+            p previous_user = User.find(current_user.id)
+            previous_token = UserPushToken.find_by_user_id(current_user.id)
+            if previous_token.present?
+              p previous_token.endpoint_arn
+              p "update push token user id in hive and aws sns"
+              previous_token.update(user_id: user.id)
+              sns_client = Aws::SNS::Client.new
+              resp = sns_client.set_endpoint_attributes({
+                endpoint_arn: previous_token.endpoint_arn, # required
+                attributes: { # required
+                  "CustomUserData" => user.id.to_s,
+                },
+              })
+            end
+          end
+
+          render json: {status:200, message: "sign in successfully",
+            user: user,
+            userfavlocation: userFav,
+            local_avatar: Topic.get_avatar(user.username),
+            success: 20 }, status: 200
+        else
+          var.push(22)
+          render json: {status:201, message: "User password mismatched.", error: var}, status: 400 # User password wrong
+        end
+
+
+      else
+        var.push(21)
+        render json: { status:201, message:"User email doesn't exit.",:error => var}, status: 400 # User email doesn't exist
+      end
+
+    elsif params[:app_name]
+      user = User.find_by_device_id(params[:device_id])
+
+      if user.present?
+        result = Hash.new
+        result[:device_id] = params[:device_token]
+        user.data = result
+        user.save!
+      else
+        user = User.new(device_id: params[:device_id], password: Devise.friendly_token)
+        user.save
+      end
+      avatar = Topic.get_avatar(user.username)
+      render json: { :user => user, :success => 20 , avatar: avatar, daily_point: user.daily_points}, status: 200
+    else
+      render json: {error_msg: "Params email and password must be presented"} , status: 400
+    end
+  end
+
+  def facebook_login
+    if params[:fb_id].present? and current_user.present?
+      var = [ ]
+      user = User.find (current_user.id)
+      # fb_account = UserAccount.find_all_by_account_type_and_linked_account_id("facebook",params[:fb_id])
+
+      fb_account = UserAccount.find_by_linked_account_id(params[:fb_id])
+
+      if user.present?
+        if fb_account.present?
+          #user_accounts = UserAccount.where(:user_id => user.id)
+          #render json: { :user => user,  :user_accounts => user_accounts, :success => 40 }, status: 200
+          user = User.find (fb_account.user_id)
+          user_accounts = UserAccount.where(:user_id => user.id)
+
+          name = user.username
+          id = user.id
+          avatar = Topic.get_avatar(user.username)
+
+          userFav = UserFavLocation.where(user_id: user.id).order('id desc')
+
+          friend_lists = UserFriendList.where(user_id: user.id)
+
+          activeUsersArray = [ ]
+          friend_lists.each do |data|
+            activeuser = User.find(data.friend_id)
+            usersArray= {id: user.id, username: activeuser.username,last_known_latitude:activeuser.last_known_latitude,last_known_longitude:activeuser.last_known_longitude,avatar_url:activeuser.avatar_url,local_avatar: Topic.get_avatar(activeuser.username)}
+            activeUsersArray.push(usersArray)
+          end
+
+          # render json: { :user => user,  :fb_exists => true, :user_accounts => user_accounts, :success => 40 }, status: 200
+          render json: { :user => user,  :fb_exists => true, user_accounts: user_accounts,userfavlocation: userFav,friend_list: activeUsersArray, :name => name, :id => id, local_avatar: avatar , :success => 40 }, status: 200
+
+          # if fb_account.user_id == user.id
+          #   user_accounts = UserAccount.where(:user_id => user.id)
+          #   render json: { :user => user,  :fb_exists => true, :user_accounts => user_accounts, :success => 40 }, status: 200
+          # else
+          #   var.push (41)
+          #   render json: { :error => var }, status: 400
+          # end
+        else
+          user.email = params[:email]
+          user.save
+          account = UserAccount.new
+          new_account = UserAccount.create(user_id: user.id,account_type: "facebook", priority: 0, linked_account_id: params[:fb_id])
+          render json: { :user => user,  :fb_exists => true,:user_accounts => new_account, :success => 40 }, status: 200
+        end
+      else
+        render json:{ error_msg: "Invalid user id/ authentication token"}, status: 400
+      end
+    else
+      render json:{ error_msg: "Param facebook id must be presented" } , status: 400
+    end
+  end
+
+  def get_reset_password_token
+    user = User.find_by_email(params[:email])
+    if user.present?
+      user.reset_password_sent_at = Time.zone.now
+      user.reset_password_token =  SecureRandom.urlsafe_base64
+      user.save!
+      render json:{status:"OK",username: user.username,token: user.reset_password_token}, status: 200
+    else
+      render json:{status:"No user"}
+    end
+
+  end
+
+  def forget_password
+    # Sends email for user to change PASSWORD
+    if params[:email].present?
+      user = User.find_by_email(params[:email])
+      if user.present?
+        user.send_password_reset_to_app
+        render json:{ status:200, message: "Email sent with password reset instructions."}, status: 200
+      else
+        render json:{ status: 201,message: "There is no user with this email."}, status: 400
+      end
+    end
+  end
+
+  def update_password
+    # Updates PASSWORD
+    @user = User.find_by_reset_password_token(params[:token])
+
+    if @user.present?
+      p "password status"
+      p status =  @user.valid_password?(params[:password])
+
+      if @user.reset_password_sent_at < 7.days.ago
+        render json:{ status: 201, message: "Password reset has expired."}, status: 400
+      else
+        @user.password = params[:password]
+        @user.password_confirmation = params[:password_confirmation]
+        @user.save
+
+        render json:{ status:200, message: "Password has been reset!", user: @user}, status: 200
+      end
+
+    else
+      render  json:{stauts: 201, message: "token invalid"}, status: 400  #err in saving password, show on reset_password page
+    end
+
+  end
+
+  def edit_profile
+    if current_user.present?
+      user = User.find_by_id(current_user.id)
+      var = [ ]
+      message = ""
+
+      if params[:email].present?
+        checkEmail = User.find_by_email(params[:email])
+        if checkEmail != nil
+          var.push(31)
+          message = "Email already exit."
+        end
+      end
+
+      if params[:password].present?
+        p user.email
+        p user.password
+        p params[:password]
+        if user.password != params[:password]
+          var.push(32)
+          message = "Password mismatched"
+        end
+      end
+
+      if params[:username].present?
+        checkUsername = User.search_data(params[:username])
+        var.push(33) if Obscenity.profane?(params["username"]) == true
+        username = params[:username]
+        checkName = User.where("LOWER(username)  =?", username.downcase).take
+        if checkName.present?
+          var.push(32) #if checkUsername.present?
+          message = "The username has already been taken"
+        end
+      end
+
+      if var.empty?
+        if params[:username].present?
+          user.username = params[:username]
+        end
+
+        if params[:email].present?
+          user.email = params[:email]
+        end
+
+        if params[:password].present?
+          user.password = params[:update_password]
+          user.password_confirmation = params[:update_password]
+        end
+
+        if params[:avatar_url].present?
+          if params[:avatar_url].to_s == "null"
+            user.avatar_url = nil
+          else
+            user.avatar_url = params[:avatar_url]
+          end
+
+        end
+
+        user.save!
+        render json: { status: 200, message: "Edit Success",:user => user, local_avatar: Topic.get_avatar(user.username), :success => 30 }, status: 200
+      else
+        render json: {status: 201, message: message, :error => var}, status: 400
+      end
+    end
+  end
+
+  def facebook_friends
+    fb_friends_array = [ ]
+    fbIDS_array = [ ]
+
+    if params[:fb_id].present?
+      fbIDS_array = params[:fb_id].split(",")
+
+      fbIDS_array.each do |fb|
+        account = UserAccount.find_by(account_type: "facebook",linked_account_id: fb)
+        if account.present?
+          data = { fb_id: fb, user_id: account.user_id }
+          fb_friends_array.push(data)
+        end
+      end
+
+      render json: { users: fb_friends_array }
+    else
+      render json: { error_msg: "facebook id must be presented" }, status: 400
     end
   end
 
@@ -318,264 +546,6 @@ class Api::UsersController < ApplicationController
 
   end
 
-  def sign_in
-    params[:bt_mac_address].present? ? bt_mac_address = params[:bt_mac_address] : bt_mac_address = ""
-
-    if params[:email].present? and params[:password].present?
-      var = [ ]
-      user = User.find_by_email(params[:email])
-
-      if user.present?
-        if user.valid_password?(params[:password])
-          if params[:app_key]
-            hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
-            user_account = UserAccount.where(user_id: user.id, hiveapplication_id: hiveapplication.id)
-            if user_account.count == 0
-               UserAccount.create(user_id: user.id, account_type: hiveapplication.app_name, linked_account_id: 0,priority: 0,hiveapplication_id: hiveapplication.id)
-            end
-
-          end
-
-          user_accounts = UserAccount.where(:user_id => user.id)
-
-          name = user.username
-          id = user.id
-          avatar = Topic.get_avatar(user.username)
-
-          userFav = UserFavLocation.where(user_id: user.id).order('id desc')
-
-          friend_lists = UserFriendList.where(user_id: user.id)
-
-          activeUsersArray = [ ]
-          friend_lists.each do |data|
-            activeuser = User.find(data.friend_id)
-            usersArray= {id: user.id, username: activeuser.username,last_known_latitude:activeuser.last_known_latitude,last_known_longitude:activeuser.last_known_longitude,avatar_url:activeuser.avatar_url,local_avatar: Topic.get_avatar(activeuser.username)}
-            activeUsersArray.push(usersArray)
-          end
-
-          render json: {status:200, message: "sign in successfully",:user => user, user_accounts: user_accounts,userfavlocation: userFav,friend_list: activeUsersArray, :name => name, :id => id, local_avatar: avatar , :success => 20 }, status: 200
-        else
-          var.push(22)
-          render json: {status:201, message: "User password mismatched.", :error => var}, status: 400 # User password wrong
-        end
-
-
-      else
-        var.push(21)
-        render json: { status:201, message:"User email doesn't exit.",:error => var}, status: 400 # User email doesn't exist
-      end
-
-    elsif params[:app_name]
-      user = User.find_by_device_id(params[:device_id])
-
-      if user.present?
-        result = Hash.new
-        result[:device_id] = params[:device_token]
-        user.data = result
-        user.save!
-      else
-        user = User.new(device_id: params[:device_id], password: Devise.friendly_token)
-        user.save
-      end
-      avatar = Topic.get_avatar(user.username)
-      render json: { :user => user, :success => 20 , avatar: avatar, daily_point: user.daily_points}, status: 200
-    else
-      render json: {error_msg: "Params email and password must be presented"} , status: 400
-    end
-  end
-
-  def facebook_login
-    if params[:fb_id].present? and current_user.present?
-      var = [ ]
-      user = User.find (current_user.id)
-      # fb_account = UserAccount.find_all_by_account_type_and_linked_account_id("facebook",params[:fb_id])
-
-      fb_account = UserAccount.find_by_linked_account_id(params[:fb_id])
-
-      if user.present?
-        if fb_account.present?
-          #user_accounts = UserAccount.where(:user_id => user.id)
-          #render json: { :user => user,  :user_accounts => user_accounts, :success => 40 }, status: 200
-          user = User.find (fb_account.user_id)
-          user_accounts = UserAccount.where(:user_id => user.id)
-
-          name = user.username
-          id = user.id
-          avatar = Topic.get_avatar(user.username)
-
-          userFav = UserFavLocation.where(user_id: user.id).order('id desc')
-
-          friend_lists = UserFriendList.where(user_id: user.id)
-
-          activeUsersArray = [ ]
-          friend_lists.each do |data|
-            activeuser = User.find(data.friend_id)
-            usersArray= {id: user.id, username: activeuser.username,last_known_latitude:activeuser.last_known_latitude,last_known_longitude:activeuser.last_known_longitude,avatar_url:activeuser.avatar_url,local_avatar: Topic.get_avatar(activeuser.username)}
-            activeUsersArray.push(usersArray)
-          end
-
-          # render json: { :user => user,  :fb_exists => true, :user_accounts => user_accounts, :success => 40 }, status: 200
-          render json: { :user => user,  :fb_exists => true, user_accounts: user_accounts,userfavlocation: userFav,friend_list: activeUsersArray, :name => name, :id => id, local_avatar: avatar , :success => 40 }, status: 200
-
-          # if fb_account.user_id == user.id
-          #   user_accounts = UserAccount.where(:user_id => user.id)
-          #   render json: { :user => user,  :fb_exists => true, :user_accounts => user_accounts, :success => 40 }, status: 200
-          # else
-          #   var.push (41)
-          #   render json: { :error => var }, status: 400
-          # end
-        else
-          user.email = params[:email]
-          user.save
-          account = UserAccount.new
-          new_account = UserAccount.create(user_id: user.id,account_type: "facebook", priority: 0, linked_account_id: params[:fb_id])
-          render json: { :user => user,  :fb_exists => true,:user_accounts => new_account, :success => 40 }, status: 200
-        end
-      else
-        render json:{ error_msg: "Invalid user id/ authentication token"}, status: 400
-      end
-    else
-      render json:{ error_msg: "Param facebook id must be presented" } , status: 400
-    end
-  end
-
-  def get_reset_password_token
-    user = User.find_by_email(params[:email])
-    if user.present?
-      user.reset_password_sent_at = Time.zone.now
-      user.reset_password_token =  SecureRandom.urlsafe_base64
-      user.save!
-      render json:{status:"OK",username: user.username,token: user.reset_password_token}, status: 200
-    else
-      render json:{status:"No user"}
-    end
-
-  end
-
-  def forget_password
-    # Sends email for user to change PASSWORD
-    if params[:email].present?
-      user = User.find_by_email(params[:email])
-      if user.present?
-        user.send_password_reset_to_app
-        render json:{ status:200, message: "Email sent with password reset instructions."}, status: 200
-      else
-        render json:{ status: 201,message: "There is no user with this email."}, status: 400
-      end
-    end
-  end
-
-  def update_password
-    # Updates PASSWORD
-    @user = User.find_by_reset_password_token(params[:token])
-
-
-    if @user.present?
-      p "password status"
-      p status =  @user.valid_password?(params[:password])
-
-      if @user.reset_password_sent_at < 7.days.ago
-        render json:{ status: 201, message: "Password reset has expired."}, status: 400
-      else
-        @user.password = params[:password]
-        @user.password_confirmation = params[:password_confirmation]
-        @user.save
-
-        render json:{ status:200, message: "Password has been reset!", user: @user}, status: 200
-      end
-
-    else
-      render  json:{stauts: 201, message: "token invalid"}, status: 400  #err in saving password, show on reset_password page
-    end
-
-  end
-
-  def edit_profile
-    if current_user.present?
-      user = User.find_by_id(current_user.id)
-      var = [ ]
-      message = ""
-
-      if params[:email].present?
-        checkEmail = User.find_by_email(params[:email])
-        if checkEmail != nil
-          var.push(31)
-          message = "Email already exit."
-        end
-      end
-
-      if params[:password].present?
-        p user.email
-        p user.password
-        p params[:password]
-        if user.password != params[:password]
-          var.push(32)
-          message = "Password mismatched"
-        end
-      end
-
-      if params[:username].present?
-        checkUsername = User.search_data(params[:username])
-        var.push(33) if Obscenity.profane?(params["username"]) == true
-        username = params[:username]
-        checkName = User.where("LOWER(username)  =?", username.downcase).take
-        if checkName.present?
-          var.push(32) #if checkUsername.present?
-          message = "The username has already been taken"
-        end
-      end
-
-      if var.empty?
-        if params[:username].present?
-          user.username = params[:username]
-        end
-
-        if params[:email].present?
-          user.email = params[:email]
-        end
-
-        if params[:password].present?
-          user.password = params[:update_password]
-          user.password_confirmation = params[:update_password]
-        end
-
-        if params[:avatar_url].present?
-          if params[:avatar_url].to_s == "null"
-            user.avatar_url = nil
-          else
-            user.avatar_url = params[:avatar_url]
-          end
-
-        end
-
-        user.save!
-        render json: { status: 200, message: "Edit Success",:user => user, local_avatar: Topic.get_avatar(user.username), :success => 30 }, status: 200
-      else
-        render json: {status: 201, message: message, :error => var}, status: 400
-      end
-    end
-  end
-
-  def facebook_friends
-    fb_friends_array = [ ]
-    fbIDS_array = [ ]
-
-    if params[:fb_id].present?
-      fbIDS_array = params[:fb_id].split(",")
-
-      fbIDS_array.each do |fb|
-        account = UserAccount.find_by(account_type: "facebook",linked_account_id: fb)
-        if account.present?
-          data = { fb_id: fb, user_id: account.user_id }
-          fb_friends_array.push(data)
-        end
-      end
-
-      render json: { users: fb_friends_array }
-    else
-      render json: { error_msg: "facebook id must be presented" }, status: 400
-    end
-  end
 
   def user_info
     if current_user.present?
@@ -610,7 +580,6 @@ class Api::UsersController < ApplicationController
     end
   end
 
-
   def block_user
     if params[:block_user_id].present? and params[:choice].present? and current_user.present?
       user = User.find(current_user.id)
@@ -622,7 +591,6 @@ class Api::UsersController < ApplicationController
       render json: { error_msg: "Params user id to block, current user id, authentication token and choice must be presented" } , status: 400
     end
   end
-
 
   def user_action_logs
 
@@ -769,6 +737,50 @@ class Api::UsersController < ApplicationController
 
   def regenerate_username
     render json: { username: User.generate_new_username }
+  end
+
+  def update_carmmunicate_user
+    if current_user.present? and params[:app_key].present?
+      hiveapplication = HiveApplication.find_by_api_key(params[:app_key])
+      if hiveapplication.present?
+        user = User.find(current_user.id)
+        #covert the params data to hash
+        data = getHashValuefromString(params[:data]) if params[:data].present?
+
+        #get predefined addtional columns from table and match with the params value
+        appAdditionalField = AppAdditionalField.where(:app_id => hiveapplication.id, :table_name => "User")
+        result = Hash.new
+        if appAdditionalField.present?
+          defined_Fields = Hash.new
+          appAdditionalField.each do |field|
+            if field.additional_column_name == "speed" or   field.additional_column_name == "direction" #default value of speed and direction is -1
+              defined_Fields[field.additional_column_name] = "-1"
+            else
+              defined_Fields[field.additional_column_name] = ""
+            end
+          end
+          #get all extra columns that define in app setting against with the params data
+          if data.present?
+            data = defined_Fields.deep_merge(data)
+            defined_Fields.keys.each do |key|
+              result.merge!(data.extract! (key))
+            end
+          else
+            result = defined_Fields
+          end
+        end
+        result = nil unless result.present?
+
+        data_hash = {}
+        user.data = result
+        user.save!
+        render json: { user: user }
+      else
+        render json: { error_msg: "Invalid application key" }, status: 400
+      end
+    else
+      render json: { error_msg: "Param user id, authentication token and application key must be presented" }, status: 400
+    end
   end
 
   def create_incident_history

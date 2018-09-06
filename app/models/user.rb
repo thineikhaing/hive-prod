@@ -83,16 +83,32 @@ class User < ActiveRecord::Base
         user_endpoint_arn = endpoint[:endpoint_arn]
 
     rescue => e
+
+      p "exception"
       result = e.message.match(/Endpoint(.*)already/)
       if result.present?
         p "endpoint"
         p user_endpoint_arn = result[1].strip
+        if !user_endpoint_arn.nil?
 
+          prev_record = UserPushToken.find_by_endpoint_arn(user_endpoint_arn)
+          prev_record.update(user_id: user_id) if prev_record.present?
+
+          sns_client = Aws::SNS::Client.new
+          resp = sns_client.set_endpoint_attributes({
+                  endpoint_arn: user_endpoint_arn, # required
+                  attributes: { # required
+                    "CustomUserData" => user_id.to_s,
+                  },
+          })
+
+        end
       end
     end
     if !user_endpoint_arn.nil?
         User.subscribe_to_topic(user_endpoint_arn)
-        user_token = UserPushToken.find_by(user_id: user_id,endpoint_arn:user_endpoint_arn,push_token: device_token)
+        user_token = UserPushToken.find_by(endpoint_arn:user_endpoint_arn,push_token: device_token)
+        user_token.update(user_id: user_id) if user_token.present?
         UserPushToken.create(user_id: user_id,endpoint_arn:user_endpoint_arn,push_token: device_token) unless user_token.present?
     end
   end

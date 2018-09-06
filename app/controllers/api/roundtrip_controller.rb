@@ -775,7 +775,7 @@ end
         busstops.push(format_bus)
       end
 
-      render json:{status:200, message:"Favourite Buses List",favbuses: favbuses, bus_stops: busstops, status: 200}
+      render json:{status:200, message:"Favourite Buses List",favbuses: favbuses, bus_stops: busstops}
     else
       render json:{status: 201, message: "unauthorized."}
     end

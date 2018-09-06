@@ -33,7 +33,6 @@ class ApplicationController < ActionController::Base
   end
 
   def set_user
-    p "session data user"
     if params[:auth_token].present? && params[:user_id].present?
       Topic.current = User.find(params[:user_id])  #get user by user_id
     end
