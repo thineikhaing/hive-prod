@@ -99,7 +99,9 @@ class Api::DownloaddataController < ApplicationController
                   user_friend_list: user_friend_list,
                   userfavlocation: userplaces,
                   friend_count: user_friend_list.count,
-                  friend_list: activeUsersArray}, status: 200
+                  friend_list: activeUsersArray,
+                  user: current_user,
+                  local_avatar: Topic.get_avatar(current_user.username)}, status: 200
     else
       render json: {},status: 400
     end

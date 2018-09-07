@@ -398,6 +398,13 @@ class Api::UsersController < ApplicationController
 
         if params[:avatar_url].present?
           if params[:avatar_url].to_s == "null"
+
+            if Rails.env.production?
+              bucket_name = AWS_Bucket::Avatar_P
+            else
+              bucket_name = AWS_Bucket::Avatar_S
+            end
+            Post.delete_S3_file(bucket_name, user.avatar_url,0)
             user.avatar_url = nil
           else
             user.avatar_url = params[:avatar_url]

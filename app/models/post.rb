@@ -531,7 +531,7 @@ class Post < ActiveRecord::Base
 
   end
 
-  def delete_S3_file(bucket_name, file_name,post_type)
+  def self.delete_S3_file(bucket_name, file_name,post_type)
     s3 = Aws::S3::Client.new
     p file_name
 
