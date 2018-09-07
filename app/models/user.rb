@@ -81,6 +81,10 @@ class User < ActiveRecord::Base
         custom_user_data: user_id.to_s
         )
         user_endpoint_arn = endpoint[:endpoint_arn]
+        
+        prev_record = UserPushToken.find_by_endpoint_arn(user_endpoint_arn)
+        prev_record.update(user_id: user_id) if prev_record.present?
+
     rescue => e
       p "exception"
       result = e.message.match(/Endpoint(.*)already/)

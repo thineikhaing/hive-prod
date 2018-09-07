@@ -1506,22 +1506,31 @@ class Topic < ActiveRecord::Base
         time_difference = Time.now - u.check_in_time
         if time_difference < time_allowance
           if u.id != topic.user_id
+            p "user id:::"
+            p u.id
             push_tokens = UserPushToken.where(user_id: u.id, notify: true)
 
             push_tokens.map{|pt|
-              if ! pt.endpoint_arn.nil?
-                begin
-                  sns.publish(target_arn: pt.endpoint_arn, message: sns_message, message_structure:"json")
-                rescue
-                  p "EndpointDisabledException or InvalidParameter"
-                  p pt.endpoint_arn
+              duplicate_token = UserPushToken.where(user_id: topic.user_id, endpoint_arn: pt.endpoint_arn)
+              if duplicate_token.present?
+                p "delete previous push token record"
+                pt.delete
+              else
+                if ! pt.endpoint_arn.nil?
+                  begin
+                    sns.publish(target_arn: pt.endpoint_arn, message: sns_message, message_structure:"json")
+                  rescue
+                    p "EndpointDisabledException or InvalidParameter"
+                    p pt.endpoint_arn
 
-                    resp = sns.delete_endpoint({
-                      endpoint_arn: pt.endpoint_arn, # required
-                    })
-                    UserPushToken.find_by_endpoint_arn(pt.endpoint_arn).delete
-                  end
+                      resp = sns.delete_endpoint({
+                        endpoint_arn: pt.endpoint_arn, # required
+                      })
+                      UserPushToken.find_by_endpoint_arn(pt.endpoint_arn).delete
+                    end
+                end
               end
+
             }
 
           end

@@ -304,7 +304,6 @@ class Post < ActiveRecord::Base
         image_url: self.img_url,
         width:  self.width,
         height: self.height,
-        created_at: self.created_at,
         user_id: self.user_id,
         username: self.username,
         post_type: self.post_type,
