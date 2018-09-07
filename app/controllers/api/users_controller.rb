@@ -1139,12 +1139,12 @@ class Api::UsersController < ApplicationController
 
   def update_noti_setting
     if current_user.present?
-      user_push_token = UserPushToken.find_by_user_id_and_push_token(params[:user_id],params[:push_token])
-      if user_push_token.present?
+      user_push_tokens = UserPushToken.where(push_token: params[:push_token])
+      if user_push_tokens.present?
         if params[:notify] == "1"
-          user_push_token.update(notify: true)
+          user_push_tokens.update_all(notify: true)
         else
-          user_push_token.update(notify: false)
+          user_push_tokens.update_all(notify: false)
         end
         render json: {status:200,message: "Update user noti setting for this device."}
       else
