@@ -1430,121 +1430,102 @@ class Topic < ActiveRecord::Base
 
   def notify_roundtrip_users
 
-    hiveapplication = HiveApplication.find(self.hiveapplication_id)
-    user_id = []
+    sns = Aws::SNS::Client.new
+
+    topic = self
+
+    place_name = topic.place_information[:name]
+    place_name =   topic.rtplaces_information[:start_place][:name] if topic.topic_type == 11
+    iphone_notification = {
+        aps: {
+            alert: topic.title,
+            sound: "default",
+            badge: 0,
+            extra:  {
+                topic_id: topic.id,
+                topic_title: topic.title,
+                broadcast_user: topic.user_id,
+                start_place: topic.rtplaces_information[:start_place][:name],
+                end_place:  topic.rtplaces_information[:end_place][:name],
+                topic_username: topic.username,
+                place_name: place_name,
+                create_at: topic.created_at,
+                shared: true
+            }
+        }
+    }
+
+    android_notification = {
+        data: {
+            message: topic.title,
+            badge: 0,
+            extra:  {
+                topic_id: topic.id,
+                topic_title: topic.title,
+                broadcast_user: topic.user_id,
+                start_place: topic.rtplaces_information[:start_place][:name],
+                end_place:  topic.rtplaces_information[:end_place][:name],
+                topic_username: topic.username,
+                place_name: place_name,
+                create_at: topic.created_at,
+                shared: true
+            }
+        }
+    }
+
+    sns_message = {
+        default: topic.title,
+        APNS_SANDBOX: iphone_notification.to_json,
+        APNS: iphone_notification.to_json,
+        GCM: android_notification.to_json
+    }.to_json
+
+    hiveapplication = HiveApplication.find(topic.hiveapplication_id)
+
     to_endpoint_arn = []
     users_by_location = []
     radius = 1 if radius.nil?
-    center_users= ""
 
-    # center_point = [self.place.latitude.to_f, self.place.longitude.to_f]
-    # box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
-    # center_users = User.where(last_known_latitude: box[0] .. box[2], last_known_longitude: box[1] .. box[3])
-    # center_users_list = center_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
-
-    
-    s_center_point = [self.start_place.latitude.to_f, self.start_place.longitude.to_f]
+    s_center_point = [topic.start_place.latitude.to_f, topic.start_place.longitude.to_f]
     s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
     start_users = User.where(last_known_latitude: s_box[0] .. s_box[2], last_known_longitude: s_box[1] .. s_box[3])
     start_users = start_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
 
-    e_center_point =  [self.end_place.latitude.to_f, self.end_place.longitude.to_f]
+    e_center_point =  [topic.end_place.latitude.to_f, topic.end_place.longitude.to_f]
     e_box = Geocoder::Calculations.bounding_box(e_center_point, radius, {units: :km})
     end_users = User.where(last_known_latitude: e_box[0] .. e_box[2], last_known_longitude: e_box[1] .. e_box[3])
     end_users = end_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
 
-
-
-
     users_by_location = start_users+end_users
-
     users_by_location = users_by_location.uniq{ |user| [user[:id]]}
-
     time_allowance = Time.now - 1.day.ago
+
 
     users_by_location.each do |u|
       if u.check_in_time.present?
         time_difference = Time.now - u.check_in_time
         if time_difference < time_allowance
-          push_tokens = UserPushToken.where(user_id: u.id)
-          if push_tokens.count > 0
-            user_id.push(u.id)
-            push_tokens.map{|pt| to_endpoint_arn.push(pt.endpoint_arn) }
+          if u.id != topic.user_id
+            push_tokens = UserPushToken.where(user_id: u.id, notify: true)
+
+            push_tokens.map{|pt|
+              if ! pt.endpoint_arn.nil?
+                begin
+                  sns.publish(target_arn: pt.endpoint_arn, message: sns_message, message_structure:"json")
+                rescue
+                  p "EndpointDisabledException or InvalidParameter"
+                  p pt.endpoint_arn
+
+                    resp = sns.delete_endpoint({
+                      endpoint_arn: pt.endpoint_arn, # required
+                    })
+                    UserPushToken.find_by_endpoint_arn(pt.endpoint_arn).delete
+                  end
+              end
+            }
+
           end
         end
-      end
-    end
-
-    p "list of users"
-    p user_id
-    p "list of to_endpoint_arn"
-    p to_endpoint_arn
-
-
-    place_name = self.place_information[:name]
-
-    if self.topic_type == 11
-      place_name =   self.rtplaces_information[:start_place][:name]
-    end
-
-    to_endpoint_arn.each do |arn|
-      if arn.present?
-        user_arn = arn
-        sns = Aws::SNS::Client.new
-        iphone_notification = {
-            aps: {
-                alert: self.title,
-                sound: "default",
-                badge: 0,
-                extra:  {
-                    topic_id: self.id,
-                    topic_title: self.title,
-                    broadcast_user: self.user_id,
-                    start_place: self.rtplaces_information[:start_place][:name],
-                    end_place:  self.rtplaces_information[:end_place][:name],
-                    topic_username: self.username,
-                    place_name: place_name,
-                    create_at: self.created_at,
-                    shared: true
-                }
-            }
-        }
-
-        android_notification = {
-            data: {
-                message: self.title,
-                badge: 0,
-                extra:  {
-                    topic_id: self.id,
-                    topic_title: self.title,
-                    broadcast_user: self.user_id,
-                    start_place: self.rtplaces_information[:start_place][:name],
-                    end_place:  self.rtplaces_information[:end_place][:name],
-                    topic_username: self.username,
-                    place_name: place_name,
-                    create_at: self.created_at,
-                    shared: true
-                }
-            }
-        }
-
-        sns_message = {
-            default: self.title,
-            APNS_SANDBOX: iphone_notification.to_json,
-            APNS: iphone_notification.to_json,
-            GCM: android_notification.to_json
-        }.to_json
-
-
-        begin
-          sns.publish(target_arn: user_arn, message: sns_message, message_structure:"json")
-        rescue
-          # Aws::SNS::Errors::EndpointDisabled
-          # Aws::SNS::Errors::InvalidParameter
-          p "EndpointDisabledException or InvalidParameter"
-        end
-
-
       end
     end
 

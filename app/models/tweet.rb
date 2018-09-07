@@ -40,13 +40,13 @@ class Tweet < ApplicationRecord
     tags.gsub(/"/, "").split(',')
 
     sns = Aws::SNS::Client.new
-    if Rails.env.development?
-      target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
-    elsif Rails.env.staging?
-      target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
-    else
-      target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_P_Broadcast_Noti'
-    end
+    # if Rails.env.development?
+    #   target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
+    # elsif Rails.env.staging?
+    #   target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
+    # else
+    #   target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_P_Broadcast_Noti'
+    # end
 
     alert_message = "["+tweet.creator+"] "+tweet.text
     tweet_topic = Topic.find_by_title(tweet.text)
@@ -91,9 +91,23 @@ class Tweet < ApplicationRecord
         GCM: android_notification.to_json
     }.to_json
 
-    s_arn = "arn:aws:sns:ap-southeast-1:378631322826:endpoint/GCM/Roundtrip_S/da5aacf6-7de3-3c0a-baa5-d86fad965ff3"
+    to_endpoint_arn= []
+    push_tokens = UserPushToken.where(notify: true)
+    push_tokens.map{|pt|
+      if ! pt.endpoint_arn.nil?
+        begin
+          sns.publish(target_arn: pt.endpoint_arn, message: sns_message, message_structure:"json")
+        rescue
+          p "EndpointDisabledException or InvalidParameter"
+          p pt.endpoint_arn
 
-    sns.publish(target_arn: target_topic, message: sns_message, message_structure:"json")
-
+            resp = sns.delete_endpoint({
+              endpoint_arn: pt.endpoint_arn, # required
+            })
+            UserPushToken.find_by_endpoint_arn(pt.endpoint_arn).delete
+        end
+      end
+    }
+    
   end
 end

@@ -889,8 +889,6 @@ class Api::UsersController < ApplicationController
 
     end
 
-
-
   end
 
   def save_user_fav_location
@@ -915,7 +913,7 @@ class Api::UsersController < ApplicationController
 
       place = place.add_record(name, latitude, longitude, address, source, source_id,
                                place_id, current_user.id, current_user.authentication_token,
-                               choice,"",place_type,locality,country,postcode)
+                               choice,"","",locality,country,postcode)
       p status = place[:status]
 
       place_id = place[:place].id
@@ -996,7 +994,7 @@ class Api::UsersController < ApplicationController
   def get_user_fav_location
     if params[:app_key].present?
       @userFav = UserFavLocation.where(user_id: params[:user_id]).order('id desc')
-      render json: { status: 200, message:"Favourite locatio list",userfavlocation: @userFav}
+      render json: { status: 200, message:"Favourite location list",userfavlocation: @userFav}
     else
       render json:{status:201, message: "Params app_key must be presented", error_msg: "Params app_key must be presented"} , status: 400
     end
@@ -1129,6 +1127,24 @@ class Api::UsersController < ApplicationController
 
     else
       render json:{status:201, message: "Params auth_token and user_id must be presented and valid.", error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
+    end
+  end
+
+  def update_noti_setting
+    if current_user.present?
+      user_push_token = UserPushToken.find_by_user_id_and_push_token(params[:user_id],params[:push_token])
+      if user_push_token.present?
+        if params[:notify] == "1"
+          user_push_token.update(notify: true)
+        else
+          user_push_token.update(notify: false)
+        end
+        render json: {status:200,message: "Update user noti setting for this device."}
+      else
+        render json:{status: 201, message: "There is no token related to user"} , status: 400
+      end
+    else
+      render json:{status: 201, message: "Params auth_token and user_id must be presented and valid."} , status: 400
     end
   end
 

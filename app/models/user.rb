@@ -81,9 +81,7 @@ class User < ActiveRecord::Base
         custom_user_data: user_id.to_s
         )
         user_endpoint_arn = endpoint[:endpoint_arn]
-
     rescue => e
-
       p "exception"
       result = e.message.match(/Endpoint(.*)already/)
       if result.present?
@@ -101,7 +99,6 @@ class User < ActiveRecord::Base
                     "CustomUserData" => user_id.to_s,
                   },
           })
-
         end
       end
     end

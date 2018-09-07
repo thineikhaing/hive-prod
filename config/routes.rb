@@ -156,6 +156,7 @@ Rails.application.routes.draw do
     match "users/save_user_friend_list"             => "users#save_user_friend_list"            , via: [:get, :post]
     match "users/delete_user_friend_list"           => "users#delete_user_friend_list"          , via: [:get, :post]
     match "users/get_user_friend_list"              => "users#get_user_friend_list"             , via: [:get, :post]
+    match "users/update_noti_setting"               => "users#update_noti_setting"             , via: [:get, :post]
 
     match "topics/create"                           => "topics#create"                          , via: [:get, :post]
     match "topics/search"                           => "topics#search"                          , via: [:get, :post]
