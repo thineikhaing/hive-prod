@@ -83,7 +83,7 @@ class User < ActiveRecord::Base
         user_endpoint_arn = endpoint[:endpoint_arn]
 
         prev_record = UserPushToken.find_by(endpoint_arn:user_endpoint_arn)
-        if prev_record.present? && prev_record.user_id != user_id
+        if prev_record.present?
           prev_record.update(user_id: user_id)
         end
 
@@ -97,7 +97,7 @@ class User < ActiveRecord::Base
         if !user_endpoint_arn.nil?
 
           prev_record = UserPushToken.find_by(endpoint_arn:user_endpoint_arn)
-          if prev_record.present? && prev_record.user_id != user_id
+          if prev_record.present?
             prev_record.update(user_id: user_id)
           end
 
@@ -114,7 +114,7 @@ class User < ActiveRecord::Base
     if !user_endpoint_arn.nil?
         User.subscribe_to_topic(user_endpoint_arn)
         user_token = UserPushToken.find_by(endpoint_arn:user_endpoint_arn)
-        if user_token.present? && user_token.user_id != user_id
+        if user_token.present? 
           user_token.update(user_id: user_id)
         else
           UserPushToken.create(user_id: user_id,endpoint_arn:user_endpoint_arn,push_token: device_token)
