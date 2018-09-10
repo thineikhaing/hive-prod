@@ -1500,7 +1500,6 @@ class Topic < ActiveRecord::Base
     users_by_location = users_by_location.uniq{ |user| [user[:id]]}
     time_allowance = Time.now - 1.day.ago
 
-
     users_by_location.each do |u|
       if u.check_in_time.present?
         time_difference = Time.now - u.check_in_time
@@ -1509,14 +1508,13 @@ class Topic < ActiveRecord::Base
             p "user id:::"
             p u.id
             push_tokens = UserPushToken.where(user_id: u.id, notify: true)
-
             push_tokens.map{|pt|
               duplicate_token = UserPushToken.where(user_id: topic.user_id, endpoint_arn: pt.endpoint_arn)
               if duplicate_token.present?
                 p "delete previous push token record"
                 pt.delete
               else
-                if ! pt.endpoint_arn.nil?
+                if !pt.endpoint_arn.nil?
                   begin
                     sns.publish(target_arn: pt.endpoint_arn, message: sns_message, message_structure:"json")
                   rescue
