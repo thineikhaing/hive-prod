@@ -82,11 +82,6 @@ class User < ActiveRecord::Base
         )
         user_endpoint_arn = endpoint[:endpoint_arn]
 
-        prev_record = UserPushToken.find_by(endpoint_arn:user_endpoint_arn)
-        if prev_record.present?
-          prev_record.update(user_id: user_id)
-        end
-
     rescue => e
       p "exception"
       p e
@@ -95,11 +90,6 @@ class User < ActiveRecord::Base
         p "endpoint"
         p user_endpoint_arn = result[1].strip
         if !user_endpoint_arn.nil?
-
-          prev_record = UserPushToken.find_by(endpoint_arn:user_endpoint_arn)
-          if prev_record.present?
-            prev_record.update(user_id: user_id)
-          end
 
           sns_client = Aws::SNS::Client.new
           resp = sns_client.set_endpoint_attributes({
@@ -111,15 +101,17 @@ class User < ActiveRecord::Base
         end
       end
     end
+
     if !user_endpoint_arn.nil?
         User.subscribe_to_topic(user_endpoint_arn)
         user_token = UserPushToken.find_by(endpoint_arn:user_endpoint_arn)
-        if user_token.present? 
+        if user_token.present?
           user_token.update(user_id: user_id)
         else
           UserPushToken.create(user_id: user_id,endpoint_arn:user_endpoint_arn,push_token: device_token)
         end
     end
+
   end
 
   def self.subscribe_to_topic(endpoint_arn)
@@ -147,10 +139,7 @@ class User < ActiveRecord::Base
   end
 
   def send_password_reset_to_app
-    p generate_token(:reset_password_token)
-    self.reset_password_sent_at = Time.zone.now
-    p self.reset_password_token =  [*('A'..'Z'),*('0'..'9')].shuffle[0,6].join
-    save!
+    # p generate_token(:reset_password_token)
     UserMailer.password_reset_to_app(self).deliver
   end
 

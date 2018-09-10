@@ -102,74 +102,68 @@ class Api::UsersController < ApplicationController
       user = User.find_by_authentication_token(params[:auth_token])
       p "facebook user account"
       fb_user = User.find_by_email(params[:email])
-      p useracc = UserAccount.find_by_user_id(fb_user.id) if fb_user.present?
+      # p useracc = UserAccount.find_by_user_id(fb_user.id) if fb_user.present?
 
       if current_user.present?
-        if user.id == current_user.id
-          checkEmail = User.find_by_email(params[:email])
-          var = [ ]
 
-          if checkEmail.nil?
-            user.username = params[:username]
-            user.email = params[:email]
-            user.password = params[:password]
-            user.password_confirmation = params[:password]
-            user.token_expiry_date= Date.today + 6.months
+        checkEmail = User.find_by_email(params[:email])
+        var = [ ]
+
+        if checkEmail.nil?
+          user.username = params[:username]
+          user.email = params[:email]
+          user.password = params[:password]
+          user.password_confirmation = params[:password]
+          user.token_expiry_date= Date.today + 6.months
+          user.save!
+
+          if params[:app_key]
+            hiveapp = HiveApplication.find_by_api_key(params[:app_key])
+            app_data = Hash.new
+            app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
+            user.app_data = Hash.new if user.app_data.nil?
+            user.app_data = user.app_data.merge(app_data)
             user.save!
-
-            if params[:app_key]
-              hiveapp = HiveApplication.find_by_api_key(params[:app_key])
-              app_data = Hash.new
-              app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
-              user.app_data = Hash.new if user.app_data.nil?
-              user.app_data = user.app_data.merge(app_data)
-              user.save!
-              user_apps = UserHiveapp.find_by(user_id: user.id,hive_application_id: hiveapp.id)
-              UserHiveapp.create(user_id: user.id,hive_application_id: hiveapp.id) unless user_apps.present?
-            end
-
-            name = user.username
-            id = user.id
-            avatar = Topic.get_avatar(user.username)
-            userFav = UserFavLocation.where(user_id: user.id).order('id desc')
-            friend_lists = UserFriendList.where(user_id: user.id)
-
-            p "previous user"
-            p previous_user = User.find(current_user.id)
-            previous_token = UserPushToken.find_by_user_id(current_user.id)
-            if previous_token.present?
-              p previous_token.endpoint_arn
-              #update push token user id in hive and aws sns
-              previous_token.update(user_id: user.id)
-              sns_client = Aws::SNS::Client.new
-              resp = sns_client.set_endpoint_attributes({
-                      endpoint_arn: previous_token.endpoint_arn, # required
-                      attributes: { # required
-                        "CustomUserData" => user.id.to_s,
-                      },
-                    })
-            end
-
-            render json: {status:200,
-              message: "User sign up successfully",
-              user: user,
-              userfavlocation: userFav,
-              friend_list: friend_lists,
-              name: name, id: id,
-              local_avatar: avatar ,
-              success: 20 }, status: 200
-            # render json: { :user => user, :user_account => user_account, :success => 10 }, status: 200
-
-          elsif useracc.nil?
-              var.push(11)
-              render json: { status:201, message: "Email already exist!", :error => var , :error_msg => "Email already exist!"}, status: 400 # Email already exist
-
-          else
-            var.push(11)
-            render json: { status:201, message: "You already register with facebook, please sign in with facebook!", :error => var}, status: 400 # Email already exist
+            user_apps = UserHiveapp.find_by(user_id: user.id,hive_application_id: hiveapp.id)
+            UserHiveapp.create(user_id: user.id,hive_application_id: hiveapp.id) unless user_apps.present?
           end
 
+          name = user.username
+          id = user.id
+          avatar = Topic.get_avatar(user.username)
+          userFav = UserFavLocation.where(user_id: user.id).order('id desc')
+          friend_lists = UserFriendList.where(user_id: user.id)
+
+          p "previous user"
+          p previous_user = User.find(current_user.id)
+          previous_token = UserPushToken.find_by_user_id(current_user.id)
+          if previous_token.present?
+            p previous_token.endpoint_arn
+            #update push token user id in hive and aws sns
+            previous_token.update(user_id: user.id)
+            sns_client = Aws::SNS::Client.new
+            resp = sns_client.set_endpoint_attributes({
+                    endpoint_arn: previous_token.endpoint_arn, # required
+                    attributes: { # required
+                      "CustomUserData" => user.id.to_s,
+                    },
+                  })
+          end
+
+          render json: {status:200,
+            message: "User sign up successfully",
+            user: user,
+            userfavlocation: userFav,
+            friend_list: friend_lists,
+            name: name, id: id,
+            local_avatar: avatar ,
+            success: 20 }, status: 200
+          # render json: { :user => user, :user_account => user_account, :success => 10 }, status: 200
+        else
+          var.push(11)
+          render json: { status:201, message: "Email already exist!", :error => var}, status: 400 # Email already exist
         end
+
       else
         render json: { error_msg: "Invalid user id/ authentication token" }, status: 400
       end
@@ -315,7 +309,10 @@ class Api::UsersController < ApplicationController
     if params[:email].present?
       user = User.find_by_email(params[:email])
       if user.present?
-        user.send_password_reset_to_app
+        user.reset_password_sent_at = Time.zone.now
+        user.reset_password_token =  [*('A'..'Z'),*('0'..'9')].shuffle[0,6].join
+        user.save!
+        user.delay.send_password_reset_to_app
         render json:{ status:200, message: "Email sent with password reset instructions."}, status: 200
       else
         render json:{ status: 201,message: "There is no user with this email."}, status: 400
@@ -338,7 +335,7 @@ class Api::UsersController < ApplicationController
         @user.password_confirmation = params[:password_confirmation]
         @user.save
 
-        render json:{ status:200, message: "Password has been reset!", user: @user}, status: 200
+        render json:{ status:200, message: "Password has been reset!", user: @user,local_avatar:Topic.get_avatar(@user.username)}, status: 200
       end
 
     else
