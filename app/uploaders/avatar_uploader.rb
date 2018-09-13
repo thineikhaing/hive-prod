@@ -1,20 +1,10 @@
-class PhotoUploader < CarrierWave::Uploader::Base
-
+class AvatarUploader < CarrierWave::Uploader::Base
   # Include RMagick or MiniMagick support:
-  #include CarrierWave::RMagick
   include CarrierWave::RMagick
-  # include CarrierWave::MimeTypes
   include CarrierWave::MiniMagick
 
-  # Choose what kind of storage to use for this uploader:
-  #storage :file
+
   storage :fog
-
-  # process :set_content_type
-  #process :quality => 40
-
-  # Override the directory where uploaded files will be stored.
-  # This is a sensible default for uploaders that are meant to be mounted:
 
   def initialize(*)
     super
@@ -26,20 +16,12 @@ class PhotoUploader < CarrierWave::Uploader::Base
         :region => "ap-southeast-1",
     }
     if Rails.env.development?
-      self.fog_directory = "hivedevimages"
+      self.fog_directory = "hivedevavatars"
     elsif Rails.env.staging?
-      self.fog_directory = "hivestagingimages"
+      self.fog_directory = "hivestagingavatars"
     elsif Rails.env.production?
-      self.fog_directory = "hivestagingimages"
+      self.fog_directory = "hiveproductionavatars"
     end
-
-    # if Rails.env.development?
-    #   self.fog_directory = "hivedevavatars"
-    # elsif Rails.env.staging?
-    #   self.fog_directory = "hivestagingavatars"
-    # elsif Rails.env.production?
-    #   self.fog_directory = "hiveproductionavatars"
-    # end
   end
 
   version :medium do
@@ -47,7 +29,7 @@ class PhotoUploader < CarrierWave::Uploader::Base
     def full_filename (for_file = model.logo.file)
       file_name =  super.chomp(File.extname(super))
       names= file_name.split("_")
-      names[1] + '_m.jpg'
+      names[1] + '_m.png'
     end
   end
 
@@ -56,26 +38,13 @@ class PhotoUploader < CarrierWave::Uploader::Base
     def full_filename (for_file = model.logo.file)
       file_name =  super.chomp(File.extname(super))
       names= file_name.split("_")
-      names[1] + '_s.jpg'
+      names[1] + '_s.png'
     end
   end
 
   def store_dir
     nil
   end
-
-  def get_geometry
-    if (@file)
-      #img = ::Magick::Image::read(@file.file).first
-      img = ::MiniMagick::Image::read(File.binread(@file.file))
-      @geometry = [ img[:width], img[:height]]
-    end
-  end
-
-  #def filename
-  #  p File.basename(super)
-  #  super.chomp(File.extname(super)) + '_s.jpg'
-  #end
 
   def cache_dir
     'tmp'

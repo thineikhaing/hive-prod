@@ -86,22 +86,22 @@ class Api::DownloaddataController < ApplicationController
       activeUsersArray = [ ]
       friend_lists.each do |data|
         user = User.find(data.friend_id)
-        usersArray= {id: user.id, username: user.username,last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,avatar_url:user.avatar_url,local_avatar: Topic.get_avatar(user.username)}
+        usersArray= {id: user.id, username: user.username,
+          last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,
+          avatar:user.avatar_url.url,local_avatar: Topic.get_avatar(user.username)}
         activeUsersArray.push(usersArray)
       end
       render json: {
                   status: 200,
                   message: "Initial User data" ,
-                  topics: topics, posts: posts_topics,
-                  topic_count: topics.count,
-                  trips: trips, trip_count: trips.count,
-                  trip_detail:trip_detail,
-                  user_friend_list: user_friend_list,
-                  userfavlocation: userplaces,
-                  friend_count: user_friend_list.count,
-                  friend_list: activeUsersArray,
                   user: current_user,
-                  local_avatar: Topic.get_avatar(current_user.username)}, status: 200
+                  topics: topics,
+                  post_topic_ids: posts_topics,
+                  trips: trips,
+                  trip_detail:trip_detail,
+                  userfavlocation: userplaces,
+                  friend_list: activeUsersArray
+                  }, status: 200
     else
       render json: {},status: 400
     end

@@ -29,24 +29,11 @@ class Post < ActiveRecord::Base
   end
 
   def avatar_url
-    # avatar = User.find_by_id(self.user_id).avatar_url
-
-    if self.user.avatar_url.nil? || self.user.avatar_url.to_s === "null"
+    if self.user.avatar_url.url.nil? || self.user.avatar_url.url === "null"
       avatar = Topic.get_avatar(username)
     else
-      avatar = self.user.avatar_url
+      avatar = self.user.avatar_url.url
     end
-    # if avatar.nil?
-    #   username = User.find_by_id(self.user_id).username
-    #
-    #   if username  == "FavrBot"
-    #     avatar = "assets/Avatars/Chat-Avatar-Admin.png"
-    #   else
-    #     avatar = Topic.get_avatar(username)
-    #   end
-    #
-    # end
-
     return avatar
   end
 
@@ -528,6 +515,8 @@ class Post < ActiveRecord::Base
   def self.delete_S3_file(bucket_name, file_name,post_type)
     s3 = Aws::S3::Client.new
     p file_name
+    p bucket_name
+    p post_type
 
     resp = s3.delete_object({
       bucket: bucket_name,
@@ -536,8 +525,8 @@ class Post < ActiveRecord::Base
 
     if post_type == Post::IMAGE    #delete medium and small version
       names = file_name.split(".")
-      sfilename = names[0] +  "_s." +  names[1]
-      mfilename =  names[0] +  "_m." + names[1]
+      p sfilename = names[0] +  "_s." + names[1]
+      p mfilename =  names[0] +  "_m." + names[1]
 
       resp = s3.delete_objects({
         bucket: bucket_name,

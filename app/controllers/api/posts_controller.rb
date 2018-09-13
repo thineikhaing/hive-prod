@@ -168,12 +168,12 @@ class Api::PostsController < ApplicationController
         post_avatar_url = Hash.new
         posts.each do |post|
           username = post.user.username
-          if post.user.avatar_url.nil? || post.user.avatar_url.to_s === "null"
+          if post.user.avatar_url.url.nil? || post.user.avatar_url.url === "null"
             p "post avatar url"
             p avatar = Topic.get_avatar(username)
             post_avatar_url[post.id] = avatar
           else
-            post_avatar_url[post.id] = post.user.avatar_url
+            post_avatar_url[post.id] = post.user.avatar_url.url
           end
 
           #get the post location

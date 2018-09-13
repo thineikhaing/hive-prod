@@ -396,17 +396,19 @@ class Api::UsersController < ApplicationController
         if params[:avatar_url].present?
           if params[:avatar_url].to_s == "null"
 
-            if Rails.env.production?
-              bucket_name = AWS_Bucket::Avatar_P
-            else
+            if Rails.env.development?
+              bucket_name = AWS_Bucket::Avatar_D
+            elsif Rails.env.staging?
               bucket_name = AWS_Bucket::Avatar_S
+            else
+              bucket_name = AWS_Bucket::Avatar_P
             end
-            Post.delete_S3_file(bucket_name, user.avatar_url,0)
+             #
+            Post.delete_S3_file(bucket_name, user.avatar_url.current_path,Post::IMAGE)
             user.avatar_url = nil
           else
             user.avatar_url = params[:avatar_url]
           end
-
         end
 
         user.save!
@@ -1073,7 +1075,10 @@ class Api::UsersController < ApplicationController
       activeUsersArray = [ ]
       friend_lists.each do |data|
         user = User.find(data.friend_id)
-        usersArray= {id: user.id, username: user.username,last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,avatar_url:user.avatar_url,local_avatar: Topic.get_avatar(user.username)}
+        usersArray= {id: user.id, username: user.username,
+          last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,
+          avatar:user.avatar_url.url,
+          local_avatar: Topic.get_avatar(user.username)}
         activeUsersArray.push(usersArray)
       end
       render json: {status:200, message: "Friend list", friend_list: activeUsersArray}  , status: 200
@@ -1093,7 +1098,9 @@ class Api::UsersController < ApplicationController
          friend_lists.each do |data|
            p data
            user = User.find(data.friend_id)
-           usersArray= {id: user.id, username: user.username,last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,avatar_url:user.avatar_url,local_avatar: Topic.get_avatar(user.username)}
+           usersArray= {id: user.id, username: user.username,
+             last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,
+             avatar:user.avatar_url.url,local_avatar: Topic.get_avatar(user.username)}
            activeUsersArray.push(usersArray)
          end
          render json: {status: 200, message: "Saved user's friend list", friend_list: activeUsersArray}  , status: 200
@@ -1120,7 +1127,9 @@ class Api::UsersController < ApplicationController
         friend_lists.each do |data|
           p data
           user = User.find(data.friend_id)
-          usersArray= {id: user.id, username: user.username,last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,avatar_url:user.avatar_url,local_avatar: Topic.get_avatar(user.username)}
+          usersArray= {id: user.id, username: user.username,
+            last_known_latitude:user.last_known_latitude,last_known_longitude:user.last_known_longitude,
+            avatar:user.avatar_url.url,local_avatar: Topic.get_avatar(user.username)}
           activeUsersArray.push(usersArray)
         end
         render json: {status:200,message: "Deleted user's friend list", friend_list: activeUsersArray}  , status: 200

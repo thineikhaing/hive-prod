@@ -90,20 +90,8 @@ class Topic < ActiveRecord::Base
   end
 
   def avatar_url
-    User.find_by_id(self.user_id).avatar_url
-    # if avatar.nil?
-    #   username = User.find_by_id(self.user_id).username
-    #
-    #   if username  == "FavrBot"
-    #     avatar = "assets/Avatars/Chat-Avatar-Admin.png"
-    #   else
-    #   avatar = Topic.get_avatar(username)
-    #   end
-    # end
-
-    # return avatar
+    User.find_by_id(self.user_id).avatar_url.url
   end
-
 
 
   def local_avatar

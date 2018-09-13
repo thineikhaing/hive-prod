@@ -20,6 +20,9 @@ class User < ActiveRecord::Base
   has_many :user_hiveapps
   belongs_to :incident_history
 
+  # mount_uploader :avatar_url, AvatarUploader
+  mount_base64_uploader :avatar_url, AvatarUploader, file_name: -> (u) { u.id }
+
   # Setup hstore
   store_accessor :data
   include Authenticable
@@ -29,12 +32,24 @@ class User < ActiveRecord::Base
   #                 :check_in_time, :profanity_counter, :offence_date, :positive_honor, :negative_honor, :honored_times,
   #                 :created_at, :data, :device_id,:socal_id,:daily_points
 
+  def as_json(options=nil)
+    super(only: [:id, :email, :username, :authentication_token, :check_in_time, :last_known_latitude, :last_known_longitude,:created_at], methods: [:avatar,:local_avatar])
+  end
+
   after_initialize :ensure_authentication_token
   after_initialize :ensure_username
 
   validates_uniqueness_of    :email, :case_sensitive => false, :allow_blank => true
 
   enums %w(BOT ADMIN VENDOR NORMAL)
+  def avatar
+    # self.avatar_url.current_path
+    self.avatar_url.url
+  end
+
+  def local_avatar
+    Topic.get_avatar(self.username)
+  end
 
   def self.sns_arn(device_type)
 

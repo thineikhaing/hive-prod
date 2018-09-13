@@ -27,5 +27,5 @@ CarrierWave.configure do |config|
     config.fog_directory = "hiveproductioniconimages"
   end
   config.fog_public = true
-  config.fog_attributes = {'Cache-Control'=>'max-age=315576000'}
+  # config.fog_attributes = {'Cache-Control'=>'max-age=315576000'}
 end

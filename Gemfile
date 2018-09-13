@@ -23,7 +23,8 @@ gem 'pusher'
 gem 'em-http-request'
 gem 'gon'
 gem "cloudfiles"
-gem "carrierwave"
+gem 'carrierwave', '~> 1.0'
+gem 'carrierwave-base64'
 gem 'fog-aws'
 gem "koala"
 gem 'factual-api'
