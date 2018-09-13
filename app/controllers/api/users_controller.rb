@@ -403,9 +403,8 @@ class Api::UsersController < ApplicationController
             else
               bucket_name = AWS_Bucket::Avatar_P
             end
-             #
             Post.delete_S3_file(bucket_name, user.avatar_url.current_path,Post::IMAGE)
-            user.avatar_url = nil
+            user.remove_avatar_url!
           else
             user.avatar_url = params[:avatar_url]
           end
