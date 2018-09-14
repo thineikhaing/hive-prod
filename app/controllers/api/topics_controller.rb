@@ -672,9 +672,10 @@ class Api::TopicsController < ApplicationController
 
      tcount = topics.count rescue '0'
      p "get nearest topics"
-     render json: {topics:topics, topic_count: tcount, status: "nearest topics within start and end"}
+     all_topics = Topic.where("hiveapplication_id=? and topic_sub_type !=? ", hive_app.id,initial_topic.id).order("created_at desc")
+     render json: {status:200, status: "nearest topics within start and end",topics:topics, topic_count: tcount,all_topics:all_topics}
     else
-      render json: {status: "Params app_key must be presented"}
+      render json: {status:201,message: "Params app_key must be presented"}
     end
   end
 

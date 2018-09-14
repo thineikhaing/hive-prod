@@ -7,9 +7,11 @@ class Api::DownloaddataController < ApplicationController
       params[:radius].present? ? radius = params[:radius] : radius = nil
       if hiveApplication.present?
         p "hive application present"
-
+        initial_topic = Topic.find_by_topic_sub_type(2)
+        all_topics = Topic.where("hiveapplication_id=? and topic_sub_type !=? ", hiveApplication.id,initial_topic.id).order("created_at desc")
+        # all_topics.prepend(initial_topic)
         if params[:radius].to_i == 100
-          topics = Topic.where(hiveapplication_id:  hiveApplication.id)
+          topics  = all_topics
           topics = topics.where("topic_sub_type != 2")
         else
           topics = Place.nearest_topics_within(params[:latitude], params[:longitude], radius, hiveApplication.id)
@@ -26,11 +28,11 @@ class Api::DownloaddataController < ApplicationController
         elsif hiveApplication.devuser_id == 1 and hiveApplication.id!=1 and params[:choice].nil? #All Applications under Herenow account except Hive
           p "All Applications under Herenow account except Hive"
 
-          initial_topic = Topic.find_by_topic_sub_type(2)
+
           topics.prepend(initial_topic)
 
           t_count = topics.count rescue '0'
-          render json: { status: 200, message: "Topic within radius" ,topics: JSON.parse(topics.to_json(content: true)) , topic_count: t_count}
+          render json: { status: 200, message: "Topic within radius " ,topics: JSON.parse(topics.to_json(content: true)) , topic_count: t_count,all_topics: all_topics}
 
         elsif params[:choice].present? and params[:choice] == "favr"
 
@@ -72,11 +74,17 @@ class Api::DownloaddataController < ApplicationController
       end
 
       posts_topics = []
+      post_topic_ids = []
+      p "posts"
+      p current_user
+      p current_user.posts
       if current_user.posts.count > 0
         current_user.posts.map{|pst| posts_topics.push(pst.topic_id)}
       end
+      current_user.topics.map{|pst| posts_topics.push(pst.id)}
 
-      if posts_topics.count > 0
+
+      if posts_topics.count > 1
         posts_topics = posts_topics.uniq!
       end
 
@@ -95,8 +103,8 @@ class Api::DownloaddataController < ApplicationController
                   status: 200,
                   message: "Initial User data" ,
                   user: current_user,
-                  topics: topics,
                   post_topic_ids: posts_topics,
+                  topics: topics,
                   trips: trips,
                   trip_detail:trip_detail,
                   userfavlocation: userplaces,

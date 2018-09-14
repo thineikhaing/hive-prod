@@ -178,8 +178,10 @@ class Post < ActiveRecord::Base
    total_posts = self.topic.posts
    post_users = []
    total_posts.map {|pst| post_users.push(pst.user_id)}
-    p "post_users"
-    p post_users
+
+    if post_users.count > 1
+      post_users = post_users.uniq!
+    end
     data = {
         id: self.id,
         topic_id: self.topic_id,

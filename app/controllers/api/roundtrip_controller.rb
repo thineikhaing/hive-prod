@@ -801,46 +801,54 @@ end
     end
   end
 
-  def demo_train_service_alert
-    alertHash = Hash.new
-    affectedSegments = []
-    messages = []
+  def calculate_transit_fare
+      smrt_mrt = params[:smrt_mrt].to_i
+      sbs_mrt = params[:sbs_mrt].to_i
+      smrt_bus = params[:smrt_bus].to_i
+      sbs_bus = params[:sbs_bus].to_i
+      smrt = smrt_mrt
+      sbs = sbs_mrt
+      bus = smrt_bus + sbs_bus
+      total_fare =0.0
+      p total_distance = (smrt + sbs + bus) * 0.001
+      compare_distance = []
+      p 'compare_distance'
+      p compare_distance.push(smrt,sbs,bus)
+      max_distance = compare_distance.max
+      p "look up price table"
+      p "total distance"
+      p total_distance = total_distance.round(1)
 
-    curTime = Time.now.strftime("%H%M")
+      if max_distance == smrt
+        p "SMRT"
+        price_table = "db/NS-EW-LRT.csv"
+        total_fare = 2.03 if total_distance >= 40.2
+      elsif max_distance == sbs
+        p "SBS"
+        price_table = "db/NE-CC-DT.csv"
+        total_fare = 2.28 if total_distance >= 40.2
+      else
+        p "BUS"
+        total_fare = 2.03 if total_distance >= 40.2
+        price_table = "db/sms-bus.csv"
+      end
 
-  params[:line].present? ? line = params[:line] : line = "NEL"
-  params[:towards].present? ? towards = params[:towards] : towards = "HarbourFront"
-  params[:stations].present? ? stations = params[:stations] : stations = "NE9, NE8, NE7, NE6"
-  params[:free_stations].present? ? free_stations = params[:free_stations] : free_stations = "NE9, NE8, NE7, NE6"
-  params[:content].present? ? content = params[:content] : content = curTime+"hrs: NEL - Additional travelling time of 20 miutes between Boon Keng and Dhoby Ghaut stations towards HarbourFront station due to a signal fault."
-  params[:status].present? ? t_status = params[:status].to_i : t_status = 2
+      if total_distance > 0
+        CSV.foreach(price_table) do |row|
+          range = row[0]
+          num1= range.match(",").pre_match.to_f
+          num2= range.match(",").post_match.to_f
 
-    segment1 = {
-      Line: line,
-      Direction: towards,
-      Stations: stations,
-      FreePublicBus:  free_stations,
-      FreeMRTShuttle: free_stations,
-      MRTShuttleDirection:towards
-    }
+          if total_distance.between?(num1,num2)
+            p "total fare"
+            p total_fare =  (row[1].to_i* 0.01)
+          end
+        end
+      end
 
-    message1 = {
-      Content:content,
-      CreatedDate: Time.now
-    }
+    render json:{status: 200, message: "fare", fare:total_fare.round(2)}
 
-    affectedSegments.push(segment1)
-    if params[:show_content].to_i == 1
-      messages.push(message1)
     end
-
-    alertHash["Status"]= t_status
-    alertHash["AffectedSegments"]= affectedSegments
-    alertHash["Message"]= messages
-
-    render json:{source: "hive", value: alertHash, status: 200}
-end
-
 
 
 end
