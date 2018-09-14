@@ -2,7 +2,7 @@ class AvatarUploader < CarrierWave::Uploader::Base
   # Include RMagick or MiniMagick support:
   include CarrierWave::RMagick
   include CarrierWave::MiniMagick
-  
+
   process :resize_to_fit => [500, 500]
 
   storage :fog
@@ -30,7 +30,7 @@ class AvatarUploader < CarrierWave::Uploader::Base
     def full_filename (for_file = model.logo.file)
       file_name =  super.chomp(File.extname(super))
       names= file_name.split("_")
-      names[1] + '_m.png'
+      names[1] + '_m.jpeg'
     end
   end
 
@@ -39,7 +39,7 @@ class AvatarUploader < CarrierWave::Uploader::Base
     def full_filename (for_file = model.logo.file)
       file_name =  super.chomp(File.extname(super))
       names= file_name.split("_")
-      names[1] + '_s.png'
+      names[1] + '_s.jpeg'
     end
   end
 
