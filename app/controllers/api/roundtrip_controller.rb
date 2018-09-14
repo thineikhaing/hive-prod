@@ -806,32 +806,12 @@ end
       sbs_mrt = params[:sbs_mrt].to_i
       smrt_bus = params[:smrt_bus].to_i
       sbs_bus = params[:sbs_bus].to_i
-      smrt = smrt_mrt
-      sbs = sbs_mrt
-      bus = smrt_bus + sbs_bus
-      total_fare =0.0
-      p total_distance = (smrt + sbs + bus) * 0.001
-      compare_distance = []
-      p 'compare_distance'
-      p compare_distance.push(smrt,sbs,bus)
-      max_distance = compare_distance.max
-      p "look up price table"
-      p "total distance"
-      p total_distance = total_distance.round(1)
+      price_table = "db/sms-bus-Sep142018.csv"
 
-      if max_distance == smrt
-        p "SMRT"
-        price_table = "db/NS-EW-LRT.csv"
-        total_fare = 2.03 if total_distance >= 40.2
-      elsif max_distance == sbs
-        p "SBS"
-        price_table = "db/NE-CC-DT.csv"
-        total_fare = 2.28 if total_distance >= 40.2
-      else
-        p "BUS"
-        total_fare = 2.03 if total_distance >= 40.2
-        price_table = "db/sms-bus.csv"
-      end
+      total_fare =0.0
+      total_distance = (smrt_mrt + sbs_mrt + smrt_bus+sbs_bus) * 0.001
+
+      total_fare = 2.02 if total_distance >= 40.2
 
       if total_distance > 0
         CSV.foreach(price_table) do |row|
@@ -847,7 +827,6 @@ end
       end
 
     render json:{status: 200, message: "fare", fare:total_fare.round(2)}
-
     end
 
 

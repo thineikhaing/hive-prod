@@ -507,7 +507,7 @@ class Api::UsersController < ApplicationController
                 unless u.id == current_user.id
                   user = User.find(u.id)
                   avatar = Topic.get_avatar(user.username)
-                  avatar_url = u.avatar_url
+                  avatar_url = u.avatar_url.url
                   if avatar_url.nil?
                     avatar_url = ""
                   end
@@ -944,7 +944,7 @@ class Api::UsersController < ApplicationController
       end
 
     else
-      render json:{status:201, message: "Params app_key must be presented",error_msg: "Params app_key must be presented"} , status: 400
+      render json:{status:201, message: "user_id and auth_token params must be presented",error_msg: "user_id and auth_token params must be presented"} , status: 400
     end
   end
 
