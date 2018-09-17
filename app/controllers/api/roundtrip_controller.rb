@@ -795,7 +795,7 @@ end
         format_bus = {id:stop.id, busid: stop.busid, service: stop.service,road_name: bus.road_name, description: bus.description, lat: bus.latitude, lng: bus.longitude}
         busstops.push(format_bus)
       end
-      render json:{status:200, message:"Favourite Buses List",favbuses: favbuses, bus_stops: busstops, status: 200}
+      render json:{status:200, message:"Favourite Buses List",favbuses: favbuses, bus_stops: busstops}
     else
       render json:{status: 201, message: "unauthorized."}
     end
@@ -811,9 +811,9 @@ end
       total_fare =0.0
       total_distance = (smrt_mrt + sbs_mrt + smrt_bus+sbs_bus) * 0.001
 
-      total_fare = 2.02 if total_distance >= 40.2
-
-      if total_distance > 0
+      if total_distance >= 40.2
+        total_fare = 2.02
+      elsif total_distance > 0
         CSV.foreach(price_table) do |row|
           range = row[0]
           num1= range.match(",").pre_match.to_f

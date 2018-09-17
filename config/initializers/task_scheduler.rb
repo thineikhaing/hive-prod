@@ -58,7 +58,7 @@ scheduler.cron '05 00 * * *' do
 
 end
 
-scheduler.every 15.minutes do
+scheduler.every 55.minutes do
  p "check accident!"
  SgAccidentHistory.get_incident_and_breakdown
 end
