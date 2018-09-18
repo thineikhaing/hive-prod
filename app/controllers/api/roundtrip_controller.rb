@@ -827,7 +827,348 @@ end
       end
 
     render json:{status: 200, message: "fare", fare:total_fare.round(2)}
+  end
+
+  def calculate_taxi_rate_api
+    total_distance_km = params[:distance].to_i
+    total_duration_min  = params[:duration]
+    p "depature::::"
+    p depature = params[:departure]
+    depature= depature.downcase!
+    p "distance in km"
+    p distance = total_distance_km - 1
+    total_time = total_duration_min
+
+    flat_rate = 3.2
+    firstmeter = 0
+    secondmeter = 0
+
+    short_d_fare = 0
+    if (distance <= 0)
+      p "distance less than 1km"
+       distance = 0.9
+      short_d_fare = (0.55 * distance).round(2)
     end
 
+    if (distance >= 1)
+      firstmeter =  0.55                # (0.22 for every 400 m | 0.55 per km thereafter or less > 1 km and ≤ 10 km)
+    end
 
+    if (distance > 10)
+      secondmeter = 0.63                # (0.22 for every 350 m | 0.63 per km thereafter or less > 10 km)
+    end
+
+    waiting_rate = 0.30               # (0.22 every 45 seconds or less | 0.30 per min)
+    peekhour = 0.25                   # 25% of metered fare (Monday to Friday 0600 - 0930 and 1800 – 0000 hours)
+    public_holiday = 0.25             # 25% of metered fare
+    late_night = 0.5                  # 50% of metered fare (0000 – 0559 hours)
+
+    # location
+    changi_airport_friday_to_Sunday = 5 # (Singapore Changi Airport: Friday - Sunday from 1700 to 0000 hours)
+    changi_airport = 3
+    seletar_airport = 3                   # (Seletar Airport)
+    sentosa = 3                           # S$3.00 (Resorts World Sentosa)
+    expo = 2                              # S$2.00 (Singapore Expo)
+    waiting_min = total_distance_km/2       # for 10 km waiting time is 5mins
+
+    today = Time.new
+
+    morning_t1 = Time.parse('06:00')
+    morning_t2 = Time.parse('09:30')
+    evening_t1 = Time.parse('18:00')
+    evening_t2 = Time.parse('00:00')
+    late_t1  = Time.parse('00:00')
+    late_t2  = Time.parse('05:59')
+
+    changi_t1 = Time.parse('17:00')
+    changi_t2 = Time.parse('00:00')
+
+    first_10km = 0.0,rest_km =0.0
+
+    net_meterfare= 0.0,  waiting_charge= 0.0,
+    peekhour_charge = 0.0 , latehour_charge = 0.0 , pbHoliday_charge= 0.0, location_charge=0.0
+
+    if distance > 0
+      p "first 10 km"
+      p first_10km = (distance + 1) * firstmeter
+
+      if distance > 10
+        p "rest meter"
+        restmeter = distance - 10 +1
+        p rest_km = restmeter * secondmeter
+      end
+
+      # sum of the first 10 km and rest km for net meter fare
+      p "net meter fare"
+      p net_meterfare = (short_d_fare + first_10km + rest_km).round(2)
+
+      # calculate charge for waiting time in traffic
+      waiting_charge = (waiting_min * waiting_rate).round(2)
+
+
+      # calculate charge for peek hours
+      if !(today.saturday? || today.sunday?)
+        p "it's weekdays"
+        if today.to_f > morning_t1.to_f and today.to_f < morning_t2.to_f
+          p "time is between morning peekhour"
+          p peekhour_charge = net_meterfare * peekhour
+        end
+      end
+
+      if  today.to_f > evening_t1.to_f and today.to_f < evening_t2.to_f
+        p "time is between evening peekhour"
+        p peekhour_charge = net_meterfare * peekhour
+      end
+
+
+      # calculate charge for late night
+
+      if  today.to_f > late_t1.to_f and today.to_f < late_t2.to_f
+        p "calculate charge for late night"
+        latehour_charge = net_meterfare * late_night
+      end
+
+
+      # calculate charge for holidays
+      publicH = Holidays.on(today, :sg)
+
+      if publicH.count == 1
+        p "calculate charge for holidays"
+        pbHoliday_charge = net_meterfare * public_holiday
+      end
+
+      # calculate charge based on location
+      p "depature ****"
+      p depature = params[:departure]
+      if depature.include?('seletar') ||  depature.include?('sentosa') ||  depature.include?('resorts world')
+        location_charge = 3
+      end
+
+      if depature.include?('expo')
+        location_charge = 2
+      end
+
+      if depature.include?('changi') ||  depature.include?('terminal') ||  depature.include?('airport')
+
+        if today.friday? || today.saturday? || today.sunday?
+          p "today is friday to sunday"
+          if  today.to_f > changi_t1.to_f and today.to_f < changi_t2.to_f
+            location_charge = 5
+          else
+            location_charge = 3
+          end
+
+        else
+          p "not friday nor sunday"
+          p location_charge = 3
+        end
+      end
+
+      p total_estimated_fare = (flat_rate + net_meterfare + waiting_charge +  peekhour_charge + latehour_charge + pbHoliday_charge + location_charge).round(2)
+
+
+      render json:{total_estimated_fare: total_estimated_fare} , status: 200
+    end
+
+  end
+
+  def search_busstop
+    if params[:search_string]
+      search_string = params[:search_string]
+      if search_string.numeric?
+        results = SgBusStop.where("(bus_id::text LIKE ?)", "#{search_string}%").all
+      else
+        results = SgBusStop.where("(lower(description) LIKE ?)", "%#{search_string.downcase}%").all
+      end
+
+      render json: {status:200, message:"Search Result",results: results}
+
+    end
+  end
+
+  def nearest_busstop_within
+    nearby_buses = []
+    radius= params[:radius]
+    latitude = params[:latitude]
+    longitude = params[:longitude]
+    radius = 1 if radius.nil?
+    center_point = [latitude.to_f, longitude.to_f]
+    box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
+    sgbusStops = SgBusStop.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
+    busInfos = Hash.new
+    sgbusStops.each do |stop|
+      busRoute = SgBusRoute.where(bus_stop_code: stop.bus_id)
+      buses = []
+      buses_num = []
+      buses_char = []
+      busRoute.each do |route|
+        if is_numeric? route.service_no
+          buses_num.push(route.service_no)
+        else
+          buses_char.push(route.service_no)
+        end
+
+      end
+      buses_num = buses_num.map(&:to_i).sort
+      buses = buses_num + buses_char
+      busInfos = {stop: stop, buses:buses}
+      nearby_buses.push(busInfos)
+
+    end
+    render json: {busStops: nearby_buses}
+
+  end
+
+  def get_bus_arrivaltime
+    tempnextBus = Hash.new
+    tempwaitTime = Hash.new
+    service = params[:service]
+    bus_id = params[:bus_id]
+
+    busLat = "%.5g" % params[:latitude].to_f
+    busLng = "%.5g" % params[:longitude].to_f
+
+    if params[:latitude] and params[:longitude]
+      busstops = SgBusStop.where(description: params[:name])
+      if busstops.count == 1
+        bLat = "%.5g" % busstops.take.latitude.to_f
+        bLng = "%.5g" % busstops.take.longitude.to_f
+        if (busLat == bLat and busLng == bLng)
+          p "found bus stop"
+          bus_id = busstops.take.bus_id
+        end
+
+      else
+        busstops.each do |stop|
+          lat = "%.5g" % stop.latitude.to_f
+          lng = "%.5g" % stop.longitude.to_f
+          if (busLat == lat and busLng == lng)
+            bus_id = stop.bus_id
+          end
+        end
+      end
+
+    end
+
+    if bus_id.nil?
+      busstops = SgBusStop.all
+      busstops.each do |stop|
+        lat = "%.5g" % stop.latitude.to_f unless stop.latitude.nil?
+        lng = "%.5g" % stop.longitude.to_f unless stop.longitude.nil?
+        if (busLat == lat and busLng == lng)
+          bus_id = stop.bus_id
+        end
+      end
+    end
+
+    p "BUS STOP ID:::"
+    p bus_id
+    p service
+
+    uri = URI('http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2')
+    params = { :BusStopCode => bus_id, :ServiceNo => service, :SST => true}
+    uri.query = URI.encode_www_form(params)
+    res = Net::HTTP::Get.new(uri,
+                             initheader = {"accept" =>"application/json", "AccountKey"=>"4G40nh9gmUGe8L2GTNWbgg==",
+                                           "UniqueUserID"=>"d52627a6-4bde-4fa1-bd48-c6270b02ffc0"})
+    con = Net::HTTP.new(uri.host, uri.port)
+    r = con.start {|http| http.request(res)}
+    response_data = JSON.parse(r.body)
+
+    results = response_data["Services"]
+    busStopCode = response_data["BusStopCode"]
+
+    bus_route_info = SgBusRoute.where(service_no: service, bus_stop_code:bus_id).take
+
+    if results.present?
+
+      nextBus = results[0]["NextBus"]
+      origin_code = nextBus["OriginCode"]
+      destination_code  = nextBus["DestinationCode"]
+
+      bus_service = SgBusService.where(service_no: service, origin_code: origin_code, destination_code: destination_code).take
+      if bus_service.nil?
+        bus_service = SgBusService.where(service_no: service, destination_code: destination_code).take
+      end
+      if bus_service.nil?
+        bus_service = SgBusService.where(service_no: service, origin_code: origin_code).take
+      end
+
+      bus_freq_interval = "-"
+
+      if !bus_service.nil?
+        formatted_time = Time.now.getlocal('+08:00').strftime("%H:%M")
+
+        allowed_ranges = [
+            "06:30".."08:30",
+            "08:31".."16:59",
+            "17:00".."19:00",
+            "19:01".."06:29"
+        ]
+
+        allowed_ranges.each_with_index{ |range,i|
+          if range.cover?(formatted_time)
+            p range
+            bus_freq_interval = bus_service.am_peak_freq if i==0
+            bus_freq_interval = bus_service.am_offpeak_freq if i==1
+            bus_freq_interval = bus_service.pm_peak_freq if i==2
+            bus_freq_interval = bus_service.pm_offpeak_freq if i==3
+          end
+        }
+      end
+
+
+
+
+      sebseqBus =  results[0]["NextBus2"]
+
+      est_time = Time.parse(nextBus["EstimatedArrival"])
+      arrivalTime = est_time.strftime("at %I:%M%p")
+
+      wait_time = 0
+      if Time.now < est_time
+        wait_time = TimeDifference.between(Time.now,est_time).in_minutes
+        wait_time = wait_time.round
+      end
+
+      tempnextBus[:nextBusInText] = arrivalTime
+      tempwaitTime[:wait_time] = wait_time
+      results[0]["NextBus"].merge!(tempnextBus)
+      results[0]["NextBus"].merge!(tempwaitTime)
+
+
+      if (sebseqBus["EstimatedArrival"]).present?
+        est_time = Time.parse(sebseqBus["EstimatedArrival"])
+        arrivalTime = est_time.strftime("at %I:%M%p")
+        wait_time = 0
+        if Time.now < est_time
+          wait_time = TimeDifference.between(Time.now,est_time).in_minutes
+          wait_time = wait_time.round
+        end
+
+        tempnextBus[:nextBusInText] = arrivalTime
+        tempwaitTime[:wait_time] = wait_time
+        results[0]["NextBus2"].merge!(tempnextBus)
+        results[0]["NextBus2"].merge!(tempwaitTime)
+      end
+
+      render json:{bus_freq:bus_freq_interval,nextBus:nextBus,results: results, bus_id: bus_id, bus_route_info:bus_route_info } , status: 200
+    else
+      render json:{error_msg:"No Available Result!"}
+    end
+
+  end
+
+  def is_numeric?(obj)
+    obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
+  end
+
+end
+
+
+
+class String
+  def numeric?
+    Float(self) != nil rescue false
+  end
 end

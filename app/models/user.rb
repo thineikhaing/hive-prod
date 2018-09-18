@@ -121,8 +121,13 @@ class User < ActiveRecord::Base
         User.subscribe_to_topic(user_endpoint_arn)
         user_token = UserPushToken.find_by(endpoint_arn:user_endpoint_arn)
         if user_token.present?
+          p "update token user id"
           user_token.update(user_id: user_id)
+          # if user_token.user_id != user_id
+          #   user_token.update(user_id: user_id)
+          # end
         else
+          p "create new token"
           UserPushToken.create(user_id: user_id,endpoint_arn:user_endpoint_arn,push_token: device_token)
         end
     end

@@ -213,6 +213,12 @@ Rails.application.routes.draw do
     match "roundtrip/save_user_fav_buses"           => "roundtrip#save_user_fav_buses"    , via: [:get, :post]
     match "roundtrip/transit_annoucement_by_admin"  => "roundtrip#transit_annoucement_by_admin"    , via: [:get, :post]
     match "roundtrip/calculate_transit_fare"        => "roundtrip#calculate_transit_fare"    , via: [:get, :post]
+    match "roundtrip/calculate_taxi_rate_api"        => "roundtrip#calculate_taxi_rate_api"    , via: [:get, :post]
+    match "roundtrip/search_busstop"                => "roundtrip#search_busstop"    , via: [:get, :post]
+    match "roundtrip/nearest_busstop_within"        => "roundtrip#nearest_busstop_within"    , via: [:get, :post]
+    match "roundtrip/get_bus_arrivaltime"           => "roundtrip#get_bus_arrivaltime"    , via: [:get, :post]
+
+
   end
 
 end

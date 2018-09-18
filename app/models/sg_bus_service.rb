@@ -1,0 +1,2 @@
+class SgBusService < ApplicationRecord
+end

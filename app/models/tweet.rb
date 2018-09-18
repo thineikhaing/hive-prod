@@ -97,6 +97,7 @@ class Tweet < ApplicationRecord
       if ! pt.endpoint_arn.nil?
         begin
           sns.publish(target_arn: pt.endpoint_arn, message: sns_message, message_structure:"json")
+          p pt.user_id
           p "endpoint arn"
           p pt.endpoint_arn
         rescue
