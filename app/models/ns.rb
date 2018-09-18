@@ -1,0 +1,2 @@
+class NS < SgMrtStation
+end

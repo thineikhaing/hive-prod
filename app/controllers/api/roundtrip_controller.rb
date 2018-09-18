@@ -1159,6 +1159,392 @@ end
 
   end
 
+  def busstop_info
+    busRoute = SgBusRoute.where(bus_stop_code: params[:bus_id])
+    buses = []
+    buses_num = []
+    buses_char = []
+    route = []
+    busRoute.each do |r|
+      if is_numeric? r.service_no
+        buses_num.push(r.service_no)
+      else
+        buses_char.push(r.service_no)
+      end
+      route.push(r)
+    end
+
+
+    buses_char = buses_char.map(&:to_s).uniq
+    buses_num = buses_num.map(&:to_i).uniq.sort
+    buses = buses_num + buses_char
+
+    route = route.uniq{ |r| [r["service_no"]]}
+    render json: {buses: buses,route:route}
+
+  end
+
+
+  def subsequence_businfo
+    service_no = params[:service_no]
+    sequence1 = params[:sequence1].to_i
+    sequence2 = params[:sequence2].to_i
+
+    total_stop = sequence1 - sequence2
+    total_stop = total_stop.abs
+
+    # service_no = service_no.gsub(/[^0-9]/, '')
+    frombusId = params[:frombusId]
+    tobusId = params[:tobusId]
+    bus_route = [ ]
+    busArray = [ ]
+    direction = 0
+
+    if !params[:frombusId].nil?
+      limit = sequence1 - sequence2
+      bus_route_dir1 = SgBusRoute.where("service_no=? and direction =1 and stop_sequence between ? and ?", service_no, sequence1, sequence2)
+      bus_route_dir2 = SgBusRoute.where("service_no=? and direction =2 and stop_sequence between ? and ?", service_no, sequence1, sequence2)
+
+      if bus_route_dir1.present?
+        bus_route_dir1.each do |d1|
+          if (d1.bus_stop_code == frombusId.to_i && d1.stop_sequence == sequence1 )
+            bus_route = bus_route_dir1
+            direction= 1
+          end
+        end
+
+      end
+
+      if bus_route_dir2.present?
+        bus_route_dir2.each do |d2|
+          if (d2.bus_stop_code == frombusId.to_i && d2.stop_sequence == sequence2 )
+            bus_route = bus_route_dir2
+            direction =2
+          end
+        end
+
+      end
+    end
+
+
+    bus_route.each do |route|
+      busArray.push(SgBusStop.find_by_bus_id(route.bus_stop_code))
+    end
+
+    if params[:depart]
+      frombusId = nil
+      frombusId = nil
+        if params[:depart_lat] and params[:depart_lng]
+          p "departure bus"
+           #busstops = SgBusStop.where(description: params[:depart])
+           busstops = SgBusStop.all
+          busstops.each do |stop|
+            lat = stop.latitude.round(4) unless stop.latitude.nil?
+            lng = stop.longitude.round(4) unless stop.longitude.nil?
+            depart_lat = params[:depart_lat].to_f.round(4)
+            depart_lng = params[:depart_lng].to_f.round(4)
+            if (depart_lat== lat and depart_lng == lng)
+              p "from bus id"
+              p frombusId = stop.bus_id
+            end
+
+            if frombusId.nil?
+              busstops = SgBusStop.where(description: params[:depart])
+              if busstops.present?
+                p frombusId = busstops.take.bus_id
+              end
+            end
+
+          end
+        end
+
+        if params[:arrive_lat] and params[:arrive_lng]
+          p "Arrival bus"
+          busstops = SgBusStop.all
+          busstops.each do |stop|
+            lat = stop.latitude.round(4) unless stop.latitude.nil?
+            lng = stop.longitude.round(4) unless stop.longitude.nil?
+            arrive_lat = params[:arrive_lat].to_f.round(4)
+            arrive_lng = params[:arrive_lng].to_f.round(4)
+            if (arrive_lat == lat and arrive_lng == lng)
+              p "to bus id"
+              p tobusId = stop.bus_id
+            end
+
+            if tobusId.nil?
+              busstops = SgBusStop.where(description: params[:arrive])
+              if busstops.present?
+                p tobusId = busstops.take.bus_id
+              end
+            end
+
+          end
+
+        end
+    end
+
+    if busArray.count == 0
+      p "search from start and end points"
+      p "start stop"
+      p frombusId
+      p bus_start = SgBusRoute.where(service_no: service_no, bus_stop_code: frombusId)
+      p "end stop"
+      p bus_end = SgBusRoute.where(service_no: service_no, bus_stop_code: tobusId)
+
+      if bus_start.count == 1
+        bus_start = bus_start.take
+        p "Start stop direction"
+        p direction = bus_start.direction
+        bus_end_arr = bus_end.where("direction =?",direction)
+        if bus_end_arr.count > 1
+          p "compare end stop id with start stop id"
+          bus_end_arr.each do |end_id|
+            if end_id.id > bus_start.id
+              p bus_end = end_id
+            end
+          end
+        else
+          p bus_end = bus_end_arr.take
+        end
+
+      elsif bus_end.count == 1
+        bus_end = bus_end.take
+        direction = bus_end.direction
+
+        bus_start = bus_start.where("direction =? ",direction).take
+      else
+        p bus_start = bus_start.take
+        bus_end = bus_end.take
+        if !bus_start.nil?
+          direction = bus_start.direction
+        end
+      end
+
+      if !bus_start.nil?
+
+        start_id = bus_start.id
+        end_id = bus_end.id
+        sg_bus_routes = SgBusRoute.where(id: start_id .. end_id)
+
+        sg_bus_routes.each do |route|
+          p route.bus_stop_code
+          # if route.distance.present?
+          busArray.push(SgBusStop.find_by_bus_id(route.bus_stop_code))
+          # end
+        end
+      end
+
+    end
+
+    render json:{results: busArray,count: busArray.count,direction:direction} , status: 200
+  end
+
+  def subsequence_mrtinfo
+
+    from = params[:from]
+    to = params[:to]
+    fromId= params[:fromId].to_s
+    toId = params[:toId].to_s
+    shortname= params[:shortname].to_s
+    sequence = ""
+    s_id, e_id = ''
+
+
+    substring = " MRT Station"
+    from.slice! substring
+    to.slice! substring
+
+    p from = from.gsub(/\s+$/,'')
+    p to = to.gsub(/\s+$/,'')
+
+    if fromId > toId
+
+    end
+    if params[:shortname].present?
+      if shortname == "NS"
+        start_ns = NS.where(code: fromId).take
+        end_ns = NS.where(code: toId).take
+
+        if start_ns.id > end_ns.id
+          sequence = NS.where(id: end_ns.id .. start_ns.id).order(id: :desc)
+        else
+          sequence = NS.where(id: start_ns.id .. end_ns.id)
+        end
+
+      elsif shortname == "CG"
+        start_cg = EW.where(code: fromId).take
+        end_cg = EW.where(code: toId).take
+
+        if fromId.to_s.include?("EW")
+          start_cg = EW.find(62)
+        elsif toId.to_s.include?("EW")
+          end_cg = EW.find(62)
+        end
+
+        sequence = []
+        if fromId.to_s.include?("EW")
+          start_station = EW.where(code: fromId).take
+          sequence.push(start_station)
+        end
+
+        if start_cg.id > end_cg.id
+          seq = EW.where(id: end_cg.id .. start_cg.id).order(id: :desc)
+          seq.each do |data|
+            sequence.push(data)
+          end
+
+        else
+          seq = EW.where(id: start_cg.id .. end_cg.id)
+          seq.each do |data|
+            sequence.push(data)
+          end
+        end
+
+        if toId.to_s.include?("EW")
+          end_station = EW.where(code: toId).take
+          sequence.push(end_station)
+        end
+      elsif shortname == "EW"
+        start_ns = EW.where(code: fromId).take
+        end_ns = EW.where(code: toId).take
+
+        if start_ns.id > end_ns.id
+          sequence = EW.where(id: end_ns.id .. start_ns.id).order(id: :desc)
+        else
+          sequence = EW.where(id: start_ns.id .. end_ns.id)
+        end
+
+      elsif shortname == "NE"
+        start_ns = NE.where(code: fromId).take
+        end_ns = NE.where(code: toId).take
+
+        if start_ns.id > end_ns.id
+          sequence = NE.where(id: end_ns.id .. start_ns.id).order(id: :desc)
+        else
+          sequence = NE.where(id: start_ns.id .. end_ns.id)
+        end
+
+      elsif shortname == "CC"
+        start_ns = CC.where(code: fromId).take
+        end_ns = CC.where(code: toId).take
+        # sequence = CC.where(id: start_ns.id .. end_ns.id)
+
+        if start_ns.id > end_ns.id
+          sequence = CC.where(id: end_ns.id .. start_ns.id).order(id: :desc)
+        else
+          sequence = CC.where(id: start_ns.id .. end_ns.id)
+        end
+
+      elsif shortname == "DT"
+        start_ns = DT.where(code: fromId).take
+        end_ns = DT.where(code: toId).take
+        # sequence = DT.where(id: start_ns.id .. end_ns.id)
+
+        if start_ns.id > end_ns.id
+          sequence = DT.where(id: end_ns.id .. start_ns.id).order(id: :desc)
+        else
+          sequence = DT.where(id: start_ns.id .. end_ns.id)
+        end
+
+      end
+    end
+
+    if params[:shortname] == "North South Line"
+      start_ns = NS.find_by_name(from)
+      end_ns = NS.find_by_name(to)
+      if start_ns.id > end_ns.id
+        sequence = NS.where(id: end_ns.id .. start_ns.id).order(id: :desc)
+      else
+        sequence = NS.where(id: start_ns.id .. end_ns.id).order(id: :asc)
+      end
+    elsif params[:shortname] == "North East Line"
+      start_ne = NE.find_by_name(from)
+      end_ne = NE.find_by_name(to)
+
+      if start_ne.id > end_ne.id
+        sequence = NE.where(id: end_ne.id .. start_ne.id).order(id: :desc)
+      else
+        sequence = NE.where(id: start_ne.id .. end_ne.id).order(id: :asc)
+      end
+
+    elsif params[:shortname] == "East West Line"
+      p start_ew = EW.find_by_name(from)
+
+      p end_ew = EW.find_by_name(to)
+
+
+      if start_ew.code == "CG2" and end_ew.code == "EW4"
+        p 'start CG2 (changi), end EW4 tanah merah'
+        sequence = EW.where(id: "63") + EW.where(id: "62") + EW.where(id: "32")
+
+      elsif start_ew.code == "CG2" and end_ew.code == "CG1"
+        p 'start CG2 (changi), end CG1 expo'
+        sequence = EW.where(id: "63") + EW.where(id: "62")
+
+      elsif start_ew.code == "CG1" and end_ew.code == "CG2"
+        p 'start CG1 (expo), end CG2 changi'
+        sequence = EW.where(id: "62") + EW.where(id: "63")
+
+      elsif start_ew.code == "CG1" and end_ew.code == "EW4"
+        p 'start CG1 (expo), end EW4 Tanah'
+        sequence = EW.where(id: "62") + EW.where(id: "32")
+
+
+      elsif start_ew.code == "EW4" and end_ew.code == "CG2"
+        p 'start EW4 (Tanah), end CG2 changi'
+        sequence = EW.where(id: "32") + EW.where(id: "62")+ EW.where(id: "63")
+
+      elsif start_ew.code == "EW4" and end_ew.code == "CG1"
+        p 'start  EW4 (Tanah), end CG1 (expo)'
+        sequence =  EW.where(id: "32") + EW.where(id: "62")
+
+      else
+
+        if start_ew.id > end_ew.id
+          sequence = EW.where(id: end_ew.id .. start_ew.id).order(id: :desc)
+        else
+          sequence = EW.where(id: start_ew.id .. end_ew.id).order(id: :asc)
+        end
+
+      end
+
+
+    elsif params[:shortname] == "Circle Line"
+      start_cc = CC.find_by_name(from)
+      end_cc = CC.find_by_name(to)
+
+      if start_cc.id > end_cc.id
+        sequence = CC.where(id: end_cc.id .. start_cc.id).order(id: :desc)
+      else
+        sequence = CC.where(id: start_cc.id .. end_cc.id).order(id: :asc)
+      end
+    elsif params[:shortname] == "Downtown Line"
+      p start_dt = DT.find_by_name(from)
+      p end_dt = DT.find_by_name(to)
+
+      if start_dt.id > end_dt.id
+        sequence = DT.where(id: end_dt.id .. start_dt.id).order(id: :desc)
+      else
+        sequence = DT.where(id: start_dt.id .. end_dt.id).order(id: :asc)
+      end
+    elsif params[:shortname] == "Sentosa Express"
+
+      p start_dt = SE.find_by_name(from)
+      p end_dt = SE.find_by_name(to)
+
+      if start_dt.id > end_dt.id
+        sequence = SE.where(id: end_dt.id .. start_dt.id).order(id: :desc)
+      else
+        sequence = SE.where(id: start_dt.id .. end_dt.id).order(id: :asc)
+      end
+
+    end
+
+
+    render json:{results: sequence}
+
+  end
+
   def is_numeric?(obj)
     obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
   end

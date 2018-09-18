@@ -217,7 +217,9 @@ Rails.application.routes.draw do
     match "roundtrip/search_busstop"                => "roundtrip#search_busstop"    , via: [:get, :post]
     match "roundtrip/nearest_busstop_within"        => "roundtrip#nearest_busstop_within"    , via: [:get, :post]
     match "roundtrip/get_bus_arrivaltime"           => "roundtrip#get_bus_arrivaltime"    , via: [:get, :post]
-
+    match "roundtrip/busstop_info"                  => "roundtrip#busstop_info"    , via: [:get, :post]
+    match "roundtrip/subsequence_businfo"           => "roundtrip#subsequence_businfo"    , via: [:get, :post]
+    match "roundtrip/subsequence_mrtinfo"           => "roundtrip#subsequence_mrtinfo"    , via: [:get, :post]
 
   end
 

@@ -1,0 +1,3 @@
+class NE < SgMrtStation
+
+end
