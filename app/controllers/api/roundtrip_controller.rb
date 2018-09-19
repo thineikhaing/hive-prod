@@ -832,11 +832,11 @@ end
   def calculate_taxi_rate_api
     total_distance_km = params[:distance].to_i
     total_duration_min  = params[:duration]
-    p "depature::::"
-    p depature = params[:departure]
-    depature= depature.downcase!
-    p "distance in km"
-    p distance = total_distance_km - 1
+    p "depature"
+    depature = params[:depature]
+    params[:depature].present? ? depature = params[:depature] : depature = params[:departure]
+    p depature= depature.downcase!
+    distance = total_distance_km - 1
     total_time = total_duration_min
 
     flat_rate = 3.2
@@ -938,8 +938,7 @@ end
       end
 
       # calculate charge based on location
-      p "depature ****"
-      p depature = params[:departure]
+
       if depature.include?('seletar') ||  depature.include?('sentosa') ||  depature.include?('resorts world')
         location_charge = 3
       end
