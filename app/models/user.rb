@@ -122,7 +122,7 @@ class User < ActiveRecord::Base
         user_token = UserPushToken.find_by(endpoint_arn:user_endpoint_arn)
         if user_token.present?
           p "update token user id"
-          user_token.update(user_id: user_id)
+          user_token.update(user_id: user_id,notify: true)
         else
           p "create new token"
           UserPushToken.create(user_id: user_id,endpoint_arn:user_endpoint_arn,push_token: device_token)
