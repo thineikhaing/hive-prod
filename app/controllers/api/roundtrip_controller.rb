@@ -1326,10 +1326,15 @@ end
         sg_bus_routes = SgBusRoute.where(id: start_id .. end_id)
 
         sg_bus_routes.each do |route|
-          p route.bus_stop_code
-          # if route.distance.present?
-          busArray.push(SgBusStop.find_by_bus_id(route.bus_stop_code))
-          # end
+          sgstop = SgBusStop.find_by_bus_id(route.bus_stop_code)
+          busArray.push({
+                  bus_stop_id: sgstop.bus_id,
+                  bus_id: sgstop.bus_id,
+                  road_name:sgstop.road_name,
+                  description:sgstop.description,
+                  latitude:sgstop.latitude,
+                  longitude:sgstop.longitude
+             })
         end
       end
 
