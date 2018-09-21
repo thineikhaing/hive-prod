@@ -1348,7 +1348,6 @@ end
     sequence = ""
     s_id, e_id = ''
 
-
     substring = " MRT Station"
     from.slice! substring
     to.slice! substring
@@ -1356,9 +1355,6 @@ end
     p from = from.gsub(/\s+$/,'')
     p to = to.gsub(/\s+$/,'')
 
-    if fromId > toId
-
-    end
     if params[:shortname].present?
       if shortname == "NS"
         start_ns = NS.where(code: fromId).take
@@ -1448,7 +1444,14 @@ end
       end
     end
 
-    if params[:shortname] == "North South Line"
+    mrt_line_name = ""
+    if params[:mrt_line_name].present?
+      mrt_line_name = params[:mrt_line_name]
+    else
+      mrt_line_name = params[:shortname]
+    end
+
+    if mrt_line_name == "North South Line"
       start_ns = NS.find_by_name(from)
       end_ns = NS.find_by_name(to)
       if start_ns.id > end_ns.id
@@ -1456,7 +1459,7 @@ end
       else
         sequence = NS.where(id: start_ns.id .. end_ns.id).order(id: :asc)
       end
-    elsif params[:shortname] == "North East Line"
+    elsif mrt_line_name == "North East Line"
       start_ne = NE.find_by_name(from)
       end_ne = NE.find_by_name(to)
 
@@ -1466,7 +1469,7 @@ end
         sequence = NE.where(id: start_ne.id .. end_ne.id).order(id: :asc)
       end
 
-    elsif params[:shortname] == "East West Line"
+    elsif mrt_line_name == "East West Line"
       p start_ew = EW.find_by_name(from)
 
       p end_ew = EW.find_by_name(to)
@@ -1508,7 +1511,7 @@ end
       end
 
 
-    elsif params[:shortname] == "Circle Line"
+    elsif mrt_line_name == "Circle Line"
       start_cc = CC.find_by_name(from)
       end_cc = CC.find_by_name(to)
 
@@ -1517,7 +1520,7 @@ end
       else
         sequence = CC.where(id: start_cc.id .. end_cc.id).order(id: :asc)
       end
-    elsif params[:shortname] == "Downtown Line"
+    elsif mrt_line_name == "Downtown Line"
       p start_dt = DT.find_by_name(from)
       p end_dt = DT.find_by_name(to)
 
@@ -1526,7 +1529,7 @@ end
       else
         sequence = DT.where(id: start_dt.id .. end_dt.id).order(id: :asc)
       end
-    elsif params[:shortname] == "Sentosa Express"
+    elsif mrt_line_name == "Sentosa Express"
 
       p start_dt = SE.find_by_name(from)
       p end_dt = SE.find_by_name(to)
