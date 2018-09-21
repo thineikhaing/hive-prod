@@ -810,7 +810,7 @@ end
 
       total_fare =0.0
       total_distance = (smrt_mrt + sbs_mrt + smrt_bus+sbs_bus) * 0.001
-
+      total_distance = total_distance.round(1)
       if total_distance >= 40.2
         total_fare = 2.02
       elsif total_distance > 0
@@ -820,8 +820,8 @@ end
           num2= range.match(",").post_match.to_f
 
           if total_distance.between?(num1,num2)
-            p "total fare"
-            p total_fare =  (row[1].to_i* 0.01)
+            "total fare"
+            total_fare =  (row[1].to_i* 0.01)
           end
         end
       end
