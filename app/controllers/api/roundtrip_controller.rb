@@ -1384,7 +1384,12 @@ end
         sequence = []
         if fromId.to_s.include?("EW")
           start_station = EW.where(code: fromId).take
-          sequence.push(start_station)
+          ew_end = EW.find_by_code("EW4")
+          seq = EW.where(id: ew_end.id .. start_station.id).order(id: :desc)
+          seq.each do |data|
+            sequence.push(data)
+          end
+
         end
 
         if start_cg.id > end_cg.id
@@ -1402,11 +1407,15 @@ end
 
         if toId.to_s.include?("EW")
           end_station = EW.where(code: toId).take
-          sequence.push(end_station)
+          ew_start = EW.find_by_code("EW4")
+          seq = EW.where(id: ew_start.id .. end_station.id)
+          seq.each do |data|
+            sequence.push(data)
+          end
         end
       elsif shortname == "EW"
-        start_ns = EW.where(code: fromId).take
-        end_ns = EW.where(code: toId).take
+        p start_ns = EW.where(code: fromId).take
+        p end_ns = EW.where(code: toId).take
 
         if start_ns.id > end_ns.id
           sequence = EW.where(id: end_ns.id .. start_ns.id).order(id: :desc)
@@ -1476,34 +1485,63 @@ end
 
     elsif mrt_line_name == "East West Line"
       p start_ew = EW.find_by_name(from)
-
       p end_ew = EW.find_by_name(to)
+      p start_ew.code
+      p end_ew.code
+
+      if start_ew.code.include?("CG") || end_ew.code.include?("CG")
+        sequence = []
+        if start_ew.code.include?("EW")
+          start_cg = EW.find(62)
+          ew_end = EW.find_by_code("EW4")
+          seq = EW.where(id: ew_end.id .. start_ew.id).order(id: :desc)
+          seq.map{|data| sequence.push(data)}
+
+          seq = EW.where(id: start_cg.id .. end_ew.id)
+          seq.map{|data| sequence.push(data)}
+        elsif end_ew.code.include?("EW")
+          p end_cg = EW.find(62)
+          p ew_start = EW.find_by_code("EW4")
+          p "--"
+          p start_ew.id
+          p end_cg.id
+          seq = EW.where(id: end_cg.id .. start_ew.id).order(id: :desc)
+          seq.map{|data| sequence.push(data)}
+
+          seq = EW.where(id: ew_start.id .. end_ew.id)
+          seq.map{|data| sequence.push(data)}
+          #
 
 
-      if start_ew.code == "CG2" and end_ew.code == "EW4"
-        p 'start CG2 (changi), end EW4 tanah merah'
-        sequence = EW.where(id: "63") + EW.where(id: "62") + EW.where(id: "32")
-
-      elsif start_ew.code == "CG2" and end_ew.code == "CG1"
-        p 'start CG2 (changi), end CG1 expo'
-        sequence = EW.where(id: "63") + EW.where(id: "62")
-
-      elsif start_ew.code == "CG1" and end_ew.code == "CG2"
-        p 'start CG1 (expo), end CG2 changi'
-        sequence = EW.where(id: "62") + EW.where(id: "63")
-
-      elsif start_ew.code == "CG1" and end_ew.code == "EW4"
-        p 'start CG1 (expo), end EW4 Tanah'
-        sequence = EW.where(id: "62") + EW.where(id: "32")
 
 
-      elsif start_ew.code == "EW4" and end_ew.code == "CG2"
-        p 'start EW4 (Tanah), end CG2 changi'
-        sequence = EW.where(id: "32") + EW.where(id: "62")+ EW.where(id: "63")
+        end
 
-      elsif start_ew.code == "EW4" and end_ew.code == "CG1"
-        p 'start  EW4 (Tanah), end CG1 (expo)'
-        sequence =  EW.where(id: "32") + EW.where(id: "62")
+        # if start_ew.code == "CG2" and end_ew.code == "EW4"
+        #   p 'start CG2 (changi), end EW4 tanah merah'
+        #   sequence = EW.where(id: "63") + EW.where(id: "62") + EW.where(id: "32")
+        #
+        # elsif start_ew.code == "CG2" and end_ew.code == "CG1"
+        #   p 'start CG2 (changi), end CG1 expo'
+        #   sequence = EW.where(id: "63") + EW.where(id: "62")
+        #
+        # elsif start_ew.code == "CG1" and end_ew.code == "CG2"
+        #   p 'start CG1 (expo), end CG2 changi'
+        #   sequence = EW.where(id: "62") + EW.where(id: "63")
+        #
+        # elsif start_ew.code == "CG1" and end_ew.code == "EW4"
+        #   p 'start CG1 (expo), end EW4 Tanah'
+        #   sequence = EW.where(id: "62") + EW.where(id: "32")
+        #
+        #
+        # elsif start_ew.code == "EW4" and end_ew.code == "CG2"
+        #   p 'start EW4 (Tanah), end CG2 changi'
+        #   sequence = EW.where(id: "32") + EW.where(id: "62")+ EW.where(id: "63")
+        #
+        # elsif start_ew.code == "EW4" and end_ew.code == "CG1"
+        #   p 'start  EW4 (Tanah), end CG1 (expo)'
+        #   sequence =  EW.where(id: "32") + EW.where(id: "62")
+        # end
 
       else
 
