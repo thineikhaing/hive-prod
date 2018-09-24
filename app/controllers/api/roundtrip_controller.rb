@@ -1353,12 +1353,6 @@ end
     sequence = ""
     s_id, e_id = ''
 
-    substring = " MRT Station"
-    from.slice! substring
-    to.slice! substring
-
-    p from = from.gsub(/\s+$/,'')
-    p to = to.gsub(/\s+$/,'')
 
     if params[:shortname].present?
       if shortname == "NS"
@@ -1373,56 +1367,34 @@ end
 
 
       elsif shortname == "CG"
-        start_cg = EW.where(code: fromId).take
-        end_cg = EW.where(code: toId).take
+        start_ew = EW.where(code: fromId).take
+        end_ew = EW.where(code: toId).take
 
-        if fromId.to_s.include?("EW")
+        if start_ew.code.include?("EW")
           start_cg = EW.find(62)
-        elsif toId.to_s.include?("EW")
-          end_cg = EW.find(62)
-        end
-
-        sequence = []
-        if fromId.to_s.include?("EW")
-          start_station = EW.where(code: fromId).take
           ew_end = EW.find_by_code("EW4")
-          seq = EW.where(id: ew_end.id .. start_station.id).order(id: :desc)
+          seq = EW.where(id: ew_end.id .. start_ew.id).order(id: :desc)
+          seq1 = EW.where(id: start_cg.id .. end_ew.id)
+          sequence = seq + seq1
 
-          seq.each do |data|
-            sequence.push(data)
-          end
-
-        end
-
-        if start_cg.id > end_cg.id
-          seq = EW.where(id: end_cg.id .. start_cg.id).order(id: :desc)
-          seq.each do |data|
-            sequence.push(data)
-          end
-
-        else
-          seq = EW.where(id: start_cg.id .. end_cg.id)
-          seq.each do |data|
-            sequence.push(data)
-          end
-        end
-
-        if toId.to_s.include?("EW")
-          end_station = EW.where(code: toId).take
+        elsif end_ew.code.include?("EW")
+          end_cg = EW.find(62)
           ew_start = EW.find_by_code("EW4")
-          seq = EW.where(id: ew_start.id .. end_station.id)
-          seq.each do |data|
-            sequence.push(data)
-          end
+          start_ew.id
+          end_cg.id
+          seq = EW.where(id: end_cg.id .. start_ew.id).order(id: :desc)
+          seq1 = EW.where(id: ew_start.id .. end_ew.id)
+          sequence = seq + seq1
         end
-      elsif shortname == "EW"
-        p start_ns = EW.where(code: fromId).take
-        p end_ns = EW.where(code: toId).take
 
-        if start_ns.id > end_ns.id
-          sequence = EW.where(id: end_ns.id .. start_ns.id).order(id: :desc)
+      elsif shortname == "EW"
+        start_ew = EW.where(code: fromId).take
+        end_ew = EW.where(code: toId).take
+
+        if start_ew.id > end_ew.id
+          sequence = EW.where(id: end_ew.id .. start_ew.id).order(id: :desc)
         else
-          sequence = EW.where(id: start_ns.id .. end_ns.id)
+          sequence = EW.where(id: start_ew.id .. end_ew.id)
         end
 
       elsif shortname == "NE"
@@ -1436,14 +1408,32 @@ end
         end
 
       elsif shortname == "CC"
-        start_ns = CC.where(code: fromId).take
-        end_ns = CC.where(code: toId).take
+        start_cc = CC.where(code: fromId).take
+        end_cc = CC.where(code: toId).take
 
-        if start_ns.id > end_ns.id
-          sequence = CC.where(id: end_ns.id .. start_ns.id).order(id: :desc)
+        if end_cc.code.include?("CE")
+          cc_last = CC.find_by_code("CC4")
+          ce_start = CC.find_by_code("CE1")
+          sequence = CC.where(id: cc_last.id .. start_cc.id).order(id: :desc)
+          res_sequence = CC.where(id: ce_start.id .. end_cc.id)
+          sequence = sequence + res_sequence
+        elsif start_cc.code.include?("CE")
+
+          cc_last = CC.find_by_code("CC4")
+          ce_start = CC.find_by_code("CE1")
+          sequence = CC.where(id: ce_start.id .. start_cc.id).order(id: :desc)
+          res_sequence = CC.where(id: cc_last.id .. end_cc.id)
+          sequence = sequence + res_sequence
         else
-          sequence = CC.where(id: start_ns.id .. end_ns.id)
+          if start_cc.id > end_cc.id
+            sequence = CC.where(id: end_cc.id .. start_cc.id).order(id: :desc)
+          else
+            sequence = CC.where(id: start_cc.id .. end_cc.id).order(id: :asc)
+          end
+          sequence = sequence.where("latitude != 0")
         end
+
+
 
       elsif shortname == "DT"
         start_ns = DT.where(code: fromId).take
@@ -1462,6 +1452,13 @@ end
       mrt_line_name = params[:mrt_line_name]
     else
       mrt_line_name = params[:shortname]
+    end
+    if params[:mrt_line_name].present?
+      substring = " MRT Station"
+      from.slice! substring
+      to.slice! substring
+      from = from.gsub(/\s+$/,'')
+      to = to.gsub(/\s+$/,'')
     end
 
     if mrt_line_name == "North South Line"
@@ -1488,8 +1485,7 @@ end
     elsif mrt_line_name == "East West Line"
       start_ew = EW.find_by_name(from)
       end_ew = EW.find_by_name(to)
-      start_ew.code
-      end_ew.code
+
       if start_ew.code.include?("CG") || end_ew.code.include?("CG")
         if start_ew.code.include?("EW")
           start_cg = EW.find(62)
@@ -1520,13 +1516,20 @@ end
     elsif mrt_line_name == "Circle Line"
       start_cc = CC.find_by_name(from)
       end_cc = CC.find_by_name(to)
+
       if end_cc.code.include?("CE")
         cc_last = CC.find_by_code("CC4")
-        sequence = CC.where(id: cc_last.id .. start_cc.id).order(id: :desc)
         ce_start = CC.find_by_code("CE1")
-        res_sequence = CC.where(id: ce_start.id .. end_cc.id).order(id: :desc)
+        sequence = CC.where(id: cc_last.id .. start_cc.id).order(id: :desc)
+        res_sequence = CC.where(id: ce_start.id .. end_cc.id)
         sequence = sequence + res_sequence
+      elsif start_cc.code.include?("CE")
 
+        cc_last = CC.find_by_code("CC4")
+        ce_start = CC.find_by_code("CE1")
+        sequence = CC.where(id: ce_start.id .. start_cc.id).order(id: :desc)
+        res_sequence = CC.where(id: cc_last.id .. end_cc.id)
+        sequence = sequence + res_sequence
       else
         if start_cc.id > end_cc.id
           sequence = CC.where(id: end_cc.id .. start_cc.id).order(id: :desc)
