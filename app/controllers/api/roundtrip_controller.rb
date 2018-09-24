@@ -1473,7 +1473,7 @@ end
         sequence = NS.where(id: start_ns.id .. end_ns.id).order(id: :asc)
       end
       sequence = sequence.where("latitude != 0")
-      
+
     elsif mrt_line_name == "North East Line"
       start_ne = NE.find_by_name(from)
       end_ne = NE.find_by_name(to)
@@ -1535,7 +1535,6 @@ end
         end
         sequence = sequence.where("latitude != 0")
       end
-
 
     elsif mrt_line_name == "Downtown Line"
       start_dt = DT.find_by_name(from)
