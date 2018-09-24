@@ -1371,6 +1371,7 @@ end
           sequence = NS.where(id: start_ns.id .. end_ns.id)
         end
 
+
       elsif shortname == "CG"
         start_cg = EW.where(code: fromId).take
         end_cg = EW.where(code: toId).take
@@ -1386,6 +1387,7 @@ end
           start_station = EW.where(code: fromId).take
           ew_end = EW.find_by_code("EW4")
           seq = EW.where(id: ew_end.id .. start_station.id).order(id: :desc)
+
           seq.each do |data|
             sequence.push(data)
           end
@@ -1436,7 +1438,6 @@ end
       elsif shortname == "CC"
         start_ns = CC.where(code: fromId).take
         end_ns = CC.where(code: toId).take
-        # sequence = CC.where(id: start_ns.id .. end_ns.id)
 
         if start_ns.id > end_ns.id
           sequence = CC.where(id: end_ns.id .. start_ns.id).order(id: :desc)
@@ -1447,8 +1448,6 @@ end
       elsif shortname == "DT"
         start_ns = DT.where(code: fromId).take
         end_ns = DT.where(code: toId).take
-        # sequence = DT.where(id: start_ns.id .. end_ns.id)
-
         if start_ns.id > end_ns.id
           sequence = DT.where(id: end_ns.id .. start_ns.id).order(id: :desc)
         else
@@ -1473,6 +1472,8 @@ end
       else
         sequence = NS.where(id: start_ns.id .. end_ns.id).order(id: :asc)
       end
+      sequence = sequence.where("latitude != 0")
+      
     elsif mrt_line_name == "North East Line"
       start_ne = NE.find_by_name(from)
       end_ne = NE.find_by_name(to)
@@ -1482,107 +1483,80 @@ end
       else
         sequence = NE.where(id: start_ne.id .. end_ne.id).order(id: :asc)
       end
+      sequence = sequence.where("latitude != 0")
 
     elsif mrt_line_name == "East West Line"
-      p start_ew = EW.find_by_name(from)
-      p end_ew = EW.find_by_name(to)
-      p start_ew.code
-      p end_ew.code
-
+      start_ew = EW.find_by_name(from)
+      end_ew = EW.find_by_name(to)
+      start_ew.code
+      end_ew.code
       if start_ew.code.include?("CG") || end_ew.code.include?("CG")
-        sequence = []
         if start_ew.code.include?("EW")
           start_cg = EW.find(62)
           ew_end = EW.find_by_code("EW4")
           seq = EW.where(id: ew_end.id .. start_ew.id).order(id: :desc)
-          seq.map{|data| sequence.push(data)}
+          seq1 = EW.where(id: start_cg.id .. end_ew.id)
+          sequence = seq + seq1
 
-          seq = EW.where(id: start_cg.id .. end_ew.id)
-          seq.map{|data| sequence.push(data)}
         elsif end_ew.code.include?("EW")
-          p end_cg = EW.find(62)
-          p ew_start = EW.find_by_code("EW4")
-          p "--"
-          p start_ew.id
-          p end_cg.id
+          end_cg = EW.find(62)
+          ew_start = EW.find_by_code("EW4")
+          start_ew.id
+          end_cg.id
           seq = EW.where(id: end_cg.id .. start_ew.id).order(id: :desc)
-          seq.map{|data| sequence.push(data)}
-
-          seq = EW.where(id: ew_start.id .. end_ew.id)
-          seq.map{|data| sequence.push(data)}
-          #
-
-
-
+          seq1 = EW.where(id: ew_start.id .. end_ew.id)
+          sequence = seq + seq1
 
         end
-
-        # if start_ew.code == "CG2" and end_ew.code == "EW4"
-        #   p 'start CG2 (changi), end EW4 tanah merah'
-        #   sequence = EW.where(id: "63") + EW.where(id: "62") + EW.where(id: "32")
-        #
-        # elsif start_ew.code == "CG2" and end_ew.code == "CG1"
-        #   p 'start CG2 (changi), end CG1 expo'
-        #   sequence = EW.where(id: "63") + EW.where(id: "62")
-        #
-        # elsif start_ew.code == "CG1" and end_ew.code == "CG2"
-        #   p 'start CG1 (expo), end CG2 changi'
-        #   sequence = EW.where(id: "62") + EW.where(id: "63")
-        #
-        # elsif start_ew.code == "CG1" and end_ew.code == "EW4"
-        #   p 'start CG1 (expo), end EW4 Tanah'
-        #   sequence = EW.where(id: "62") + EW.where(id: "32")
-        #
-        #
-        # elsif start_ew.code == "EW4" and end_ew.code == "CG2"
-        #   p 'start EW4 (Tanah), end CG2 changi'
-        #   sequence = EW.where(id: "32") + EW.where(id: "62")+ EW.where(id: "63")
-        #
-        # elsif start_ew.code == "EW4" and end_ew.code == "CG1"
-        #   p 'start  EW4 (Tanah), end CG1 (expo)'
-        #   sequence =  EW.where(id: "32") + EW.where(id: "62")
-        # end
-
       else
-
         if start_ew.id > end_ew.id
           sequence = EW.where(id: end_ew.id .. start_ew.id).order(id: :desc)
         else
           sequence = EW.where(id: start_ew.id .. end_ew.id).order(id: :asc)
         end
-
+        sequence = sequence.where("latitude != 0")
       end
-
 
     elsif mrt_line_name == "Circle Line"
       start_cc = CC.find_by_name(from)
       end_cc = CC.find_by_name(to)
+      if end_cc.code.include?("CE")
+        cc_last = CC.find_by_code("CC4")
+        sequence = CC.where(id: cc_last.id .. start_cc.id).order(id: :desc)
+        ce_start = CC.find_by_code("CE1")
+        res_sequence = CC.where(id: ce_start.id .. end_cc.id).order(id: :desc)
+        sequence = sequence + res_sequence
 
-      if start_cc.id > end_cc.id
-        sequence = CC.where(id: end_cc.id .. start_cc.id).order(id: :desc)
       else
-        sequence = CC.where(id: start_cc.id .. end_cc.id).order(id: :asc)
+        if start_cc.id > end_cc.id
+          sequence = CC.where(id: end_cc.id .. start_cc.id).order(id: :desc)
+        else
+          sequence = CC.where(id: start_cc.id .. end_cc.id).order(id: :asc)
+        end
+        sequence = sequence.where("latitude != 0")
       end
+
+
     elsif mrt_line_name == "Downtown Line"
-      p start_dt = DT.find_by_name(from)
-      p end_dt = DT.find_by_name(to)
+      start_dt = DT.find_by_name(from)
+      end_dt = DT.find_by_name(to)
 
       if start_dt.id > end_dt.id
         sequence = DT.where(id: end_dt.id .. start_dt.id).order(id: :desc)
       else
         sequence = DT.where(id: start_dt.id .. end_dt.id).order(id: :asc)
       end
+      sequence = sequence.where("latitude != 0")
     elsif mrt_line_name == "Sentosa Express"
-
-      p start_dt = SE.find_by_name(from)
-      p end_dt = SE.find_by_name(to)
+      start_dt = SE.find_by_name(from)
+      end_dt = SE.find_by_name(to)
 
       if start_dt.id > end_dt.id
         sequence = SE.where(id: end_dt.id .. start_dt.id).order(id: :desc)
       else
         sequence = SE.where(id: start_dt.id .. end_dt.id).order(id: :asc)
       end
-
+      sequence = sequence.where("latitude != 0")
     end
 
 
