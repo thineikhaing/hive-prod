@@ -1242,7 +1242,7 @@ end
             lng = stop.longitude.round(4) unless stop.longitude.nil?
             depart_lat = params[:depart_lat].to_f.round(4)
             depart_lng = params[:depart_lng].to_f.round(4)
-            if (depart_lat== lat and depart_lng == lng)
+            if (depart_lat== lat && depart_lng == lng)
               p "from bus id"
               p frombusId = stop.bus_id
             end
@@ -1251,6 +1251,9 @@ end
               busstops = SgBusStop.where(description: params[:depart])
               if busstops.present?
                 p frombusId = busstops.take.bus_id
+              else
+                busstops = SgBusStop.where("description LIKE ?","%#{params[:depart]}")
+                p frombusId = busstops.take.bus_id if busstops.present?
               end
             end
 
@@ -1261,19 +1264,23 @@ end
           p "Arrival bus"
           busstops = SgBusStop.all
           busstops.each do |stop|
-            lat = stop.latitude.round(4) unless stop.latitude.nil?
-            lng = stop.longitude.round(4) unless stop.longitude.nil?
-            arrive_lat = params[:arrive_lat].to_f.round(4)
-            arrive_lng = params[:arrive_lng].to_f.round(4)
-            if (arrive_lat == lat and arrive_lng == lng)
+             lat = stop.latitude.round(5) unless stop.latitude.nil?
+             lng = stop.longitude.round(5) unless stop.longitude.nil?
+            arrive_lat = params[:arrive_lat].to_f.round(5)
+            arrive_lng = params[:arrive_lng].to_f.round(5)
+            if (arrive_lat == lat && arrive_lng == lng)
               p "to bus id"
               p tobusId = stop.bus_id
             end
 
             if tobusId.nil?
-              busstops = SgBusStop.where(description: params[:arrive])
+              p "to bus id"
+              p busstops = SgBusStop.where(description: params[:arrive])
               if busstops.present?
                 p tobusId = busstops.take.bus_id
+              else
+                busstops = SgBusStop.where("description LIKE ?","%#{params[:arrive]}")
+                p tobusId = busstops.take.bus_id if busstops.present?
               end
             end
 
@@ -1288,6 +1295,7 @@ end
       p frombusId
       p bus_start = SgBusRoute.where(service_no: service_no, bus_stop_code: frombusId)
       p "end stop"
+      p tobusId
       p bus_end = SgBusRoute.where(service_no: service_no, bus_stop_code: tobusId)
 
       if bus_start.count == 1
@@ -1364,7 +1372,6 @@ end
         else
           sequence = NS.where(id: start_ns.id .. end_ns.id)
         end
-
 
       elsif shortname == "CG"
         start_ew = EW.where(code: fromId).take
