@@ -1024,14 +1024,14 @@ end
     service = params[:service]
     bus_id = params[:bus_id]
 
-    busLat = "%.5g" % params[:latitude].to_f
-    busLng = "%.5g" % params[:longitude].to_f
+    busLat = params[:latitude].to_f.round(4)
+    busLng = params[:longitude].to_f.round(4)
 
     if params[:latitude] and params[:longitude]
-      busstops = SgBusStop.where(description: params[:name])
+      p busstops = SgBusStop.where(description: params[:name])
       if busstops.count == 1
-        bLat = "%.5g" % busstops.take.latitude.to_f
-        bLng = "%.5g" % busstops.take.longitude.to_f
+        p bLat = busstops.take.latitude.round(4)
+        p bLng = busstops.take.longitude.round(4)
         if (busLat == bLat and busLng == bLng)
           p "found bus stop"
           bus_id = busstops.take.bus_id
@@ -1039,12 +1039,16 @@ end
 
       else
         busstops.each do |stop|
-          lat = "%.5g" % stop.latitude.to_f
-          lng = "%.5g" % stop.longitude.to_f
+          lat = stop.latitude.round(4)
+          lng = stop.longitude.round(4)
           if (busLat == lat and busLng == lng)
             bus_id = stop.bus_id
           end
         end
+      end
+
+      if bus_id.nil? && busstops.count == 1
+        bus_id = busstops.take.bus_id
       end
 
     end
@@ -1052,8 +1056,8 @@ end
     if bus_id.nil?
       busstops = SgBusStop.all
       busstops.each do |stop|
-        lat = "%.5g" % stop.latitude.to_f unless stop.latitude.nil?
-        lng = "%.5g" % stop.longitude.to_f unless stop.longitude.nil?
+        lat = stop.latitude.to_f.round(4) unless stop.latitude.nil?
+        lng = stop.longitude.to_f.round(4) unless stop.longitude.nil?
         if (busLat == lat and busLng == lng)
           bus_id = stop.bus_id
         end
