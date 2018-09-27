@@ -1196,7 +1196,6 @@ end
     total_stop = sequence1 - sequence2
     total_stop = total_stop.abs
 
-    # service_no = service_no.gsub(/[^0-9]/, '')
     frombusId = params[:frombusId]
     tobusId = params[:tobusId]
     bus_route = [ ]
@@ -1229,7 +1228,6 @@ end
       end
     end
 
-
     bus_route.each do |route|
       busArray.push(SgBusStop.find_by_bus_id(route.bus_stop_code))
     end
@@ -1238,84 +1236,51 @@ end
       frombusId = nil
       frombusId = nil
         if params[:depart_lat] and params[:depart_lng]
-          p "departure bus"
-           #busstops = SgBusStop.where(description: params[:depart])
+
            busstops = SgBusStop.all
           busstops.each do |stop|
-            lat = stop.latitude.round(4) unless stop.latitude.nil?
+            lat = stop.latitude.round(3) unless stop.latitude.nil?
             lng = stop.longitude.round(4) unless stop.longitude.nil?
-            depart_lat = params[:depart_lat].to_f.round(4)
+            depart_lat = params[:depart_lat].to_f.round(3)
             depart_lng = params[:depart_lng].to_f.round(4)
             if (depart_lat== lat && depart_lng == lng)
-              p "from bus id"
-              p frombusId = stop.bus_id
+              frombusId = stop.bus_id
             end
-
-            if frombusId.nil?
-              busstops = SgBusStop.where(description: params[:depart])
-              if busstops.present?
-                p frombusId = busstops.take.bus_id
-              else
-                busstops = SgBusStop.where("description LIKE ?","%#{params[:depart]}")
-                p frombusId = busstops.take.bus_id if busstops.present?
-              end
-            end
-
           end
         end
 
         if params[:arrive_lat] and params[:arrive_lng]
-          p "Arrival bus"
+
+          arrive_lat = params[:arrive_lat].to_f.round(3)
+          arrive_lng = params[:arrive_lng].to_f.round(4)
           busstops = SgBusStop.all
           busstops.each do |stop|
-             lat = stop.latitude.round(5) unless stop.latitude.nil?
-             lng = stop.longitude.round(5) unless stop.longitude.nil?
-            arrive_lat = params[:arrive_lat].to_f.round(5)
-            arrive_lng = params[:arrive_lng].to_f.round(5)
+             lat = stop.latitude.round(3) unless stop.latitude.nil?
+             lng = stop.longitude.round(4) unless stop.longitude.nil?
             if (arrive_lat == lat && arrive_lng == lng)
-              p "to bus id"
-              p tobusId = stop.bus_id
+              tobusId = stop.bus_id
             end
-
-            if tobusId.nil?
-              p "to bus id"
-              p busstops = SgBusStop.where(description: params[:arrive])
-              if busstops.present?
-                p tobusId = busstops.take.bus_id
-              else
-                busstops = SgBusStop.where("description LIKE ?","%#{params[:arrive]}")
-                p tobusId = busstops.take.bus_id if busstops.present?
-              end
-            end
-
           end
-
         end
     end
 
     if busArray.count == 0
       p "search from start and end points"
-      p "start stop"
-      p frombusId
-      p bus_start = SgBusRoute.where(service_no: service_no, bus_stop_code: frombusId)
-      p "end stop"
-      p tobusId
-      p bus_end = SgBusRoute.where(service_no: service_no, bus_stop_code: tobusId)
+      bus_start = SgBusRoute.where(service_no: service_no, bus_stop_code: frombusId)
+      bus_end = SgBusRoute.where(service_no: service_no, bus_stop_code: tobusId)
 
       if bus_start.count == 1
         bus_start = bus_start.take
-        p "Start stop direction"
-        p direction = bus_start.direction
+        direction = bus_start.direction
         bus_end_arr = bus_end.where("direction =?",direction)
         if bus_end_arr.count > 1
-          p "compare end stop id with start stop id"
           bus_end_arr.each do |end_id|
             if end_id.id > bus_start.id
-              p bus_end = end_id
+              bus_end = end_id
             end
           end
         else
-          p bus_end = bus_end_arr.take
+          bus_end = bus_end_arr.take
         end
 
       elsif bus_end.count == 1
@@ -1324,7 +1289,7 @@ end
 
         bus_start = bus_start.where("direction =? ",direction).take
       else
-        p bus_start = bus_start.take
+        bus_start = bus_start.take
         bus_end = bus_end.take
         if !bus_start.nil?
           direction = bus_start.direction
