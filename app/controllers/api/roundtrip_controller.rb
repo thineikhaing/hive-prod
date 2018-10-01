@@ -1360,8 +1360,8 @@ end
 
   def subsequence_mrtinfo
 
-    from = params[:from]
-    to = params[:to]
+    from = params[:from].strip
+    to = params[:to].strip
     fromId= params[:fromId].to_s
     toId = params[:toId].to_s
     shortname= params[:shortname].to_s
@@ -1554,8 +1554,10 @@ end
       end
 
     elsif mrt_line_name == "Downtown Line"
-      start_dt = DT.find_by_name(from)
-      end_dt = DT.find_by_name(to)
+      p from
+      p to
+      p start_dt = DT.find_by_name(from)
+      p end_dt = DT.find_by_name(to)
 
       if start_dt.id > end_dt.id
         sequence = DT.where(id: end_dt.id .. start_dt.id).order(id: :desc)
