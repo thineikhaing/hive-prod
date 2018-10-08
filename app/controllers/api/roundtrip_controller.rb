@@ -267,7 +267,7 @@ class Api::RoundtripController < ApplicationController
             trip_detail.push(eval(detail))
           end
 
-          render json: {status:200, message: "Delete trip by id.", trips: trips,trip_detail:trip_detail}  , status: 200
+          render json: {status:200, message: "Delete trip by id.", trips: trips,trip_detail:trip_detail} 
         end
       elsif params[:ids].present?
         p "selected id to delete"
@@ -284,7 +284,7 @@ class Api::RoundtripController < ApplicationController
           trip_detail.push(eval(detail))
         end
 
-        render json: {status:200, message: "Delete trip by id.", trips: trips,trip_detail:trip_detail}  , status: 200
+        render json: {status:200, message: "Delete trip by id.", trips: trips,trip_detail:trip_detail}
       end
     else
       render json:{status:201, message: "Params auth_token and user_id must be presented and valid.", error_msg: "Params auth_token and user_id must be presented and valid."} , status: 400
@@ -303,7 +303,7 @@ class Api::RoundtripController < ApplicationController
         Tweet.send_tweet_noti(tweet)
     end
 
-    render json: {status:200, message: "Created new transit announcement",tweet:tweet}  , status: 200
+    render json: {status:200, message: "Created new transit announcement",tweet:tweet}
   end
 
 
@@ -966,7 +966,7 @@ end
       p total_estimated_fare = (flat_rate + net_meterfare + waiting_charge +  peekhour_charge + latehour_charge + pbHoliday_charge + location_charge).round(2)
 
 
-      render json:{total_estimated_fare: total_estimated_fare} , status: 200
+      render json:{total_estimated_fare: total_estimated_fare, status: 200}
     end
 
   end
@@ -1014,7 +1014,7 @@ end
       nearby_buses.push(busInfos)
 
     end
-    render json: {busStops: nearby_buses}
+    render json: {busStops: nearby_buses, status: 200}
 
   end
 
@@ -1121,8 +1121,6 @@ end
       end
 
 
-
-
       sebseqBus =  results[0]["NextBus2"]
 
       est_time = Time.parse(nextBus["EstimatedArrival"])
@@ -1155,7 +1153,7 @@ end
         results[0]["NextBus2"].merge!(tempwaitTime)
       end
 
-      render json:{bus_freq:bus_freq_interval,nextBus:nextBus,results: results, bus_id: bus_id, bus_route_info:bus_route_info } , status: 200
+      render json:{bus_freq:bus_freq_interval,nextBus:nextBus,results: results, bus_id: bus_id, bus_route_info:bus_route_info, status: 200}
     else
       render json:{error_msg:"No Available Result!"}
     end
@@ -1183,7 +1181,7 @@ end
     buses = buses_num + buses_char
 
     route = route.uniq{ |r| [r["service_no"]]}
-    render json: {buses: buses,route:route}
+    render json: {buses: buses,route:route, status: 200}
 
   end
 
@@ -1355,7 +1353,7 @@ end
 
     end
 
-    render json:{results: busArray,count: busArray.count,direction:direction} , status: 200
+    render json:{results: busArray,count: busArray.count,direction:direction, status: 200}
   end
   def subsequence_mrtinfo
 
@@ -1591,7 +1589,7 @@ end
     end
 
 
-    render json:{results: sequence}
+    render json:{results: sequence,status: 200}
 
   end
 
