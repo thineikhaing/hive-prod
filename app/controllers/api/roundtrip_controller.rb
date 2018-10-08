@@ -1554,10 +1554,9 @@ end
       end
 
     elsif mrt_line_name == "Downtown Line"
-      p from
-      p to
-      p start_dt = DT.find_by_name(from)
-      p end_dt = DT.find_by_name(to)
+
+      start_dt = DT.find_by_name(from)
+      end_dt = DT.find_by_name(to)
 
       if start_dt.id > end_dt.id
         sequence = DT.where(id: end_dt.id .. start_dt.id).order(id: :desc)
