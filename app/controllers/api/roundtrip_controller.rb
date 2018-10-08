@@ -1357,18 +1357,26 @@ end
 
     render json:{results: busArray,count: busArray.count,direction:direction} , status: 200
   end
-
   def subsequence_mrtinfo
 
-    from = params[:from].strip
-    to = params[:to].strip
+    from = params[:from].downcase
+    to = params[:to].downcase
+
     fromId= params[:fromId].to_s
     toId = params[:toId].to_s
     shortname= params[:shortname].to_s
     sequence = ""
     s_id, e_id = ''
 
+    if from.last(3).include? "stn"
+      from = from.gsub("stn","")
+    end
+    if to.last(3).include? "stn"
+      to = to.gsub("stn","")
+    end
 
+    p from = from.strip
+    p to = to.strip
     if params[:shortname].present?
       if shortname == "NS"
         start_ns = NS.where(code: fromId).take
@@ -1476,8 +1484,10 @@ end
     end
 
     if mrt_line_name == "North South Line"
-      start_ns = NS.find_by_name(from)
-      end_ns = NS.find_by_name(to)
+
+      start_ns = NS.where('lower(name) = ?', from.downcase).first
+      end_ns = NS.where('lower(name) = ?', to.downcase).first
+
       if start_ns.id > end_ns.id
         sequence = NS.where(id: end_ns.id .. start_ns.id).order(id: :desc)
       else
@@ -1486,8 +1496,9 @@ end
       sequence = sequence.where("latitude != 0")
 
     elsif mrt_line_name == "North East Line"
-      start_ne = NE.find_by_name(from)
-      end_ne = NE.find_by_name(to)
+
+      start_ne = NE.where('lower(name) = ?', from.downcase).first
+      end_ne = NE.where('lower(name) = ?', to.downcase).first
 
       if start_ne.id > end_ne.id
         sequence = NE.where(id: end_ne.id .. start_ne.id).order(id: :desc)
@@ -1497,8 +1508,9 @@ end
       sequence = sequence.where("latitude != 0")
 
     elsif mrt_line_name == "East West Line"
-      start_ew = EW.find_by_name(from)
-      end_ew = EW.find_by_name(to)
+
+      start_ew = EW.where('lower(name) = ?', from.downcase).first
+      end_ew = EW.where('lower(name) = ?', to.downcase).first
 
       if start_ew.code.include?("CG") || end_ew.code.include?("CG")
         if start_ew.code.include?("EW")
@@ -1528,8 +1540,9 @@ end
       end
 
     elsif mrt_line_name == "Circle Line"
-      start_cc = CC.find_by_name(from)
-      end_cc = CC.find_by_name(to)
+
+      start_cc = CC.where('lower(name) = ?', from.downcase).first
+      end_cc = CC.where('lower(name) = ?', to.downcase).first
 
       if end_cc.code.include?("CE")
         cc_last = CC.find_by_code("CC4")
@@ -1554,10 +1567,9 @@ end
       end
 
     elsif mrt_line_name == "Downtown Line"
-      p from
-      p to
-      p start_dt = DT.find_by_name(from)
-      p end_dt = DT.find_by_name(to)
+
+      start_dt = DT.where('lower(name) = ?', from.downcase).first
+      end_dt = DT.where('lower(name) = ?', to.downcase).first
 
       if start_dt.id > end_dt.id
         sequence = DT.where(id: end_dt.id .. start_dt.id).order(id: :desc)
@@ -1566,8 +1578,9 @@ end
       end
       sequence = sequence.where("latitude != 0")
     elsif mrt_line_name == "Sentosa Express"
-      start_dt = SE.find_by_name(from)
-      end_dt = SE.find_by_name(to)
+
+      start_dt = SE.where('lower(name) = ?', from.downcase).first
+      end_dt = SE.where('lower(name) = ?', to.downcase).first
 
       if start_dt.id > end_dt.id
         sequence = SE.where(id: end_dt.id .. start_dt.id).order(id: :desc)
