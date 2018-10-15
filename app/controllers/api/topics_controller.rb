@@ -618,6 +618,18 @@ class Api::TopicsController < ApplicationController
           if current_user.present?
             topics = Topic.where(user_id: current_user.id,hiveapplication_id: hiveapplication.id)
           end
+
+          if Rails.env.production?
+            socalKey = Socal_key::Production_Key
+          else
+            socalKey = Socal_key::Development_Key
+          end
+
+          if params[:app_key] == socalKey
+            Vote.where(topic_id: topic.id).delete_all
+          end
+
+
           topic.delete
 
           render json: { status: 200, message: "Delete topic by id",topics: topics }
