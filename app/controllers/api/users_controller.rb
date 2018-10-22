@@ -915,7 +915,8 @@ class Api::UsersController < ApplicationController
       params[:locality].present? ? locality = params[:locality] : locality=""
       params[:country].present? ? country = params[:country] : country=""
       params[:postcode].present? ? postcode = params[:postcode] : postcode=""
-
+      p "place id"
+      p place_id
       place = place.add_record(name, latitude, longitude, address, source, source_id,
                                place_id, current_user.id, current_user.authentication_token,
                                choice,"","",locality,country,postcode)

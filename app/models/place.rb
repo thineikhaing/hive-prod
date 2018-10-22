@@ -236,7 +236,7 @@ class Place < ActiveRecord::Base
     category = "" unless category.present?
     if auth_token.present?
       if place_id.present?
-        p "exciting record"
+        p "place id exit"
         place = Place.find(place_id)
         Checkinplace.create(place_id: place.id, user_id: user_id)
         user.last_known_latitude =  place.latitude
@@ -256,11 +256,11 @@ class Place < ActiveRecord::Base
 
       elsif source.to_i == Place::ONEMAP
         place = ""
-        check_records = Place.where(name:name)
+        check_records = Place.where(address:address)
 
         check_records.each do |cr|
           p "exisiting  record"
-          place = cr if cr.name.downcase == name.downcase
+          place = cr if cr.address.downcase == address.downcase
         end
 
         if place == ""
