@@ -263,6 +263,10 @@ class Place < ActiveRecord::Base
           place = cr if cr.address.downcase == address.downcase
         end
 
+        if address.nil?
+          address = name
+        end
+
         if place == ""
           place = Place.create(
               name: name,
