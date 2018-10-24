@@ -1002,7 +1002,7 @@ end
     sgbusStops.each do |stop|
 
       busRoute = SgBusRoute.where(bus_stop_code: stop.bus_id)
-      distance = Geocoder::Calculations.distance_between([latitude,longitude], [stop.latitude,stop.longitude], {units: :km}).round(2)
+      distance = Geocoder::Calculations.distance_between([latitude,longitude], [stop.latitude,stop.longitude], {units: :km}).round(1)
       stop= stop.as_json.merge!({distance: distance})
 
       buses = []
@@ -1028,11 +1028,13 @@ end
       end
       buses_num = buses_num.map(&:to_i).sort
       buses = buses_num + buses_char
+      nearest = nearest.sort {|x,y|
+        y[:service_no].to_i <=>x[:service_no].to_i
+      }
       busInfos = {stop: stop, buses:buses}
       busInfos2 = {stop: stop, buses:nearest}
       nearby_buses.push(busInfos)
       nearby_buses2.push(busInfos2)
-
     end
 
     nearby_buses2 = nearby_buses2.sort {|x,y|y[:stop][:distance]<=>x[:stop][:distance]}.reverse
