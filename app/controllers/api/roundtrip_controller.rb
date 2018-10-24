@@ -267,7 +267,7 @@ class Api::RoundtripController < ApplicationController
             trip_detail.push(eval(detail))
           end
 
-          render json: {status:200, message: "Delete trip by id.", trips: trips,trip_detail:trip_detail} 
+          render json: {status:200, message: "Delete trip by id.", trips: trips,trip_detail:trip_detail}
         end
       elsif params[:ids].present?
         p "selected id to delete"
@@ -987,6 +987,7 @@ end
 
   def nearest_busstop_within
     nearby_buses = []
+    nearby_buses2 = []
     radius= params[:radius]
     latitude = params[:latitude]
     longitude = params[:longitude]
@@ -995,12 +996,28 @@ end
     box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
     sgbusStops = SgBusStop.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
     busInfos = Hash.new
+    busInfos2 = Hash.new
+
     sgbusStops.each do |stop|
+
       busRoute = SgBusRoute.where(bus_stop_code: stop.bus_id)
+      distance = Geocoder::Calculations.distance_between([latitude,longitude], [stop.latitude,stop.longitude], {units: :km}).round(2)
+      stop= stop.as_json.merge!({distance: distance})
+
       buses = []
       buses_num = []
       buses_char = []
+      nearest = []
       busRoute.each do |route|
+        today = Date.today
+        if today.saturday?
+          nearest.push({service_no: route.service_no,firstbus:route.sat_firstbus,lastbus:route.sat_lastbus})
+        elsif today.sunday?
+          nearest.push({service_no: route.service_no,firstbus:route.sun_firstbus,lastbus:route.sun_firstbus})
+        else
+          nearest.push({service_no: route.service_no,firstbus:route.wd_firstbus,lastbus:route.wd_lastbus})
+        end
+
         if is_numeric? route.service_no
           buses_num.push(route.service_no)
         else
@@ -1011,10 +1028,13 @@ end
       buses_num = buses_num.map(&:to_i).sort
       buses = buses_num + buses_char
       busInfos = {stop: stop, buses:buses}
+      busInfos2 = {stop: stop, buses:nearest}
       nearby_buses.push(busInfos)
+      nearby_buses2.push(busInfos2)
 
     end
-    render json: {busStops: nearby_buses, status: 200}
+
+    render json: {nearestStops:nearby_buses2, busStops: nearby_buses, status: 200}
 
   end
 
