@@ -998,6 +998,7 @@ end
     busInfos = Hash.new
     busInfos2 = Hash.new
 
+
     sgbusStops.each do |stop|
 
       busRoute = SgBusRoute.where(bus_stop_code: stop.bus_id)
@@ -1033,6 +1034,8 @@ end
       nearby_buses2.push(busInfos2)
 
     end
+
+    nearby_buses2 = nearby_buses2.sort {|x,y|y[:stop][:distance]<=>x[:stop][:distance]}.reverse
 
     render json: {nearestStops:nearby_buses2, busStops: nearby_buses, status: 200}
 
