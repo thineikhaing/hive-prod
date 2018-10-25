@@ -220,6 +220,7 @@ Rails.application.routes.draw do
     match "roundtrip/busstop_info"                  => "roundtrip#busstop_info"    , via: [:get, :post]
     match "roundtrip/subsequence_businfo"           => "roundtrip#subsequence_businfo"    , via: [:get, :post]
     match "roundtrip/subsequence_mrtinfo"           => "roundtrip#subsequence_mrtinfo"    , via: [:get, :post]
+    match "roundtrip/get_bus_sequence"              => "roundtrip#get_bus_sequence"    , via: [:get, :post]
 
   end
 

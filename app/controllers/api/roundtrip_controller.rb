@@ -1033,7 +1033,9 @@ end
       buses_num = []
       buses_char = []
       nearest = []
+      seq = []
       busRoute.each do |route|
+
         today = Date.today
         if today.saturday?
           nearest.push({service_no: route.service_no,firstbus:route.sat_firstbus,lastbus:route.sat_lastbus})
@@ -1042,6 +1044,11 @@ end
         else
           nearest.push({service_no: route.service_no,firstbus:route.wd_firstbus,lastbus:route.wd_lastbus})
         end
+         #
+         # serviceSeq = SgBusRoute.where(service_no: route.service_no,direction: route.direction)
+         #
+         # seq.push({sequence: serviceSeq})
+         # nearest = (nearest << seq).flatten!
 
         if is_numeric? route.service_no
           buses_num.push(route.service_no)
@@ -1055,6 +1062,7 @@ end
       nearest = nearest.sort {|x,y|
         y[:service_no].to_i <=>x[:service_no].to_i
       }.reverse
+
       busInfos = {stop: stop, buses:buses}
       busInfos2 = {stop: stop, buses:nearest}
       nearby_buses.push(busInfos)
@@ -1065,6 +1073,12 @@ end
 
     render json: {nearestStops:nearby_buses2, busStops: nearby_buses, status: 200}
 
+  end
+
+  def get_bus_sequence
+    busRoute = SgBusRoute.find_by(service_no: params[:service_no],bus_stop_code: params[:bus_id])
+    busSequence =  SgBusRoute.where(service_no: params[:service_no],direction: busRoute.direction)
+    render json: {busSequence:busSequence, status: 200}
   end
 
   def get_bus_arrivaltime
