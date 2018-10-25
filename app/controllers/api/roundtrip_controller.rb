@@ -1015,6 +1015,7 @@ end
     group_roadname.map{|r|
         seqHash.push({road_name: r,stops: busSequence.where(road_name: r)})
     }
+
     render json: {busSequence:seqHash, status: 200}
 
   end
@@ -1036,8 +1037,14 @@ end
             LEFT OUTER JOIN user_fav_buses as favs ON sg_bus_stops.bus_id= favs.busid
             WHERE (favs.user_id = ' << current_user.id.to_s << 'AND routes.service_no = favs.service)'
 
-      groupbus = ActiveRecord::Base.connection.execute(sql)
-      groupbus= groupbus.group_by { |d| d["bus_id"] }
+      busQuery = ActiveRecord::Base.connection.execute(sql).to_a
+
+      seqHash = []
+      groupbus = busQuery.map {|x| x["bus_id"]}.uniq
+      groupbus.map{|r|
+        busArr = busQuery.select {|e| e["bus_id"] == r}
+        seqHash.push({bus_id: r,stops: busArr})
+      }
 
       busstops = []
       favbuses = UserFavBus.select("id, service, busid").where(user_id: current_user.id)
@@ -1068,7 +1075,7 @@ end
       end
 
 
-      render json:{user_fav_buses:groupbus,favbuses: favbuses, bus_stops: busstops, message:"Favourite Buses List",status:200}
+      render json:{user_fav_buses:seqHash,favbuses: favbuses, bus_stops: busstops, message:"Favourite Buses List",status:200}
     else
       render json:{status: 201, message: "unauthorized."}
     end
