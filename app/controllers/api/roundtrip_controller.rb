@@ -788,13 +788,37 @@ end
       if params[:id]
         UserFavBus.delete(params[:id])
       end
-      favbuses = UserFavBus.where(user_id: current_user.id)
+      favbuses = UserFavBus.select("id, service, busid").where(user_id: current_user.id)
       busstops = []
       favbuses.each do |stop|
-        bus = SgBusStop.where(bus_id: stop.busid).take
-        format_bus = {id:stop.id, busid: stop.busid, service: stop.service,road_name: bus.road_name, description: bus.description, lat: bus.latitude, lng: bus.longitude}
+        bus = SgBusStop.find_by(bus_id: stop.busid)
+        route = SgBusRoute.find_by(service_no:stop.service,bus_stop_code:stop.busid)
+        today = Date.today
+        if today.saturday?
+          format_bus = {id:stop.id, busid: stop.busid,
+            service: stop.service,road_name: bus.road_name,
+            description: bus.description, lat: bus.latitude, lng: bus.longitude,
+            firstbus:route.sat_firstbus,lastbus:route.sat_lastbus
+          }
+        elsif today.sunday?
+          format_bus = {id:stop.id, busid: stop.busid,
+            service: stop.service,road_name: bus.road_name,
+            description: bus.description, lat: bus.latitude, lng: bus.longitude,
+            firstbus:route.sun_firstbus,lastbus:route.sun_firstbus
+          }
+        else
+          format_bus = {id:stop.id, busid: stop.busid,
+            service: stop.service,road_name: bus.road_name,
+            description: bus.description, lat: bus.latitude, lng: bus.longitude,
+            firstbus:route.wd_firstbus,lastbus:route.wd_lastbus
+          }
+        end
         busstops.push(format_bus)
       end
+
+       # busstops.group_by{|k,v| v[:busid]}
+       # busstops.each_with_object(Hash.new { |hsh, key| hsh[key] = [] }) { |(f,l), h| h[f] << l }.to_a
+
       render json:{status:200, message:"Favourite Buses List",favbuses: favbuses, bus_stops: busstops}
     else
       render json:{status: 201, message: "unauthorized."}
@@ -1030,7 +1054,7 @@ end
       buses = buses_num + buses_char
       nearest = nearest.sort {|x,y|
         y[:service_no].to_i <=>x[:service_no].to_i
-      }
+      }.reverse
       busInfos = {stop: stop, buses:buses}
       busInfos2 = {stop: stop, buses:nearest}
       nearby_buses.push(busInfos)
