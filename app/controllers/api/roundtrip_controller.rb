@@ -1009,9 +1009,15 @@ end
     busSequence = SgBusStop.joins("LEFT OUTER JOIN sg_bus_routes ON  sg_bus_routes.bus_stop_code=sg_bus_stops.bus_id")
                .where('sg_bus_routes.direction = ? AND sg_bus_routes.service_no =?', busRoute.direction,params[:service_no])
                # .select(visits_appointments.*,places_seatables.name as seatable_name, places_seatables.id as seatable_id')
-    render json: {busSequence:busSequence, status: 200}
-  end
+    # busSequence= busSequence.group_by { |d| d["road_name"]}
+    seqHash = []
+    group_roadname =busSequence.map {|x| x.road_name}.uniq
+    group_roadname.map{|r|
+        seqHash.push({road_name: r,stops: busSequence.where(road_name: r)})
+    }
+    render json: {busSequence:seqHash, status: 200}
 
+  end
 
   def get_user_fav_buses
     if current_user.present?
@@ -1084,7 +1090,7 @@ end
         format_bus = {id:stop.id, busid: stop.busid, service: stop.service,road_name: bus.road_name, description: bus.description, lat: bus.latitude, lng: bus.longitude}
         busstops.push(format_bus)
       end
-      
+
       sql = 'SELECT favs.id,favs.service ,
             sg_bus_stops.bus_id, sg_bus_stops.road_name,
             sg_bus_stops.description,
