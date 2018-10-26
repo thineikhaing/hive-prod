@@ -1050,25 +1050,38 @@ end
       favbuses = UserFavBus.select("id, service, busid").where(user_id: current_user.id)
       favbuses.each do |stop|
         bus = SgBusStop.find_by(bus_id: stop.busid)
-        route = SgBusRoute.find_by(service_no:stop.service,bus_stop_code:stop.busid)
+         route = SgBusRoute.find_by(service_no:stop.service,bus_stop_code:stop.busid)
         today = Date.today
+
         if today.saturday?
+
+          !route.nil? ? first_bus = route.sat_firstbus : first_bus = '-'
+          !route.nil? ? lastbus = route.sat_lastbus : lastbus = '-'
+
           format_bus = {id:stop.id, busid: stop.busid,
             service: stop.service,road_name: bus.road_name,
             description: bus.description, lat: bus.latitude, lng: bus.longitude,
-            firstbus:route.sat_firstbus,lastbus:route.sat_lastbus
+            firstbus:first_bus,lastbus:lastbus
           }
         elsif today.sunday?
+
+          !route.nil? ? first_bus = route.sun_firstbus : first_bus = '-'
+          !route.nil? ? lastbus = route.sun_lastbus : lastbus = '-'
+
           format_bus = {id:stop.id, busid: stop.busid,
             service: stop.service,road_name: bus.road_name,
             description: bus.description, lat: bus.latitude, lng: bus.longitude,
-            firstbus:route.sun_firstbus,lastbus:route.sun_firstbus
+            firstbus:first_bus,lastbus:lastbus
           }
         else
+  
+         !route.nil? ? first_bus = route.wd_firstbus : first_bus = '-'
+         !route.nil? ? lastbus = route.wd_lastbus : lastbus = '-'
+
           format_bus = {id:stop.id, busid: stop.busid,
             service: stop.service,road_name: bus.road_name,
             description: bus.description, lat: bus.latitude, lng: bus.longitude,
-            firstbus:route.wd_firstbus,lastbus:route.wd_lastbus
+            firstbus:first_bus,lastbus:lastbus
           }
         end
         busstops.push(format_bus)
