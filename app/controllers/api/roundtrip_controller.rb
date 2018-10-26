@@ -1107,10 +1107,17 @@ end
             LEFT OUTER JOIN user_fav_buses as favs ON sg_bus_stops.bus_id= favs.busid
             WHERE (favs.user_id = ' << current_user.id.to_s << 'AND routes.service_no = favs.service)'
 
-      groupbus = ActiveRecord::Base.connection.execute(sql)
-      groupbus= groupbus.group_by { |d| d["bus_id"] }
+      busQuery = ActiveRecord::Base.connection.execute(sql)
+      # groupbus= groupbus.group_by { |d| d["bus_id"] }
 
-      render json:{user_fav_buses:groupbus,status:200,favbuses: favbuses, bus_stops: busstops,message:"Favourite Buses List"}
+      seqHash = []
+      groupbus = busQuery.map {|x| x["bus_id"]}.uniq
+      groupbus.map{|r|
+        busArr = busQuery.select {|e| e["bus_id"] == r}
+        seqHash.push({bus_id: r,stops: busArr})
+      }
+
+      render json:{user_fav_buses:seqHash,status:200,favbuses: favbuses, bus_stops: busstops,message:"Favourite Buses List"}
     else
       render json:{status: 201, message: "unauthorized."}
     end
