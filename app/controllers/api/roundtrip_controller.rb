@@ -968,8 +968,8 @@ end
       buses_char = []
       nearest = []
       seq = []
+      uniq_nearest = []
       busRoute.each do |route|
-
         today = Date.today
         if today.saturday?
           nearest.push({service_no: route.service_no,firstbus:route.sat_firstbus,lastbus:route.sat_lastbus})
@@ -986,14 +986,23 @@ end
         end
 
       end
+
+      uniqservice = nearest.uniq! {|e| e[:service_no] }
+
+      if uniqservice.nil?
+        uniq_nearest = nearest
+      else
+        uniq_nearest =  uniqservice
+      end
+
       buses_num = buses_num.map(&:to_i).sort
       buses = buses_num + buses_char
-      nearest = nearest.sort {|x,y|
+      uniq_nearest = uniq_nearest.sort {|x,y|
         y[:service_no].to_i <=>x[:service_no].to_i
       }.reverse
 
       busInfos = {stop: stop, buses:buses}
-      busInfos2 = {stop: stop, buses:nearest}
+      busInfos2 = {stop: stop, buses:uniq_nearest}
       nearby_buses.push(busInfos)
       nearby_buses2.push(busInfos2)
     end
@@ -1074,7 +1083,7 @@ end
             firstbus:first_bus,lastbus:lastbus
           }
         else
-  
+
          !route.nil? ? first_bus = route.wd_firstbus : first_bus = '-'
          !route.nil? ? lastbus = route.wd_lastbus : lastbus = '-'
 
