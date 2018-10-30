@@ -943,6 +943,42 @@ end
     end
   end
 
+
+  def busstop_info
+    busRoute = SgBusRoute.where(bus_stop_code: params[:bus_id])
+    buses = []
+    buses_num = []
+    buses_char = []
+    route = []
+    busRoute.each do |r|
+      if is_numeric? r.service_no
+        buses_num.push(r.service_no)
+      else
+        buses_char.push(r.service_no)
+      end
+      route.push(r)
+    end
+
+    buses_char = buses_char.map(&:to_s).uniq
+    buses_num = buses_num.map(&:to_i).uniq.sort
+    buses = buses_num + buses_char
+
+    route = route.uniq{ |r| [r["service_no"]]}
+    services = []
+    route.each do |route|
+      today = Date.today
+      if today.saturday?
+        services.push({service_no: route.service_no,firstbus:route.sat_firstbus,lastbus:route.sat_lastbus})
+      elsif today.sunday?
+        services.push({service_no: route.service_no,firstbus:route.sun_firstbus,lastbus:route.sun_firstbus})
+      else
+        services.push({service_no: route.service_no,firstbus:route.wd_firstbus,lastbus:route.wd_lastbus})
+      end
+    end
+
+    render json: {services:services,buses: buses,route:route, status: 200}
+  end
+
   def nearest_busstop_within
     nearby_buses = []
     nearby_buses2 = []
@@ -960,6 +996,8 @@ end
     sgbusStops.each do |stop|
 
       busRoute = SgBusRoute.where(bus_stop_code: stop.bus_id)
+      busRoute = busRoute.uniq{ |r| [r["service_no"]]}
+
       distance = Geocoder::Calculations.distance_between([latitude,longitude], [stop.latitude,stop.longitude], {units: :km}).round(1)
       stop= stop.as_json.merge!({distance: distance})
 
@@ -987,13 +1025,6 @@ end
 
       end
 
-      uniqservice = nearest.uniq! {|e| e[:service_no] }
-
-      if uniqservice.nil?
-        uniq_nearest = nearest
-      else
-        uniq_nearest =  uniqservice
-      end
 
       buses_num = buses_num.map(&:to_i).sort
       buses = buses_num + buses_char
@@ -1002,7 +1033,7 @@ end
       }.reverse
 
       busInfos = {stop: stop, buses:buses}
-      busInfos2 = {stop: stop, buses:uniq_nearest}
+      busInfos2 = {stop: stop, buses:nearest}
       nearby_buses.push(busInfos)
       nearby_buses2.push(busInfos2)
     end
@@ -1028,6 +1059,7 @@ end
     render json: {busSequence:seqHash, status: 200}
 
   end
+
 
   def get_user_fav_buses
     if current_user.present?
@@ -1285,31 +1317,6 @@ end
     else
       render json:{error_msg:"No Available Result!"}
     end
-
-  end
-
-  def busstop_info
-    busRoute = SgBusRoute.where(bus_stop_code: params[:bus_id])
-    buses = []
-    buses_num = []
-    buses_char = []
-    route = []
-    busRoute.each do |r|
-      if is_numeric? r.service_no
-        buses_num.push(r.service_no)
-      else
-        buses_char.push(r.service_no)
-      end
-      route.push(r)
-    end
-
-
-    buses_char = buses_char.map(&:to_s).uniq
-    buses_num = buses_num.map(&:to_i).uniq.sort
-    buses = buses_num + buses_char
-
-    route = route.uniq{ |r| [r["service_no"]]}
-    render json: {buses: buses,route:route, status: 200}
 
   end
 
