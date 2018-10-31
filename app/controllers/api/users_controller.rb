@@ -934,11 +934,10 @@ class Api::UsersController < ApplicationController
       userfav = UserFavLocation.where(user_id: user.id , place_id: place_id).order('id desc')
 
       if userfav.count == 0
-        UserFavLocation.create(user_id: current_user.id, place_id: place_id,
+        fav_place = UserFavLocation.create(user_id: current_user.id, place_id: place_id,
             place_type: params[:place_type],name: name,img_url: img_url)
-
         @fav_locations = UserFavLocation.where(user_id: current_user.id).order('id desc')
-        render json:{ status:200, message: "Location added successfully.", userfavlocation: @fav_locations}
+        render json:{fav_place: fav_place , userfavlocation: @fav_locationsstatus:200, message: "Location added successfully."}
 
       else
         render json:{status:201, message: "Duplicate location",error_msg: 'location already exit!'}
@@ -1058,7 +1057,6 @@ class Api::UsersController < ApplicationController
 
         fav_locations = UserFavLocation.where(user_id: params[:user_id]).order('id desc')
         render json: {status:200, message: "Delete favourite location by id.", userfavlocation: fav_locations}  , status: 200
-
 
       end
 
