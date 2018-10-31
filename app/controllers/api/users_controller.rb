@@ -917,6 +917,8 @@ class Api::UsersController < ApplicationController
       params[:postcode].present? ? postcode = params[:postcode] : postcode=""
       p "place id"
       p place_id
+      p latitude
+      p longitude
       place = place.add_record(name, latitude, longitude, address, source, source_id,
                                place_id, current_user.id, current_user.authentication_token,
                                choice,"","",locality,country,postcode)
@@ -937,7 +939,7 @@ class Api::UsersController < ApplicationController
         fav_place = UserFavLocation.create(user_id: current_user.id, place_id: place_id,
             place_type: params[:place_type],name: name,img_url: img_url)
         @fav_locations = UserFavLocation.where(user_id: current_user.id).order('id desc')
-        render json:{fav_place: fav_place , userfavlocation: @fav_locationsstatus,status:200, message: "Location added successfully."}
+        render json:{fav_place: fav_place , userfavlocation: @fav_locations,status:200, message: "Location added successfully."}
 
       else
         render json:{status:201, message: "Duplicate location",error_msg: 'location already exit!'}
