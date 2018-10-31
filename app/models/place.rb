@@ -467,8 +467,8 @@ class Place < ActiveRecord::Base
         else
           if choice == "luncheon"
             place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, category: "Food and Dining",img_url: img_url,country: country,postal_code: postcode,locality: locality) unless place.present?
-          elsif
-            place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id,img_url: img_url,country: country,postal_code: postcode,locality: locality) unless place.present?  
+          elsif place.nil?
+            place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id,img_url: img_url,country: country,postal_code: postcode,locality: locality)
           else
             geocoder = Geocoder.search("#{latitude},#{longitude}").first
             if geocoder.present? and geocoder.address.present?
