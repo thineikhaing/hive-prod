@@ -1046,15 +1046,18 @@ end
 
   def get_bus_sequence
     busRoute = SgBusRoute.find_by(service_no: params[:service_no],bus_stop_code: params[:bus_id])
-    busSequence = SgBusStop.joins("LEFT OUTER JOIN sg_bus_routes ON  sg_bus_routes.bus_stop_code=sg_bus_stops.bus_id")
-               .where('sg_bus_routes.direction = ? AND sg_bus_routes.service_no =?', busRoute.direction,params[:service_no])
-               # .select(visits_appointments.*,places_seatables.name as seatable_name, places_seatables.id as seatable_id')
-    # busSequence= busSequence.group_by { |d| d["road_name"]}
+    mainRoute = SgBusRoute.where(service_no: params[:service_no],direction: busRoute.direction)
     seqHash = []
-    group_roadname =busSequence.map {|x| x.road_name}.uniq
-    group_roadname.map{|r|
-        seqHash.push({road_name: r,stops: busSequence.where(road_name: r)})
+    busStops = []
+
+    mainRoute.map{|rt|
+      busStops.push(SgBusStop.find_by_bus_id(rt.bus_stop_code))
     }
+
+    group_roadname= busStops.group_by(&:road_name)
+    group_roadname.each do |key, value|
+      seqHash.push({road_name: key,stops:value})
+    end
 
     render json: {busSequence:seqHash, status: 200}
 
