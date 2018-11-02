@@ -1046,17 +1046,41 @@ end
 
   def get_bus_sequence
     busRoute = SgBusRoute.find_by(service_no: params[:service_no],bus_stop_code: params[:bus_id])
+
     mainRoute = SgBusRoute.where(service_no: params[:service_no],direction: busRoute.direction)
     seqHash = []
     busStops = []
+    mainRoute.map{|rt| busStops.push(SgBusStop.find_by_bus_id(rt.bus_stop_code))}
+    i =  0
+    group_stops =  []
 
-    mainRoute.map{|rt|
-      busStops.push(SgBusStop.find_by_bus_id(rt.bus_stop_code))
-    }
+    while i <= busStops.length+1
 
-    group_roadname= busStops.group_by(&:road_name)
-    group_roadname.each do |key, value|
-      seqHash.push({road_name: key,stops:value})
+      if busStops[i+1].present?
+        if busStops[i].road_name == busStops[i+1].road_name
+          group_stops.push(busStops[i])
+        elsif busStops[i].road_name == busStops[i-1].road_name
+          group_stops.push(busStops[i])
+        else
+          if group_stops.length > 0
+            group_roadname= group_stops.group_by(&:road_name)
+            group_roadname.each do |key, value|
+              seqHash.push({road_name: key,stops:value})
+            end
+          end
+          diffSeq = []
+          seqHash.push({road_name: busStops[i].road_name ,stops:diffSeq.push(busStops[i])})
+          group_stops = []
+        end
+      end
+      i+=1
+    end
+
+    if group_stops.length > 0
+      p group_roadname= group_stops.group_by(&:road_name)
+      group_roadname.each do |key, value|
+        seqHash.push({road_name: key,stops:value})
+      end
     end
 
     render json: {busSequence:seqHash, status: 200}
@@ -1094,7 +1118,7 @@ end
       favbuses = UserFavBus.select("id, service, busid").where(user_id: current_user.id)
       favbuses.each do |stop|
         bus = SgBusStop.find_by(bus_id: stop.busid)
-         route = SgBusRoute.find_by(service_no:stop.service,bus_stop_code:stop.busid)
+        route = SgBusRoute.find_by(service_no:stop.service,bus_stop_code:stop.busid)
         today = Date.today
 
         if today.saturday?
