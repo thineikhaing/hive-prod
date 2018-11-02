@@ -1050,17 +1050,30 @@ end
     mainRoute = SgBusRoute.where(service_no: params[:service_no],direction: busRoute.direction)
     seqHash = []
     busStops = []
+    group_stops =  []
     mainRoute.map{|rt| busStops.push(SgBusStop.find_by_bus_id(rt.bus_stop_code))}
     i =  0
-    group_stops =  []
-
-    while i <= busStops.length+1
+    prev_roadname = ""
+    prev_condition = 0
+    while i <= busStops.length-1
 
       if busStops[i+1].present?
         if busStops[i].road_name == busStops[i+1].road_name
+
+          if prev_condition == 2 && prev_roadname != busStops[i].road_name
+            group_roadname= group_stops.group_by(&:road_name)
+            group_roadname.each do |key, value|
+              seqHash.push({road_name: key,stops:value})
+            end
+            group_stops = []
+          end
+
           group_stops.push(busStops[i])
+          prev_condition = 1
+
         elsif busStops[i].road_name == busStops[i-1].road_name
           group_stops.push(busStops[i])
+          prev_condition = 2
         else
           if group_stops.length > 0
             group_roadname= group_stops.group_by(&:road_name)
@@ -1070,11 +1083,19 @@ end
           end
           diffSeq = []
           seqHash.push({road_name: busStops[i].road_name ,stops:diffSeq.push(busStops[i])})
+          prev_condition = 3
           group_stops = []
         end
+      else
+        group_stops.push(busStops[i])
       end
+
+      prev_roadname =  busStops[i].road_name if busStops[i].present?
+
       i+=1
     end
+    p "group rest"
+    p group_stops
 
     if group_stops.length > 0
       p group_roadname= group_stops.group_by(&:road_name)
