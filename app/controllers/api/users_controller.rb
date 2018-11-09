@@ -915,34 +915,34 @@ class Api::UsersController < ApplicationController
       params[:locality].present? ? locality = params[:locality] : locality=""
       params[:country].present? ? country = params[:country] : country=""
       params[:postcode].present? ? postcode = params[:postcode] : postcode=""
-      p "place id"
-      p place_id
-      p latitude
-      p longitude
+
+      user = User.find_by_authentication_token (params[:auth_token]) if params[:auth_token].present?
+
       place = place.add_record(name, latitude, longitude, address, source, source_id,
                                place_id, current_user.id, current_user.authentication_token,
                                choice,"","",locality,country,postcode)
+      p user.id
       p status = place[:status]
-
-      place_id = place[:place].id
+      p place_id = place[:place].id
 
       # pp = Place.find(place_id)
       # pp.source_id = source_id
       # pp.save!
       # p 'save soruce id'
 
-      user = User.find_by_authentication_token (params[:auth_token]) if params[:auth_token].present?
 
-      userfav = UserFavLocation.where(user_id: user.id , place_id: place_id).order('id desc')
+      fav_lists = UserFavLocation.where(user_id: current_user.id).order('id desc')
+      userfav = UserFavLocation.find_by(user_id: user.id , place_id: place_id)
 
-      if userfav.count == 0
+      if userfav.nil?
         fav_place = UserFavLocation.create(user_id: current_user.id, place_id: place_id,
             place_type: params[:place_type],name: name,img_url: img_url)
-        @fav_locations = UserFavLocation.where(user_id: current_user.id).order('id desc')
-        render json:{fav_place: fav_place , userfavlocation: @fav_locations,status:200, message: "Location added successfully."}
+
+        render json:{fav_place: fav_place , userfavlocation: fav_lists,status:200, message: "Location added successfully."}
 
       else
-        render json:{status:201, message: "Duplicate location",error_msg: 'location already exit!'}
+        fav_place = UserFavLocation.find_by_place_id(place_id)
+        render json:{fav_place: fav_place, userfavlocation: fav_lists , status:201, message: "Duplicate location",error_msg: 'location already exit!'}
       end
 
     else

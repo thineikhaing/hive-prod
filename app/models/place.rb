@@ -395,34 +395,31 @@ class Place < ActiveRecord::Base
         @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
         @spot = @client.spot(source_id.to_s)
         url = ""
-
         if img_url.present?
           url = img_url
         else
-
           if @spot.photos[0].present?
             url = @spot.photos[0].fetch_url(800)
           else
             url = ""
           end
-
         end
 
         place = ""
 
-        check_records = Place.where(name:@spot.name, source:7)
+        check_records = Place.where(name:name,source:7)
 
         check_records.each do |cr|
           p "exisiting google record"
-          place = cr if cr.name.downcase == @spot.name.downcase
+          place = cr if cr.address.downcase == address.downcase
         end
 
         if place == ""
           place = Place.create(
-              name: @spot.name,
-              latitude: @spot.lat,
-              longitude: @spot.lng,
-              address: @spot.formatted_address,
+              name: name,
+              latitude:latitude,
+              longitude:longitude,
+              address: address,
               source: Place::GOOGLE,
               source_id: source_id,
               user_id: user_id,
@@ -433,7 +430,7 @@ class Place < ActiveRecord::Base
               locality: locality)
         end
 
-        p "place source id"
+        p "Place"
         p place
         p place.source_id
         place.save!
@@ -468,11 +465,6 @@ class Place < ActiveRecord::Base
           if choice == "luncheon"
             place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, category: "Food and Dining",img_url: img_url,country: country,postal_code: postcode,locality: locality) unless place.present?
           else
-            p "check name"
-            p name
-            p address
-            p place
-
             if place.blank?
               place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, img_url: img_url,category: category,country: country,postal_code: postcode,locality: locality)
             elsif address.nil?
