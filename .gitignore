@@ -15,4 +15,5 @@
 .rvmrc
 .ruby-version
 .DS_STORE
+/config/database.yml
                                                   F

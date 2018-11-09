@@ -26,7 +26,7 @@ class PhotoUploader < CarrierWave::Uploader::Base
         :region => "ap-southeast-1",
     }
     if Rails.env.development?
-      self.fog_directory = "hivedevimages"
+      self.fog_directory = "hivestagingimages"
     elsif Rails.env.staging?
       self.fog_directory = "hivestagingimages"
     elsif Rails.env.production?

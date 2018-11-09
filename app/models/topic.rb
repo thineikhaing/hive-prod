@@ -74,13 +74,13 @@ class Topic < ActiveRecord::Base
       super(only: [:id, :state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
                    :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username,:avatar_url,:local_avatar, :place_information,
-                                                                                         :tag_information, :post_information,
-                                                                                         :rtplaces_information, :content, :active_user])
+                                                                                         :rtplaces_information, :post_information,
+                                                                                         :content, :active_user])
     else
       super(only: [:id,:state, :title, :points, :free_points, :topic_type, :topic_sub_type, :place_id, :hiveapplication_id,
                    :user_id, :image_url,:width, :height, :data, :value, :unit, :likes, :dislikes, :offensive, :notification_range,
                    :special_type,:start_place_id, :end_place_id, :created_at], methods: [:username, :avatar_url,:local_avatar, :place_information,
-                                                                                         :tag_information,:post_information,:rtplaces_information, :content,:active_user])
+                                                                                        :post_information,:rtplaces_information, :content,:active_user])
     end
   end
 
@@ -122,7 +122,6 @@ class Topic < ActiveRecord::Base
 
   def post_information
     first_post = Post.where(topic_id: self.id).last
-
   end
 
 

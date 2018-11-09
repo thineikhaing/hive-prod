@@ -5,6 +5,7 @@ class Api::DownloaddataController < ApplicationController
       hiveApplication = HiveApplication.find_by_api_key(params[:app_key])
 
       params[:radius].present? ? radius = params[:radius] : radius = nil
+
       if hiveApplication.present?
         p "hive application present"
         initial_topic = Topic.find_by_topic_sub_type(2)
@@ -15,7 +16,6 @@ class Api::DownloaddataController < ApplicationController
           topics = topics.where("topic_sub_type != 2")
         else
           topics = Place.nearest_topics_within(params[:latitude], params[:longitude], radius, hiveApplication.id)
-
         end
 
         topics = topics.sort {|x,y| y["created_at"]<=>x["created_at"]}

@@ -26,7 +26,6 @@ class Api::TopicsController < ApplicationController
         params[:start_source].present? ? start_source = params[:start_source] : start_source = ""
         params[:start_source_id].present? ? start_source_id = params[:start_source_id] : start_source_id = nil
 
-
         params[:end_name].present? ? end_name = params[:end_name] : end_name = nil
         params[:end_address].present? ? end_address = params[:end_address] : end_address = ""
         params[:end_latitude].present? ? end_latitude = params[:end_latitude] : end_latitude = nil
@@ -34,7 +33,6 @@ class Api::TopicsController < ApplicationController
         params[:end_place_id].present? ? end_place_id = params[:end_place_id] : end_place_id = nil
         params[:end_source].present? ? end_source = params[:end_source] : end_source = ""
         params[:end_source_id].present? ? end_source_id = params[:end_source_id] : end_source_id = nil
-        # params[:place_id].present? ? place_id = params[:place_id].to_i :  place_id = nil
 
         category = ""
         locality=""
@@ -69,14 +67,11 @@ class Api::TopicsController < ApplicationController
           end
         end
 
-
-
         data = params[:data] if data.present?
         data = data.delete('\\"') if data.present?
         p "data hash value"
         p data
         if current_user.present?
-
           data = getHashValuefromString(data) if data.present?
           appAdditionalField = AppAdditionalField.where(:app_id => hiveapplication.id, :table_name => "Topic")
           if appAdditionalField.present?
@@ -84,7 +79,7 @@ class Api::TopicsController < ApplicationController
             appAdditionalField.each do |field|
               defined_Fields[field.additional_column_name] = nil
             end
-            #get all extra columns that define in app setting against with the params data
+        
             if data.present?
               data = defined_Fields.deep_merge(data)
               result = Hash.new
@@ -95,19 +90,14 @@ class Api::TopicsController < ApplicationController
               result = defined_Fields
             end
 
-            if params[:departure_time].present?
-              result["depature_time"]= params[:departure_time]
-              result["arrival_time"]= params[:arrival_time]
-            end
-
             if params[:transport_type].present?
               result["transport_type"]= params[:transport_type]
               result["color"]= params[:color]
             else
               result["color"]= "5f57ba"
             end
-          end
 
+          end
 
           result = nil unless result.present?
           params[:likes].present? ? likes = params[:likes].to_i : likes = 0

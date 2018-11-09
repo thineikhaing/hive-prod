@@ -65,7 +65,7 @@ class Api::PostsController < ApplicationController
                              height: params[:height],
                              place_id: place_id,
                              data: result)
-          # post.delay.post_image_upload_delayed_job(params[:image_url]) if params[:post_type] == Post::IMAGE.to_s
+          post.delay.post_image_upload_delayed_job(params[:image_url]) if params[:post_type] == Post::IMAGE.to_s
         end
 
 
@@ -152,16 +152,13 @@ class Api::PostsController < ApplicationController
           params[:numPosts].present? ? no_of_posts= params[:numPosts].to_i : no_of_posts=0
           params[:post_id].present? ? post_id= params[:post_id].to_i : post_id=0
           if no_of_posts ==0 && post_id ==0
-            #topic.posts.find(:all,:order => "id DESC", :limit => 10)
             posts =  topic.posts.order("id DESC").limit(10)
           elsif no_of_posts > 0 && post_id ==0
-            #topic.posts.find(:all,:order => "id DESC", :limit => no_of_posts)
             posts =  topic.posts.order("id DESC").limit(no_of_posts)
           elsif no_of_posts == 0 && post_id > 0
             posts =  topic.posts.where("id < ?", post_id).order("id DESC").limit(10)
           elsif no_of_posts > 0 && post_id > 0
             posts =  topic.posts.where("id < ?", post_id).order("id DESC").limit(no_of_posts)
-
           end
         end
 
@@ -179,7 +176,7 @@ class Api::PostsController < ApplicationController
           #get the post location
         end
 
-        render json: {status:200, message:"Post list",posts: posts,topic:topic,post_avatar_url:post_avatar_url}
+        render json: {status:200, message:"Post list",posts: posts.reverse , topic:topic,post_avatar_url:post_avatar_url}
       else
         render json: {status: 201, message: "Invalid application key", error_msg: "Invalid application key" }, status: 400
       end

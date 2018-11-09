@@ -641,7 +641,7 @@ class Post < ActiveRecord::Base
   def post_image_upload_delayed_job(filename)
     p "delayed job starts!"
     uploader = PhotoUploader.new
-    uploader.retrieve_from_store!(filename)
+    uploader.retrieve_from_store!(File.basename(filename))
     uploader.cache_stored_file!
     uploader.resize_to_fit(uploader.get_geometry[0]/5,uploader.get_geometry[1]/5)
     uploader.store!

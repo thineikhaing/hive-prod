@@ -39,11 +39,13 @@ class Place < ActiveRecord::Base
 
     hive = HiveApplication.find(hive_id)
 
-
     radius = 1 if radius.nil?
+    radius = 0.5
     center_point = [latitude.to_f, longitude.to_f]
     box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
     places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
+    p "total place count"
+    p places.length
 
     topics_array = [ ]
 
@@ -63,9 +65,7 @@ class Place < ActiveRecord::Base
 
           end
         end
-      end
 
-      places.each do |place|
         if place.end_places.present?
           topic_end_places = place.end_places.order("created_at asc")
           topic_end_places.each do |topic|
@@ -79,23 +79,28 @@ class Place < ActiveRecord::Base
 
           end
         end
+
       end
 
-      places.each do |place|
-        if place.topics.present?
-          topic_places = place.topics.order("created_at asc")
-          topic_places.each do |topic|
-            if hive_id==1
-              topics_array.push(topic)
-            else
-              if topic.hiveapplication_id == hive_id
-                topics_array.push(topic)
-              end
-            end
 
-          end
-        end
-      end
+      p "topics_array"
+      p topics_array.length
+
+      # places.each do |place|
+      #   if place.topics.present?
+      #     topic_places = place.topics.order("created_at asc")
+      #     topic_places.each do |topic|
+      #       if hive_id==1
+      #         topics_array.push(topic)
+      #       else
+      #         if topic.hiveapplication_id == hive_id
+      #           topics_array.push(topic)
+      #         end
+      #       end
+      #
+      #     end
+      #   end
+      # end
 
     else
       places.each do |place|
@@ -116,16 +121,12 @@ class Place < ActiveRecord::Base
 
     end
 
-    p "1 year topics "
-
-
     if topics_array.present?
-      p "uniq array"
       topics_array = topics_array.uniq{ |topic| [topic["id"]]}
     else
       topics_array = [ ]
     end
-    topics_array
+
   end
 
 
@@ -458,6 +459,7 @@ class Place < ActiveRecord::Base
 
         p "check place "
         p place
+        p name
 
         if private_place.present?
           return { place: private_place, status: 71 }
@@ -465,30 +467,25 @@ class Place < ActiveRecord::Base
           if choice == "luncheon"
             place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, category: "Food and Dining",img_url: img_url,country: country,postal_code: postcode,locality: locality) unless place.present?
           else
+
+
             if place.blank?
-              place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, img_url: img_url,category: category,country: country,postal_code: postcode,locality: locality)
-            elsif address.nil?
               geocoder = Geocoder.search("#{latitude},#{longitude}").first
               if geocoder.present? and geocoder.address.present?
+                !name.nil? ? name = name : name = geocoder.address
+                !address.nil? ? address = address : address = geocoder.address
 
                 check = Place.find_by_address(geocoder.address)
-                check.present? ? place = check : place = Place.create(name: geocoder.address, latitude: latitude, longitude: longitude,
-                    address: geocoder.address, source: source, source_id: source_id, user_id: user_id,
+                check.present? ? place = check : place = Place.create(name: name, latitude: latitude, longitude: longitude,
+                    address: address, source: source, source_id: source_id, user_id: user_id,
                     img_url: img_url,category: category,country: geocoder.country,
                     postal_code: geocoder.postal_code,locality: locality) unless place.present?
               end
               if !name.nil?
-                if name.include?("MRT")
-                  place.name = name
-                else
-                  place.name = geocoder.address
-                end
+                place.name = name if name.include?("MRT")
                 place.save!
               end
             end
-
-
-
 
             # if name.present?
             #   place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, img_url: img_url,category: category,country: country,postal_code: postcode,locality: locality) unless place.present?
@@ -597,14 +594,9 @@ class Place < ActiveRecord::Base
     #
     # end
     #Place.create_place_by_lat_lng(1.38874082716249, 103.75661801598,1)
-    # geocoder = Geocoder.search("1.38874082716249, 103.75661801598").first
+    # geocoder = Geocoder.search("1.31803065581523, 103.84350034994").first
     geocoder = Geocoder.search("#{latitude},#{longitude}").first
     p "Place GEO lat|lng"
-    p latitude
-    p longitude
-    p current_user
-
-
     if geocoder.present? and geocoder.address.present?
       check = Place.find_by_address(geocoder.address)
       check2 = Place.find_by_address("Somewhere in the world")
