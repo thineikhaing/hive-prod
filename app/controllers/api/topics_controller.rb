@@ -87,19 +87,14 @@ class Api::TopicsController < ApplicationController
             #get all extra columns that define in app setting against with the params data
             if data.present?
               data = defined_Fields.deep_merge(data)
-
               result = Hash.new
-
               defined_Fields.keys.each do |key|
-                p "merge value"
-                p result.merge!(data.extract! (key))
+                result.merge!(data.extract! (key))
               end
-
             else
               result = defined_Fields
             end
 
-            p result
             if params[:departure_time].present?
               result["depature_time"]= params[:departure_time]
               result["arrival_time"]= params[:arrival_time]
@@ -108,6 +103,8 @@ class Api::TopicsController < ApplicationController
             if params[:transport_type].present?
               result["transport_type"]= params[:transport_type]
               result["color"]= params[:color]
+            else
+              result["color"]= "5f57ba"
             end
           end
 
