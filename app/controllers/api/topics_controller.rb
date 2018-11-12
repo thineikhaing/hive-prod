@@ -79,7 +79,7 @@ class Api::TopicsController < ApplicationController
             appAdditionalField.each do |field|
               defined_Fields[field.additional_column_name] = nil
             end
-        
+
             if data.present?
               data = defined_Fields.deep_merge(data)
               result = Hash.new
@@ -672,7 +672,7 @@ class Api::TopicsController < ApplicationController
      tcount = topics.count rescue '0'
      p "get nearest topics"
      all_topics = Topic.where("hiveapplication_id=? and topic_sub_type !=? ", hive_app.id,initial_topic.id).order("created_at desc")
-     render json: {status:200, status: "nearest topics within start and end",topics:topics, topic_count: tcount,all_topics:all_topics}
+     render json: {status:200, message: "nearest topics within start and end",topics:topics, topic_count: tcount,all_topics:all_topics}
     else
       render json: {status:201,message: "Params app_key must be presented"}
     end

@@ -6,14 +6,8 @@ class Place < ActiveRecord::Base
   has_many :start_places , class_name: "Topic", foreign_key: "start_place_id",primary_key: :id
   has_many :end_places , class_name: "Topic", foreign_key: "end_place_id",primary_key: :id
 
-  has_many :depatures, class_name: "Trip", foreign_key: "start_place_id",primary_key: :id
-  has_many :arrivals, class_name: "Trip", foreign_key: "end_place_id",primary_key: :id
-
   # Setup hstore
   store_accessor :data
-
-  #attr_accessible :name, :category, :address, :locality, :region, :neighbourhood, :chain_name, :country, :postal_code, :website_url, :contact_number, :img_url, :source, :source_id, :latitude, :longitude, :user_id
-
   enums %w(HERENOW USER VENDOR FACTUAL MRT UNKNOWN PRIVATE GOOGLE GOTHERE ONEMAP)
 
   # def self.start_places
@@ -23,8 +17,6 @@ class Place < ActiveRecord::Base
   # def self.end_places
   #   Topic.where(end_place_id: self.id)
   # end
-
-
 
   # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)
   def self.nearest_topics_within(latitude, longitude, radius, hive_id)
@@ -36,71 +28,33 @@ class Place < ActiveRecord::Base
     else
       round_key = RoundTrip_key::Production_Key
     end
-
     hive = HiveApplication.find(hive_id)
-
     radius = 1 if radius.nil?
     radius = 0.5
     center_point = [latitude.to_f, longitude.to_f]
+
     box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
-    places = Place.where(latitude: box[0] .. box[2], longitude: box[1] .. box[3])
-    p "total place count"
-    p places.length
+
+    places = Place.joins(:start_places).joins(:end_places).where(latitude: box[0] .. box[2], longitude: box[1] .. box[3]).distinct
+
+    # places = Place.joins(:start_places).joins(:end_places).where(latitude: "1.3134489919704064".to_f .. "1.3224422080295937".to_f, longitude: "103.83907940209771".to_f .. "103.84807499790229".to_f).distinct
+
+    p "#{box[0]} .. #{box[2]}"
+    p "#{box[1]} .. #{box[3]}"
 
     topics_array = [ ]
-
     if hive.api_key == round_key
-
       places.each do |place|
-        if place.start_places.present?
-          topic_start_places = place.start_places.order("created_at asc") #.where("topics.created_at BETWEEN ? AND ?",  3.months.ago, Time.now)
-          topic_start_places.each do |topic|
-            if hive_id==1
-              topics_array.push(topic)
-            else
-              if topic.hiveapplication_id == hive_id
-                topics_array.push(topic)
-              end
-            end
 
-          end
-        end
+        (topics_array << place.topics.order("created_at asc")).flatten!
+        (topics_array << place.start_places.order("created_at asc")).flatten!
+        (topics_array << place.end_places.order("created_at asc")).flatten!
 
-        if place.end_places.present?
-          topic_end_places = place.end_places.order("created_at asc")
-          topic_end_places.each do |topic|
-            if hive_id==1
-              topics_array.push(topic)
-            else
-              if topic.hiveapplication_id == hive_id
-                topics_array.push(topic)
-              end
-            end
-
-          end
-        end
-
+        # topics = Topic.where('place_id =? OR start_place_id =? OR end_place_id =? ', place.id, place.id, place.id)
+        # topics.map{|topic|
+        #   topics_array.push(topic)
+        # }
       end
-
-
-      p "topics_array"
-      p topics_array.length
-
-      # places.each do |place|
-      #   if place.topics.present?
-      #     topic_places = place.topics.order("created_at asc")
-      #     topic_places.each do |topic|
-      #       if hive_id==1
-      #         topics_array.push(topic)
-      #       else
-      #         if topic.hiveapplication_id == hive_id
-      #           topics_array.push(topic)
-      #         end
-      #       end
-      #
-      #     end
-      #   end
-      # end
 
     else
       places.each do |place|
@@ -122,13 +76,13 @@ class Place < ActiveRecord::Base
     end
 
     if topics_array.present?
+      p topics_array
       topics_array = topics_array.uniq{ |topic| [topic["id"]]}
     else
       topics_array = [ ]
     end
 
   end
-
 
 
   # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)
@@ -139,8 +93,6 @@ class Place < ActiveRecord::Base
     radius_between = radius_between.round
 
     p "radius between two points is #{radius_between} km"
-
-
 
     if radius_between < 2 and radius_between > 0
       radius = (radius_between * 0.5).round(2)
@@ -160,41 +112,26 @@ class Place < ActiveRecord::Base
 
     s_center_point = [s_latitude.to_f, s_longitude.to_f]
     s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
-    s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3])
+    s_places = Place.where(latitude: s_box[0] .. s_box[2], longitude: s_box[1] .. s_box[3]).distinct
 
     e_center_point = [e_latitude.to_f, e_longitude.to_f]
     e_box = Geocoder::Calculations.bounding_box(e_center_point, radius, {units: :km})
-    e_places = Place.where(latitude: e_box[0] .. e_box[2], longitude: e_box[1] .. e_box[3])
+    e_places = Place.where(latitude: e_box[0] .. e_box[2], longitude: e_box[1] .. e_box[3]).distinct
 
     time_allowance = Time.now - 1.month.ago
 
     topics_array = [ ]
 
     e_places.each do |place|
-      if place.start_places.present?
-        (topics_array << place.start_places.order("created_at asc")).flatten!
-      end
-
-      if place.end_places.present?
-        (topics_array << place.end_places.order("created_at asc")).flatten!
-      end
-
-      topics_array = topics_array.uniq{ |topic| [topic[:id]]}
+      (topics_array << place.start_places.order("created_at asc")).flatten!
+      (topics_array << place.end_places.order("created_at asc")).flatten!
     end
 
     s_places.each do |place|
-      if place.start_places.present?
-        (topics_array << place.start_places.order("created_at asc")).flatten!
-      end
-
-      if place.end_places.present?
-        # topics_array.merge(place.end_places)
-        (topics_array << place.end_places.order("created_at asc")).flatten!
-      end
-
-      topics_array = topics_array.uniq{ |topic| [topic[:id]]}
-
+      (topics_array << place.start_places.order("created_at asc")).flatten!
+      (topics_array << place.end_places.order("created_at asc")).flatten!
     end
+
 
 
     if radius_between >= 4
@@ -202,20 +139,13 @@ class Place < ActiveRecord::Base
       p radius_between
       p centerpoint
       center_box = Geocoder::Calculations.bounding_box(centerpoint, radius, {units: :km})
-      center_places = Place.where(latitude: center_box[0] .. center_box[2], longitude: center_box[1] .. center_box[3])
-      #.where("topics.created_at BETWEEN ? AND ?", Time.now.beginning_of_month, 2.months.from_now)
+      center_places = Place.joins(:topics).where(latitude: center_box[0] .. center_box[2], longitude: center_box[1] .. center_box[3]).distinct
 
       center_places.each do |place|
-        if place.start_places.present?
-          (topics_array << place.start_places.order("created_at asc")).flatten!
-        end
-        if place.end_places.present?
-          (topics_array << place.end_places.order("created_at asc")).flatten!
-        end
-        topics_array = topics_array.uniq{ |topic| [topic[:id]]}
+        (topics_array << place.start_places.order("created_at asc")).flatten!
+        (topics_array << place.end_places.order("created_at asc")).flatten!
       end
     end
-    #
 
     if topics_array.present?
       topics_array = topics_array.uniq{ |topic| [topic[:id]]}
@@ -223,8 +153,6 @@ class Place < ActiveRecord::Base
       topics_array = [ ]
     end
   end
-
-  # add_record("name", "latitude", "longitude", "address", "", "", 163, 333, "y-cZXxwrSXvtiyTGBzpf", "choice","img_url",category="",locality="",country="",postcode="")
 
   def add_record(name, latitude, longitude, address, source, source_id, place_id, user_id, auth_token,
                  choice,img_url,category="",locality="",country="",postcode="")
