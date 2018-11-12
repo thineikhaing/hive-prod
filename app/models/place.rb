@@ -2,10 +2,8 @@ class Place < ActiveRecord::Base
   has_many :topics
   has_many :user_fav_locations
   belongs_to :user
-
-  has_many :start_places , class_name: "Topic", foreign_key: "start_place_id",primary_key: :id
-  has_many :end_places , class_name: "Topic", foreign_key: "end_place_id",primary_key: :id
-
+  has_many :start_topics , class_name: "Topic", foreign_key: "start_place_id",primary_key: :id
+  has_many :end_topics , class_name: "Topic", foreign_key: "end_place_id",primary_key: :id
   # Setup hstore
   store_accessor :data
   enums %w(HERENOW USER VENDOR FACTUAL MRT UNKNOWN PRIVATE GOOGLE GOTHERE ONEMAP)
@@ -35,27 +33,20 @@ class Place < ActiveRecord::Base
 
     box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
 
-    places = Place.joins(:start_places).joins(:end_places).where(latitude: box[0] .. box[2], longitude: box[1] .. box[3]).distinct
+    places = Place.joins(:start_topics).joins(:end_topics).where(latitude: box[0] .. box[2], longitude: box[1] .. box[3]).distinct
 
     # places = Place.joins(:start_places).joins(:end_places).where(latitude: "1.3134489919704064".to_f .. "1.3224422080295937".to_f, longitude: "103.83907940209771".to_f .. "103.84807499790229".to_f).distinct
-
-    p "#{box[0]} .. #{box[2]}"
-    p "#{box[1]} .. #{box[3]}"
+    p "total place count"
+    p places.count
+    p "#{box[0]} .. #{box[2]} | #{box[1]} .. #{box[3]}"
 
     topics_array = [ ]
     if hive.api_key == round_key
       places.each do |place|
-
         (topics_array << place.topics.order("created_at asc")).flatten!
-        (topics_array << place.start_places.order("created_at asc")).flatten!
-        (topics_array << place.end_places.order("created_at asc")).flatten!
-
-        # topics = Topic.where('place_id =? OR start_place_id =? OR end_place_id =? ', place.id, place.id, place.id)
-        # topics.map{|topic|
-        #   topics_array.push(topic)
-        # }
+        (topics_array << place.start_topics.order("created_at asc")).flatten!
+        (topics_array << place.end_topics.order("created_at asc")).flatten!
       end
-
     else
       places.each do |place|
         if place.topics.present?
@@ -68,15 +59,12 @@ class Place < ActiveRecord::Base
                 topics_array.push(topic)
               end
             end
-
           end
         end
       end
-
     end
 
     if topics_array.present?
-      p topics_array
       topics_array = topics_array.uniq{ |topic| [topic["id"]]}
     else
       topics_array = [ ]

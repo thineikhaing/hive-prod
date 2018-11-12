@@ -8,7 +8,7 @@ class Api::DownloaddataController < ApplicationController
 
       if hiveApplication.present?
         p "hive application present"
-        initial_topic = Topic.find_by_topic_sub_type(2)
+        initial_topic = Topic.find_by(topic_sub_type: 2,hiveapplication_id: hiveApplication.id)
         all_topics = Topic.where("hiveapplication_id=? and topic_sub_type !=? ", hiveApplication.id,initial_topic.id).order("created_at desc")
         # all_topics.prepend(initial_topic)
         if params[:radius].to_i == 100
@@ -28,10 +28,15 @@ class Api::DownloaddataController < ApplicationController
         elsif hiveApplication.devuser_id == 1 and hiveApplication.id!=1 and params[:choice].nil? #All Applications under Herenow account except Hive
           p "All Applications under Herenow account except Hive"
 
-
           topics.prepend(initial_topic)
+          if params[:num_topics].present?
+            first_index = params[:next_index].to_i
+            next_index = first_index + params[:num_topics].to_i - 1
+            topics = topics[first_index..next_index]
+          end
 
           t_count = topics.count rescue '0'
+
           render json: { status: 200, message: "Topic within radius " ,topics: JSON.parse(topics.to_json(content: true)) , topic_count: t_count,all_topics: all_topics}
 
         elsif params[:choice].present? and params[:choice] == "favr"
