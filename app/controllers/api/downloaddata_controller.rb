@@ -83,9 +83,7 @@ class Api::DownloaddataController < ApplicationController
 
       posts_topics = []
       post_topic_ids = []
-      p "posts"
-      p current_user
-      p current_user.posts
+
       if current_user.posts.count > 0
         current_user.posts.map{|pst| posts_topics.push(pst.topic_id)}
       end

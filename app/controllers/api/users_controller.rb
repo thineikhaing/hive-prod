@@ -15,6 +15,22 @@ class Api::UsersController < ApplicationController
     end
   end
 
+  def get_trip_list
+    trips = Trip.where(user_id: current_user.id).order('id DESC').last(10)
+    if trips.count > 11
+      ids = trips.limit(10).order('id DESC').pluck(:id)
+      trips.where('id NOT IN (?)', ids).destroy_all
+    end
+    trip_detail =  []
+    trips.each do |trip|
+      detail = trip.data["route_detail"]
+      trip_detail.push(eval(detail))
+    end
+    render json: {status:200, message: "User Trip List",trips: trips, trip_detail:trip_detail}
+
+  end
+
+
   def get_user_avatar
     if params[:username]
 
