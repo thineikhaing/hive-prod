@@ -29,10 +29,16 @@ class Api::DownloaddataController < ApplicationController
           p "All Applications under Herenow account except Hive"
 
           topics.prepend(initial_topic)
+          
           if params[:num_topics].present?
-            first_index = params[:next_index].to_i
-            next_index = first_index + params[:num_topics].to_i - 1
-            topics = topics[first_index..next_index]
+            if params[:next_index].to_i < topics.count
+              first_index = params[:next_index].to_i
+              next_index = first_index + params[:num_topics].to_i - 1
+              topics = topics[first_index..next_index]
+            else
+              topics = []
+            end
+
           end
           t_count = topics.count rescue '0'
           render json: {status: 200, message: "Topic within radius " ,topics: JSON.parse(topics.to_json(content: true)) , topic_count: t_count}
