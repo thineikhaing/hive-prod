@@ -669,10 +669,20 @@ class Api::TopicsController < ApplicationController
      initial_topic = Topic.find_by_topic_sub_type(2)
      topics.prepend(initial_topic)
 
+     if params[:num_topics].present?
+       if params[:next_index].to_i < topics.count
+         first_index = params[:next_index].to_i
+         next_index = first_index + params[:num_topics].to_i - 1
+         topics = topics[first_index..next_index]
+       else
+         topics = []
+       end
+     end
+
      tcount = topics.count rescue '0'
-     p "get nearest topics"
-     all_topics = Topic.where("hiveapplication_id=? and topic_sub_type !=? ", hive_app.id,initial_topic.id).order("created_at desc")
-     render json: {status:200, message: "nearest topics within start and end",topics:topics, topic_count: tcount,all_topics:all_topics}
+
+
+     render json: {status:200, message: "nearest topics within start and end",topics:topics, topic_count: tcount}
     else
       render json: {status:201,message: "Params app_key must be presented"}
     end

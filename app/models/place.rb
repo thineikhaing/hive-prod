@@ -43,9 +43,9 @@ class Place < ActiveRecord::Base
     topics_array = [ ]
     if hive.api_key == round_key
       places.each do |place|
-        (topics_array << place.topics.order("created_at asc")).flatten!
-        (topics_array << place.start_topics.order("created_at asc")).flatten!
-        (topics_array << place.end_topics.order("created_at asc")).flatten!
+        (topics_array << place.topics.order("created_at asc")).flatten! if place.topics.present?
+        (topics_array << place.start_topics.order("created_at asc")).flatten! if place.start_topics.present?
+        (topics_array << place.end_topics.order("created_at asc")).flatten!  if place.end_topics.present?
       end
     else
       places.each do |place|
@@ -111,13 +111,13 @@ class Place < ActiveRecord::Base
     topics_array = [ ]
 
     e_places.each do |place|
-      (topics_array << place.start_places.order("created_at asc")).flatten!
-      (topics_array << place.end_places.order("created_at asc")).flatten!
+      (topics_array << place.start_topics.order("created_at asc")).flatten! if place.start_topics.present?
+      (topics_array << place.end_topics.order("created_at asc")).flatten! if place.end_topics.present?
     end
 
     s_places.each do |place|
-      (topics_array << place.start_places.order("created_at asc")).flatten!
-      (topics_array << place.end_places.order("created_at asc")).flatten!
+      (topics_array << place.start_topics.order("created_at asc")).flatten! if place.start_topics.present?
+      (topics_array << place.end_topics.order("created_at asc")).flatten! if place.end_topics.present?
     end
 
 
@@ -130,8 +130,8 @@ class Place < ActiveRecord::Base
       center_places = Place.joins(:topics).where(latitude: center_box[0] .. center_box[2], longitude: center_box[1] .. center_box[3]).distinct
 
       center_places.each do |place|
-        (topics_array << place.start_places.order("created_at asc")).flatten!
-        (topics_array << place.end_places.order("created_at asc")).flatten!
+        (topics_array << place.start_topics.order("created_at asc")).flatten! if place.start_topics.present?
+        (topics_array << place.end_topics.order("created_at asc")).flatten! if place.end_topics.present?
       end
     end
 
