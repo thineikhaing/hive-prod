@@ -328,7 +328,7 @@ class Place < ActiveRecord::Base
 
         check_records.each do |cr|
           p "exisiting google record"
-          place = cr if cr.address.downcase == address.downcase
+          place = cr if cr.address.downcase == address.downcase if address.present?
         end
 
         if place == ""
@@ -368,9 +368,10 @@ class Place < ActiveRecord::Base
         p check_records = Place.nearest(latitude, longitude, 0.5)
 
         check_records.each do |cr|
-
           private_place = cr if cr.user_id == user_id and cr.source == 6
-          place = cr if cr.name.downcase == name.downcase if name.present?
+          if place.name.present?
+            place = cr if cr.address.downcase == address.downcase if address.present?
+          end
         end
 
         p "check place "
