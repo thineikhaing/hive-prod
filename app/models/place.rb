@@ -369,7 +369,7 @@ class Place < ActiveRecord::Base
 
         check_records.each do |cr|
           private_place = cr if cr.user_id == user_id and cr.source == 6
-          if place.name.present?
+          if cr.name.present?
             place = cr if cr.address.downcase == address.downcase if address.present?
           end
         end
