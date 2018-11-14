@@ -692,9 +692,19 @@ class Api::TopicsController < ApplicationController
     hive = HiveApplication.find_by_api_key(params[:app_key])
     if hive.present?
       topics = Topic.where(hiveapplication_id: hive.id, user_id: current_user.id)
-      render json: {status:200,
-                    message: "User Topics",
-                    topics: topics}, status: 200
+      if params[:other_user_id].present?
+        user_id = params[:other_user_id].to_i
+        other_topics = Topic.where(hiveapplication_id: hive.id, user_id: user_id)
+        render json: {status:200,
+                      message: "User Topics",
+                      topics: topics,
+                      other_topics:other_topics}, status: 200
+      else
+        render json: {status:200,
+                      message: "User Topics",
+                      topics: topics}, status: 200
+      end
+
     else
       render json: {message: "no topics"}
     end
