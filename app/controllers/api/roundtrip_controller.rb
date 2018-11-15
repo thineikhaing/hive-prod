@@ -1114,9 +1114,7 @@ end
       if params[:id]
         UserFavBus.delete(params[:id])
       end
-      # groupbus = SgBusStop.joins("LEFT JOIN sg_bus_routes as routes ON sg_bus_stops.bus_id = routes.bus_stop_code LEFT JOIN user_fav_buses as favs ON sg_bus_stops.bus_id= favs.busid")
-      # .where("favs.user_id = ? AND routes.service_no = favs.service", current_user.id)
-      # .select("favs.id,favs.service,sg_bus_stops.bus_id,sg_bus_stops.road_name,sg_bus_stops.description,routes.wd_firstbus,routes.wd_lastbus")
+
       sql = 'SELECT favs.id,favs.service ,
             sg_bus_stops.bus_id, sg_bus_stops.road_name,
             sg_bus_stops.description,
@@ -1136,49 +1134,7 @@ end
         seqHash.push({bus_id: r,stops: busArr})
       }
 
-      busstops = []
-      favbuses = UserFavBus.select("id, service, busid").where(user_id: current_user.id)
-      favbuses.each do |stop|
-        bus = SgBusStop.find_by(bus_id: stop.busid)
-        route = SgBusRoute.find_by(service_no:stop.service,bus_stop_code:stop.busid)
-        today = Date.today
-
-        if today.saturday?
-
-          !route.nil? ? first_bus = route.sat_firstbus : first_bus = '-'
-          !route.nil? ? lastbus = route.sat_lastbus : lastbus = '-'
-
-          format_bus = {id:stop.id, busid: stop.busid,
-            service: stop.service,road_name: bus.road_name,
-            description: bus.description, lat: bus.latitude, lng: bus.longitude,
-            firstbus:first_bus,lastbus:lastbus
-          }
-        elsif today.sunday?
-
-          !route.nil? ? first_bus = route.sun_firstbus : first_bus = '-'
-          !route.nil? ? lastbus = route.sun_lastbus : lastbus = '-'
-
-          format_bus = {id:stop.id, busid: stop.busid,
-            service: stop.service,road_name: bus.road_name,
-            description: bus.description, lat: bus.latitude, lng: bus.longitude,
-            firstbus:first_bus,lastbus:lastbus
-          }
-        else
-
-         !route.nil? ? first_bus = route.wd_firstbus : first_bus = '-'
-         !route.nil? ? lastbus = route.wd_lastbus : lastbus = '-'
-
-          format_bus = {id:stop.id, busid: stop.busid,
-            service: stop.service,road_name: bus.road_name,
-            description: bus.description, lat: bus.latitude, lng: bus.longitude,
-            firstbus:first_bus,lastbus:lastbus
-          }
-        end
-        busstops.push(format_bus)
-      end
-
-
-      render json:{user_fav_buses:seqHash,favbuses: favbuses, bus_stops: busstops, message:"Favourite Buses List",status:200}
+      render json:{user_fav_buses:seqHash, message:"Favourite Buses List",status:200}
     else
       render json:{status: 201, message: "unauthorized."}
     end
@@ -1188,17 +1144,10 @@ end
     if current_user.present?
       service = params[:service]
       busid = params[:busid]
-      p check_dup = UserFavBus.where(user_id: current_user.id, service: service, busid: busid)
+      favBus = UserFavBus.find_by(user_id: current_user.id, service: service, busid: busid)
 
-      if check_dup.empty?
-        UserFavBus.create(user_id: current_user.id, service: service, busid: busid)
-      end
-      favbuses = UserFavBus.where(user_id: current_user.id)
-      busstops = []
-      favbuses.each do |stop|
-        bus = SgBusStop.where(bus_id: stop.busid).take
-        format_bus = {id:stop.id, busid: stop.busid, service: stop.service,road_name: bus.road_name, description: bus.description, lat: bus.latitude, lng: bus.longitude}
-        busstops.push(format_bus)
+      if !favBus.present?
+        favBus = UserFavBus.create(user_id: current_user.id, service: service, busid: busid)
       end
 
       sql = 'SELECT favs.id,favs.service ,
@@ -1209,19 +1158,17 @@ end
             FROM "sg_bus_stops"
             LEFT JOIN sg_bus_routes as routes ON sg_bus_stops.bus_id = routes.bus_stop_code
             LEFT OUTER JOIN user_fav_buses as favs ON sg_bus_stops.bus_id= favs.busid
-            WHERE (favs.user_id = ' << current_user.id.to_s << 'AND routes.service_no = favs.service)'
+            WHERE (favs.user_id = ' << current_user.id.to_s << 'AND routes.service_no = favs.service AND favs.id = ' << favBus.id.to_s << ')'
 
       busQuery = ActiveRecord::Base.connection.execute(sql)
-      # groupbus= groupbus.group_by { |d| d["bus_id"] }
 
       seqHash = []
       groupbus = busQuery.map {|x| x["bus_id"]}.uniq
       groupbus.map{|r|
         busArr = busQuery.select {|e| e["bus_id"] == r}
-        seqHash.push({bus_id: r,stops: busArr})
+        seqHash.push({bus_id: r,stops: busArr.reverse})
       }
-
-      render json:{user_fav_buses:seqHash,status:200,favbuses: favbuses, bus_stops: busstops,message:"Favourite Buses List"}
+      render json:{user_fav_buses:seqHash,status:200,message:"Favourite Buses List"}
     else
       render json:{status: 201, message: "unauthorized."}
     end
