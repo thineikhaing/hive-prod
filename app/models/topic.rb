@@ -1412,7 +1412,7 @@ class Topic < ActiveRecord::Base
     topic = self
 
     place_name = topic.place_information[:name]
-    place_name =   topic.rtplaces_information[:start_place][:name] if topic.topic_type == 11
+    # place_name =   topic.rtplaces_information[:start_place][:name] if topic.topic_type == 11
 
     sns = Aws::SNS::Client.new
     iphone_notification = {
