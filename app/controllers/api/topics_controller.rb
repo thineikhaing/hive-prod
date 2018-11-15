@@ -45,11 +45,14 @@ class Api::TopicsController < ApplicationController
         end_id = 0
 
         if params[:start_place_id] || params[:start_longitude]  || params[:start_longitude]  || params[:start_source_id]
+          if params[:start_longitude].to_f > "0.0".to_f
             place = Place.new
             start_place = place.add_record(start_name, start_latitude, start_longitude, start_address, start_source, start_source_id, start_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
             # p "start place info::::"
             start_id = start_place[:place].id
             start_place[:place].name
+          end
+
 
             if params[:latitude].to_i == 0 && params[:longitude].to_i
               place_id = start_id
@@ -57,10 +60,12 @@ class Api::TopicsController < ApplicationController
         end
 
         if params[:end_place_id] || params[:end_longitude]  || params[:end_longitude]  || params[:end_source_id]
-          end_place = place.add_record(end_name, end_latitude, end_longitude, end_address, end_source, end_source_id, end_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
-          # p "end place info::::"
-          end_id = end_place[:place].id
-          end_place[:place].name
+          if params[:start_longitude].to_f > "0.0".to_f
+            end_place = place.add_record(end_name, end_latitude, end_longitude, end_address, end_source, end_source_id, end_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
+            end_id = end_place[:place].id
+            end_place[:place].name
+          end
+
 
           if params[:latitude].to_i == 0 && params[:longitude].to_i
             place_id = start_id
@@ -175,9 +180,8 @@ class Api::TopicsController < ApplicationController
             end
           end
 
-           p "check to share"
-          p params[:shared_rt]
-          if params[:shared_rt].present? and hiveapplication.api_key == round_key
+
+          if params[:shared_rt].to_s != "false" and hiveapplication.api_key == round_key
             p "notify to rt users"
              topic.notify_roundtrip_users
           end
