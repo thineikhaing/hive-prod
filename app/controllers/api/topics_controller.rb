@@ -692,18 +692,30 @@ class Api::TopicsController < ApplicationController
     hive = HiveApplication.find_by_api_key(params[:app_key])
     if hive.present?
       topics = Topic.where(hiveapplication_id: hive.id, user_id: current_user.id)
+      other_topics = []
       if params[:other_user_id].present?
         user_id = params[:other_user_id].to_i
         other_topics = Topic.where(hiveapplication_id: hive.id, user_id: user_id)
-        render json: {status:200,
-                      message: "User Topics",
-                      topics: topics,
-                      other_topics:other_topics}, status: 200
-      else
-        render json: {status:200,
-                      message: "User Topics",
-                      topics: topics}, status: 200
       end
+
+      if topics.present?
+        params[:num_topics].present? ? no_of_topics = params[:num_topics].to_i : no_of_topics = 0
+        params[:topic_id].present? ? topic_id = params[:topic_id].to_i : topic_id = 0
+        if no_of_topics ==0 && topic_id ==0
+          topics =  topics.order("id DESC").limit(10)
+        elsif no_of_topics > 0 && topic_id == 0
+          topics =  topics.order("id DESC").limit(no_of_topics)
+        elsif no_of_topics == 0 && topic_id > 0
+          topics =  topics.where("id < ?", topic_id).order("id DESC").limit(10)
+        elsif no_of_topics > 0 && topic_id > 0
+          topics =  topics.where("id < ?", topic_id).order("id DESC").limit(no_of_topics)
+        end
+      end
+
+      render json: {status:200,
+                    message: "User Topics",
+                    topics: topics,
+                    other_topics:other_topics}, status: 200
 
     else
       render json: {message: "no topics"}
