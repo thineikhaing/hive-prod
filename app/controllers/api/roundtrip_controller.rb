@@ -1123,7 +1123,7 @@ end
             FROM "sg_bus_stops"
             LEFT JOIN sg_bus_routes as routes ON sg_bus_stops.bus_id = routes.bus_stop_code
             LEFT OUTER JOIN user_fav_buses as favs ON sg_bus_stops.bus_id= favs.busid
-            WHERE (favs.user_id = ' << current_user.id.to_s << 'AND routes.service_no = favs.service)'
+            WHERE (favs.user_id = ' << current_user.id.to_s << ' AND routes.service_no = favs.service) ORDER BY favs.id desc'
 
       busQuery = ActiveRecord::Base.connection.execute(sql).to_a
 
