@@ -1120,6 +1120,7 @@ end
       sql = 'SELECT favs.id,favs.service ,
             sg_bus_stops.bus_id, sg_bus_stops.road_name,
             sg_bus_stops.description,
+            sg_bus_stops.latitude , sg_bus_stops.longitude,
             routes.wd_firstbus as firstbus,routes.wd_lastbus as lastbus
             FROM "sg_bus_stops"
             LEFT JOIN sg_bus_routes as routes ON sg_bus_stops.bus_id = routes.bus_stop_code
@@ -1203,6 +1204,7 @@ end
       sql = 'SELECT favs.id,favs.service ,
             sg_bus_stops.bus_id, sg_bus_stops.road_name,
             sg_bus_stops.description,
+            sg_bus_stops.latitude , sg_bus_stops.longitude,
             routes.wd_firstbus as firstbus,routes.wd_lastbus as lastbus
             FROM "sg_bus_stops"
             LEFT JOIN sg_bus_routes as routes ON sg_bus_stops.bus_id = routes.bus_stop_code

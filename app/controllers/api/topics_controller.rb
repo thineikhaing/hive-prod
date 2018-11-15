@@ -712,7 +712,6 @@ class Api::TopicsController < ApplicationController
 
   def check_user_last_topic
     p "checking user's last topic with transport_type"
-
     hive_app_key = HiveApplication.find_by_api_key(params[:app_key])
     if hive_app_key.present?
       p user_id = params["user_id"]
@@ -731,7 +730,6 @@ class Api::TopicsController < ApplicationController
   end
 
   def favr_topics_by_user
-
     p 'favr_topics_by_user'
     if params[:auth_token].present?
       user = User.find_by_authentication_token(params[:auth_token])
