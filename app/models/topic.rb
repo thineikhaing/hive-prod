@@ -1424,8 +1424,6 @@ class Topic < ActiveRecord::Base
                 topic_id: topic.id,
                 topic_title: topic.title,
                 broadcast_user: topic.user_id,
-                start_place: topic.rtplaces_information[:start_place][:name],
-                end_place:  topic.rtplaces_information[:end_place][:name],
                 topic_username: topic.username,
                 place_name: place_name,
                 create_at: topic.created_at,
@@ -1442,8 +1440,6 @@ class Topic < ActiveRecord::Base
                 topic_id: topic.id,
                 topic_title: topic.title,
                 broadcast_user: topic.user_id,
-                start_place: topic.rtplaces_information[:start_place][:name],
-                end_place:  topic.rtplaces_information[:end_place][:name],
                 topic_username: topic.username,
                 place_name: place_name,
                 create_at: topic.created_at,
@@ -1464,18 +1460,30 @@ class Topic < ActiveRecord::Base
     to_endpoint_arn = []
     users_by_location = []
     radius = 1 if radius.nil?
+    start_users =end_users= users= []
+    if topic.start_place.present?
+      s_center_point = [topic.start_place.latitude.to_f, topic.start_place.longitude.to_f]
+      s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
+      start_users = User.where(last_known_latitude: s_box[0] .. s_box[2], last_known_longitude: s_box[1] .. s_box[3])
+      start_users = start_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+    end
 
-    s_center_point = [topic.start_place.latitude.to_f, topic.start_place.longitude.to_f]
-    s_box = Geocoder::Calculations.bounding_box(s_center_point, radius, {units: :km})
-    start_users = User.where(last_known_latitude: s_box[0] .. s_box[2], last_known_longitude: s_box[1] .. s_box[3])
-    start_users = start_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+    if topic.end_place.present?
+      e_center_point =  [topic.end_place.latitude.to_f, topic.end_place.longitude.to_f]
+      e_box = Geocoder::Calculations.bounding_box(e_center_point, radius, {units: :km})
+      end_users = User.where(last_known_latitude: e_box[0] .. e_box[2], last_known_longitude: e_box[1] .. e_box[3])
+      end_users = end_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+    end
 
-    e_center_point =  [topic.end_place.latitude.to_f, topic.end_place.longitude.to_f]
-    e_box = Geocoder::Calculations.bounding_box(e_center_point, radius, {units: :km})
-    end_users = User.where(last_known_latitude: e_box[0] .. e_box[2], last_known_longitude: e_box[1] .. e_box[3])
-    end_users = end_users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+    if topic.place.present?
+      center_point = [topic.place.latitude.to_f, topic.place.longitude.to_f]
+      s_box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
+      users = User.where(last_known_latitude: s_box[0] .. s_box[2], last_known_longitude: s_box[1] .. s_box[3])
+      users = users.where("app_data ->'app_id#{hiveapplication.id}' = '#{hiveapplication.api_key}'")
+    end
 
-    users_by_location = start_users+end_users
+
+    users_by_location = start_users+end_users+users
     users_by_location = users_by_location.uniq{ |user| [user[:id]]}
     time_allowance = Time.now - 1.day.ago
 
