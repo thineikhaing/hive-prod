@@ -34,18 +34,17 @@ class Place < ActiveRecord::Base
     box = Geocoder::Calculations.bounding_box(center_point, radius, {units: :km})
 
     places = Place.joins(:start_topics).joins(:end_topics).where(latitude: box[0] .. box[2], longitude: box[1] .. box[3]).distinct
-
-    # places = Place.joins(:start_places).joins(:end_places).where(latitude: "1.3134489919704064".to_f .. "1.3224422080295937".to_f, longitude: "103.83907940209771".to_f .. "103.84807499790229".to_f).distinct
-    p "total place count"
-    p places.count
-    p "#{box[0]} .. #{box[2]} | #{box[1]} .. #{box[3]}"
+    topicPlaces = Place.joins(:topics).where(latitude: box[0] .. box[2], longitude: box[1] .. box[3]).distinct
 
     topics_array = [ ]
     if hive.api_key == round_key
       places.each do |place|
-        (topics_array << place.topics.order("created_at asc")).flatten! if place.topics.present?
         (topics_array << place.start_topics.order("created_at asc")).flatten! if place.start_topics.present?
         (topics_array << place.end_topics.order("created_at asc")).flatten!  if place.end_topics.present?
+      end
+
+      topicPlaces.each do |place|
+        (topics_array << place.topics.order("created_at asc")).flatten! if place.topics.present?
       end
     else
       places.each do |place|
@@ -111,11 +110,13 @@ class Place < ActiveRecord::Base
     e_places.each do |place|
       (topics_array << place.start_topics.order("created_at asc")).flatten! if place.start_topics.present?
       (topics_array << place.end_topics.order("created_at asc")).flatten! if place.end_topics.present?
+      (topics_array << place.topics.order("created_at asc")).flatten! if place.topics.present?
     end
 
     s_places.each do |place|
       (topics_array << place.start_topics.order("created_at asc")).flatten! if place.start_topics.present?
       (topics_array << place.end_topics.order("created_at asc")).flatten! if place.end_topics.present?
+      (topics_array << place.topics.order("created_at asc")).flatten! if place.topics.present?
     end
 
 
