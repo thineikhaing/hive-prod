@@ -399,7 +399,7 @@ class Api::RoundtripController < ApplicationController
         topic_posts = Post.where(topic_id: topic_id)
         post_count = topic_posts.count
       end
-      p text
+      
       if text.downcase.include?("train") || text.downcase.include?("ewl") || text.downcase.include?("nel") || text.downcase.include?("ccl") || text.downcase.include?("dtl") || text.downcase.include?("nel") || text.downcase.include?("lrt")
         header = "MRT"
         mrt_status = 'last'

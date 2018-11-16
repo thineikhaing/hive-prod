@@ -373,9 +373,12 @@ class Place < ActiveRecord::Base
           else
 
             if place.blank?
+
+
               geocoder = Geocoder.search("#{latitude},#{longitude}").first
+
               if geocoder.present? and geocoder.address.present?
-                !name.nil? ? name = name : name = geocoder.address
+                !name.nil? ? name = name : name = geocoder.data["address"]["road"]
                 !address.nil? ? address = address : address = geocoder.address
 
                 check = Place.find_by_address(geocoder.address)
@@ -452,44 +455,13 @@ class Place < ActiveRecord::Base
   end
 
   def self.create_place_by_lat_lng(latitude, longitude,current_user)
-    # factual = Factual.new(Factual_Const::Key, Factual_Const::Secret)
-    # query = factual.geo(latitude,longitude).first
-    #
-    # if query.present?
-    #   if query["address"].present?
-    #     check = Place.find_by_address(query["address"])
-    #     check.present? ? place = check : place = Place.create(name: query["address"], latitude:latitude, longitude: longitude, address: query["address"], postal_code: query["postcode"], locality: query["locality"], country: query["country"], source: Place::UNKNOWN, user_id: current_user.id)
-    #   elsif query["locality"].present?
-    #     check = Place.find_by_address("Somewhere in #{query["locality"]}")
-    #     check.present? ? place = check : place = Place.create(name: "Somewhere in #{query["locality"]}", latitude: latitude, longitude: longitude, address: "Somewhere in #{query["locality"]}", postal_code: query["postcode"], locality: query["locality"], country: query["country"], source: Place::UNKNOWN, user_id: current_user.id)
-    #   end
-    # else
-    #   geocoder = Geocoder.search("#{latitude},#{longitude}").first
-    #
-    #
-    #
-    #   if geocoder.present? and geocoder.address.present?
-    #     check = Place.find_by_address(geocoder.address)
-    #     check2 = Place.find_by_address("Somewhere in the world")
-    #
-    #     check.present? ? place = check : place = Place.create(name: geocoder.address, latitude: latitude, longitude: longitude,
-    #                                                           address: geocoder.address,country: geocoder.country,
-    #                                                           source: Place::UNKNOWN, user_id: current_user.id,postal_code: geocoder.postal_code)
-    #   else
-    #     check2.present? ? place = check2 : place = Place.create(name: "Somewhere in the world", latitude: latitude, longitude: longitude, address: "Somewhere in the world", source: Place::UNKNOWN, user_id: current_user.id)
-    #   end
-    #
-    #
-    # end
-    #Place.create_place_by_lat_lng(1.38874082716249, 103.75661801598,1)
-    # geocoder = Geocoder.search("1.31803065581523, 103.84350034994").first
+
     geocoder = Geocoder.search("#{latitude},#{longitude}").first
     p "Place GEO lat|lng"
     if geocoder.present? and geocoder.address.present?
       check = Place.find_by_address(geocoder.address)
       check2 = Place.find_by_address("Somewhere in the world")
-
-      check.present? ? place = check : place = Place.create(name: geocoder.address, latitude: latitude, longitude: longitude,
+      check.present? ? place = check : place = Place.create(name: geocoder.data["address"]["road"], latitude: latitude, longitude: longitude,
                                                             address: geocoder.address,country: geocoder.country,
                                                            source: Place::UNKNOWN, user_id: current_user.id,postal_code: geocoder.postal_code)
     else
