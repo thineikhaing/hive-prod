@@ -12,7 +12,7 @@ class Api::TopicsController < ApplicationController
         if params[:place_id]
           place_id = params[:place_id].to_i
         else
-          if params[:latitude].present?
+          if params[:latitude].to_f > 0.0
            place = Place.create_place_by_lat_lng(params[:latitude], params[:longitude],current_user)
            place_id = place.id
           end
@@ -44,38 +44,23 @@ class Api::TopicsController < ApplicationController
         start_id = 0
         end_id = 0
 
-        if params[:start_place_id] || params[:start_longitude]  || params[:start_longitude]  || params[:start_source_id]
-          if params[:start_longitude].to_f > "0.0".to_f
-            place = Place.new
-            start_place = place.add_record(start_name, start_latitude, start_longitude, start_address, start_source, start_source_id, start_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
-            # p "start place info::::"
-            start_id = start_place[:place].id
-            start_place[:place].name
-          end
-
-
-            if params[:latitude].to_i == 0 && params[:longitude].to_i
-              place_id = start_id
-            end
+        if params[:start_longitude].to_f > "0.0".to_f
+          place = Place.new
+          start_place = place.add_record(start_name, start_latitude, start_longitude, start_address, start_source, start_source_id, start_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
+          start_id = start_place[:place].id
+          place_id = start_id if params[:latitude].to_f == 0.0
         end
 
-        if params[:end_place_id] || params[:end_longitude]  || params[:end_longitude]  || params[:end_source_id]
-          if params[:start_longitude].to_f > "0.0".to_f
-            end_place = place.add_record(end_name, end_latitude, end_longitude, end_address, end_source, end_source_id, end_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
-            end_id = end_place[:place].id
-            end_place[:place].name
-          end
-
-
-          if params[:latitude].to_i == 0 && params[:longitude].to_i
-            place_id = start_id
-          end
+        if params[:end_longitude].to_f > "0.0".to_f
+          end_place = place.add_record(end_name, end_latitude, end_longitude, end_address, end_source, end_source_id, end_place_id, current_user.id, current_user.authentication_token, choice,img_url,category,locality,country,postcode)
+          end_id = end_place[:place].id
         end
+
+
 
         data = params[:data] if data.present?
         data = data.delete('\\"') if data.present?
-        p "data hash value"
-        p data
+
         if current_user.present?
           data = getHashValuefromString(data) if data.present?
           appAdditionalField = AppAdditionalField.where(:app_id => hiveapplication.id, :table_name => "Topic")
@@ -147,8 +132,9 @@ class Api::TopicsController < ApplicationController
           if topic.present? and params[:post_content].present?
             p "Post create"
             post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, place_id: place_id) if params[:post_type] == Post::TEXT.to_s
-            #comment out as there is no image post for luncheon
-            #post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height], place_id: place_id) if params[:post_type] == Post::IMAGE.to_s  or params[:post_type] == Post::AUDIO.to_s
+            post = Post.create(content: params[:post_content], post_type: params[:post_type],  topic_id: topic.id, user_id: current_user.id, img_url: params[:img_url], width: params[:width], height: params[:height], place_id: place_id) if params[:post_type] == Post::IMAGE.to_s  or params[:post_type] == Post::AUDIO.to_s
+            post.broadcast_hive
+            post.broadcast_other_app
           end
 
           #create tag
@@ -182,8 +168,7 @@ class Api::TopicsController < ApplicationController
 
 
           if params[:shared_rt].to_s != "false" and hiveapplication.api_key == round_key
-            p "notify to rt users"
-             topic.notify_roundtrip_users
+            topic.notify_roundtrip_users
           end
 
           #increase like and dislike count

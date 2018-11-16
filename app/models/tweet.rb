@@ -47,7 +47,7 @@ class Tweet < ApplicationRecord
     # else
     #   target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_P_Broadcast_Noti'
     # end
-
+    p tweet
     alert_message = "["+tweet.creator+"] "+tweet.text
     tweet_topic = Topic.find_by_title(tweet.text)
     topic_id = 0

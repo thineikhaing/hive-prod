@@ -8,14 +8,6 @@ class Place < ActiveRecord::Base
   store_accessor :data
   enums %w(HERENOW USER VENDOR FACTUAL MRT UNKNOWN PRIVATE GOOGLE GOTHERE ONEMAP)
 
-  # def self.start_places
-  #   Topic.where(start_place_id: self.id)
-  # end
-  #
-  # def self.end_places
-  #   Topic.where(end_place_id: self.id)
-  # end
-
   # Returns nearest topics within n latitude, n longitude and n radius (For downloaddata controller)
   def self.nearest_topics_within(latitude, longitude, radius, hive_id)
 
@@ -370,18 +362,15 @@ class Place < ActiveRecord::Base
             place = cr if cr.address.downcase == address.downcase if address.present?
           end
         end
-
         p "check place "
         p place
         p name
-
         if private_place.present?
           return { place: private_place, status: 71 }
         else
           if choice == "luncheon"
             place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, category: "Food and Dining",img_url: img_url,country: country,postal_code: postcode,locality: locality) unless place.present?
           else
-
 
             if place.blank?
               geocoder = Geocoder.search("#{latitude},#{longitude}").first
@@ -395,24 +384,9 @@ class Place < ActiveRecord::Base
                     img_url: img_url,category: category,country: geocoder.country,
                     postal_code: geocoder.postal_code,locality: locality) unless place.present?
               end
-              if !name.nil?
-                place.name = name if name.include?("MRT")
-                place.save!
-              end
+
             end
 
-            # if name.present?
-            #   place = Place.create(name: name, latitude: latitude, longitude: longitude, address: address, source: source, user_id: user_id, img_url: img_url,category: category,country: country,postal_code: postcode,locality: locality) unless place.present?
-            # else
-            #   geocoder = Geocoder.search("#{latitude},#{longitude}").first
-            #   if geocoder.present? and geocoder.address.present?
-            #     check = Place.find_by_address(geocoder.address)
-            #     check.present? ? place = check : place = Place.create(name: geocoder.address, latitude: latitude, longitude: longitude,
-            #                                                           address: geocoder.address, source: source, source_id: source_id, user_id: user_id,
-            #                                                           img_url: img_url,category: category,country: geocoder.country,
-            #                                                           postal_code: geocoder.postal_code,locality: locality) unless place.present?
-            #   end
-            # end
           end
 
           Checkinplace.create(place_id: place.id, user_id: user_id)

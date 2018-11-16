@@ -292,17 +292,14 @@ class Api::RoundtripController < ApplicationController
   end
 
   def transit_annoucement_by_admin
-    text = params[:text]
+    text = params[:content]
     tags  = []
     station_tags = Hash.new
     station_tags["tags"] = tags
-    tweet = Tweet.create(text: params[:text], creator: "Admin",hashtags:station_tags,posted_at:Time.now)
+    tweet = Tweet.create(text: params[:content], creator: "Admin",hashtags:station_tags,posted_at:Time.now)
     Pusher["hive_channel"].trigger_async("new_tweet", tweet)
-    if params[:shared].to_i == 1
-        p "send noti"
-        Tweet.send_tweet_noti(tweet)
-    end
-
+    Tweet.send_tweet_noti(tweet)
+    
     render json: {status:200, message: "Created new transit announcement",tweet:tweet}
   end
 
@@ -323,20 +320,11 @@ class Api::RoundtripController < ApplicationController
     mrt_status = ''
     tweet_counter = 0
 
-    # domain_url = 'https://api.twitter.com'
-    # @consumer = OAuth::Consumer.new(Twitter_Config::Consumer_key, Twitter_Config::Consumer_secret, {:site=> domain_url})
-    # accesstoken = OAuth::AccessToken.new(@consumer, Twitter_Config::Access_token, Twitter_Config::Access_token_secret)
-    # smrt_request = accesstoken.request(:get, "https://api.twitter.com/1.1/search/tweets.json?from=SMRT_Singapore&result_type=recent").body
-    # sbs_request = accesstoken.request(:get, "https://api.twitter.com/1.1/search/tweets.json?from=SBSTransit_Ltd&result_type=recent").body
-    # smrt_results= JSON.parse(smrt_request)
-    # sbs_results = JSON.parse(sbs_request)
-    # smrt_recent_tweet = smrt_results["statuses"]
-    # sbs_recent_tweet = sbs_results["statuses"]
-
     smrt_client = $twitter_client.search("from:SMRT_Singapore", result_type: "recent")
     sbs_client = $twitter_client.search("from:SBSTransit_Ltd", result_type: "recent")
 
     smrt_client.collect do |tweet|
+
     # Tweet.expiring_soon.where(creator: "SMRT_Singapore").order("created_at desc").collect do |tweet|
       text = tweet.text
       if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides")|| text.downcase.include?("enjoy")|| text.downcase.include?("happy")
@@ -346,8 +334,6 @@ class Api::RoundtripController < ApplicationController
         smrt_tweets.push(tweet)
 
         created_at = tweet.created_at.dup.localtime.strftime("%b-%d %I:%M%p %a")
-        p "hashtag ++++"
-        p hashtags = tweet.hashtags
         tags  = []
         hashtags.each do |tag|
           tags.push(tag.text)
