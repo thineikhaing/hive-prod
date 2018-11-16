@@ -299,7 +299,7 @@ class Api::RoundtripController < ApplicationController
     tweet = Tweet.create(text: params[:content], creator: "Admin",hashtags:station_tags,posted_at:Time.now)
     Pusher["hive_channel"].trigger_async("new_tweet", tweet)
     Tweet.send_tweet_noti(tweet)
-    
+
     render json: {status:200, message: "Created new transit announcement",tweet:tweet}
   end
 
@@ -335,6 +335,8 @@ class Api::RoundtripController < ApplicationController
 
         created_at = tweet.created_at.dup.localtime.strftime("%b-%d %I:%M%p %a")
         tags  = []
+        p tweet
+        hashtags = tweet.hashtags
         hashtags.each do |tag|
           tags.push(tag.text)
         end
@@ -397,6 +399,7 @@ class Api::RoundtripController < ApplicationController
         topic_posts = Post.where(topic_id: topic_id)
         post_count = topic_posts.count
       end
+      p text
       if text.downcase.include?("train") || text.downcase.include?("ewl") || text.downcase.include?("nel") || text.downcase.include?("ccl") || text.downcase.include?("dtl") || text.downcase.include?("nel") || text.downcase.include?("lrt")
         header = "MRT"
         mrt_status = 'last'
