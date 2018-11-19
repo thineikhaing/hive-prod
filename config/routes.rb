@@ -120,7 +120,7 @@ Rails.application.routes.draw do
     match "downloaddata/retrieve_carmic_user"       => "downloaddata#retrieve_carmic_user"      , via: [:get, :post]
 
     match "downloaddata/incident_and_breakdown" => "downloaddata#incident_and_breakdown"   , via: [:get, :post]
-    match "downloaddata/retrieve_user_data"     => "downloaddata#retrieve_user_data"   , via: [:get, :post]
+    match "downloaddata/retrieve_user_data" => "downloaddata#retrieve_user_data"   , via: [:get, :post]
     match "downloaddata/user_related_topics"    => "downloaddata#user_related_topics"   , via: [:get, :post]
 
     match "users/get_user"                          => "users#get_user"            , via: [:get, :post]

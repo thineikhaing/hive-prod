@@ -40,20 +40,46 @@ class Tweet < ApplicationRecord
     tags.gsub(/"/, "").split(',')
 
     sns = Aws::SNS::Client.new
-    # if Rails.env.development?
-    #   target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
-    # elsif Rails.env.staging?
-    #   target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_S_Broadcast_Noti'
-    # else
-    #   target_topic = 'arn:aws:sns:ap-southeast-1:378631322826:Roundtrip_P_Broadcast_Noti'
-    # end
-    p tweet
+
     alert_message = "["+tweet.creator+"] "+tweet.text
     tweet_topic = Topic.find_by_title(tweet.text)
     topic_id = 0
     if tweet_topic.present?
       topic_id = tweet_topic.id
     end
+
+    nsl_tweets = []
+    ewl_tweets = []
+    ccl_tweets = []
+    nel_tweets = []
+    dtl_tweets = []
+    lrt_tweets = []
+    lta_tweets = []
+    bus_tweets = []
+
+    text = tweet.text
+    type = ""
+
+    if text.downcase.include?("nsl") || text.downcase.include?("north-south")
+      type = "nsl_tweets"
+    elsif text.downcase.include?("ewl") || text.downcase.include?("east-west")
+      type = "ewl_tweets"
+    elsif text.downcase.include?("ccl")
+      type = "ccl_tweets"
+    elsif text.downcase.include?("lrt")
+      type = "lrt_tweets"
+    elsif text.downcase.include?("dtl")
+      type = "dtl_tweets"
+    elsif text.downcase.include?("nel")
+      type = "nel_tweets"
+    elsif text.downcase.include?("svcs") || text.downcase.include?("svc") || text.downcase.include?("services") || text.downcase.include?("service")
+      type = "bus_tweets"
+    else
+      type = "lta_tweets"
+    end
+
+    p "type :::"
+    p type
 
     iphone_notification = {
         aps: {
@@ -65,6 +91,7 @@ class Tweet < ApplicationRecord
                 posted_at: tweet.posted_at,
                 text: tweet.text,
                 tags: tags,
+                type: type,
                 creator: tweet.creator
             }
         }
