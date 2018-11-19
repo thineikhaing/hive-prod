@@ -82,13 +82,11 @@ class Api::DownloaddataController < ApplicationController
       end
 
       posts_topics = []
-      post_topic_ids = []
 
       if current_user.posts.count > 0
         current_user.posts.map{|pst| posts_topics.push(pst.topic_id)}
       end
       current_user.topics.map{|pst| posts_topics.push(pst.id)}
-
 
       if posts_topics.count > 1
         posts_topics = posts_topics.uniq!
@@ -119,6 +117,25 @@ class Api::DownloaddataController < ApplicationController
     else
       render json: {},status: 400
     end
+  end
+
+  def user_related_topics
+    hive = HiveApplication.find_by_api_key(params[:app_key])
+    posts_topics = []
+
+    if current_user.posts.count > 0
+      current_user.posts.map{|pst| posts_topics.push(pst.topic_id)}
+    end
+    current_user.topics.map{|pst| posts_topics.push(pst.id)}
+
+    if posts_topics.count > 1
+      posts_topics = posts_topics.uniq!
+    end
+    render json: {
+                status: 200,
+                message: "User Related Topics" ,
+                topic_ids: posts_topics
+              }
   end
 
 
