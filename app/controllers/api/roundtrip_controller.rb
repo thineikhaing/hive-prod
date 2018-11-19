@@ -400,6 +400,7 @@ class Api::RoundtripController < ApplicationController
         post_count = topic_posts.count
       end
 
+       
       if text.downcase.include?("train") || text.downcase.include?("ewl") || text.downcase.include?("nel") || text.downcase.include?("ccl") || text.downcase.include?("dtl") || text.downcase.include?("nel") || text.downcase.include?("lrt")
         header = "MRT"
         mrt_status = 'last'

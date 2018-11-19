@@ -12,8 +12,7 @@ class Api::DownloaddataController < ApplicationController
 
         # all_topics.prepend(initial_topic)
         if params[:radius].to_i == 100
-          topics = Topic.where("hiveapplication_id=? and topic_sub_type !=? ", hiveApplication.id,initial_topic.id).order("created_at desc")
-          topics = topics.where("topic_sub_type != 2")
+          topics = Topic.where("hiveapplication_id=? and topic_sub_type !=? ", hiveApplication.id,2).order("created_at desc")
         else
           topics = Place.nearest_topics_within(params[:latitude], params[:longitude], radius, hiveApplication.id)
         end

@@ -102,8 +102,14 @@ class Api::UsersController < ApplicationController
     if current_user.present?
       if params[:device_token].present?
         p "register token"
-        User.create_endpoint(params[:device_type], params[:device_token],params[:user_id])
-        render json: { status: 200, message: "User token register"}
+        chk_duplicate = UserPushToken.find_by(user_id: current_user.id, push_token: params[:device_token])
+        if chk_duplicate.present?
+          render json: { status: 200, message: "Registed token already!"}
+        else
+          message = User.create_endpoint(params[:device_type], params[:device_token],params[:user_id])
+          render json: { status: 200, message: message}
+        end
+
       else
         render json: { status: 201, message: "Need device token parameter for SNS register"}
       end

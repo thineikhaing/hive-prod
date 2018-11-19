@@ -86,6 +86,7 @@ class User < ActiveRecord::Base
   end
 
   def self.create_endpoint(device_type, device_token,user_id)
+    messsage = ""
     user_endpoint_arn = nil
     begin
       p "Create end point at SNS"
@@ -96,10 +97,8 @@ class User < ActiveRecord::Base
         custom_user_data: user_id.to_s
         )
         user_endpoint_arn = endpoint[:endpoint_arn]
-
+        message = "New token register"
     rescue => e
-      p "exception"
-      p e
       result = e.message.match(/Endpoint(.*)already/)
       if result.present?
         p "endpoint"
@@ -113,7 +112,11 @@ class User < ActiveRecord::Base
                     "CustomUserData" => user_id.to_s,
                   },
           })
+          message = "Token exit | Update userID"
         end
+      else
+        p "exception messsage"
+        p message = e.message
       end
     end
 
@@ -128,9 +131,7 @@ class User < ActiveRecord::Base
           UserPushToken.create(user_id: user_id,endpoint_arn:user_endpoint_arn,push_token: device_token)
         end
     end
-
-
-
+    return message
   end
 
   def self.subscribe_to_topic(endpoint_arn)
