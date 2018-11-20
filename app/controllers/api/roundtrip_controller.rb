@@ -1161,7 +1161,7 @@ end
             WHERE (favs.user_id = ' << current_user.id.to_s << 'AND routes.service_no = favs.service AND favs.id = ' << favBus.id.to_s << ')'
 
       busQuery = ActiveRecord::Base.connection.execute(sql)
-      render json:{user_fav_bus:busQuery[0],message:"Favourite Buses List"}
+      render json:{status:200,message:"Favourite Buses List", user_fav_bus:busQuery[0]}
     else
       render json:{status: 201, message: "unauthorized."}
     end
