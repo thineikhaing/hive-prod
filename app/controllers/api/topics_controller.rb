@@ -590,10 +590,8 @@ class Api::TopicsController < ApplicationController
             topic.delete_event_broadcast_hive
             topic.delete_event_broadcast_other_app
           end
-          topics = []
-          if current_user.present?
-            topics = Topic.where(user_id: current_user.id,hiveapplication_id: hiveapplication.id)
-          end
+
+
 
           if Rails.env.production?
             socalKey = Socal_key::Production_Key
@@ -605,8 +603,12 @@ class Api::TopicsController < ApplicationController
             Vote.where(topic_id: topic.id).delete_all
           end
 
-
           topic.delete
+
+          topics = []
+          if current_user.present?
+            topics = Topic.where(user_id: current_user.id,hiveapplication_id: hiveapplication.id).order("id DESC")
+          end
 
           render json: { status: 200, message: "Delete topic by id",topics: topics }
         else

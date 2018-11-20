@@ -1139,7 +1139,7 @@ class Api::UsersController < ApplicationController
   def delete_user_friend_list
     if current_user.present?
 
-      user_to_delete = UserFriendList.find_by(friend_id: params[:friend_id])
+      user_to_delete = UserFriendList.find_by(friend_id: params[:friend_id],user_id: current_user.id)
       if user_to_delete.present?
         user_to_delete.destroy
 
