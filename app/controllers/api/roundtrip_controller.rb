@@ -400,7 +400,7 @@ class Api::RoundtripController < ApplicationController
         post_count = topic_posts.count
       end
 
-       
+
       if text.downcase.include?("train") || text.downcase.include?("ewl") || text.downcase.include?("nel") || text.downcase.include?("ccl") || text.downcase.include?("dtl") || text.downcase.include?("nel") || text.downcase.include?("lrt")
         header = "MRT"
         mrt_status = 'last'
@@ -1130,7 +1130,16 @@ end
     end
   end
 
-  def save_user_fav_buses
+  def delete_user_fav_bus
+    if current_user.present?
+      if params[:id]
+        UserFavBus.delete(params[:id])
+        render json:{message:"Delete User Fav Bus",status:200}
+      end
+    end
+  end
+
+  def save_user_fav_bus
     if current_user.present?
       service = params[:service]
       busid = params[:busid]
@@ -1151,14 +1160,7 @@ end
             WHERE (favs.user_id = ' << current_user.id.to_s << 'AND routes.service_no = favs.service AND favs.id = ' << favBus.id.to_s << ')'
 
       busQuery = ActiveRecord::Base.connection.execute(sql)
-
-      seqHash = []
-      groupbus = busQuery.map {|x| x["bus_id"]}.uniq
-      groupbus.map{|r|
-        busArr = busQuery.select {|e| e["bus_id"] == r}
-        seqHash.push({bus_id: r,stops: busArr.reverse})
-      }
-      render json:{user_fav_buses:seqHash,status:200,message:"Favourite Buses List"}
+      render json:{user_fav_bus:busQuery[0],message:"Favourite Buses List"}
     else
       render json:{status: 201, message: "unauthorized."}
     end
