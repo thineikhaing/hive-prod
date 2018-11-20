@@ -684,7 +684,7 @@ class Api::TopicsController < ApplicationController
       other_topics = []
       if params[:other_user_id].present?
         user_id = params[:other_user_id].to_i
-        other_topics = Topic.where(hiveapplication_id: hive.id, user_id: user_id)
+        topics = Topic.where(hiveapplication_id: hive.id, user_id: user_id)
       end
 
       if topics.present?
@@ -703,8 +703,7 @@ class Api::TopicsController < ApplicationController
 
       render json: {status:200,
                     message: "User Topics",
-                    topics: topics,
-                    other_topics:other_topics}, status: 200
+                    topics: topics}, status: 200
 
     else
       render json: {message: "no topics"}
