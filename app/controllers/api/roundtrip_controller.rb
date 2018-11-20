@@ -1121,6 +1121,7 @@ end
       groupbus = busQuery.map {|x| x["bus_id"]}.uniq
       groupbus.map{|r|
         busArr = busQuery.select {|e| e["bus_id"] == r}
+        busArr = busArr.uniq{ |r| [r["id"]]}
         seqHash.push({bus_id: r,stops: busArr})
       }
 
