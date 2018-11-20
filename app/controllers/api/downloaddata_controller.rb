@@ -65,7 +65,7 @@ class Api::DownloaddataController < ApplicationController
   def retrieve_user_data
     hive = HiveApplication.find_by_api_key(params[:app_key])
     if hive.present? && current_user.present?
-      topics = Topic.where(hiveapplication_id: hive.id, user_id: current_user.id)
+      topics = Topic.where(hiveapplication_id: hive.id, user_id: current_user.id).order("id DESC")
       user_friend_list = UserFriendList.where(user_id: current_user.id)
       trips = Trip.where(user_id: current_user.id).order('id DESC').last(10)
 
