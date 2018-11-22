@@ -66,7 +66,7 @@ class Api::DownloaddataController < ApplicationController
     if current_user.present?
       mrtstation = []
       mrtstation = NS.all + EW.all + CC.all + DT.all + NE.all + SE.all
-      render json: {count:mrtstation.count,stations: mrtstation}
+      render json: {status: 200, message:"Singapore MRT Stations",count:mrtstation.count,stations: mrtstation}
     end
   end
 
