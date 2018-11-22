@@ -62,6 +62,14 @@ class Api::DownloaddataController < ApplicationController
     end
   end
 
+  def get_smrt_stations
+    if current_user.present?
+      mrtstation = []
+      mrtstation = NS.all + EW.all + CC.all + DT.all + NE.all + SE.all
+      render json: {count:mrtstation.count,stations: mrtstation}
+    end
+  end
+
   def retrieve_user_data
     hive = HiveApplication.find_by_api_key(params[:app_key])
     if hive.present? && current_user.present?
@@ -81,7 +89,6 @@ class Api::DownloaddataController < ApplicationController
       end
 
       posts_topics = []
-
       if current_user.posts.count > 0
         current_user.posts.map{|pst| posts_topics.push(pst.topic_id)}
       end
@@ -102,17 +109,35 @@ class Api::DownloaddataController < ApplicationController
           avatar:user.avatar_url.url,local_avatar: Topic.get_avatar(user.username)}
         activeUsersArray.push(usersArray)
       end
-      render json: {
-                  status: 200,
-                  message: "Initial User data" ,
-                  user: current_user,
-                  post_topic_ids: posts_topics,
-                  topics: topics,
-                  trips: trips,
-                  trip_detail:trip_detail,
-                  userfavlocation: userplaces,
-                  friend_list: activeUsersArray
-                  }, status: 200
+      only_count = false
+      if params[:only_count].present?
+        params[:only_count] == "true" ? only_count = true : only_count = false
+      end
+
+      if only_count == true
+        render json: {
+                    status: 200,
+                    message: "Initial User data count" ,
+                    user: current_user,
+                    topic_count: topics.count,
+                    trip_count: trips.count,
+                    buddy_count: activeUsersArray.count,
+                    fav_place_count: userplaces.count
+                    }, status: 200
+      else
+        render json: {
+                    status: 200,
+                    message: "Initial User data" ,
+                    user: current_user,
+                    post_topic_ids: posts_topics,
+                    topics: topics,
+                    trips: trips,
+                    trip_detail:trip_detail,
+                    userfavlocation: userplaces,
+                    friend_list: activeUsersArray
+                    }, status: 200
+      end
+
     else
       render json: {},status: 400
     end

@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
-  # existing paths
-  # match '*path' => 'errors#error_404', via: :all
+
+  # get '*unmatched_route', to: 'application#raise_not_found'
+
   root to: 'hiveapplication#login_page'
   post "dev_sign_in"              =>  'home#dev_sign_in'        , via: [:get, :post]
   # match "application_portal"      => "home#application_portal"  , as: "home/application_portal", via: [:get, :post]
@@ -23,8 +24,6 @@ Rails.application.routes.draw do
   resources :hiveapplication
   resources :car_action_logs
   resources :places
-
-
 
   # match "create_train_fault_alert"      => 'hiveapplication#create_train_fault_alert'          , via: [:get, :post]
   post  "sign_in"                  => 'hiveapplication#sign_in'          , as: "hiveapplication/sign_in"
@@ -124,6 +123,7 @@ Rails.application.routes.draw do
     match "downloaddata/incident_and_breakdown" => "downloaddata#incident_and_breakdown"   , via: [:get, :post]
     match "downloaddata/retrieve_user_data" => "downloaddata#retrieve_user_data"   , via: [:get, :post]
     match "downloaddata/user_related_topics"    => "downloaddata#user_related_topics"   , via: [:get, :post]
+    match "downloaddata/get_smrt_stations"    => "downloaddata#get_smrt_stations"   , via: [:get, :post]
 
     match "users/get_user"                          => "users#get_user"            , via: [:get, :post]
     match "users/create_anonymous_user"             => "users#create_anonymous_user"            , via: [:get, :post]
