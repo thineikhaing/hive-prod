@@ -24,12 +24,11 @@ class Api::UsersController < ApplicationController
     trip_detail =  []
     trips.each do |trip|
       detail = trip.data["route_detail"]
-      trip_detail.push(eval(detail))
+      p trip_detail.push(eval(detail))
+      p "+++"
     end
     render json: {status:200, message: "User Trip List",trips: trips, trip_detail:trip_detail}
-
   end
-
 
   def get_user_avatar
     if params[:username]
@@ -119,68 +118,72 @@ class Api::UsersController < ApplicationController
   end
 
   def sign_up
-     p  "sign up"
+
     if params[:auth_token].present?
       user = User.find_by_authentication_token(params[:auth_token])
-      p "facebook user account"
-      fb_user = User.find_by_email(params[:email])
-      # p useracc = UserAccount.find_by_user_id(fb_user.id) if fb_user.present?
-
       if current_user.present?
 
         checkEmail = User.find_by_email(params[:email])
         var = [ ]
 
         if checkEmail.nil?
-          user.username = params[:username]
-          user.email = params[:email]
-          user.password = params[:password]
-          user.password_confirmation = params[:password]
-          user.token_expiry_date= Date.today + 6.months
-          user.save!
+          if params[:username].present?
+            checkUsername = User.search_data(params[:username])
+            var.push(33) if Obscenity.profane?(params["username"]) == true
+            username = params[:username]
+            checkName = User.where("LOWER(username)  =?", username.downcase).take
+            if checkName.present?
+              var.push(33) #if checkUsername.present?
+              message = "The username has already been taken"
+            end
+          end
 
-          if params[:app_key]
-            hiveapp = HiveApplication.find_by_api_key(params[:app_key])
-            app_data = Hash.new
-            app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
-            user.app_data = Hash.new if user.app_data.nil?
-            user.app_data = user.app_data.merge(app_data)
+          if var.empty?
+            user.username = params[:username]
+            user.email = params[:email]
+            user.password = params[:password]
+            user.password_confirmation = params[:password]
+            user.token_expiry_date= Date.today + 6.months
             user.save!
-            user_apps = UserHiveapp.find_by(user_id: user.id,hive_application_id: hiveapp.id)
-            UserHiveapp.create(user_id: user.id,hive_application_id: hiveapp.id) unless user_apps.present?
+
+            if params[:app_key]
+              hiveapp = HiveApplication.find_by_api_key(params[:app_key])
+              app_data = Hash.new
+              app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
+              user.app_data = Hash.new if user.app_data.nil?
+              user.app_data = user.app_data.merge(app_data)
+              user.save!
+              user_apps = UserHiveapp.find_by(user_id: user.id,hive_application_id: hiveapp.id)
+              UserHiveapp.create(user_id: user.id,hive_application_id: hiveapp.id) unless user_apps.present?
+            end
+
+            userFav = UserFavLocation.where(user_id: user.id).order('id desc')
+            friend_lists = UserFriendList.where(user_id: user.id)
+
+            previous_token = UserPushToken.find_by_user_id(current_user.id)
+            if previous_token.present?
+              previous_token.update(user_id: user.id)
+              sns_client = Aws::SNS::Client.new
+              resp = sns_client.set_endpoint_attributes({
+                      endpoint_arn: previous_token.endpoint_arn, # required
+                      attributes: { # required
+                        "CustomUserData" => user.id.to_s,
+                      },
+                    })
+            end
+
+            render json: {status:200,
+              message: "User sign up successfully",
+              user: user,
+              userfavlocation: userFav,
+              friend_list: friend_lists,
+              name: user.username, id: user.id,
+              local_avatar: Topic.get_avatar(user.username) ,
+              success: 20 }, status: 200
+
+          else
+            render json: {status: 201, message: message, :error => var}, status: 400
           end
-
-          name = user.username
-          id = user.id
-          avatar = Topic.get_avatar(user.username)
-          userFav = UserFavLocation.where(user_id: user.id).order('id desc')
-          friend_lists = UserFriendList.where(user_id: user.id)
-
-          p "previous user"
-          p previous_user = User.find(current_user.id)
-          previous_token = UserPushToken.find_by_user_id(current_user.id)
-          if previous_token.present?
-            p previous_token.endpoint_arn
-            #update push token user id in hive and aws sns
-            previous_token.update(user_id: user.id)
-            sns_client = Aws::SNS::Client.new
-            resp = sns_client.set_endpoint_attributes({
-                    endpoint_arn: previous_token.endpoint_arn, # required
-                    attributes: { # required
-                      "CustomUserData" => user.id.to_s,
-                    },
-                  })
-          end
-
-          render json: {status:200,
-            message: "User sign up successfully",
-            user: user,
-            userfavlocation: userFav,
-            friend_list: friend_lists,
-            name: name, id: id,
-            local_avatar: avatar ,
-            success: 20 }, status: 200
-          # render json: { :user => user, :user_account => user_account, :success => 10 }, status: 200
         else
           var.push(11)
           render json: { status:201, message: "Email already exist!", :error => var}, status: 400 # Email already exist
@@ -230,13 +233,13 @@ class Api::UsersController < ApplicationController
             success: 20 }, status: 200
         else
           var.push(22)
-          render json: {status:201, message: "User password mismatched.", error: var}, status: 400 # User password wrong
+          render json: {status:201, message: "Wrong Password. Please try again.", error: var}, status: 400 # User password wrong
         end
 
 
       else
         var.push(21)
-        render json: { status:201, message:"User email doesn't exit.",:error => var}, status: 400 # User email doesn't exist
+        render json: { status:201, message:"No account found with those details. Reset your password or sign up for a new account.",:error => var}, status: 400 # User email doesn't exist
       end
 
     elsif params[:app_name]
@@ -379,7 +382,7 @@ class Api::UsersController < ApplicationController
           message = "Email already exit."
         end
       end
-      
+
       if params[:password].present?
         if !user.valid_password?(params[:password])
           var.push(32)
@@ -403,7 +406,7 @@ class Api::UsersController < ApplicationController
         username = params[:username]
         checkName = User.where("LOWER(username)  =?", username.downcase).take
         if checkName.present?
-          var.push(32) #if checkUsername.present?
+          var.push(33) #if checkUsername.present?
           message = "The username has already been taken"
         end
       end

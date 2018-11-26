@@ -41,6 +41,7 @@ class Api::RoundtripController < ApplicationController
     fare = params[:fare]
     trip_route = params[:trip_route]
     trip_eta = params[:trip_eta]
+    transit_color = "#6981E0"
 
     category = ""
     locality=""
@@ -67,7 +68,7 @@ class Api::RoundtripController < ApplicationController
       p s_query.place_id
 
       s_place = Place.new
-      start_place = s_place.add_record(depature_name, s_lat, s_lng, address, 7,
+      start_place = s_place.add_record(depature_name, s_lat, s_lng, address, nil,
                                        s_query.place_id, nil, user_id, auth_token,
                                        choice,img_url,category,locality,country,postcode)
       p "start place info::::"
@@ -83,7 +84,7 @@ class Api::RoundtripController < ApplicationController
       e_query.place_id
 
       e_place = Place.new
-      end_place = e_place.add_record(arrival_name, e_lat, e_lng, address, 7,
+      end_place = e_place.add_record(arrival_name, e_lat, e_lng, address, nil,
                                      e_query.place_id, nil, user_id, auth_token,
                                      choice,img_url,category,locality,country,postcode)
       p "end end info::::"
@@ -132,12 +133,28 @@ class Api::RoundtripController < ApplicationController
               to_stopSequence = to_detail[:stopSequence]
               f_detail.merge!(stopSequence: from_stopSequence)
               t_detail.merge!(stopSequence: to_stopSequence)
+              if data[:mode] == "BUS"
+                transit_color= "#3299BB"
+              elsif data[:mode] == "SUBWAY"
+                shortname = data[:routeShortName]
+                if shortname == "EW" || shortname == "CG"
+                  transit_color = "#189e4a"
+                elsif shortname == "NE"
+                  transit_color = "#844184"
+                elsif shortname == "CC" || shortname == "CE"
+                  transit_color = "#FF9900"
+                elsif shortname == "DT"
+                  transit_color = "#0e56a3"
+                end
+              else
+                transit_color = "#D3D3D3"
+              end
             end
 
             route_hash[index] = {from:f_detail, to: t_detail,
                                  distance:distance, mode: mode,
                                  geo_point: geo_points,short_name: short_name,
-                                 total_stops: total_stops}
+                                 color:transit_color, total_stops: total_stops}
 
           end
 
@@ -188,6 +205,7 @@ class Api::RoundtripController < ApplicationController
                 end
               else
                 short_name = data[:transit_details][:line][:short_name]
+                transit_color= "#3299BB"
               end
             else
               if travel_mode == "WALKING"
@@ -201,7 +219,7 @@ class Api::RoundtripController < ApplicationController
             route_hash[index] = {from:f_detail, to: t_detail,
                                  distance:distance, mode: mode,
                                  geo_point: geo_points,short_name: short_name,
-                                 transit_color:transit_color,total_stops: total_stops}
+                                 color:transit_color,total_stops: total_stops}
 
           end
 
@@ -214,7 +232,7 @@ class Api::RoundtripController < ApplicationController
       tripData[:route_detail] = route_hash
       tripData[:source] = source
       tripData[:country] = country
-      tripData[:trip_eta] = trip_eta
+      # tripData[:duration] = trip_eta
       total_distance = total_distance.round(2)
 
       # a.gsub!(/\"/, '\'')
