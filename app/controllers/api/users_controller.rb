@@ -386,7 +386,7 @@ class Api::UsersController < ApplicationController
       if params[:password].present?
         if !user.valid_password?(params[:password])
           var.push(32)
-          message = "Password mismatched"
+          message = "Your old password doesnt match!"
         end
       end
 
