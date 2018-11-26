@@ -85,7 +85,7 @@ Hive::Application.configure do
       :openssl_verify_mode => OpenSSL::SSL::VERIFY_NONE,
       :address              => "mail.hnmail.xyz",
       :port                 => "587",
-      :domain               => "raydiusapp.com",
+      :domain               => "hnmail.xyz",
       :authentication       => :plain,
       :user_name            => "tripbot@hnmail.xyz",
       :password             => "MNHTiGCz" ,

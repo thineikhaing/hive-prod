@@ -334,8 +334,8 @@ class Api::UsersController < ApplicationController
         user.reset_password_sent_at = Time.zone.now
         user.reset_password_token =  [*('A'..'Z'),*('0'..'9')].shuffle[0,6].join
         user.save!
-        user.send_password_reset_to_app
-        render json:{ status:200, message: "Email sent with password reset instructions."}, status: 200
+        user.delay.send_password_reset_to_app
+        render json:{ status:200, message: "Email sent with password reset instructions.",token: user.reset_password_token}, status: 200
       else
         render json:{ status: 201,message: "There is no user with this email."}, status: 400
       end
