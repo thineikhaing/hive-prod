@@ -380,15 +380,20 @@ class Api::UsersController < ApplicationController
         end
       end
 
-      if params[:password].present?
-        p user.email
-        p user.password
-        p params[:password]
-        if user.password != params[:password]
-          var.push(32)
-          message = "Password mismatched"
-        end
+      if !user.valid_password?(params[:password])
+        var.push(32)
+        message = "Password mismatched"
       end
+
+      # if params[:password].present?
+      #   p user.email
+      #   p user.password
+      #   p params[:password]
+      #   if user.password != params[:password]
+      #     var.push(32)
+      #     message = "Password mismatched"
+      #   end
+      # end
 
       if params[:username].present?
         checkUsername = User.search_data(params[:username])
