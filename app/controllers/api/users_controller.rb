@@ -379,10 +379,12 @@ class Api::UsersController < ApplicationController
           message = "Email already exit."
         end
       end
-
-      if !user.valid_password?(params[:password])
-        var.push(32)
-        message = "Password mismatched"
+      
+      if params[:password].present?
+        if !user.valid_password?(params[:password])
+          var.push(32)
+          message = "Password mismatched"
+        end
       end
 
       # if params[:password].present?
