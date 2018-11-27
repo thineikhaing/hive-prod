@@ -22,12 +22,27 @@ class Api::UsersController < ApplicationController
       trips.where('id NOT IN (?)', ids).destroy_all
     end
     trip_detail =  []
+    trip_list = []
     trips.each do |trip|
       detail = trip.data["route_detail"]
-      p trip_detail.push(eval(detail))
-      p "+++"
+      tt_detail = eval(detail)
+      trip_detail.push(tt_detail)
+      trip_list.push(
+        id: trip.id,
+        user_id: trip.user_id,
+        start_place_id: trip.start_place_id,
+        end_place_id: trip.end_place_id,
+        transit_mode: trip.transit_mode,
+        depature_time: trip.depature_time,
+        arrival_time: trip.arrival_time,
+        distance: trip.distance,
+        fare: trip.fare,
+        source: trip.data["source"],
+        country: trip.data["country"],
+        legs:tt_detail.values)
+
     end
-    render json: {status:200, message: "User Trip List",trips: trips, trip_detail:trip_detail}
+    render json: {status:200, message: "User Trip List",trip_list:trip_list,trips: trips, trip_detail:trip_detail}
   end
 
   def get_user_avatar
