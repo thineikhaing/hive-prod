@@ -40,6 +40,13 @@ class UserMailer < ActionMailer::Base
   def password_reset_to_app(user)
     @user = user
     # @reset_pwd_token = user.reset_password_token
+    if Rails.env.development?
+      host_url = "http://localhost:3001"
+    else
+      host_url = "https://roundtrip-sg.herokuapp.com"
+    end
+    
+    @reset_url = host_url+"/reset_password/" + @user.reset_password_token
     mail :to => user.email, :subject => "Password Reset token"
   end
 

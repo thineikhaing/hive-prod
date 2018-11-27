@@ -62,26 +62,26 @@ Hive::Application.configure do
   config.action_mailer.perform_deliveries = :true
   config.action_mailer.raise_delivery_errors = :true
 
-  # ActionMailer::Base.smtp_settings = {
-  #     :address              => "smtp.gmail.com",
-  #     :port                 => "587",
-  #     :domain               => "raydiusapp.com",
-  #     :authentication       => :plain,
-  #     :user_name            => "thineikhaing@gmail.com",
-  #     :password             => "" ,
-  #     :enable_starttls_auto => true
-  # }
-
   ActionMailer::Base.smtp_settings = {
-      :openssl_verify_mode => OpenSSL::SSL::VERIFY_NONE,
-      :address              => "mail.hnmail.xyz",
+      :address              => "smtp.gmail.com",
       :port                 => "587",
-      :domain               => "hnmail.xyz",
+      :domain               => "raydiusapp.com",
       :authentication       => :plain,
-      :user_name            => "tripbot@hnmail.xyz",
-      :password             => "MNHTiGCz" ,
+      :user_name            => "thineikhaing@gmail.com",
+      :password             => "abcABC!@#" ,
       :enable_starttls_auto => true
   }
+
+  # ActionMailer::Base.smtp_settings = {
+  #     :openssl_verify_mode => OpenSSL::SSL::VERIFY_NONE,
+  #     :address              => "mail.hnmail.xyz",
+  #     :port                 => "587",
+  #     :domain               => "hnmail.xyz",
+  #     :authentication       => :plain,
+  #     :user_name            => "tripbot@hnmail.xyz",
+  #     :password             => "MNHTiGCz" ,
+  #     :enable_starttls_auto => true
+  # }
 
 end
 

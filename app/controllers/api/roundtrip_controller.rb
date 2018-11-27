@@ -59,27 +59,23 @@ class Api::RoundtripController < ApplicationController
  # RESTART IDENTITY")
 
     if params[:start_latlng]
-      p "start address"
-      p s_geo_localization = "#{s_lat},#{s_lng}"
-      s_query = Geocoder.search(s_geo_localization).first
-      p address = s_query.address
-      country = s_query.country
-      p "source_id?"
-      p s_query.place_id
 
+      s_geo_localization = "#{s_lat},#{s_lng}"
+      s_query = Geocoder.search(s_geo_localization).first
+      address = s_query.address
+      country = s_query.country
+      s_query.place_id
       s_place = Place.new
       start_place = s_place.add_record(depature_name, s_lat, s_lng, address, nil,
                                        s_query.place_id, nil, user_id, auth_token,
                                        choice,img_url,category,locality,country,postcode)
-      p "start place info::::"
-      p start_id = start_place[:place].id
+      start_id = start_place[:place].id
     end
 
     if params[:end_latlng]
-      p "end address"
-      p e_geo_localization = "#{e_lat},#{e_lng}"
+      e_geo_localization = "#{e_lat},#{e_lng}"
       e_query = Geocoder.search(e_geo_localization).first
-      p address = e_query.address
+      address = e_query.address
       country = e_query.country
       e_query.place_id
 
@@ -87,12 +83,16 @@ class Api::RoundtripController < ApplicationController
       end_place = e_place.add_record(arrival_name, e_lat, e_lng, address, nil,
                                      e_query.place_id, nil, user_id, auth_token,
                                      choice,img_url,category,locality,country,postcode)
-      p "end end info::::"
-      p end_id = end_place[:place].id
+    end_id = end_place[:place].id
 
     end
 
     prev_trip = Trip.where(user_id: user_id, start_place_id: start_id, end_place_id:end_id, transit_mode: transit_mode)
+
+    p "Trip route ***"
+    trip_route = params[:trip_route]
+    p trip_route = trip_route
+    p "******"
 
     if prev_trip.present?
       user_trips  = Trip.where(user_id: user_id)
@@ -101,7 +101,9 @@ class Api::RoundtripController < ApplicationController
     else
       if params[:trip_route].present?
         if source.to_i == Place::ONEMAP
-          trip_route = params[:trip_route][:legs]
+          p "Trip route ***"
+          p trip_route = params[:trip_route][:legs]
+          p "******"
           trip_route.each do |index,data|
             f_detail =  Hash.new []
             t_detail =  Hash.new []

@@ -335,9 +335,9 @@ class Api::UsersController < ApplicationController
       user = User.find_by_email(params[:email])
       if user.present?
         user.reset_password_sent_at = Time.zone.now
-        user.reset_password_token =  [*('A'..'Z'),*('0'..'9')].shuffle[0,6].join
+        p user.reset_password_token =  [*('A'..'Z'),*('0'..'9')].shuffle[0,6].join
         user.save!
-        user.delay.send_password_reset_to_app
+        user.send_password_reset_to_app
         render json:{ status:200, message: "Email sent with password reset instructions.",token: user.reset_password_token}, status: 200
       else
         render json:{ status: 201,message: "There is no user with this email."}, status: 400
@@ -354,7 +354,7 @@ class Api::UsersController < ApplicationController
       p status =  @user.valid_password?(params[:password])
 
       if @user.reset_password_sent_at < 7.days.ago
-        render json:{ status: 201, message: "Password reset has expired."}, status: 400
+        render json:{ status: 400, message: "Password reset has expired."}, status: 400
       else
         @user.password = params[:password]
         @user.password_confirmation = params[:password_confirmation]
@@ -364,7 +364,7 @@ class Api::UsersController < ApplicationController
       end
 
     else
-      render  json:{stauts: 201, message: "token invalid"}, status: 400  #err in saving password, show on reset_password page
+      render  json:{status: 400, message: "token invalid"}, status: 400  #err in saving password, show on reset_password page
     end
 
   end
@@ -384,6 +384,7 @@ class Api::UsersController < ApplicationController
       end
 
       if params[:password].present?
+        p params[:passowrd]
         if !user.valid_password?(params[:password])
           var.push(32)
           message = "Your old password doesnt match!"
