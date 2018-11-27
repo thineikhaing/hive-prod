@@ -88,12 +88,7 @@ class Api::RoundtripController < ApplicationController
     end
 
     prev_trip = Trip.where(user_id: user_id, start_place_id: start_id, end_place_id:end_id, transit_mode: transit_mode)
-
-    p "Trip route ***"
-    trip_route = params[:trip_route]
-    p trip_route = trip_route
-    p "******"
-
+    prev_trip =nil
     if prev_trip.present?
       user_trips  = Trip.where(user_id: user_id)
       p "Trip already exit"
@@ -101,22 +96,24 @@ class Api::RoundtripController < ApplicationController
     else
       if params[:trip_route].present?
         if source.to_i == Place::ONEMAP
-          p "Trip route ***"
-          p trip_route = params[:trip_route][:legs]
-          p "******"
-          trip_route.each do |index,data|
+          trip_route = params[:trip_route][:legs]
+          if trip_route.keys[0].to_i == 0
+            trip_route = trip_route.values
+          end
+
+          trip_route.each do |data|
             f_detail =  Hash.new []
             t_detail =  Hash.new []
             distance = data[:distance].to_f
             total_distance = total_distance + distance
             mode = data[:mode]
 
-            from_detail = data[:from]
+            p from_detail = data[:from]
             from_name = from_detail[:name]
             from_lat = from_detail[:lat]
             from_lng = from_detail[:lon]
 
-            to_detail = data[:to]
+            p to_detail = data[:to]
             to_name = to_detail[:name]
             to_lat = to_detail[:lat]
             to_lng = to_detail[:lon]
@@ -152,17 +149,15 @@ class Api::RoundtripController < ApplicationController
                 transit_color = "#D3D3D3"
               end
             end
-
-            route_hash[index] = {from:f_detail, to: t_detail,
+            route_hash = {from:f_detail, to: t_detail,
                                  distance:distance, mode: mode,
                                  geo_point: geo_points,short_name: short_name,
                                  color:transit_color, total_stops: total_stops}
 
           end
-
         elsif source.to_i == Place::GOOGLE
           trip_route = params[:trip_route][:steps]
-          trip_route.each do |index,data|
+          trip_route.each do |data|
             f_detail =  Hash.new []
             t_detail =  Hash.new []
             distance = data[:distance][:value].to_f
@@ -215,19 +210,21 @@ class Api::RoundtripController < ApplicationController
               else
                 mode = "DRIVE"
               end
-
             end
 
-            route_hash[index] = {from:f_detail, to: t_detail,
+            route_hash = {from:f_detail, to: t_detail,
                                  distance:distance, mode: mode,
                                  geo_point: geo_points,short_name: short_name,
                                  color:transit_color,total_stops: total_stops}
 
           end
-
-        end
-
       end
+
+    end
+
+
+
+
 
 
       tripData = Hash.new

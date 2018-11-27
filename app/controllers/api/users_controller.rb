@@ -27,6 +27,13 @@ class Api::UsersController < ApplicationController
       detail = trip.data["route_detail"]
       tt_detail = eval(detail)
       trip_detail.push(tt_detail)
+      
+      if tt_detail.keys[0] == 0
+        legs = tt_detail.values
+      else
+        legs = tt_detail
+      end
+
       trip_list.push(
         id: trip.id,
         user_id: trip.user_id,
@@ -43,7 +50,7 @@ class Api::UsersController < ApplicationController
         fare: trip.fare,
         source: trip.data["source"],
         country: trip.data["country"],
-        legs:tt_detail.values)
+        legs:legs)
 
     end
     render json: {status:200, message: "User Trip List",trip_list:trip_list,trips: trips, trip_detail:trip_detail}
