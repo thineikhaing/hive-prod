@@ -2,6 +2,7 @@ class Api::RoundtripController < ApplicationController
   require 'google_maps_service'
   require 'twitter'
   after_action  :set_access_control_headers
+  skip_before_action :verify_authenticity_token
 
   def set_access_control_headers
     headers['Access-Control-Allow-Origin'] = '*'
@@ -21,7 +22,7 @@ class Api::RoundtripController < ApplicationController
 
   def save_trip
 
-    route_hash = Hash.new []
+    route_hash = []
     user_id = params[:user_id]
     auth_token = params[:auth_token]
     start_latlng = params[:start_latlng]
@@ -86,9 +87,7 @@ class Api::RoundtripController < ApplicationController
     end_id = end_place[:place].id
 
     end
-
     prev_trip = Trip.where(user_id: user_id, start_place_id: start_id, end_place_id:end_id, transit_mode: transit_mode)
-    prev_trip =nil
     if prev_trip.present?
       user_trips  = Trip.where(user_id: user_id)
       p "Trip already exit"
@@ -100,6 +99,7 @@ class Api::RoundtripController < ApplicationController
           if trip_route.keys[0].to_i == 0
             trip_route = trip_route.values
           end
+
 
           trip_route.each do |data|
             f_detail =  Hash.new []
@@ -149,17 +149,22 @@ class Api::RoundtripController < ApplicationController
                 transit_color = "#D3D3D3"
               end
             end
-            route_hash = {from:f_detail, to: t_detail,
+            route_hash.push({from:f_detail, to: t_detail,
                                  distance:distance, mode: mode,
                                  geo_point: geo_points,short_name: short_name,
-                                 color:transit_color, total_stops: total_stops}
+                                 color:transit_color, total_stops: total_stops})
 
           end
         elsif source.to_i == Place::GOOGLE
           trip_route = params[:trip_route][:steps]
+          if trip_route.keys[0].to_i == 0
+            trip_route = trip_route.values
+          end
+
           trip_route.each do |data|
             f_detail =  Hash.new []
             t_detail =  Hash.new []
+
             distance = data[:distance][:value].to_f
             total_distance = total_distance + distance
             travel_mode = data[:travel_mode]
@@ -212,10 +217,10 @@ class Api::RoundtripController < ApplicationController
               end
             end
 
-            route_hash = {from:f_detail, to: t_detail,
+            route_hash.push({from:f_detail, to: t_detail,
                                  distance:distance, mode: mode,
                                  geo_point: geo_points,short_name: short_name,
-                                 color:transit_color,total_stops: total_stops}
+                                 color:transit_color,total_stops: total_stops})
 
           end
       end
@@ -234,8 +239,12 @@ class Api::RoundtripController < ApplicationController
       # tripData[:duration] = trip_eta
       total_distance = total_distance.round(2)
 
+      p "route detail"
+      p route_hash
+
       # a.gsub!(/\"/, '\'')
       #eval(a)
+
       trip = Trip.create(user_id: user_id,start_place_id: start_id,
                          end_place_id: end_id,transit_mode: transit_mode,
                          depature_time: depature_time, arrival_time: arrival_time,

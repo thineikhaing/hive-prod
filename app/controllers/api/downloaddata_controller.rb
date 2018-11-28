@@ -1,5 +1,5 @@
 class Api::DownloaddataController < ApplicationController
-
+  skip_before_action :verify_authenticity_token
   def initial_retrieve
     if params[:app_key].present?
       hiveApplication = HiveApplication.find_by_api_key(params[:app_key])
@@ -81,11 +81,30 @@ class Api::DownloaddataController < ApplicationController
         ids = trips.limit(10).order('id DESC').pluck(:id)
         trips.where('id NOT IN (?)', ids).destroy_all
       end
-
+      trip_list = []
       trip_detail =  []
       trips.each do |trip|
         detail = trip.data["route_detail"]
-        trip_detail.push(eval(detail))
+        tt_detail = eval(detail)
+        trip_detail.push(tt_detail)
+
+        trip_list.push(
+          id: trip.id,
+          user_id: trip.user_id,
+          depature_name: trip.depart.name,
+          arrival_name: trip.arrive.name,
+          depart_lat: trip.depart.latitude,
+          depart_lng: trip.depart.longitude,
+          arrive_lat: trip.arrive.latitude,
+          arrive_lng: trip.arrive.longitude,
+          transit_mode: trip.transit_mode,
+          depature_time: trip.depature_time,
+          arrival_time: trip.arrival_time,
+          distance: trip.distance,
+          fare: trip.fare,
+          source: trip.data["source"],
+          country: trip.data["country"],
+          legs:tt_detail)
       end
 
       posts_topics = []
@@ -131,8 +150,7 @@ class Api::DownloaddataController < ApplicationController
                     user: current_user,
                     post_topic_ids: posts_topics,
                     topics: topics,
-                    trips: trips,
-                    trip_detail:trip_detail,
+                    trips: trip_list,
                     userfavlocation: userplaces,
                     friend_list: activeUsersArray
                     }, status: 200

@@ -4,9 +4,9 @@ class Api::UsersController < ApplicationController
   respond_to :json
   skip_before_action :verify_authenticity_token
 
-  def ssl_configured?
-    !Rails.env.development?
-  end
+  # def ssl_configured?
+  #   !Rails.env.development?
+  # end
 
   def get_user
     if params[:auth_token].present? && params[:user_id].present?
@@ -27,13 +27,11 @@ class Api::UsersController < ApplicationController
       detail = trip.data["route_detail"]
       tt_detail = eval(detail)
       trip_detail.push(tt_detail)
-      
-      if tt_detail.keys[0] == 0
-        legs = tt_detail.values
-      else
-        legs = tt_detail
-      end
-
+      # if tt_detail.keys[0] == 0
+      #   legs = tt_detail.values
+      # else
+      #   legs = tt_detail
+      # end
       trip_list.push(
         id: trip.id,
         user_id: trip.user_id,
@@ -50,10 +48,9 @@ class Api::UsersController < ApplicationController
         fare: trip.fare,
         source: trip.data["source"],
         country: trip.data["country"],
-        legs:legs)
-
+        legs:tt_detail)
     end
-    render json: {status:200, message: "User Trip List",trip_list:trip_list,trips: trips, trip_detail:trip_detail}
+    render json: {status:200, message: "User Trip List",trip_list:trip_list}
   end
 
   def get_user_avatar
@@ -1129,6 +1126,7 @@ class Api::UsersController < ApplicationController
   end
 
   def get_user_friend_list
+
     if current_user.present?
       friend_lists = UserFriendList.where(user_id: current_user.id)
 

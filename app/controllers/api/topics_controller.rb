@@ -706,9 +706,8 @@ class Api::TopicsController < ApplicationController
       render json: {status:200,
                     message: "User Topics",
                     topics: topics}, status: 200
-
     else
-      render json: {message: "no topics"}
+      render json: {status:201,message: "Params app_key must be presented"}
     end
   end
 

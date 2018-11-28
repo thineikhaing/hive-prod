@@ -2,3 +2,6 @@
 
 require ::File.expand_path('../config/environment',  __FILE__)
 run Rails.application
+
+require "rack-timeout"
+use Rack::Timeout, service_timeout: 5

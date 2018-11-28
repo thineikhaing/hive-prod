@@ -336,9 +336,6 @@ class Place < ActiveRecord::Base
               locality: locality)
         end
 
-        p "Place"
-        p place
-        p place.source_id
         place.save!
 
         Checkinplace.create(place_id: place.id, user_id: user_id)
@@ -354,7 +351,7 @@ class Place < ActiveRecord::Base
         p "add user custom record"
         place = ""
         private_place = ""
-        p check_records = Place.nearest(latitude, longitude, 0.5)
+        check_records = Place.nearest(latitude, longitude, 0.5)
 
         check_records.each do |cr|
           private_place = cr if cr.user_id == user_id and cr.source == 6
@@ -362,9 +359,7 @@ class Place < ActiveRecord::Base
             place = cr if cr.address.downcase == address.downcase if address.present?
           end
         end
-        p "check place "
-        p place
-        p name
+
         if private_place.present?
           return { place: private_place, status: 71 }
         else
@@ -373,10 +368,7 @@ class Place < ActiveRecord::Base
           else
 
             if place.blank?
-
-
               geocoder = Geocoder.search("#{latitude},#{longitude}").first
-
               if geocoder.present? and geocoder.address.present?
                 !name.nil? ? name = name : name = geocoder.data["address"]["road"]
                 !address.nil? ? address = address : address = geocoder.address
