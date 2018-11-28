@@ -384,13 +384,7 @@ class Place < ActiveRecord::Base
 
           end
 
-          Checkinplace.create(place_id: place.id, user_id: user_id)
-          user.last_known_latitude =  place.latitude
-          user.last_known_longitude = place.longitude
-          user.check_in_time = Time.now
-          user.save!
-          Userpreviouslocation.create(latitude: place.latitude, longitude: place.longitude, radius: 1, user_id: user_id)
-
+      
           return { place: place, status: 70 }
         end
       end

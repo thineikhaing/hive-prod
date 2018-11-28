@@ -410,7 +410,7 @@ class Api::UsersController < ApplicationController
         p params[:passowrd]
         if !user.valid_password?(params[:password])
           var.push(32)
-          message = "Your old password doesnt match!"
+          message = "Your old password doesn't match!"
         end
       end
 
@@ -431,7 +431,7 @@ class Api::UsersController < ApplicationController
         checkName = User.where("LOWER(username)  =?", username.downcase).take
         if checkName.present?
           var.push(33) #if checkUsername.present?
-          message = "The username has already been taken"
+          message = "The username has already been taken."
         end
       end
 

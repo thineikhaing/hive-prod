@@ -96,10 +96,10 @@ class Api::RoundtripController < ApplicationController
       if params[:trip_route].present?
         if source.to_i == Place::ONEMAP
           trip_route = params[:trip_route][:legs]
-          if trip_route.keys[0].to_i == 0
+
+          if trip_route.respond_to?(:keys)
             trip_route = trip_route.values
           end
-
 
           trip_route.each do |data|
             f_detail =  Hash.new []
@@ -144,6 +144,8 @@ class Api::RoundtripController < ApplicationController
                   transit_color = "#FF9900"
                 elsif shortname == "DT"
                   transit_color = "#0e56a3"
+                elsif shortname == "NS"
+                  transit_color = "#d32f2f"
                 end
               else
                 transit_color = "#D3D3D3"
@@ -157,7 +159,8 @@ class Api::RoundtripController < ApplicationController
           end
         elsif source.to_i == Place::GOOGLE
           trip_route = params[:trip_route][:steps]
-          if trip_route.keys[0].to_i == 0
+
+          if trip_route.respond_to?(:keys)
             trip_route = trip_route.values
           end
 
