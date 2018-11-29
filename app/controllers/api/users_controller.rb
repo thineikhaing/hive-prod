@@ -16,22 +16,30 @@ class Api::UsersController < ApplicationController
   end
 
   def get_trip_list
-    trips = Trip.where(user_id: current_user.id).order('id DESC').last(10)
-    if trips.count > 11
-      ids = trips.limit(10).order('id DESC').pluck(:id)
-      trips.where('id NOT IN (?)', ids).destroy_all
+    trips = Trip.where(user_id: current_user.id)
+    # if trips.count > 11
+    #   ids = trips.limit(10).order('id DESC').pluck(:id)
+    #   trips.where('id NOT IN (?)', ids).destroy_all
+    # end
+
+    params[:num_trips].present? ? num_trips = params[:num_trips].to_i : num_trips=0
+    params[:trip_id].present? ? trip_id= params[:trip_id].to_i : trip_id=0
+    if num_trips ==0 && trip_id ==0
+      trips =  trips.order("id DESC").limit(10)
+    elsif num_trips > 0 && trip_id ==0
+      trips =  trips.order("id DESC").limit(num_trips)
+    elsif num_trips == 0 && trip_id > 0
+      trips =  trips.where("id < ?", trip_id).order("id DESC").limit(10)
+    elsif num_trips > 0 && trip_id > 0
+      trips =  trips.where("id < ?", trip_id).order("id DESC").limit(num_trips)
     end
+
     trip_detail =  []
     trip_list = []
     trips.each do |trip|
       detail = trip.data["route_detail"]
       tt_detail = eval(detail)
       trip_detail.push(tt_detail)
-      # if tt_detail.keys[0] == 0
-      #   legs = tt_detail.values
-      # else
-      #   legs = tt_detail
-      # end
       trip_list.push(
         id: trip.id,
         user_id: trip.user_id,
@@ -50,6 +58,8 @@ class Api::UsersController < ApplicationController
         country: trip.data["country"],
         legs:tt_detail)
     end
+
+
     render json: {status:200, message: "User Trip List",trip_list:trip_list}
   end
 

@@ -231,10 +231,6 @@ class Api::RoundtripController < ApplicationController
     end
 
 
-
-
-
-
       tripData = Hash.new
       tripData[:route_detail] = route_hash
       tripData[:source] = source
@@ -256,22 +252,39 @@ class Api::RoundtripController < ApplicationController
                          depature_name:depature_name,arrival_name:arrival_name)
       trip = trip.save!
 
-      user_trips  = Trip.where(user_id: user_id)
 
-      if user_trips.count > 11
-        ids = user_trips.limit(10).order('id DESC').pluck(:id)
-        user_trips.where('id NOT IN (?)', ids).destroy_all
+      if params[:hybrid].present?
+        trips = Trip.where(user_id: user_id).last(10)
+        if trips.count > 11
+          ids = trips.limit(10).order('id DESC').pluck(:id)
+          trips.where('id NOT IN (?)', ids).destroy_all
+        end
       end
 
       user_trips  = Trip.where(user_id: user_id)
-
-      trip_detail =  []
+      trip_list = []
       user_trips.each do |trip|
         detail = trip.data["route_detail"]
-        trip_detail.push(eval(detail))
-      end
+        trip_list.push(
+          id: trip.id,
+          user_id: trip.user_id,
+          depature_name: trip.depart.name,
+          arrival_name: trip.arrive.name,
+          depart_lat: trip.depart.latitude,
+          depart_lng: trip.depart.longitude,
+          arrive_lat: trip.arrive.latitude,
+          arrive_lng: trip.arrive.longitude,
+          transit_mode: trip.transit_mode,
+          depature_time: trip.depature_time,
+          arrival_time: trip.arrival_time,
+          distance: trip.distance,
+          fare: trip.fare,
+          source: trip.data["source"],
+          country: trip.data["country"],
+          legs:eval(detail))
+        end
 
-      render json:{status: 200,message:"save user trip!", trips: user_trips,trip_detail:trip_detail}
+      render json:{status: 200,message:"save user trip!", trips: trip_list}
 
     end
 
