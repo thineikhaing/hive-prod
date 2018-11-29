@@ -43,6 +43,7 @@ class Api::RoundtripController < ApplicationController
     trip_route = params[:trip_route]
     trip_eta = params[:trip_eta]
     transit_color = "#6981E0"
+    params[:duration].present? ? duration = params[:duration].to_i : duration=0
 
     category = ""
     locality=""
@@ -249,7 +250,7 @@ class Api::RoundtripController < ApplicationController
                          depature_time: depature_time, arrival_time: arrival_time,
                          distance: total_distance, fare: fare, data: tripData,
                          depart_latlng:start_latlng, arr_latlng: end_latlng,
-                         depature_name:depature_name,arrival_name:arrival_name)
+                         depature_name:depature_name,arrival_name:arrival_name,duration:duration)
       trip = trip.save!
 
 
@@ -280,6 +281,7 @@ class Api::RoundtripController < ApplicationController
           transit_mode: trip.transit_mode,
           depature_time: trip.depature_time,
           arrival_time: trip.arrival_time,
+          duration: trip.duration,
           distance: trip.distance,
           fare: trip.fare,
           source: trip.data["source"],

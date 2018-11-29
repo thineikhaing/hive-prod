@@ -52,6 +52,7 @@ class Api::UsersController < ApplicationController
         transit_mode: trip.transit_mode,
         depature_time: trip.depature_time,
         arrival_time: trip.arrival_time,
+        duration: trip.duration,
         distance: trip.distance,
         fare: trip.fare,
         source: trip.data["source"],
