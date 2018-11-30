@@ -75,19 +75,14 @@ class Api::DownloaddataController < ApplicationController
     if hive.present? && current_user.present?
       topics = Topic.where(hiveapplication_id: hive.id, user_id: current_user.id).order("id DESC")
       user_friend_list = UserFriendList.where(user_id: current_user.id)
-      trips = Trip.where(user_id: current_user.id).order('id DESC').last(10)
+      trips = Trip.where(user_id: current_user.id)
 
-      if trips.count > 11
-        ids = trips.limit(10).order('id DESC').pluck(:id)
-        trips.where('id NOT IN (?)', ids).destroy_all
-      end
       trip_list = []
       trip_detail =  []
       trips.each do |trip|
         detail = trip.data["route_detail"]
         tt_detail = eval(detail)
         trip_detail.push(tt_detail)
-
         trip_list.push(
           id: trip.id,
           user_id: trip.user_id,
@@ -102,6 +97,7 @@ class Api::DownloaddataController < ApplicationController
           arrival_time: trip.arrival_time,
           distance: trip.distance,
           fare: trip.fare,
+          duration: trip.duration,
           source: trip.data["source"],
           country: trip.data["country"],
           legs:tt_detail)
