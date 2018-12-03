@@ -437,7 +437,6 @@ class Api::UsersController < ApplicationController
 
       if params[:username].present?
         checkUsername = User.search_data(params[:username])
-        var.push(33) if Obscenity.profane?(params["username"]) == true
         username = params[:username]
         checkName = User.where("LOWER(username)  =?", username.downcase).take
         if checkName.present?
