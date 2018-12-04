@@ -461,7 +461,7 @@ class Api::UsersController < ApplicationController
 
         if params[:avatar_url].present?
 
-          if params[:avatar_url].to_s == "null"
+          if !current_user.avatar_url.url.nil?
             if Rails.env.development?
               bucket_name = AWS_Bucket::Avatar_D
             elsif Rails.env.staging?
@@ -471,10 +471,13 @@ class Api::UsersController < ApplicationController
             end
             Post.delete_S3_file(bucket_name, user.avatar_url.current_path,Post::IMAGE)
             user.remove_avatar_url!
-          else
-            user.avatar_url = params[:avatar_url]
-          end
 
+          end
+          user.avatar_url = params[:avatar_url]
+
+          # if params[:avatar_url].to_s == "null"
+          # else
+          # end
         end
 
         user.save!

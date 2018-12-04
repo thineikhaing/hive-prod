@@ -44,7 +44,21 @@ class User < ActiveRecord::Base
   enums %w(BOT ADMIN VENDOR NORMAL)
   def avatar
     # self.avatar_url.current_path
-    self.avatar_url.url
+    # self.avatar_url.url
+    if Rails.env.development?
+      bucket = AWS_Bucket::Avatar_D
+    elsif Rails.env.staging?
+      bucket = AWS_Bucket::Avatar_S
+    else
+      bucket = AWS_Bucket::Avatar_P
+    end
+
+    if !self.avatar_url.url.nil?
+      avatar = "https://s3.ap-southeast-1.amazonaws.com/"+bucket+"/"+self.id.to_s+".jpeg"
+    else
+      avatar = nil
+    end
+    return avatar
   end
 
   def local_avatar

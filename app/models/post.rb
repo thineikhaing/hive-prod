@@ -32,7 +32,14 @@ class Post < ActiveRecord::Base
     if self.user.avatar_url.url.nil? || self.user.avatar_url.url === "null"
       avatar = Topic.get_avatar(username)
     else
-      avatar = self.user.avatar_url.url
+      if Rails.env.development?
+        bucket = AWS_Bucket::Avatar_D
+      elsif Rails.env.staging?
+        bucket = AWS_Bucket::Avatar_S
+      else
+        bucket = AWS_Bucket::Avatar_P
+      end
+      avatar =  "https://s3.ap-southeast-1.amazonaws.com/"+bucket+"/"+self.user.id.to_s+".jpeg"
     end
     return avatar
   end

@@ -90,7 +90,21 @@ class Topic < ActiveRecord::Base
   end
 
   def avatar_url
-    User.find_by_id(self.user_id).avatar_url.url
+    # User.find_by_id(self.user_id).avatar_url.url
+    if Rails.env.development?
+      bucket = AWS_Bucket::Avatar_D
+    elsif Rails.env.staging?
+      bucket = AWS_Bucket::Avatar_S
+    else
+      bucket = AWS_Bucket::Avatar_P
+    end
+    if !User.find_by_id(self.user_id).avatar_url.url.nil?
+      avatar = "https://s3.ap-southeast-1.amazonaws.com/"+bucket+"/"+self.user_id.to_s+".jpeg"
+    else
+      avatar = nil
+    end
+    return avatar
+
   end
 
 
