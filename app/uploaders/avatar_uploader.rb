@@ -55,7 +55,6 @@ class AvatarUploader < CarrierWave::Uploader::Base
     true
   end
 
-
   # For images you might use something like this:
   def extension_white_list
     %w(jpg jpeg gif png)

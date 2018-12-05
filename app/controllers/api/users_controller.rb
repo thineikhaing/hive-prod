@@ -16,7 +16,7 @@ class Api::UsersController < ApplicationController
   end
 
   def get_trip_list
-    trips = Trip.where(user_id: current_user.id)
+    trips = Trip.where(user_id: current_user.id).order("updated_at desc")
     # if trips.count > 11
     #   ids = trips.limit(10).order('id DESC').pluck(:id)
     #   trips.where('id NOT IN (?)', ids).destroy_all
@@ -43,8 +43,8 @@ class Api::UsersController < ApplicationController
       trip_list.push(
         id: trip.id,
         user_id: trip.user_id,
-        depature_name: trip.depart.name,
-        arrival_name: trip.arrive.name,
+        depature_name: trip.depature_name,
+        arrival_name: trip.arrival_name,
         depart_lat: trip.depart.latitude,
         depart_lng: trip.depart.longitude,
         arrive_lat: trip.arrive.latitude,

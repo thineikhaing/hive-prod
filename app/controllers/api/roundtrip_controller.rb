@@ -88,10 +88,14 @@ class Api::RoundtripController < ApplicationController
     end_id = end_place[:place].id
 
     end
-    prev_trip = Trip.where(user_id: user_id, start_place_id: start_id, end_place_id:end_id, transit_mode: transit_mode)
-    if prev_trip.present?
-      user_trips  = Trip.where(user_id: user_id)
+    trip = Trip.find_by(user_id: user_id, depature_name: depature_name, arrival_name:arrival_name)
+    if trip.present?
       p "Trip already exit"
+      trip.transit_mode = transit_mode if trip.transit_mode != transit_mode
+      trip.updated_at  = Time.now
+      trip.save!
+      user_trips  = Trip.where(user_id: user_id)
+
       render json:{message:"Trip is already exit.", status: 200, trips: user_trips}
     else
       if params[:trip_route].present?
@@ -239,9 +243,6 @@ class Api::RoundtripController < ApplicationController
       # tripData[:duration] = trip_eta
       total_distance = total_distance.round(2)
 
-      p "route detail"
-      p route_hash
-
       # a.gsub!(/\"/, '\'')
       #eval(a)
 
@@ -252,7 +253,6 @@ class Api::RoundtripController < ApplicationController
                          depart_latlng:start_latlng, arr_latlng: end_latlng,
                          depature_name:depature_name,arrival_name:arrival_name,duration:duration)
       trip = trip.save!
-
 
       if params[:hybrid].present?
         if params[:hybrid].to_s == "true"
@@ -265,6 +265,9 @@ class Api::RoundtripController < ApplicationController
         end
       end
 
+      params[:start_name].present? ? start_name = params[:start_name] : start_name = nil
+      params[:start_address].present? ? start_address = params[:start_address] : start_address = ""
+
       user_trips  = Trip.where(user_id: user_id)
       trip_list = []
       user_trips.each do |trip|
@@ -272,8 +275,8 @@ class Api::RoundtripController < ApplicationController
         trip_list.push(
           id: trip.id,
           user_id: trip.user_id,
-          depature_name: trip.depart.name,
-          arrival_name: trip.arrive.name,
+          depature_name: trip.depature_name,
+          arrival_name: trip.arrival_name,
           depart_lat: trip.depart.latitude,
           depart_lng: trip.depart.longitude,
           arrive_lat: trip.arrive.latitude,
@@ -296,7 +299,7 @@ class Api::RoundtripController < ApplicationController
   end
 
   def get_trip
-    trips  = Trip.where(user_id: params[:user_id])
+    trips  = Trip.where(user_id: params[:user_id]).order("updated_at desc")
     render json:{status:200, message:"Get user trip",trips:trips}
   end
 
