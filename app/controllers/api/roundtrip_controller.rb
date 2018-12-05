@@ -88,163 +88,164 @@ class Api::RoundtripController < ApplicationController
     end_id = end_place[:place].id
 
     end
-    trip = Trip.find_by(user_id: user_id, depature_name: depature_name, arrival_name:arrival_name)
-    if trip.present?
-      p "Trip already exit"
-      trip.transit_mode = transit_mode if trip.transit_mode != transit_mode
-      trip.updated_at  = Time.now
-      trip.save!
-      user_trips  = Trip.where(user_id: user_id)
 
-      render json:{message:"Trip is already exit.", status: 200, trips: user_trips}
-    else
-      if params[:trip_route].present?
-        if source.to_i == Place::ONEMAP
-          trip_route = params[:trip_route][:legs]
+    if params[:trip_route].present?
+      if source.to_i == Place::ONEMAP
+        trip_route = params[:trip_route][:legs]
 
-          if trip_route.respond_to?(:keys)
-            trip_route = trip_route.values
-          end
+        if trip_route.respond_to?(:keys)
+          trip_route = trip_route.values
+        end
 
-          trip_route.each do |data|
-            f_detail =  Hash.new []
-            t_detail =  Hash.new []
-            distance = data[:distance].to_f
-            total_distance = total_distance + distance
-            mode = data[:mode]
+        trip_route.each do |data|
+          f_detail =  Hash.new []
+          t_detail =  Hash.new []
+          distance = data[:distance].to_f
+          total_distance = total_distance + distance
+          mode = data[:mode]
 
-            p from_detail = data[:from]
-            from_name = from_detail[:name]
-            from_lat = from_detail[:lat]
-            from_lng = from_detail[:lon]
+          p from_detail = data[:from]
+          from_name = from_detail[:name]
+          from_lat = from_detail[:lat]
+          from_lng = from_detail[:lon]
 
-            p to_detail = data[:to]
-            to_name = to_detail[:name]
-            to_lat = to_detail[:lat]
-            to_lng = to_detail[:lon]
+          p to_detail = data[:to]
+          to_name = to_detail[:name]
+          to_lat = to_detail[:lat]
+          to_lng = to_detail[:lon]
 
-            f_detail.merge!(name: from_name, lat: from_lat, lng: from_lng)
-            t_detail.merge!(name: to_name, lat: to_lat, lng: to_lng)
+          f_detail.merge!(name: from_name, lat: from_lat, lng: from_lng)
+          t_detail.merge!(name: to_name, lat: to_lat, lng: to_lng)
 
-            geo_points = data[:legGeometry][:points]
-            short_name = ""
-            total_stops = 0
+          geo_points = data[:legGeometry][:points]
+          short_name = ""
+          total_stops = 0
 
-            if data[:mode] != "WALK"
-              total_stops = to_detail[:stopSequence].to_i - from_detail[:stopSequence].to_i
-              short_name = data[:routeShortName]
-              from_stopSequence = from_detail[:stopSequence]
-              to_stopSequence = to_detail[:stopSequence]
-              f_detail.merge!(stopSequence: from_stopSequence)
-              t_detail.merge!(stopSequence: to_stopSequence)
-              if data[:mode] == "BUS"
-                transit_color= "#3299BB"
-              elsif data[:mode] == "SUBWAY"
-                shortname = data[:routeShortName]
-                if shortname == "EW" || shortname == "CG"
-                  transit_color = "#189e4a"
-                elsif shortname == "NE"
-                  transit_color = "#844184"
-                elsif shortname == "CC" || shortname == "CE"
-                  transit_color = "#FF9900"
-                elsif shortname == "DT"
-                  transit_color = "#0e56a3"
-                elsif shortname == "NS"
-                  transit_color = "#d32f2f"
-                end
-              else
-                transit_color = "#D3D3D3"
-              end
-            end
-            route_hash.push({from:f_detail, to: t_detail,
-                                 distance:distance, mode: mode,
-                                 geo_point: geo_points,short_name: short_name,
-                                 color:transit_color, total_stops: total_stops})
-
-          end
-        elsif source.to_i == Place::GOOGLE
-          trip_route = params[:trip_route][:steps]
-
-          if trip_route.respond_to?(:keys)
-            trip_route = trip_route.values
-          end
-
-          trip_route.each do |data|
-            f_detail =  Hash.new []
-            t_detail =  Hash.new []
-
-            distance = data[:distance][:value].to_f
-            total_distance = total_distance + distance
-            travel_mode = data[:travel_mode]
-
-            from_detail = data[:start_location]
-            from_lat = from_detail[:lat]
-            from_lng = from_detail[:lng]
-
-            to_detail = data[:end_location]
-            to_lat = to_detail[:lat]
-            to_lng = to_detail[:lng]
-
-            f_detail.merge!(lat: from_lat, lng: from_lng)
-            t_detail.merge!(lat: to_lat, lng: to_lng)
-
-            geo_points = data[:polyline][:points]
-            short_name = ""
-            mode = ""
-            total_stops = 0
-
-            if travel_mode != "WALKING" && travel_mode != "DRIVING"
-              total_stops = data[:transit_details][:num_stops]
-              transit_name = data[:transit_details][:line][:name]
-              transit_color = data[:transit_details][:line][:color]
-              mode = data[:transit_details][:line][:vehicle][:type]
-
-              if mode == "SUBWAY"
-                if transit_name == "North South Line"
-                  short_name = "NS"
-                elsif transit_name == "East West Line"
-                  short_name = "EW"
-                elsif transit_name == "North Eest Line"
-                  short_name = "NE"
-                elsif transit_name == "Circle Line"
-                  short_name = "CC"
-                elsif transit_name == "Downtown Line"
-                  short_name = "DT"
-                else
-                  short_name = "LRT"
-                end
-              else
-                short_name = data[:transit_details][:line][:short_name]
-                transit_color= "#3299BB"
+          if data[:mode] != "WALK"
+            total_stops = to_detail[:stopSequence].to_i - from_detail[:stopSequence].to_i
+            short_name = data[:routeShortName]
+            from_stopSequence = from_detail[:stopSequence]
+            to_stopSequence = to_detail[:stopSequence]
+            f_detail.merge!(stopSequence: from_stopSequence)
+            t_detail.merge!(stopSequence: to_stopSequence)
+            if data[:mode] == "BUS"
+              transit_color= "#3299BB"
+            elsif data[:mode] == "SUBWAY"
+              shortname = data[:routeShortName]
+              if shortname == "EW" || shortname == "CG"
+                transit_color = "#189e4a"
+              elsif shortname == "NE"
+                transit_color = "#844184"
+              elsif shortname == "CC" || shortname == "CE"
+                transit_color = "#FF9900"
+              elsif shortname == "DT"
+                transit_color = "#0e56a3"
+              elsif shortname == "NS"
+                transit_color = "#d32f2f"
               end
             else
-              if travel_mode == "WALKING"
-                mode = "WALK"
-              else
-                mode = "DRIVE"
-              end
+              transit_color = "#D3D3D3"
             end
-
-            route_hash.push({from:f_detail, to: t_detail,
-                                 distance:distance, mode: mode,
-                                 geo_point: geo_points,short_name: short_name,
-                                 color:transit_color,total_stops: total_stops})
-
           end
+          route_hash.push({from:f_detail, to: t_detail,
+                               distance:distance, mode: mode,
+                               geo_point: geo_points,short_name: short_name,
+                               color:transit_color, total_stops: total_stops})
+
+        end
+
+      elsif source.to_i == Place::GOOGLE
+        trip_route = params[:trip_route][:steps]
+
+        if trip_route.respond_to?(:keys)
+          trip_route = trip_route.values
+        end
+
+        trip_route.each do |data|
+          f_detail =  Hash.new []
+          t_detail =  Hash.new []
+
+          distance = data[:distance][:value].to_f
+          total_distance = total_distance + distance
+          travel_mode = data[:travel_mode]
+
+          from_detail = data[:start_location]
+          from_lat = from_detail[:lat]
+          from_lng = from_detail[:lng]
+
+          to_detail = data[:end_location]
+          to_lat = to_detail[:lat]
+          to_lng = to_detail[:lng]
+
+          f_detail.merge!(lat: from_lat, lng: from_lng)
+          t_detail.merge!(lat: to_lat, lng: to_lng)
+
+          geo_points = data[:polyline][:points]
+          short_name = ""
+          mode = ""
+          total_stops = 0
+
+          if travel_mode != "WALKING" && travel_mode != "DRIVING"
+            total_stops = data[:transit_details][:num_stops]
+            transit_name = data[:transit_details][:line][:name]
+            transit_color = data[:transit_details][:line][:color]
+            mode = data[:transit_details][:line][:vehicle][:type]
+
+            if mode == "SUBWAY"
+              if transit_name == "North South Line"
+                short_name = "NS"
+              elsif transit_name == "East West Line"
+                short_name = "EW"
+              elsif transit_name == "North Eest Line"
+                short_name = "NE"
+              elsif transit_name == "Circle Line"
+                short_name = "CC"
+              elsif transit_name == "Downtown Line"
+                short_name = "DT"
+              else
+                short_name = "LRT"
+              end
+            else
+              short_name = data[:transit_details][:line][:short_name]
+              transit_color= "#3299BB"
+            end
+          else
+            if travel_mode == "WALKING"
+              mode = "WALK"
+            else
+              mode = "DRIVE"
+            end
+          end
+
+          route_hash.push({from:f_detail, to: t_detail,
+                               distance:distance, mode: mode,
+                               geo_point: geo_points,short_name: short_name,
+                               color:transit_color,total_stops: total_stops})
+
+        end
+
       end
 
     end
 
+    tripData = Hash.new
+    tripData[:route_detail] = route_hash
+    tripData[:source] = source
+    tripData[:country] = country
+    total_distance = total_distance.round(2)
 
-      tripData = Hash.new
-      tripData[:route_detail] = route_hash
-      tripData[:source] = source
-      tripData[:country] = country
-      # tripData[:duration] = trip_eta
-      total_distance = total_distance.round(2)
-
-      # a.gsub!(/\"/, '\'')
-      #eval(a)
+    trip = Trip.find_by(user_id: user_id, depature_name: depature_name, arrival_name:arrival_name)
+    if trip.present?
+      p "Trip already exit"
+      if trip.transit_mode != transit_mode
+        trip.transit_mode = transit_mode
+        trip.data = tripData
+      end
+      trip.updated_at  = Time.now
+      trip.save!
+      user_trips  = Trip.where(user_id: user_id)
+      render json:{message:"Trip is already exit.", status: 200, trips: user_trips}
+    else
 
       trip = Trip.create(user_id: user_id,start_place_id: start_id,
                          end_place_id: end_id,transit_mode: transit_mode,
@@ -264,35 +265,8 @@ class Api::RoundtripController < ApplicationController
           end
         end
       end
-
-      params[:start_name].present? ? start_name = params[:start_name] : start_name = nil
-      params[:start_address].present? ? start_address = params[:start_address] : start_address = ""
-
-      user_trips  = Trip.where(user_id: user_id)
-      trip_list = []
-      user_trips.each do |trip|
-        detail = trip.data["route_detail"]
-        trip_list.push(
-          id: trip.id,
-          user_id: trip.user_id,
-          depature_name: trip.depature_name,
-          arrival_name: trip.arrival_name,
-          depart_lat: trip.depart.latitude,
-          depart_lng: trip.depart.longitude,
-          arrive_lat: trip.arrive.latitude,
-          arrive_lng: trip.arrive.longitude,
-          transit_mode: trip.transit_mode,
-          depature_time: trip.depature_time,
-          arrival_time: trip.arrival_time,
-          duration: trip.duration,
-          distance: trip.distance,
-          fare: trip.fare,
-          source: trip.data["source"],
-          country: trip.data["country"],
-          legs:eval(detail))
-        end
-
-      render json:{status: 200,message:"save user trip!", trips: trip_list}
+      user_trips  = Trip.where(user_id: user_id).order("updated_at desc")
+      render json:{status: 200,message:"save user trip!", trips: user_trips}
 
     end
 
