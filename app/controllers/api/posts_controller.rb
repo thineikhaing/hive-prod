@@ -4,12 +4,8 @@ class Api::PostsController < ApplicationController
     if current_user.present?
       topic = Topic.find_by_id(params[:topic_id].to_i)
       if topic.present?
-        if check_banned_profanity(params[:post])
-          user = User.find_by_id(current_user.id)
-          user.profanity_counter += 1
-          user.offence_date = Time.now
-          user.save!
-        end
+
+
 
         data = getHashValuefromString(params[:data]) if params[:data].present?
 
@@ -48,6 +44,10 @@ class Api::PostsController < ApplicationController
         end
 
         result = nil unless result.present?
+
+        p "post content"
+        p params[:post]
+        p params[:content]
 
         post = Post.create(content: params[:post],
                            post_type: params[:post_type],
@@ -91,6 +91,14 @@ class Api::PostsController < ApplicationController
           post.broadcast_hive
           post.broadcast_other_app(params[:temp_id])
         end
+
+        if check_banned_profanity(params[:post])
+          user = User.find_by_id(current_user.id)
+          user.profanity_counter += 1
+          user.offence_date = Time.now
+          user.save!
+        end
+
         render json: { status:200, message: "Post create successfully",post: post,temp_id: params[:temp_id],  profanity_counter: current_user.profanity_counter,posts: topic.posts}
       else
         render json: { status:201, message:"Invalid topic id",error_msg: "Invalid topic id" } , status: 400
@@ -100,12 +108,6 @@ class Api::PostsController < ApplicationController
       if currentuser.present?
 
         temp_id= params[:temp_id]
-
-        if check_banned_profanity(params[:post])
-          currentuser.profanity_counter += 1
-          currentuser.offence_date = Time.now
-          currentuser.save!
-        end
         post = Post.new
 
         post = Post.create(content: params[:post],
@@ -128,7 +130,12 @@ class Api::PostsController < ApplicationController
         end
 
         post.broadcast_to_topic(params[:topic_id])
-        p 'broadcast_to_topic'
+        
+        if check_banned_profanity(params[:post])
+          currentuser.profanity_counter += 1
+          currentuser.offence_date = Time.now
+          currentuser.save!
+        end
 
         render json: { status: 200, message:"create topic successfully",post: post, temp_id: params[:temp_id], profanity_counter: currentuser.profanity_counter, offence_date: currentuser.offence_date }
 
