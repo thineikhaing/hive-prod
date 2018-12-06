@@ -44,21 +44,18 @@ class Api::RoundtripController < ApplicationController
     trip_eta = params[:trip_eta]
     transit_color = "#6981E0"
     params[:duration].present? ? duration = params[:duration].to_i : duration=0
-
     category = ""
     locality=""
     country=""
+
     postcode=""
     img_url = nil
     choice="others"
     address = ""
-
     start_id = 0
     end_id = 0
     total_distance = 0.0
-
- #    ActiveRecord::Base.connection.execute("TRUNCATE TABLE trips
- # RESTART IDENTITY")
+    tripData = Hash.new
 
     if params[:start_latlng]
 
@@ -86,7 +83,6 @@ class Api::RoundtripController < ApplicationController
                                      e_query.place_id, nil, user_id, auth_token,
                                      choice,img_url,category,locality,country,postcode)
     end_id = end_place[:place].id
-
     end
 
     if params[:trip_route].present?
@@ -153,7 +149,6 @@ class Api::RoundtripController < ApplicationController
                                color:transit_color, total_stops: total_stops})
 
         end
-
       elsif source.to_i == Place::GOOGLE
         trip_route = params[:trip_route][:steps]
 
@@ -223,16 +218,12 @@ class Api::RoundtripController < ApplicationController
                                color:transit_color,total_stops: total_stops})
 
         end
-
       end
-
+      tripData[:route_detail] = route_hash
+      tripData[:source] = source
+      tripData[:country] = country
+      total_distance = total_distance.round(2)
     end
-
-    tripData = Hash.new
-    tripData[:route_detail] = route_hash
-    tripData[:source] = source
-    tripData[:country] = country
-    total_distance = total_distance.round(2)
 
     trip = Trip.find_by(user_id: user_id, depature_name: depature_name, arrival_name:arrival_name)
     if trip.present?
@@ -244,9 +235,8 @@ class Api::RoundtripController < ApplicationController
       trip.updated_at  = Time.now
       trip.save!
       user_trips  = Trip.where(user_id: user_id)
-      render json:{message:"Trip is already exit.", status: 200, trips: user_trips}
+      message="Trip is already exit."
     else
-
       trip = Trip.create(user_id: user_id,start_place_id: start_id,
                          end_place_id: end_id,transit_mode: transit_mode,
                          depature_time: depature_time, arrival_time: arrival_time,
@@ -254,26 +244,27 @@ class Api::RoundtripController < ApplicationController
                          depart_latlng:start_latlng, arr_latlng: end_latlng,
                          depature_name:depature_name,arrival_name:arrival_name,duration:duration)
       trip = trip.save!
+      message="New Trip Created!"
+    end
 
-      if params[:hybrid].present?
-        if params[:hybrid].to_s == "true"
-          p "limit phonegap user's trip count to 10"
-          trips = Trip.where(user_id: user_id)
-          if trips.count > 11
-            ids = trips.limit(10).order('id DESC').pluck(:id)
-            trips.where('id NOT IN (?)', ids).destroy_all
-          end
+    if params[:hybrid].present?
+      if params[:hybrid].to_s == "true"
+        p "limit phonegap user's trip count to 10"
+        trips = Trip.where(user_id: user_id)
+        if trips.count > 11
+          ids = trips.limit(10).order('id DESC').pluck(:id)
+          trips.where('id NOT IN (?)', ids).destroy_all
         end
       end
-      user_trips  = Trip.where(user_id: user_id).order("updated_at desc")
-      render json:{status: 200,message:"save user trip!", trips: user_trips}
-
     end
+
+    user_trips  = Trip.where(user_id: user_id).order("updated_at DESC")
+    render json:{status: 200,message:message, trips: user_trips}
 
   end
 
   def get_trip
-    trips  = Trip.where(user_id: params[:user_id]).order("updated_at desc")
+    trips  = Trip.where(user_id: params[:user_id]).order("updated_at DESC")
     render json:{status:200, message:"Get user trip",trips:trips}
   end
 
