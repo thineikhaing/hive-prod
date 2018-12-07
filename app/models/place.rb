@@ -359,7 +359,7 @@ class Place < ActiveRecord::Base
           if cr.name.present?
 
            place = cr if cr.address.downcase == address.downcase if address.present?
-           p cr.address.downcase
+           
           end
         end
 

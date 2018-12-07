@@ -225,18 +225,20 @@ class Api::RoundtripController < ApplicationController
       total_distance = total_distance.round(2)
     end
 
-    trip = Trip.find_by(user_id: user_id, depature_name: depature_name, arrival_name:arrival_name)
+    trip = Trip.where(user_id: user_id, depature_name: depature_name, arrival_name:arrival_name, transit_mode: transit_mode).last
+    create_new = 1
+    message = "New Trip Created!"
+
     if trip.present?
-      p "Trip already exit"
-      if trip.transit_mode != transit_mode
-        trip.transit_mode = transit_mode
-        trip.data = tripData
-      end
-      trip.updated_at  = Time.now
-      trip.save!
-      user_trips  = Trip.where(user_id: user_id)
-      message="Trip is already exit."
-    else
+      p message="Trip is already exit."
+      p current_time = Time.current
+      p trip_time = trip.created_at
+      p diff_in_hours = ((current_time - trip_time) / 3600).round(1)
+      p "check time difference"
+      p create_new = 0 if diff_in_hours < 12
+    end
+
+    if create_new == 1
       trip = Trip.create(user_id: user_id,start_place_id: start_id,
                          end_place_id: end_id,transit_mode: transit_mode,
                          depature_time: depature_time, arrival_time: arrival_time,
@@ -244,7 +246,6 @@ class Api::RoundtripController < ApplicationController
                          depart_latlng:start_latlng, arr_latlng: end_latlng,
                          depature_name:depature_name,arrival_name:arrival_name,duration:duration)
       trip = trip.save!
-      message="New Trip Created!"
     end
 
     if params[:hybrid].present?
