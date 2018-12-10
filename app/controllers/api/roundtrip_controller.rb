@@ -1514,8 +1514,8 @@ end
       to = to.gsub("stn","")
     end
 
-    p from = from.strip
-    p to = to.strip
+    from = from.strip
+    to = to.strip
     if params[:shortname].present?
       if shortname == "NS"
         start_ns = NS.where(code: fromId).take
@@ -1728,35 +1728,114 @@ end
       end
       sequence = sequence.where("latitude != 0")
 
-    elsif mrt_line_name == "Bukit Panjang LRT"
+    elsif mrt_line_name.downcase == "bukit panjang lrt"
+      d_code = ""
+      direction = params[:direction]
+
       start_st = BP.where('lower(name) = ?', from.downcase).first
       end_st = BP.where('lower(name) = ?', to.downcase).first
-      if start_st.id > end_st.id
-        sequence = BP.where(id: end_st.id .. start_st.id).order(id: :desc)
-      else
-        sequence = BP.where(id: start_st.id .. end_st.id).order(id: :asc)
-      end
-      sequence = sequence.where("latitude != 0")
 
-    elsif mrt_line_name == "Sengkang LRT"
+      if params[:direction]
+        p direction.split.map{|w| d_code = w if w.include?("BP")}
+        start_rec = BP.where('lower(name) = ?', from.downcase)
+        start_st = BP.where('code = ?', d_code).first
+      end
+
+
+
+      if d_code == "BP6"
+        bp_interchange = BP.find_by_code(d_code)
+        sq1 = BP.where(id: start_st.id .. bp_interchange.id)
+
+        if end_st.code.gsub(/[^0-9]/, '').to_i > 10
+          nxt_id = BP.find_by_code("BP13")
+          sq2 = BP.where(id: end_st.id .. nxt_id.id).order(id: :desc)
+        else
+          nxt_id = BP.find_by_code("BP7")
+          sq2 = BP.where(id: nxt_id.id .. end_st.id)
+        end
+        p nxt_id.id
+        p end_st.id
+
+        sequence = sq1 + sq2
+      else
+
+        if start_st.id > end_st.id
+          sequence = BP.where(id: end_st.id .. start_st.id).order(id: :desc)
+        else
+          sequence = BP.where(id: start_st.id .. end_st.id).order(id: :asc)
+        end
+
+      end
+
+      sequence = start_rec + sequence if params[:direction]
+
+    elsif mrt_line_name.downcase == "sengkang lrt"
+      d_code = ""
+      direction = params[:direction]
       start_st = SK.where('lower(name) = ?', from.downcase).first
       end_st = SK.where('lower(name) = ?', to.downcase).first
+
+      interchange = 0
+      if params[:direction].present?
+        direction.split.map{|w| d_code = w if w.include?("SW") || w.include?("STC")|| w.include?("SE")}
+        start_st = SK.find_by_code(d_code)
+        if to.downcase.include?("sengkang") && d_code.include?("SW")
+          interchange = 1
+          p end_st = SK.where('code like ?',"#{"SW"}%").last
+          end_rec = SK.where(code: "STC")
+        elsif to.downcase.include?("sengkang") && d_code.include?("STC")
+          end_st = SK.find_by_code("STC")
+        else
+          end_st = SK.where('lower(name) = ?', to.downcase).take
+        end
+        start_rec = SK.where('lower(name) = ? ', from.downcase)
+      end
+
       if start_st.id > end_st.id
         sequence = SK.where(id: end_st.id .. start_st.id).order(id: :desc)
       else
         sequence = SK.where(id: start_st.id .. end_st.id).order(id: :asc)
       end
-      sequence = sequence.where("latitude != 0")
 
-    elsif mrt_line_name == "Penggol LRT"
+      sequence = sequence.where("latitude != 0")
+      sequence = start_rec + sequence if params[:direction]
+      sequence = sequence + end_rec if interchange == 1
+
+    elsif mrt_line_name.downcase == "punggol lrt"
+      d_code = ""
+      direction = params[:direction]
+
       start_st = PE.where('lower(name) = ?', from.downcase).first
       end_st = PE.where('lower(name) = ?', to.downcase).first
+
+      interchange = 0
+
+      if params[:direction].present?
+        direction.split.map{|w| d_code = w if w.include?("PW") || w.include?("PTC")|| w.include?("PE")}
+        start_st = PE.find_by_code(d_code)
+        if to.downcase.include?("punggol") && d_code.include?("PW")
+          interchange = 1
+          end_st = PE.where('code like ?',"#{"PW"}%").first
+          end_rec = PE.where(code: "PTC")
+        elsif to.downcase.include?("punggol") && d_code.include?("PTC")
+          end_st = PE.find_by_code("PTC")
+        else
+          end_st = PE.where('lower(name) = ?', to.downcase).take
+        end
+        start_rec = PE.where('lower(name) = ? ', from.downcase)
+      end
+
       if start_st.id > end_st.id
         sequence = PE.where(id: end_st.id .. start_st.id).order(id: :desc)
       else
         sequence = PE.where(id: start_st.id .. end_st.id).order(id: :asc)
       end
+
       sequence = sequence.where("latitude != 0")
+      sequence = start_rec + sequence if params[:direction]
+      sequence = sequence + end_rec if interchange == 1
+
     end
 
 
