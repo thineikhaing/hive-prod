@@ -1727,6 +1727,36 @@ end
         sequence = SE.where(id: start_dt.id .. end_dt.id).order(id: :asc)
       end
       sequence = sequence.where("latitude != 0")
+
+    elsif mrt_line_name == "Bukit Panjang LRT"
+      start_st = BP.where('lower(name) = ?', from.downcase).first
+      end_st = BP.where('lower(name) = ?', to.downcase).first
+      if start_st.id > end_st.id
+        sequence = BP.where(id: end_st.id .. start_st.id).order(id: :desc)
+      else
+        sequence = BP.where(id: start_st.id .. end_st.id).order(id: :asc)
+      end
+      sequence = sequence.where("latitude != 0")
+
+    elsif mrt_line_name == "Sengkang LRT"
+      start_st = SK.where('lower(name) = ?', from.downcase).first
+      end_st = SK.where('lower(name) = ?', to.downcase).first
+      if start_st.id > end_st.id
+        sequence = SK.where(id: end_st.id .. start_st.id).order(id: :desc)
+      else
+        sequence = SK.where(id: start_st.id .. end_st.id).order(id: :asc)
+      end
+      sequence = sequence.where("latitude != 0")
+
+    elsif mrt_line_name == "Penggol LRT"
+      start_st = PE.where('lower(name) = ?', from.downcase).first
+      end_st = PE.where('lower(name) = ?', to.downcase).first
+      if start_st.id > end_st.id
+        sequence = PE.where(id: end_st.id .. start_st.id).order(id: :desc)
+      else
+        sequence = PE.where(id: start_st.id .. end_st.id).order(id: :asc)
+      end
+      sequence = sequence.where("latitude != 0")
     end
 
 

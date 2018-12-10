@@ -1,0 +1,2 @@
+class SK < SgMrtStation
+end
