@@ -1006,7 +1006,7 @@ class Api::UsersController < ApplicationController
 
       if userfav.nil?
         fav_place = UserFavLocation.create(user_id: current_user.id, place_id: place_id,
-            place_type: params[:place_type],name: name,img_url: img_url)
+            place_type: params[:place_type],name: name,address: params[:address] ,img_url: img_url)
 
         render json:{fav_place: fav_place , userfavlocation: fav_lists,status:200, message: "Location added successfully."}
 

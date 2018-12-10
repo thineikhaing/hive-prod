@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_18_101320) do
+ActiveRecord::Schema.define(version: 2018_12_10_015200) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
@@ -407,6 +407,7 @@ ActiveRecord::Schema.define(version: 2018_09_18_101320) do
     t.string "arr_latlng"
     t.string "depature_name"
     t.string "arrival_name"
+    t.integer "duration", default: 0
     t.index ["user_id"], name: "index_trips_on_user_id"
   end
 
@@ -445,6 +446,7 @@ ActiveRecord::Schema.define(version: 2018_09_18_101320) do
     t.datetime "updated_at", null: false
     t.string "name"
     t.string "img_url"
+    t.string "address"
   end
 
   create_table "user_friend_lists", id: :serial, force: :cascade do |t|
