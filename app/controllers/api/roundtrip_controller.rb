@@ -1201,7 +1201,7 @@ end
         p busstops = SgBusStop.where(["LOWER(description) =?","#{params[:name].downcase}"])
         if busstops.count == 1
           p bLat = busstops.take.latitude.round(3)
-          p bLng = busstops.take.longitude.round(4)
+          p bLng = busstops.take.longitude.round(3)
           if (busLat == bLat and busLng == bLng)
             p "found bus stop"
             bus_id = busstops.take.bus_id
@@ -1211,7 +1211,7 @@ end
         else
           busstops.each do |stop|
             lat = stop.latitude.round(3)
-            lng = stop.longitude.round(4)
+            lng = stop.longitude.round(3)
             if (busLat == lat and busLng == lng)
               bus_id = stop.bus_id
               selected_stop = stop
@@ -1232,7 +1232,7 @@ end
       busstops = SgBusStop.all
       busstops.each do |stop|
         lat = stop.latitude.to_f.round(3) unless stop.latitude.nil?
-        lng = stop.longitude.to_f.round(4) unless stop.longitude.nil?
+        lng = stop.longitude.to_f.round(3) unless stop.longitude.nil?
         if (busLat == lat and busLng == lng)
           bus_id = stop.bus_id
           selected_stop = stop
@@ -1340,172 +1340,86 @@ end
 
   def subsequence_businfo
     service_no = params[:service_no]
-    sequence1 = params[:sequence1].to_i
-    sequence2 = params[:sequence2].to_i
+    frombusId = nil
+    tobusId = nil
 
-    total_stop = sequence1 - sequence2
-    total_stop = total_stop.abs
 
-    frombusId = params[:frombusId]
-    tobusId = params[:tobusId]
-    bus_route = [ ]
-    busArray = [ ]
-    direction = 0
+    if params[:depart_lat] and params[:depart_lng]
+      bus_route = SgBusRoute.where(service_no: service_no)
+      p "depart lat lng"
+      p dlat1 = params[:depart_lat].to_f
+      p dlng1 = params[:depart_lng].to_f
+      p "+++"
+      p "arrive lat lng"
+      p alat1 = params[:arrive_lat].to_f
+      p alng1 = params[:arrive_lng].to_f
+      p "+++"
 
-    if !params[:frombusId].nil?
-      limit = sequence1 - sequence2
-      bus_route_dir1 = SgBusRoute.where("service_no=? and direction =1 and stop_sequence between ? and ?", service_no, sequence1, sequence2)
-      bus_route_dir2 = SgBusRoute.where("service_no=? and direction =2 and stop_sequence between ? and ?", service_no, sequence1, sequence2)
+      bus_route.each do |route|
+        stop = SgBusStop.find_by_bus_id(route.bus_stop_code)
+        lat = stop.latitude.to_f
+        lng = stop.longitude.to_f
+        # stop.description
+        dep_distance = Geocoder::Calculations.distance_between([dlat1,dlng1], [lat,lng], {units: :km}).round(1)
+        arr_distance = Geocoder::Calculations.distance_between([alat1,alng1], [lat,lng], {units: :km}).round(1)
+        p "+++"
 
-      if bus_route_dir1.present?
-        bus_route_dir1.each do |d1|
-          if (d1.bus_stop_code == frombusId.to_i && d1.stop_sequence == sequence1 )
-            bus_route = bus_route_dir1
-            direction= 1
+
+        if dep_distance <= 0.15
+          p dep_distance
+          p "from bus id"
+
+          if lat.round(3) == dlat1.round(3) and lng.round(3) == dlng1.round(3)
+            p frombusId = stop.bus_id
+            p stop.description
+          elsif stop.description.downcase == params[:depart].downcase
+            p frombusId = stop.bus_id
+            p stop.description
           end
+
         end
 
-      end
-
-      if bus_route_dir2.present?
-        bus_route_dir2.each do |d2|
-          if (d2.bus_stop_code == frombusId.to_i && d2.stop_sequence == sequence2 )
-            bus_route = bus_route_dir2
-            direction =2
-          end
-        end
-
-      end
-    end
-
-    bus_route.each do |route|
-      busArray.push(SgBusStop.find_by_bus_id(route.bus_stop_code))
-    end
-
-    if params[:depart].present?
-      frombusId = nil
-      tobusId = nil
-
-      p "depart latlng"
-      p depart_lat = params[:depart_lat].to_f.round(3)
-      p depart_lng = params[:depart_lng].to_f.round(3)
-
-      p "arrive latlng"
-      p arrive_lat = params[:arrive_lat].to_f.round(3)
-      p arrive_lng = params[:arrive_lng].to_f.round(3)
-      tolatlng_match = nil
-      fromlatlng_match = nil
-
-      if params[:depart_lat] and params[:depart_lng]
-
-        busstops = SgBusStop.all
-        busstops.each do |stop|
-          lat = stop.latitude.round(3) unless stop.latitude.nil?
-          lng = stop.longitude.round(3) unless stop.longitude.nil?
-
-          if (depart_lat == lat && depart_lng == lng && params[:depart].downcase == stop.description.downcase)
-              p "from bus id"
-              p frombusId = stop.bus_id
-              p stop.description
-          elsif (depart_lat == lat && depart_lng == lng )
-            fromlatlng_match = stop.bus_id
-          end
-          if (arrive_lat == lat && arrive_lng == lng && params[:arrive].downcase == stop.description.downcase)
-            p "to bus id"
+        if arr_distance <= 0.15
+          p "to bus id"
+          if lat.round(3) == alat1.round(3) and lng.round(3) == alng1.round(3)
             p tobusId = stop.bus_id
             p stop.description
-          elsif (arrive_lat == lat && arrive_lng == lng )
-              p "to bus id"
-            p tolatlng_match = stop.bus_id
+          elsif stop.description.downcase == params[:arrive].downcase
+            p tobusId = stop.bus_id
+            p stop.description
           end
-        end
-
-
-        if tobusId.nil?
-          p "toID find by description"
-          p busstops = SgBusStop.where(["LOWER(description) =?","#{params[:arrive].downcase}"])
-          p 'to bus id'
-          p tolatlng_match
-          if busstops.count == 1
-            p tobusId = busstops.take.bus_id
-          elsif !tolatlng_match.nil?
-            p tobusId = tolatlng_match
-          end
-        end
-
-        if frombusId.nil?
-          p "fromID find by description"
-          p busstops = SgBusStop.where(["LOWER(description) =?","#{params[:depart].downcase}"])
-          p "from bus id"
-          if busstops.count == 1
-            p frombusId = busstops.take.bus_id
-          elsif busstops.count > 1
-            busstops.each do |stop|
-              p lat = stop.latitude.round(3) unless stop.latitude.nil?
-              p lng = stop.longitude.round(2) unless stop.longitude.nil?
-              if (depart_lat == lat && depart_lng.round(2) == lng)
-                  p frombusId = stop.bus_id
-              end
-            end
-          elsif !fromlatlng_match.nil?
-            p frombusId = fromlatlng_match
-          end
-
         end
       end
-
     end
 
-    if busArray.count == 0
-      bus_start = SgBusRoute.where(service_no: service_no, bus_stop_code: frombusId)
-      bus_end = SgBusRoute.where(service_no: service_no, bus_stop_code: tobusId)
+    bus_start = SgBusRoute.find_by(service_no: service_no, bus_stop_code: frombusId)
+    bus_end = SgBusRoute.find_by(service_no: service_no, bus_stop_code: tobusId)
 
-      if bus_start.count == 1
-        bus_start = bus_start.take
-        direction = bus_start.direction
-        bus_end_arr = bus_end.where("direction =?",direction)
-        if bus_end_arr.count > 1
-          bus_end_arr.each do |end_id|
-            if end_id.id > bus_start.id
-              bus_end = end_id
-            end
-          end
-        else
-          bus_end = bus_end_arr.take
-        end
-
-      elsif bus_end.count == 1
-        bus_end = bus_end.take
-        direction = bus_end.direction
-        bus_start = bus_start.where("direction =? ",direction).take
+    if !bus_start.nil?
+      busArray = []
+      start_id = bus_start.id
+      end_id = bus_end.id
+      if start_id > end_id
+        sg_bus_routes = SgBusRoute.where(id: end_id .. start_id).order("id desc")
       else
-        bus_start = bus_start.take
-        bus_end = bus_end.take
-        if !bus_start.nil?
-          direction = bus_start.direction
-        end
-      end
-
-      if !bus_start.nil?
-        start_id = bus_start.id
-        end_id = bus_end.id
         sg_bus_routes = SgBusRoute.where(id: start_id .. end_id)
-        sg_bus_routes.each do |route|
-          sgstop = SgBusStop.find_by_bus_id(route.bus_stop_code)
-          busArray.push({
-                  bus_stop_id: sgstop.bus_id,
-                  bus_id: sgstop.bus_id,
-                  road_name:sgstop.road_name,
-                  description:sgstop.description,
-                  latitude:sgstop.latitude,
-                  longitude:sgstop.longitude
-             })
-        end
+      end
+      sg_bus_routes.each do |route|
+        sgstop = SgBusStop.find_by_bus_id(route.bus_stop_code)
+        busArray.push({
+                bus_stop_id: sgstop.bus_id,
+                bus_id: sgstop.bus_id,
+                road_name:sgstop.road_name,
+                description:sgstop.description,
+                latitude:sgstop.latitude,
+                longitude:sgstop.longitude
+           })
       end
 
     end
 
-    render json:{results: busArray,count: busArray.count,direction:direction, status: 200}
+    render json:{results: busArray,count: busArray.count, status: 200}
+
   end
   def subsequence_mrtinfo
 
