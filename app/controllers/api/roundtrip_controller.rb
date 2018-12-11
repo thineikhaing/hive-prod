@@ -1194,34 +1194,39 @@ end
     busLng = params[:longitude].to_f.round(4)
     selected_stop = ''
 
-    if params[:latitude] and params[:longitude]
-      p busstops = SgBusStop.where(["LOWER(description) =?","#{params[:name].downcase}"])
-      if busstops.count == 1
-        p bLat = busstops.take.latitude.round(3)
-        p bLng = busstops.take.longitude.round(4)
-        if (busLat == bLat and busLng == bLng)
-          p "found bus stop"
+    if params[:bus_id].present?
+      bus_id = params[:bus_id]
+    else
+      if params[:latitude] and params[:longitude]
+        p busstops = SgBusStop.where(["LOWER(description) =?","#{params[:name].downcase}"])
+        if busstops.count == 1
+          p bLat = busstops.take.latitude.round(3)
+          p bLng = busstops.take.longitude.round(4)
+          if (busLat == bLat and busLng == bLng)
+            p "found bus stop"
+            bus_id = busstops.take.bus_id
+            selected_stop = busstops.take
+          end
+
+        else
+          busstops.each do |stop|
+            lat = stop.latitude.round(3)
+            lng = stop.longitude.round(4)
+            if (busLat == lat and busLng == lng)
+              bus_id = stop.bus_id
+              selected_stop = stop
+            end
+          end
+        end
+
+        if bus_id.nil? && busstops.count == 1
           bus_id = busstops.take.bus_id
           selected_stop = busstops.take
         end
-
-      else
-        busstops.each do |stop|
-          lat = stop.latitude.round(3)
-          lng = stop.longitude.round(4)
-          if (busLat == lat and busLng == lng)
-            bus_id = stop.bus_id
-            selected_stop = stop
-          end
-        end
       end
-
-      if bus_id.nil? && busstops.count == 1
-        bus_id = busstops.take.bus_id
-        selected_stop = busstops.take
-      end
-
     end
+
+
 
     if bus_id.nil?
       busstops = SgBusStop.all
@@ -1235,7 +1240,7 @@ end
       end
     end
 
-    p "BUS STOP ID:::"
+
     p bus_id
     p service
     p selected_stop
@@ -1834,26 +1839,40 @@ end
         direction.split.map{|w| d_code = w if w.include?("PW") || w.include?("PTC")|| w.include?("PE")}
         start_st = PE.find_by_code(d_code)
         inter_st = PE.where(code: "PTC")
-        if to.downcase.include?("punggol") && d_code.include?("PW")
+        start_code = start_st.code.gsub(/[^0-9]/, '').to_i
+
+        # if to.downcase.include?("punggol point")
+        #   inter_st = PE.where(code: "PW3")
+        # end
+
+        if to.downcase.include?("punggol") && d_code.include?("PW") && !to.downcase.include?("punggol point")
           interchange = 1
-          end_st = PE.where('code like ?',"#{"PW"}%").last
-        elsif to.downcase.include?("punggol")
+          if start_code <= 4
+            end_st = PE.where('code like ?',"#{"PW"}%").first
+          else
+            end_st = PE.where('code like ?',"#{"PW"}%").last
+          end
+        elsif to.downcase.include?("punggol") && !to.downcase.include?("punggol point")
           interchange = 1
-          end_st = PE.where('code like ?',"#{"PE"}%").last
+          if start_code <= 4
+            end_st = PE.where('code like ?',"#{"PE"}%").first
+          else
+            end_st = PE.where('code like ?',"#{"PE"}%").last
+          end
         else
           end_st = PE.where('lower(name) = ?', to.downcase).take
         end
         start_rec = PE.where('lower(name) = ? ', from.downcase)
       end
 
-      p start_st
-      p end_st
 
       if start_st.id > end_st.id
         sequence = PE.where(id: end_st.id .. start_st.id).order(id: :desc)
       else
         sequence = PE.where(id: start_st.id .. end_st.id).order(id: :asc)
       end
+
+      p interchange
 
       sequence = sequence.where("latitude != 0")
       sequence = start_rec + sequence if params[:direction]
