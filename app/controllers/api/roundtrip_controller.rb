@@ -1195,7 +1195,7 @@ end
     selected_stop = ''
 
     if params[:latitude] and params[:longitude]
-      p busstops = SgBusStop.where(["LOWER(description) =?","#{params[:name].downcase}"]) 
+      p busstops = SgBusStop.where(["LOWER(description) =?","#{params[:name].downcase}"])
       if busstops.count == 1
         p bLat = busstops.take.latitude.round(3)
         p bLng = busstops.take.longitude.round(4)
@@ -1835,7 +1835,7 @@ end
         start_st = PE.find_by_code(d_code)
         if to.downcase.include?("punggol") && d_code.include?("PW")
           interchange = 1
-          end_st = PE.where('code like ?',"#{"PW"}%").first
+          end_st = PE.where('code like ?',"#{"PW"}%").last
           end_rec = PE.where(code: "PTC")
         elsif to.downcase.include?("punggol") && d_code.include?("PTC")
           end_st = PE.find_by_code("PTC")
@@ -1844,6 +1844,9 @@ end
         end
         start_rec = PE.where('lower(name) = ? ', from.downcase)
       end
+
+      p start_st
+      p end_st
 
       if start_st.id > end_st.id
         sequence = PE.where(id: end_st.id .. start_st.id).order(id: :desc)
