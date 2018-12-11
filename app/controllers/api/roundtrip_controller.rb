@@ -1833,12 +1833,13 @@ end
       if params[:direction].present?
         direction.split.map{|w| d_code = w if w.include?("PW") || w.include?("PTC")|| w.include?("PE")}
         start_st = PE.find_by_code(d_code)
+        inter_st = PE.where(code: "PTC")
         if to.downcase.include?("punggol") && d_code.include?("PW")
           interchange = 1
           end_st = PE.where('code like ?',"#{"PW"}%").last
-          end_rec = PE.where(code: "PTC")
-        elsif to.downcase.include?("punggol") && d_code.include?("PTC")
-          end_st = PE.find_by_code("PTC")
+        elsif to.downcase.include?("punggol")
+          interchange = 1
+          end_st = PE.where('code like ?',"#{"PE"}%").last
         else
           end_st = PE.where('lower(name) = ?', to.downcase).take
         end
@@ -1856,7 +1857,7 @@ end
 
       sequence = sequence.where("latitude != 0")
       sequence = start_rec + sequence if params[:direction]
-      sequence = sequence + end_rec if interchange == 1
+      sequence = sequence + inter_st if interchange == 1
 
     end
 
