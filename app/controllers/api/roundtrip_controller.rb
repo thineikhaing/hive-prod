@@ -1192,15 +1192,17 @@ end
 
     busLat = params[:latitude].to_f.round(3)
     busLng = params[:longitude].to_f.round(4)
+    selected_stop = ''
 
     if params[:latitude] and params[:longitude]
-      p busstops = SgBusStop.where(description: params[:name])
+      p busstops = SgBusStop.where(["LOWER(description) =?","#{params[:name].downcase}"]) 
       if busstops.count == 1
         p bLat = busstops.take.latitude.round(3)
         p bLng = busstops.take.longitude.round(4)
         if (busLat == bLat and busLng == bLng)
           p "found bus stop"
           bus_id = busstops.take.bus_id
+          selected_stop = busstops.take
         end
 
       else
@@ -1209,12 +1211,14 @@ end
           lng = stop.longitude.round(4)
           if (busLat == lat and busLng == lng)
             bus_id = stop.bus_id
+            selected_stop = stop
           end
         end
       end
 
       if bus_id.nil? && busstops.count == 1
         bus_id = busstops.take.bus_id
+        selected_stop = busstops.take
       end
 
     end
@@ -1223,9 +1227,10 @@ end
       busstops = SgBusStop.all
       busstops.each do |stop|
         lat = stop.latitude.to_f.round(3) unless stop.latitude.nil?
-        lng = stop.longitude.to_f.round(2) unless stop.longitude.nil?
-        if (busLat == lat and busLng.round(2) == lng)
+        lng = stop.longitude.to_f.round(4) unless stop.longitude.nil?
+        if (busLat == lat and busLng == lng)
           bus_id = stop.bus_id
+          selected_stop = stop
         end
       end
     end
@@ -1233,6 +1238,7 @@ end
     p "BUS STOP ID:::"
     p bus_id
     p service
+    p selected_stop
 
     uri = URI('http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2')
     params = { :BusStopCode => bus_id, :ServiceNo => service, :SST => true}
@@ -1736,39 +1742,52 @@ end
       end_st = BP.where('lower(name) = ?', to.downcase).first
 
       if params[:direction]
-        p direction.split.map{|w| d_code = w if w.include?("BP")}
-        start_rec = BP.where('lower(name) = ?', from.downcase)
-        start_st = BP.where('code = ?', d_code).first
+        direction.split.map{|w| d_code = w if w.include?("BP")}
       end
 
+      start_code = start_st.code.gsub(/[^0-9]/, '').to_i
+      end_code = end_st.code.gsub(/[^0-9]/, '').to_i
 
+      bp_interchange = BP.find_by_code("BP6")
+      interchange  = 0
 
-      if d_code == "BP6"
-        bp_interchange = BP.find_by_code(d_code)
+      if (start_code <= 6 and end_code <=6) || (start_code > 6 and end_code > 6)
+        if end_code == 14
+          nxt_id = BP.find_by_code("BP13")
+          sq1 = BP.where(id: start_st.id .. nxt_id.id)
+          sequence = sq1  + BP.where(code: "BP6") + BP.where(code: "BP14")
+        else
+          if start_st.id > end_st.id
+            sequence = BP.where(id: end_st.id .. start_st.id).order(id: :desc)
+          else
+            sequence = BP.where(id: start_st.id .. end_st.id).order(id: :asc)
+          end
+        end
+
+      elsif start_code == 14 and end_code == 6
+        sequence = BP.where('code = ?', "BP6")
+
+      elsif end_code == 14 and start_code == 14
+        sequence = BP.where('code = ?', "BP14")
+
+      elsif start_code < 6 and end_code > 6
         sq1 = BP.where(id: start_st.id .. bp_interchange.id)
-
-        if end_st.code.gsub(/[^0-9]/, '').to_i > 10
+        if end_code > 10
           nxt_id = BP.find_by_code("BP13")
           sq2 = BP.where(id: end_st.id .. nxt_id.id).order(id: :desc)
         else
           nxt_id = BP.find_by_code("BP7")
           sq2 = BP.where(id: nxt_id.id .. end_st.id)
         end
-        p nxt_id.id
-        p end_st.id
-
         sequence = sq1 + sq2
+
       else
-
-        if start_st.id > end_st.id
-          sequence = BP.where(id: end_st.id .. start_st.id).order(id: :desc)
-        else
-          sequence = BP.where(id: start_st.id .. end_st.id).order(id: :asc)
-        end
-
+        nxt_id = BP.find_by_code("BP13")
+        sq1 = BP.where(id: start_st.id .. nxt_id.id)
+        sq2 = BP.where(id: end_st.id .. bp_interchange.id).order(id: :desc)
+        sequence = sq1 + sq2
       end
 
-      sequence = start_rec + sequence if params[:direction]
 
     elsif mrt_line_name.downcase == "sengkang lrt"
       d_code = ""
