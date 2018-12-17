@@ -134,11 +134,6 @@ namespace :userdefaultsetup do
     i = 0
     while i < 26070
 
-      p "result count"
-      p result.count
-      p "loop i value :::"
-      p i
-
       uri = URI('http://datamall2.mytransport.sg/ltaodataservice/BusRoutes')
       params = { :$skip => i}
       uri.query = URI.encode_www_form(params)
@@ -150,14 +145,7 @@ namespace :userdefaultsetup do
       con = Net::HTTP.new(uri.host, uri.port)
       r = con.start {|http| http.request(res)}
       new_results = JSON.parse(r.body)
-
-      p new_results["value"].last
-      p "+++++++++"
-
       result += new_results["value"]
-
-      p "new_results"
-      p new_results["value"].count
 
       # Increment.
       i += 50
