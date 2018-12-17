@@ -1652,6 +1652,37 @@ end
         sequence = SE.where(id: start_dt.id .. end_dt.id).order(id: :asc)
       end
       sequence = sequence.where("latitude != 0")
+    elsif mrt_line_name == "Sentosa Line"
+      start_dt = SL.where('lower(name) = ?', from.downcase).first
+      end_dt = SL.where('lower(name) = ?', to.downcase).first
+
+      if start_dt.id > end_dt.id
+        sequence = SL.where(id: end_dt.id .. start_dt.id).order(id: :desc)
+      else
+        sequence = SL.where(id: start_dt.id .. end_dt.id).order(id: :asc)
+      end
+      sequence = sequence.where("latitude != 0")
+
+    elsif mrt_line_name == "Beach Tram"
+      start_dt = BT.where('lower(name) = ?', from.downcase).first
+      end_dt = BT.where('lower(name) = ?', to.downcase).first
+
+      if start_dt.id > end_dt.id
+        sequence = BT.where(id: end_dt.id .. start_dt.id).order(id: :desc)
+      else
+        sequence = BT.where(id: start_dt.id .. end_dt.id).order(id: :asc)
+      end
+      sequence = sequence.where("latitude != 0")
+    elsif mrt_line_name == "Mt Faber Line"
+      start_dt = MF.where('lower(name) = ?', from.downcase).first
+      end_dt = MF.where('lower(name) = ?', to.downcase).first
+
+      if start_dt.id > end_dt.id
+        sequence = MF.where(id: end_dt.id .. start_dt.id).order(id: :desc)
+      else
+        sequence = MF.where(id: start_dt.id .. end_dt.id).order(id: :asc)
+      end
+      sequence = sequence.where("latitude != 0")
 
     elsif mrt_line_name.downcase == "bukit panjang lrt"
       d_code = ""

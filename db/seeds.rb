@@ -54,3 +54,18 @@ CSV.foreach("db/mrt_stations/pe_seeds.csv") do |row|
   PE.create(code: row[0],name: row[1], latitude: row[2], longitude: row[3])
   puts "Created: #{row}"
 end
+
+CSV.foreach("db/mrt_stations/silo_seeds.csv") do |row|
+  BT.create(code: row[0],name: row[1], latitude: row[2], longitude: row[3])
+  puts "Created: #{row}"
+end
+
+CSV.foreach("db/mrt_stations/mf.csv") do |row|
+  MF.create(code: row[0],name: row[1], latitude: row[2], longitude: row[3])
+  puts "Created: #{row}"
+end
+
+CSV.foreach("db/mrt_stations/sl.csv") do |row|
+  SL.create(code: row[0],name: row[1], latitude: row[2], longitude: row[3])
+  puts "Created: #{row}"
+end

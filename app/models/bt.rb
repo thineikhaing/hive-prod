@@ -1,0 +1,2 @@
+class BT < SgMrtStation
+end
