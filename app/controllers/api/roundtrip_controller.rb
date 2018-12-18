@@ -1432,14 +1432,11 @@ end
     sequence = ""
     s_id, e_id = ''
 
-    if from.last(3).include? "stn"
-      from = from.gsub("stn","")
-      from = from.gsub("station","")
-    end
-    if to.last(3).include? "stn"
-      to = to.gsub("stn","")
-      to = to.gsub("station","")
-    end
+    from = from.gsub("stn","") if from.last(3).include? "stn"
+    to = to.gsub("stn","") if to.last(3).include? "stn"
+
+    from = from.gsub("station","")
+    to = to.gsub("station","")
 
     from = from.strip
     to = to.strip
@@ -1679,6 +1676,8 @@ end
       end
       sequence = sequence.where("latitude != 0")
     elsif mrt_line_name == "Mt Faber Line"
+      from = from+" station"
+      to = to+" station"
       start_dt = MF.where('lower(name) = ?', from.downcase).first
       end_dt = MF.where('lower(name) = ?', to.downcase).first
 
