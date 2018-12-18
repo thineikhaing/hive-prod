@@ -1434,9 +1434,11 @@ end
 
     if from.last(3).include? "stn"
       from = from.gsub("stn","")
+      from = from.gsub("station","")
     end
     if to.last(3).include? "stn"
       to = to.gsub("stn","")
+      to = to.gsub("station","")
     end
 
     from = from.strip
@@ -1642,7 +1644,8 @@ end
       end
       sequence = sequence.where("latitude != 0")
     elsif mrt_line_name == "Sentosa Express"
-
+      from = from+" station"
+      to = to+" station"
       start_dt = SE.where('lower(name) = ?', from.downcase).first
       end_dt = SE.where('lower(name) = ?', to.downcase).first
 
@@ -1653,6 +1656,8 @@ end
       end
       sequence = sequence.where("latitude != 0")
     elsif mrt_line_name == "Sentosa Line"
+      from = from+" station"
+      to = to+" station"
       start_dt = SL.where('lower(name) = ?', from.downcase).first
       end_dt = SL.where('lower(name) = ?', to.downcase).first
 
