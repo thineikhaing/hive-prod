@@ -32,7 +32,7 @@ module Hive
     # For Foundation 5
     config.assets.precompile += %w( vendor/modernizr )
 
-
+    # config.action_controller.permit_all_parameters = true
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"
 

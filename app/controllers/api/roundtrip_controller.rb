@@ -21,7 +21,7 @@ class Api::RoundtripController < ApplicationController
   end
 
   def save_trip
-
+    p "save trip"
     route_hash = []
     user_id = params[:user_id]
     auth_token = params[:auth_token]
@@ -150,6 +150,7 @@ class Api::RoundtripController < ApplicationController
 
         end
       elsif source.to_i == Place::GOOGLE
+        p "google trip"
         trip_route = params[:trip_route][:steps]
 
         if trip_route.respond_to?(:keys)
@@ -1339,7 +1340,7 @@ end
 
 
   def subsequence_businfo
-    service_no = params[:service_no]
+    service_no = params[:service_no].strip
     frombusId = nil
     tobusId = nil
 
@@ -1384,6 +1385,7 @@ end
           if lat.round(3) == alat1.round(3) and lng.round(3) == alng1.round(3)
             p tobusId = stop.bus_id
             p stop.description
+
           elsif stop.description.downcase == params[:arrive].downcase
             p tobusId = stop.bus_id
             p stop.description
@@ -1394,17 +1396,17 @@ end
 
     bus_start = SgBusRoute.find_by(service_no: service_no, bus_stop_code: frombusId)
     bus_end = SgBusRoute.find_by(service_no: service_no, bus_stop_code: tobusId)
-
+    busArray = []
     if !bus_start.nil?
-      busArray = []
       start_id = bus_start.id
-      end_id = bus_end.id
+      !bus_end.nil? ? end_id = bus_end.id : end_id = start_id.to_i + params[:stop].to_i
       if start_id > end_id
         sg_bus_routes = SgBusRoute.where(id: end_id .. start_id).order("id desc")
       else
         sg_bus_routes = SgBusRoute.where(id: start_id .. end_id)
       end
-      sg_bus_routes.each do |route|
+      bus_route = sg_bus_routes.where(direction: bus_start.direction)
+      bus_route.each do |route|
         sgstop = SgBusStop.find_by_bus_id(route.bus_stop_code)
         busArray.push({
                 bus_stop_id: sgstop.bus_id,
@@ -1418,7 +1420,7 @@ end
 
     end
 
-    render json:{results: busArray,count: busArray.count, status: 200}
+    render json:{count: busArray.count, results: busArray, status: 200}
 
   end
   def subsequence_mrtinfo
