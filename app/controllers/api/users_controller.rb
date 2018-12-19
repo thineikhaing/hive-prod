@@ -1007,14 +1007,14 @@ class Api::UsersController < ApplicationController
       if userfav.nil?
         fav_place = UserFavLocation.create(user_id: current_user.id, place_id: place_id,
             place_type: params[:place_type],name: name,address: params[:address] ,img_url: img_url)
-            
+
         render json:{fav_place: fav_place , userfavlocation: fav_lists,status:200, message: "Location added successfully."}
 
       else
-        fav_place = UserFavLocation.find_by_place_id(place_id)
-        update_place = fav_place.update(place_type: params[:place_type] )
+        p "exiting place ::::: "
+        update_place = UserFavLocation.find_by_place_id(place_id).update(place_type: params[:place_type] )
         fav_lists = UserFavLocation.where(user_id: current_user.id).order('id desc')
-        render json:{fav_place: update_place , userfavlocation: fav_lists , status:201, message: "Duplicate location",error_msg: 'location already exit!'}
+        render json:{fav_place: update_place , userfavlocation: fav_lists , status:200 , message: "Duplicate location" }
       end
 
     else
