@@ -1370,7 +1370,7 @@ end
             p "origin found lat lng"
             p frombusId = stop.bus_id
             p stop.id
-            chkfromFlag = false
+            # chkfromFlag = false
           elsif dep_distance <= 0.1
             closet_origin = stop.bus_id
           end
@@ -1386,7 +1386,7 @@ end
             p "destination found lat lng"
             p tobusId = stop.bus_id
             p stop.id
-            chktoFlag = false
+            # chktoFlag = false
           elsif arr_distance <= 0.1
             closet_destination = stop.bus_id
           end
