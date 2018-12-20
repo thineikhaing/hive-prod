@@ -1401,20 +1401,18 @@ end
 
     bus_start = SgBusRoute.where(service_no: service_no, bus_stop_code: frombusId)
     bus_end = SgBusRoute.where(service_no: service_no, bus_stop_code: tobusId)
+
     if bus_start.count > 1 and bus_end.count == 1
       bus_start = bus_start.where(direction: bus_end.take.direction).take
       bus_end = bus_end.take
     elsif bus_end.count > 1 and bus_start.count == 1
-      bus_end = bus_end.where(direction: bus_start.take.direction)
+      bus_end = bus_end.where(direction: bus_start.take.direction).take
       bus_start = bus_start.take
     else
       bus_start = bus_start.take
       bus_end = bus_end.take
     end
 
-
-
-    p bus_end = SgBusRoute.find_by(service_no: service_no, bus_stop_code: tobusId,direction: bus_start.direction)
     busArray = []
     if !bus_start.nil? && !bus_end.nil?
       start_id = bus_start.id
