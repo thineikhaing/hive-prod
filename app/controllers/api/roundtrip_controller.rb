@@ -1353,8 +1353,8 @@ end
         stop = SgBusStop.find_by_bus_id(route.bus_stop_code)
         lat = stop.latitude.to_f
         lng = stop.longitude.to_f
-        dep_distance = Geocoder::Calculations.distance_between([dlat1,dlng1], [lat,lng], {units: :km}).round(1)
-        arr_distance = Geocoder::Calculations.distance_between([alat1,alng1], [lat,lng], {units: :km}).round(1)
+        dep_distance = Geocoder::Calculations.distance_between([dlat1,dlng1], [lat,lng], {units: :km}).floor(2)
+        arr_distance = Geocoder::Calculations.distance_between([alat1,alng1], [lat,lng], {units: :km}).floor(2)
 
         if chkfromFlag == true
           if stop.description.downcase == depart_name.downcase
@@ -1366,7 +1366,7 @@ end
             p "origin found lat lng"
             p frombusId = stop.bus_id
             p stop.id
-            # chkfromFlag = false
+            chkfromFlag = false if dep_distance == 0.0
           elsif dep_distance <= 0.2
             p "closet_origin"
             p closet_origin = stop.bus_id
@@ -1378,14 +1378,20 @@ end
             p "destination found stop name"
             p tobusId = stop.bus_id
             p stop.id
+            p stop.description
             chktoFlag = false
           elsif lat.floor(3) == alat1.floor(3) and lng.floor(3) == alng1.floor(3)
             p "destination found lat lng"
+            p arr_distance
             p tobusId = stop.bus_id
-            p stop.id
-            # chktoFlag = false
+            p stop.description
+            chktoFlag = false if arr_distance == 0.0
           elsif arr_distance <= 0.1
+            p arr_distance
+            p "closet_destination"
+            p stop.id
             closet_destination = stop.bus_id
+            p stop.description
           end
         end
 
@@ -1399,8 +1405,8 @@ end
     p frombusId
     p tobusId
 
-    bus_start = SgBusRoute.where(service_no: service_no, bus_stop_code: frombusId)
-    bus_end = SgBusRoute.where(service_no: service_no, bus_stop_code: tobusId)
+    p bus_start = SgBusRoute.where(service_no: service_no, bus_stop_code: frombusId)
+    p bus_end = SgBusRoute.where(service_no: service_no, bus_stop_code: tobusId)
 
     if bus_start.count > 1 and bus_end.count == 1
       bus_start = bus_start.where(direction: bus_end.take.direction).take
