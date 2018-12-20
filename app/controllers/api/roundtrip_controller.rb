@@ -1343,63 +1343,72 @@ end
     service_no = params[:service_no].strip
     frombusId = nil
     tobusId = nil
-
-
+    closet_destination = closet_origin = nil
     if params[:depart_lat] and params[:depart_lng]
       bus_route = SgBusRoute.where(service_no: service_no)
-      p "depart lat lng"
-      p dlat1 = params[:depart_lat].to_f
-      p dlng1 = params[:depart_lng].to_f
-      p "+++"
-      p "arrive lat lng"
-      p alat1 = params[:arrive_lat].to_f
-      p alng1 = params[:arrive_lng].to_f
-      p "+++"
 
+      dlat1 = params[:depart_lat].to_f
+      dlng1 = params[:depart_lng].to_f
+      alat1 = params[:arrive_lat].to_f
+      alng1 = params[:arrive_lng].to_f
+
+      chkfromFlag = chktoFlag = true
       bus_route.each do |route|
         stop = SgBusStop.find_by_bus_id(route.bus_stop_code)
         lat = stop.latitude.to_f
         lng = stop.longitude.to_f
-        # stop.description
         dep_distance = Geocoder::Calculations.distance_between([dlat1,dlng1], [lat,lng], {units: :km}).round(1)
         arr_distance = Geocoder::Calculations.distance_between([alat1,alng1], [lat,lng], {units: :km}).round(1)
-        p "+++"
 
-
-        if dep_distance <= 0.15
-          p dep_distance
-          p "from bus id"
-
-          if lat.round(3) == dlat1.round(3) and lng.round(3) == dlng1.round(3)
+        if chkfromFlag == true
+          if stop.description.downcase == params[:depart].downcase
+            p "origin found lat lng"
             p frombusId = stop.bus_id
-            p stop.description
-          elsif stop.description.downcase == params[:depart].downcase
+            p stop.id
+            chkfromFlag = false
+          elsif lat.floor(3) == dlat1.floor(3) and lng.floor(3) == dlng1.floor(3)
+            p "origin found lat lng"
             p frombusId = stop.bus_id
-            p stop.description
-          end
-
-        end
-
-        if arr_distance <= 0.15
-          p "to bus id"
-          if lat.round(3) == alat1.round(3) and lng.round(3) == alng1.round(3)
-            p tobusId = stop.bus_id
-            p stop.description
-
-          elsif stop.description.downcase == params[:arrive].downcase
-            p tobusId = stop.bus_id
-            p stop.description
+            p stop.id
+            chkfromFlag = false
+          elsif dep_distance <= 0.1
+            closet_origin = stop.bus_id
           end
         end
+
+        if chktoFlag == true
+          if stop.description.downcase == params[:arrive].downcase
+            p "destination found stop name"
+            p tobusId = stop.bus_id
+            p stop.id
+            chktoFlag = false
+          elsif lat.floor(3) == alat1.floor(3) and lng.floor(3) == alng1.floor(3)
+            p "destination found lat lng"
+            p tobusId = stop.bus_id
+            p stop.id
+            chktoFlag = false
+          elsif arr_distance <= 0.1
+            closet_destination = stop.bus_id
+          end
+        end
+
       end
     end
 
-    bus_start = SgBusRoute.find_by(service_no: service_no, bus_stop_code: frombusId)
-    bus_end = SgBusRoute.find_by(service_no: service_no, bus_stop_code: tobusId)
+    tobusId = closet_destination if chktoFlag == true and !closet_destination.nil?
+    frombusId = closet_origin if chkfromFlag == true and !closet_origin.nil?
+
+    p "from and to bus"
+    p frombusId
+    p tobusId
+
+    p bus_start = SgBusRoute.find_by(service_no: service_no, bus_stop_code: frombusId)
+    p bus_end = SgBusRoute.find_by(service_no: service_no, bus_stop_code: tobusId,direction: bus_start.direction)
     busArray = []
-    if !bus_start.nil?
+    if !bus_start.nil? && !bus_end.nil?
       start_id = bus_start.id
-      !bus_end.nil? ? end_id = bus_end.id : end_id = start_id.to_i + params[:stop].to_i
+      end_id = bus_end.id
+
       if start_id > end_id
         sg_bus_routes = SgBusRoute.where(id: end_id .. start_id).order("id desc")
       else
