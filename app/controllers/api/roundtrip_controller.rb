@@ -1228,7 +1228,6 @@ end
     end
 
 
-
     if bus_id.nil?
       busstops = SgBusStop.all
       busstops.each do |stop|
@@ -1240,11 +1239,6 @@ end
         end
       end
     end
-
-
-    p bus_id
-    p service
-    p selected_stop
 
     uri = URI('http://datamall2.mytransport.sg/ltaodataservice/BusArrivalv2')
     params = { :BusStopCode => bus_id, :ServiceNo => service, :SST => true}
@@ -1341,6 +1335,8 @@ end
 
   def subsequence_businfo
     service_no = params[:service_no].strip
+    depart_name = params[:depart].strip
+    arrive_name = params[:arrive].strip
     frombusId = nil
     tobusId = nil
     closet_destination = closet_origin = nil
@@ -1361,7 +1357,7 @@ end
         arr_distance = Geocoder::Calculations.distance_between([alat1,alng1], [lat,lng], {units: :km}).round(1)
 
         if chkfromFlag == true
-          if stop.description.downcase == params[:depart].downcase
+          if stop.description.downcase == depart_name.downcase
             p "origin found lat lng"
             p frombusId = stop.bus_id
             p stop.id
@@ -1371,13 +1367,14 @@ end
             p frombusId = stop.bus_id
             p stop.id
             # chkfromFlag = false
-          elsif dep_distance <= 0.1
-            closet_origin = stop.bus_id
+          elsif dep_distance <= 0.2
+            p "closet_origin"
+            p closet_origin = stop.bus_id
           end
         end
 
         if chktoFlag == true
-          if stop.description.downcase == params[:arrive].downcase
+          if stop.description.downcase == arrive_name.downcase
             p "destination found stop name"
             p tobusId = stop.bus_id
             p stop.id
@@ -1402,7 +1399,21 @@ end
     p frombusId
     p tobusId
 
-    p bus_start = SgBusRoute.find_by(service_no: service_no, bus_stop_code: frombusId)
+    bus_start = SgBusRoute.where(service_no: service_no, bus_stop_code: frombusId)
+    bus_end = SgBusRoute.where(service_no: service_no, bus_stop_code: tobusId)
+    if bus_start.count > 1 and bus_end.count == 1
+      bus_start = bus_start.where(direction: bus_end.take.direction).take
+      bus_end = bus_end.take
+    elsif bus_end.count > 1 and bus_start.count == 1
+      bus_end = bus_end.where(direction: bus_start.take.direction)
+      bus_start = bus_start.take
+    else
+      bus_start = bus_start.take
+      bus_end = bus_end.take
+    end
+
+
+
     p bus_end = SgBusRoute.find_by(service_no: service_no, bus_stop_code: tobusId,direction: bus_start.direction)
     busArray = []
     if !bus_start.nil? && !bus_end.nil?
@@ -1426,12 +1437,11 @@ end
                 longitude:sgstop.longitude
            })
       end
-
     end
 
     render json:{count: busArray.count, results: busArray, status: 200}
-
   end
+
   def subsequence_mrtinfo
 
     from = params[:from].downcase
