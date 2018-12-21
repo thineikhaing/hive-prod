@@ -1361,7 +1361,7 @@ end
             p "origin found lat lng"
             p frombusId = stop.bus_id
             p stop.id
-            chkfromFlag = false
+            chkfromFlag = false if dep_distance <= 0.1
           elsif lat.floor(3) == dlat1.floor(3) and lng.floor(3) == dlng1.floor(3)
             p "origin found lat lng"
             p frombusId = stop.bus_id
