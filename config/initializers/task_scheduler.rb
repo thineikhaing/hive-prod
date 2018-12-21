@@ -53,10 +53,10 @@ scheduler.cron '05 00 * * *' do
 
 end
 
-# scheduler.every 55.minutes do
-#  p "check accident!"
-#  SgAccidentHistory.get_incident_and_breakdown
-# end
+scheduler.every 25.minutes do
+ p "check accident!"
+ SgAccidentHistory.get_incident_and_breakdown
+end
 
 
 # command out
