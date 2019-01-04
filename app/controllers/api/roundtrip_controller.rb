@@ -771,13 +771,13 @@ end
       sbs_mrt = params[:sbs_mrt].to_i
       smrt_bus = params[:smrt_bus].to_i
       sbs_bus = params[:sbs_bus].to_i
-      price_table = "db/sms-bus-Sep142018.csv"
+      price_table = "db/mrt-lrt-fare.csv"
 
       total_fare =0.0
       total_distance = (smrt_mrt + sbs_mrt + smrt_bus+sbs_bus) * 0.001
       total_distance = total_distance.round(1)
       if total_distance >= 40.2
-        total_fare = 2.02
+        total_fare = 2.08
       elsif total_distance > 0
         CSV.foreach(price_table) do |row|
           range = row[0]
