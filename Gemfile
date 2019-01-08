@@ -78,7 +78,7 @@ group :production, :staging do
   gem "sprockets-redirect"
 end
 
-# gem 'request_store'
+# gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
 
 group :assets do
   gem 'bourbon'

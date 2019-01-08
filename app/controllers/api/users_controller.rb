@@ -99,6 +99,7 @@ class Api::UsersController < ApplicationController
   def create_anonymous_user
     if params[:device_id].present?
       app_key = params[:app_key] if params[:app_key].present?
+      app_key = params[:api_key] if params[:api_key].present?
       hiveapp = HiveApplication.find_by_api_key(app_key) if params[:app_key].present?
       push_token = params[:push_token]
 
