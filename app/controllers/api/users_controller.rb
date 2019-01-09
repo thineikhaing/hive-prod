@@ -100,6 +100,7 @@ class Api::UsersController < ApplicationController
     if params[:device_id].present?
       app_key = params[:app_key] if params[:app_key].present?
       app_key = params[:api_key] if params[:api_key].present?
+
       hiveapp = HiveApplication.find_by_api_key(app_key) if params[:app_key].present?
       push_token = params[:push_token]
 
@@ -138,7 +139,10 @@ class Api::UsersController < ApplicationController
         p "register token"
         chk_duplicate = UserPushToken.find_by(user_id: current_user.id, push_token: params[:device_token])
         if chk_duplicate.present?
-          render json: { status: 200, message: "Registed token already!"}
+          tokens = UserPushToken.where(endpoint_arn: chk_duplicate.endpoint_arn)
+          other_token = tokens.where.not(user_id: current_user.id).delete_all
+          user_token = UserPushToken.find_by_user_id(current_user.id)
+          render json: { status: 200,user_id: current_user.id,token: user_token, message: "Registed token already!"}
         else
           message = User.create_endpoint(params[:device_type], params[:device_token],params[:user_id])
           render json: { status: 200, message: message}

@@ -136,7 +136,7 @@ class User < ActiveRecord::Base
 
     if !user_endpoint_arn.nil?
         User.subscribe_to_topic(user_endpoint_arn)
-        user_token = UserPushToken.find_by(endpoint_arn:user_endpoint_arn)
+        user_token = UserPushToken.where(endpoint_arn:user_endpoint_arn)
         if user_token.present?
           p "update token user id"
           user_token.update(user_id: user_id,notify: true)
