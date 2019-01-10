@@ -117,7 +117,14 @@ class Api::UsersController < ApplicationController
       end
       if user.present?
         if push_token.present?
-          User.create_endpoint(params[:device_type], push_token ,user.id)
+          p "check before create "
+          p chk_duplicate = UserPushToken.find_by(push_token: push_token)
+          if chk_duplicate.present?
+            chk_duplicate.update(user_id: user_id,notify: true)
+          else
+            User.create_endpoint(params[:device_type], push_token ,user.id)
+          end
+
         end
         user_apps = UserHiveapp.find_by(user_id: user.id,hive_application_id: hiveapp.id)
         UserHiveapp.create(user_id: user.id,hive_application_id: hiveapp.id) unless user_apps.present?

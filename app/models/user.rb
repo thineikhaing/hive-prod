@@ -118,7 +118,6 @@ class User < ActiveRecord::Base
         p "endpoint"
         p user_endpoint_arn = result[1].strip
         if !user_endpoint_arn.nil?
-
           sns_client = Aws::SNS::Client.new
           resp = sns_client.set_endpoint_attributes({
                   endpoint_arn: user_endpoint_arn, # required
@@ -136,8 +135,10 @@ class User < ActiveRecord::Base
 
     if !user_endpoint_arn.nil?
         User.subscribe_to_topic(user_endpoint_arn)
-        user_tokens = UserPushToken.where(endpoint_arn:user_endpoint_arn)
-        if user_tokens.count > 1
+        p user_tokens = UserPushToken.where(endpoint_arn:user_endpoint_arn)
+        p "user token count"
+        p user_tokens.count
+        if user_tokens.count >= 1
           p "update token user id"
           user_tokens.last.update(user_id: user_id,notify: true)
           user_token = UserPushToken.find_by(user_id: user_id, endpoint_arn: user_endpoint_arn)
