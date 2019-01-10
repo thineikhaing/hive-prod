@@ -140,7 +140,7 @@ class Api::UsersController < ApplicationController
         chk_duplicate = UserPushToken.find_by(user_id: current_user.id, push_token: params[:device_token])
         if chk_duplicate.present?
           tokens = UserPushToken.where(endpoint_arn: chk_duplicate.endpoint_arn)
-          user_token = UserPushToken.find_by_user_id(current_user.id)
+          user_token = UserPushToken.find_by(user_id: current_user.id, endpoint_arn: chk_duplicate.endpoint_arn)
           tokens.where.not(id: user_token.id).delete_all
           render json: { status: 200,user_id: current_user.id,token: user_token,tokens: tokens, message: "Registed token already!"}
         else

@@ -139,7 +139,8 @@ class User < ActiveRecord::Base
         user_tokens = UserPushToken.where(endpoint_arn:user_endpoint_arn)
         if user_tokens.count > 1
           p "update token user id"
-          user_token = user_tokens.last.update(user_id: user_id,notify: true)
+          user_tokens.last.update(user_id: user_id,notify: true)
+          user_token = UserPushToken.find_by(user_id: user_id, endpoint_arn: user_endpoint_arn)
           user_tokens.where.not(id: user_token.id).delete_all
         else
           p "create new token"
