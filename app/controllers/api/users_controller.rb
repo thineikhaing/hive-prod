@@ -120,7 +120,7 @@ class Api::UsersController < ApplicationController
           p "check before create "
           p chk_duplicate = UserPushToken.find_by(push_token: push_token)
           if chk_duplicate.present?
-            chk_duplicate.update(user_id: user_id,notify: true)
+            chk_duplicate.update(user_id: user.id,notify: true)
           else
             User.create_endpoint(params[:device_type], push_token ,user.id)
           end
