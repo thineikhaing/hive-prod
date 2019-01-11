@@ -299,16 +299,16 @@ class Place < ActiveRecord::Base
       elsif source.to_i == Place::GOOGLE
         p "add record from google"
         @client = GooglePlaces::Client.new(GoogleAPI::Google_Key)
-        @spot = @client.spot(source_id.to_s)
+
         url = ""
         if img_url.present?
           url = img_url
-        else
-          if @spot.photos[0].present?
-            url = @spot.photos[0].fetch_url(800)
-          else
-            url = ""
-          end
+        elsif source_id.present?
+            @spot = @client.spot(source_id.to_s)
+            if @spot.photos[0].present?
+              url = @spot.photos[0].fetch_url(800)
+            end
+
         end
 
         place = ""
@@ -331,8 +331,8 @@ class Place < ActiveRecord::Base
               user_id: user_id,
               img_url: url,
               category: category,
-              country: @spot.country,
-              postal_code: @spot.postal_code,
+              country: country,
+              postal_code: postcode,
               locality: locality)
         end
 
@@ -359,7 +359,7 @@ class Place < ActiveRecord::Base
           if cr.name.present?
 
            place = cr if cr.address.downcase == address.downcase if address.present?
-           
+
           end
         end
 
