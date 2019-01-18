@@ -190,7 +190,7 @@ class Place < ActiveRecord::Base
         end
 
 
-        p "place source id"
+        p "place***"
         p place
         place.save!
 
@@ -304,11 +304,10 @@ class Place < ActiveRecord::Base
         if img_url.present?
           url = img_url
         elsif source_id.present?
+            p "+++ source id +++"
+            p source_id
             @spot = @client.spot(source_id.to_s)
-            if @spot.photos[0].present?
-              url = @spot.photos[0].fetch_url(800)
-            end
-
+            url = @spot.photos[0].fetch_url(800) if @spot.photos[0].present?
         end
 
         place = ""

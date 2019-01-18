@@ -225,5 +225,36 @@ namespace :userdefaultsetup do
     end
   end
 
+  desc "simulate multiple chat conversation"
+  task :simulate_multiple_users_chatting  => :environment do
+    # scheduler = Rufus::Scheduler.new
+    # job = scheduler.every '15s' do
+      users = User.all.sample(15)
+      topic = Topic.find_by(topic_sub_type: 2)
+      users.each do |u|
+        post = Post.create(content:LiterateRandomizer.sentence,
+                           post_type: 3,
+                           topic_id: topic.id,
+                           user_id: u.id,
+                           place_id: 0)
+         post.broadcast_hive
+
+         post1 = Post.create(content:LiterateRandomizer.sentence,
+                            post_type: 3,
+                            topic_id: Topic.all.sample(1)[0].id,
+                            user_id: u.id,
+                            place_id: 0)
+          post1.broadcast_hive
+
+         p post.content
+         p post1.topic.title
+         p "+++"
+      # end
+    end
+    # j= scheduler.job(job)
+    # j.unschedule
+  end
+
+
 
 end

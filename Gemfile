@@ -80,6 +80,8 @@ end
 
 # gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
 
+gem 'literate_randomizer'
+
 group :assets do
   gem 'bourbon'
   gem 'uglifier', '~> 2.6.1'

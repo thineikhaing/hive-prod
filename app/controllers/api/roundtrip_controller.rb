@@ -1248,71 +1248,56 @@ end
                                            "UniqueUserID"=>"d52627a6-4bde-4fa1-bd48-c6270b02ffc0"})
     con = Net::HTTP.new(uri.host, uri.port)
     r = con.start {|http| http.request(res)}
-    response_data = JSON.parse(r.body)
+    if r.class == Net::HTTPOK
+      p "get body"
+      response_data = JSON.parse(r.body)
 
-    results = response_data["Services"]
-    busStopCode = response_data["BusStopCode"]
+      results = response_data["Services"]
+      busStopCode = response_data["BusStopCode"]
+      bus_route_info = SgBusRoute.where(service_no: service, bus_stop_code:bus_id).take
 
-    bus_route_info = SgBusRoute.where(service_no: service, bus_stop_code:bus_id).take
+      if results.present?
+        nextBus = results[0]["NextBus"]
+        origin_code = nextBus["OriginCode"]
+        destination_code  = nextBus["DestinationCode"]
 
-    if results.present?
+        bus_service = SgBusService.where(service_no: service, origin_code: origin_code, destination_code: destination_code).take
+        if bus_service.nil?
+          bus_service = SgBusService.where(service_no: service, destination_code: destination_code).take
+        end
+        if bus_service.nil?
+          bus_service = SgBusService.where(service_no: service, origin_code: origin_code).take
+        end
 
-      nextBus = results[0]["NextBus"]
-      origin_code = nextBus["OriginCode"]
-      destination_code  = nextBus["DestinationCode"]
+        bus_freq_interval = "-"
 
-      bus_service = SgBusService.where(service_no: service, origin_code: origin_code, destination_code: destination_code).take
-      if bus_service.nil?
-        bus_service = SgBusService.where(service_no: service, destination_code: destination_code).take
-      end
-      if bus_service.nil?
-        bus_service = SgBusService.where(service_no: service, origin_code: origin_code).take
-      end
+        if !bus_service.nil?
+          formatted_time = Time.now.getlocal('+08:00').strftime("%H:%M")
 
-      bus_freq_interval = "-"
+          allowed_ranges = [
+              "06:30".."08:30",
+              "08:31".."16:59",
+              "17:00".."19:00",
+              "19:01".."06:29"
+          ]
 
-      if !bus_service.nil?
-        formatted_time = Time.now.getlocal('+08:00').strftime("%H:%M")
-
-        allowed_ranges = [
-            "06:30".."08:30",
-            "08:31".."16:59",
-            "17:00".."19:00",
-            "19:01".."06:29"
-        ]
-
-        allowed_ranges.each_with_index{ |range,i|
-          if range.cover?(formatted_time)
-            p range
-            bus_freq_interval = bus_service.am_peak_freq if i==0
-            bus_freq_interval = bus_service.am_offpeak_freq if i==1
-            bus_freq_interval = bus_service.pm_peak_freq if i==2
-            bus_freq_interval = bus_service.pm_offpeak_freq if i==3
-          end
-        }
-      end
-
-
-      sebseqBus =  results[0]["NextBus2"]
-
-      est_time = Time.parse(nextBus["EstimatedArrival"])
-      arrivalTime = est_time.strftime("at %I:%M%p")
-
-      wait_time = 0
-      if Time.now < est_time
-        wait_time = TimeDifference.between(Time.now,est_time).in_minutes
-        wait_time = wait_time.round
-      end
-
-      tempnextBus[:nextBusInText] = arrivalTime
-      tempwaitTime[:wait_time] = wait_time
-      results[0]["NextBus"].merge!(tempnextBus)
-      results[0]["NextBus"].merge!(tempwaitTime)
+          allowed_ranges.each_with_index{ |range,i|
+            if range.cover?(formatted_time)
+              p range
+              bus_freq_interval = bus_service.am_peak_freq if i==0
+              bus_freq_interval = bus_service.am_offpeak_freq if i==1
+              bus_freq_interval = bus_service.pm_peak_freq if i==2
+              bus_freq_interval = bus_service.pm_offpeak_freq if i==3
+            end
+          }
+        end
 
 
-      if (sebseqBus["EstimatedArrival"]).present?
-        est_time = Time.parse(sebseqBus["EstimatedArrival"])
+        sebseqBus =  results[0]["NextBus2"]
+
+        est_time = Time.parse(nextBus["EstimatedArrival"])
         arrivalTime = est_time.strftime("at %I:%M%p")
+
         wait_time = 0
         if Time.now < est_time
           wait_time = TimeDifference.between(Time.now,est_time).in_minutes
@@ -1321,14 +1306,34 @@ end
 
         tempnextBus[:nextBusInText] = arrivalTime
         tempwaitTime[:wait_time] = wait_time
-        results[0]["NextBus2"].merge!(tempnextBus)
-        results[0]["NextBus2"].merge!(tempwaitTime)
-      end
+        results[0]["NextBus"].merge!(tempnextBus)
+        results[0]["NextBus"].merge!(tempwaitTime)
 
-      render json:{bus_freq:bus_freq_interval,nextBus:nextBus,results: results, bus_id: bus_id, bus_route_info:bus_route_info, status: 200}
+
+        if (sebseqBus["EstimatedArrival"]).present?
+          est_time = Time.parse(sebseqBus["EstimatedArrival"])
+          arrivalTime = est_time.strftime("at %I:%M%p")
+          wait_time = 0
+          if Time.now < est_time
+            wait_time = TimeDifference.between(Time.now,est_time).in_minutes
+            wait_time = wait_time.round
+          end
+
+          tempnextBus[:nextBusInText] = arrivalTime
+          tempwaitTime[:wait_time] = wait_time
+          results[0]["NextBus2"].merge!(tempnextBus)
+          results[0]["NextBus2"].merge!(tempwaitTime)
+        end
+
+        render json:{bus_freq:bus_freq_interval,nextBus:nextBus,results: results, bus_id: bus_id, bus_route_info:bus_route_info, status: 200}
+      else
+        render json:{error_msg:"No Available Result!"}
+      end
     else
-      render json:{error_msg:"No Available Result!"}
+        render json:{error_msg:"No Available Result!"}
     end
+
+
 
   end
 
