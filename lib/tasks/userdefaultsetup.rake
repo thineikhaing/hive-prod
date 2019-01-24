@@ -239,17 +239,8 @@ namespace :userdefaultsetup do
                            place_id: 0)
          post.broadcast_hive
          post.broadcast_other_app(nil)
-
-         post1 = Post.create(content:LiterateRandomizer.sentence,
-                            post_type: 3,
-                            topic_id: Topic.all.sample(1)[0].id,
-                            user_id: u.id,
-                            place_id: 0)
-          post1.broadcast_hive
-          post1.broadcast_other_app(nil)
-
+  
          p post.content
-         p post1.topic.title
          p "+++"
        end
     # j= scheduler.job(job)
