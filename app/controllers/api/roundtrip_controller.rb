@@ -1177,8 +1177,29 @@ end
             LEFT OUTER JOIN user_fav_buses as favs ON sg_bus_stops.bus_id= favs.busid
             WHERE (favs.user_id = ' << current_user.id.to_s << 'AND routes.service_no = favs.service AND favs.id = ' << favBus.id.to_s << ')'
 
+
+      sql1 = 'SELECT favs.id,favs.service ,
+            sg_bus_stops.bus_id, sg_bus_stops.road_name,
+            sg_bus_stops.description,
+            sg_bus_stops.latitude , sg_bus_stops.longitude,
+            routes.wd_firstbus as firstbus,routes.wd_lastbus as lastbus
+            FROM "sg_bus_stops"
+            LEFT JOIN sg_bus_routes as routes ON sg_bus_stops.bus_id = routes.bus_stop_code
+            LEFT OUTER JOIN user_fav_buses as favs ON sg_bus_stops.bus_id= favs.busid
+            WHERE (favs.user_id = ' << current_user.id.to_s << ' AND routes.service_no = favs.service) ORDER BY favs.id desc'
+
       busQuery = ActiveRecord::Base.connection.execute(sql)
-      render json:{status:200,message:"Favourite Buses List", user_fav_bus:busQuery[0]}
+      busQuery1 = ActiveRecord::Base.connection.execute(sql1)
+
+      seqHash = []
+      groupbus = busQuery1.map {|x| x["bus_id"]}.uniq
+      groupbus.map{|r|
+        busArr = busQuery1.select {|e| e["bus_id"] == r}
+        busArr = busArr.uniq{ |r| [r["id"]]}
+        seqHash.push({bus_id: r,stops: busArr})
+      }
+
+      render json:{status:200,message:"Favourite Buses List", user_fav_bus:busQuery[0],user_fav_buses:seqHash}
     else
       render json:{status: 201, message: "unauthorized."}
     end
