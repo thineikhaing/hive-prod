@@ -4,8 +4,8 @@ CarrierWave.configure do |config|
   config.fog_provider = 'fog/aws'                        # required
   config.fog_credentials = {
   :provider => 'AWS',
-  :aws_access_key_id => "AKIAIJMZ5RLXRO6LJHPQ",
-  :aws_secret_access_key => "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",
+  :aws_access_key_id => "AKIAIG27A72A33NAIHTQ",
+  :aws_secret_access_key => "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",
   :region => "ap-southeast-1"
   }
 
@@ -28,4 +28,7 @@ CarrierWave.configure do |config|
   end
   config.fog_public = true
   # config.fog_attributes = {'Cache-Control'=>'max-age=315576000'}
+
+  # :aws_access_key_id => "AKIAIJMZ5RLXRO6LJHPQ",
+  # :aws_secret_access_key => "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",
 end

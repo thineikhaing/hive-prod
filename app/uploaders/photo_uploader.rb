@@ -21,8 +21,8 @@ class PhotoUploader < CarrierWave::Uploader::Base
 
     self.fog_credentials = {
         :provider               => 'AWS',              # required
-        :aws_access_key_id      => 'AKIAIJMZ5RLXRO6LJHPQ',     # required
-        :aws_secret_access_key  => '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',    # required
+        :aws_access_key_id      => 'AKIAIG27A72A33NAIHTQ',     # required
+        :aws_secret_access_key  => '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',    # required
         :region => "ap-southeast-1",
     }
     if Rails.env.development?

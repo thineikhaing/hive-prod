@@ -145,7 +145,8 @@ namespace :userdefaultsetup do
       con = Net::HTTP.new(uri.host, uri.port)
       r = con.start {|http| http.request(res)}
       new_results = JSON.parse(r.body)
-      result += new_results["value"]
+      new_results["value"]
+      result += new_results["value"] unless new_results["value"].nil?
 
       # Increment.
       i += 50
@@ -202,7 +203,7 @@ namespace :userdefaultsetup do
       r = con.start {|http| http.request(res)}
       new_results = JSON.parse(r.body)
 
-      result += new_results["value"]
+      result += new_results["value"] unless new_results["value"].nil?
       p "+++++++++"
       p "new_results"
       p new_results["value"].count
@@ -239,7 +240,7 @@ namespace :userdefaultsetup do
                            place_id: 0)
          post.broadcast_hive
          post.broadcast_other_app(nil)
-  
+
          p post.content
          p "+++"
        end

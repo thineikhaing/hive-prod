@@ -34,7 +34,7 @@ class UserMailer < ActionMailer::Base
     else
       @reset_pwd_url = "http://h1ve-production.herokuapp.com/reset_password?token=" + user.reset_password_token
     end
-    mail :to => user.email, :subject => "Password Reset"
+    mail :to => user.email, :subject => "Papassword_reset_to_appssword Reset"
   end
 
   def password_reset_to_app(user)
@@ -45,7 +45,7 @@ class UserMailer < ActionMailer::Base
     else
       host_url = "https://roundtrip-sg.herokuapp.com"
     end
-    
+
     @reset_url = host_url+"/reset_password/" + @user.reset_password_token
     mail :to => user.email, :subject => "Password Reset token"
   end
