@@ -43,7 +43,6 @@ class Api::RoundtripController < ApplicationController
     trip_route = params[:trip_route]
     trip_eta = params[:trip_eta]
     transit_color = "#6981E0"
-    params[:duration].present? ? duration = params[:duration].to_i : duration=0
     category = ""
     locality=""
     country=""
@@ -54,11 +53,18 @@ class Api::RoundtripController < ApplicationController
     address = ""
     start_id = 0
     end_id = 0
-    total_distance = 0.0
+    total_distance = total_duration = 0.0
     tripData = Hash.new
+    nativeData = Hash.new
+
+    params[:currency].present? ? currency = params[:currency] : currency= ""
+    params[:native_legs].present? ? native_legs = params[:native_legs] : native_legs= ""
+    p "native_legs"
+    p native_legs = native_legs.to_s
+
+    nativeData[:data]= native_legs
 
     if params[:start_latlng]
-
       s_geo_localization = "#{s_lat},#{s_lng}"
       s_query = Geocoder.search(s_geo_localization).first
       address = s_query.address
@@ -69,6 +75,9 @@ class Api::RoundtripController < ApplicationController
                                        s_query.place_id, nil, user_id, auth_token,
                                        choice,img_url,category,locality,country,postcode)
       start_id = start_place[:place].id
+
+      params[:start_addr].present? ? start_addr = params[:start_addr] : start_addr= s_query.address
+
     end
 
     if params[:end_latlng]
@@ -82,7 +91,9 @@ class Api::RoundtripController < ApplicationController
       end_place = e_place.add_record(arrival_name, e_lat, e_lng, address, nil,
                                      e_query.place_id, nil, user_id, auth_token,
                                      choice,img_url,category,locality,country,postcode)
-    end_id = end_place[:place].id
+      end_id = end_place[:place].id
+
+      params[:end_addr].present? ? start_addr = params[:end_addr] : end_addr= e_query.address
     end
 
     if params[:trip_route].present?
@@ -97,15 +108,16 @@ class Api::RoundtripController < ApplicationController
           f_detail =  Hash.new []
           t_detail =  Hash.new []
           distance = data[:distance].to_f
+          step_duration = data[:duration].to_f
+          total_duration = total_duration + step_duration
           total_distance = total_distance + distance
           mode = data[:mode]
-
-          p from_detail = data[:from]
+          from_detail = data[:from]
           from_name = from_detail[:name]
           from_lat = from_detail[:lat]
           from_lng = from_detail[:lon]
 
-          p to_detail = data[:to]
+          to_detail = data[:to]
           to_name = to_detail[:name]
           to_lat = to_detail[:lat]
           to_lng = to_detail[:lon]
@@ -144,7 +156,7 @@ class Api::RoundtripController < ApplicationController
             end
           end
           route_hash.push({from:f_detail, to: t_detail,
-                               distance:distance, mode: mode,
+                               distance:distance,duration:step_duration, mode: mode,
                                geo_point: geo_points,short_name: short_name,
                                color:transit_color, total_stops: total_stops})
 
@@ -162,7 +174,9 @@ class Api::RoundtripController < ApplicationController
           t_detail =  Hash.new []
 
           distance = data[:distance][:value].to_f
+          step_duration = data[:duration][:value].to_f
           total_distance = total_distance + distance
+          total_duration = total_duration + step_duration
           travel_mode = data[:travel_mode]
 
           from_detail = data[:start_location]
@@ -214,7 +228,7 @@ class Api::RoundtripController < ApplicationController
           end
 
           route_hash.push({from:f_detail, to: t_detail,
-                               distance:distance, mode: mode,
+                               distance:distance,duration:step_duration, mode: mode,
                                geo_point: geo_points,short_name: short_name,
                                color:transit_color,total_stops: total_stops})
 
@@ -239,15 +253,19 @@ class Api::RoundtripController < ApplicationController
       p create_new = 0 if diff_in_hours < 12
     end
 
-    if create_new == 1
-      trip = Trip.create(user_id: user_id,start_place_id: start_id,
-                         end_place_id: end_id,transit_mode: transit_mode,
-                         depature_time: depature_time, arrival_time: arrival_time,
-                         distance: total_distance, fare: fare, data: tripData,
-                         depart_latlng:start_latlng, arr_latlng: end_latlng,
-                         depature_name:depature_name,arrival_name:arrival_name,duration:duration)
-      trip = trip.save!
-    end
+    # if create_new == 1
+    #
+    # end
+
+    trip = Trip.create(user_id: user_id,start_place_id: start_id,
+                       end_place_id: end_id,transit_mode: transit_mode,
+                       depature_time: depature_time, arrival_time: arrival_time,
+                       distance: total_distance,duration:total_duration, fare: fare, data: tripData,
+                       depart_latlng:start_latlng, arr_latlng: end_latlng,
+                       depature_name:depature_name,arrival_name:arrival_name,
+                      native_legs:nativeData,currency:currency,
+                      start_addr:start_addr,end_addr: end_addr)
+    trip = trip.save!
 
     if params[:hybrid].present?
       if params[:hybrid].to_s == "true"

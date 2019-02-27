@@ -16,7 +16,7 @@ class Api::UsersController < ApplicationController
   end
 
   def get_trip_list
-    trips = Trip.where(user_id: current_user.id).order("updated_at desc")
+    trips = Trip.where(user_id: current_user.id)
     # if trips.count > 11
     #   ids = trips.limit(10).order('id DESC').pluck(:id)
     #   trips.where('id NOT IN (?)', ids).destroy_all
@@ -24,40 +24,54 @@ class Api::UsersController < ApplicationController
 
     params[:num_trips].present? ? num_trips = params[:num_trips].to_i : num_trips=0
     params[:trip_id].present? ? trip_id= params[:trip_id].to_i : trip_id=0
-    if num_trips ==0 && trip_id ==0
-      trips =  trips.order("id DESC").limit(10)
-    elsif num_trips > 0 && trip_id ==0
-      trips =  trips.order("id DESC").limit(num_trips)
-    elsif num_trips == 0 && trip_id > 0
-      trips =  trips.where("id < ?", trip_id).order("id DESC").limit(10)
-    elsif num_trips > 0 && trip_id > 0
-      trips =  trips.where("id < ?", trip_id).order("id DESC").limit(num_trips)
+    params[:get_all].present? ? get_all= params[:get_all].to_i : get_all = 0
+
+    if get_all == 1
+      trips = trips.order("id DESC")
+    else
+      if num_trips == 0 && trip_id ==0
+        trips =  trips.order("id DESC").limit(10)
+      elsif num_trips > 0 && trip_id ==0
+        trips =  trips.order("id DESC").limit(num_trips)
+      elsif num_trips == 0 && trip_id > 0
+        trips =  trips.where("id < ?", trip_id).order("id DESC").limit(10)
+      elsif num_trips > 0 && trip_id > 0
+        trips =  trips.where("id < ?", trip_id).order("id DESC").limit(num_trips)
+      end
     end
+
 
     trip_detail =  []
     trip_list = []
     trips.each do |trip|
       detail = trip.data["route_detail"]
-      tt_detail = eval(detail)
+      tt_detail = eval(detail) unless detail.nil?
       trip_detail.push(tt_detail)
+      native_data = trip.native_legs["data"] unless trip.native_legs.nil?
       trip_list.push(
         id: trip.id,
         user_id: trip.user_id,
         depature_name: trip.depature_name,
         arrival_name: trip.arrival_name,
-        depart_lat: trip.depart.latitude,
-        depart_lng: trip.depart.longitude,
-        arrive_lat: trip.arrive.latitude,
-        arrive_lng: trip.arrive.longitude,
+        depart_coordinate: trip.depart_latlng,
+        source_coordinate: trip.arr_latlng,
+        start_addr: trip.start_addr,
+        end_addr: trip.end_addr,
         transit_mode: trip.transit_mode,
         depature_time: trip.depature_time,
         arrival_time: trip.arrival_time,
         duration: trip.duration,
         distance: trip.distance,
         fare: trip.fare,
+        currency: trip.currency,
         source: trip.data["source"],
         country: trip.data["country"],
-        legs:tt_detail)
+        depart_lat: trip.depart.latitude,
+        depart_lng: trip.depart.longitude,
+        arrive_lat: trip.arrive.latitude,
+        arrive_lng: trip.arrive.longitude,
+        legs:tt_detail,
+        native_legs:JSON.parse(native_data))
     end
 
 
