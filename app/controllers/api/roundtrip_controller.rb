@@ -93,7 +93,7 @@ class Api::RoundtripController < ApplicationController
                                      choice,img_url,category,locality,country,postcode)
       end_id = end_place[:place].id
 
-      params[:end_addr].present? ? start_addr = params[:end_addr] : end_addr= e_query.address
+      params[:end_addr].present? ? end_addr = params[:end_addr] : end_addr= e_query.address
     end
 
     if params[:trip_route].present?
