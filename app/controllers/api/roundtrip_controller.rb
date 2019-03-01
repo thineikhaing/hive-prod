@@ -279,8 +279,37 @@ class Api::RoundtripController < ApplicationController
     end
 
     user_trips  = Trip.where(user_id: user_id).order("updated_at DESC")
-    render json:{status: 200,message:message, trips: user_trips}
 
+    trip =  Trip.where(user_id: user_id).last
+    native_data = JSON.parse(trip.native_legs["data"]) unless trip.native_legs.nil?
+    detail = trip.data["route_detail"]
+    tt_detail = eval(detail) unless detail.nil?
+
+    user_trip = {
+      id: trip.id,
+      user_id: trip.user_id,
+      depature_name: trip.depature_name,
+      arrival_name: trip.arrival_name,
+      start_addr: trip.start_addr,
+      end_addr: trip.end_addr,
+      transit_mode: trip.transit_mode,
+      depature_time: trip.depature_time,
+      arrival_time: trip.arrival_time,
+      duration: trip.duration,
+      distance: trip.distance,
+      fare: trip.fare,
+      currency: trip.currency,
+      source: trip.data["source"],
+      country: trip.data["country"],
+      depart_lat: trip.depart.latitude,
+      depart_lng: trip.depart.longitude,
+      arrive_lat: trip.arrive.latitude,
+      arrive_lng: trip.arrive.longitude,
+      legs:tt_detail,
+      native_legs:native_data
+    }
+
+    render json:{status: 200,message:message, trip: user_trip}
   end
 
   def get_trip

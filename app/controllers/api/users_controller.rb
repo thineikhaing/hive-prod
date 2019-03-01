@@ -47,14 +47,22 @@ class Api::UsersController < ApplicationController
       detail = trip.data["route_detail"]
       tt_detail = eval(detail) unless detail.nil?
       trip_detail.push(tt_detail)
+      p "trip.native_legs"
+      # p JSON.parse(trip.native_legs["data"])
       native_data = trip.native_legs["data"] unless trip.native_legs.nil?
+
+      begin
+        native_data = JSON.parse(native_data)
+      rescue
+         puts "Rescued: JSON parsing"
+      end
+
+
       trip_list.push(
         id: trip.id,
         user_id: trip.user_id,
         depature_name: trip.depature_name,
         arrival_name: trip.arrival_name,
-        depart_coordinate: trip.depart_latlng,
-        source_coordinate: trip.arr_latlng,
         start_addr: trip.start_addr,
         end_addr: trip.end_addr,
         transit_mode: trip.transit_mode,
@@ -71,7 +79,7 @@ class Api::UsersController < ApplicationController
         arrive_lat: trip.arrive.latitude,
         arrive_lng: trip.arrive.longitude,
         legs:tt_detail,
-        native_legs:JSON.parse(native_data))
+        native_legs:native_data)
     end
 
 
