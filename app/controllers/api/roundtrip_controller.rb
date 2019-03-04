@@ -253,19 +253,19 @@ class Api::RoundtripController < ApplicationController
       p create_new = 0 if diff_in_hours < 12
     end
 
-    # if create_new == 1
-    #
-    # end
+    if create_new == 1
+      trip = Trip.create(user_id: user_id,start_place_id: start_id,
+                         end_place_id: end_id,transit_mode: transit_mode,
+                         depature_time: depature_time, arrival_time: arrival_time,
+                         distance: total_distance,duration:total_duration, fare: fare, data: tripData,
+                         depart_latlng:start_latlng, arr_latlng: end_latlng,
+                         depature_name:depature_name,arrival_name:arrival_name,
+                        native_legs:nativeData,currency:currency,
+                        start_addr:start_addr,end_addr: end_addr)
+      trip = trip.save!
+    end
 
-    trip = Trip.create(user_id: user_id,start_place_id: start_id,
-                       end_place_id: end_id,transit_mode: transit_mode,
-                       depature_time: depature_time, arrival_time: arrival_time,
-                       distance: total_distance,duration:total_duration, fare: fare, data: tripData,
-                       depart_latlng:start_latlng, arr_latlng: end_latlng,
-                       depature_name:depature_name,arrival_name:arrival_name,
-                      native_legs:nativeData,currency:currency,
-                      start_addr:start_addr,end_addr: end_addr)
-    trip = trip.save!
+
 
     if params[:hybrid].present?
       if params[:hybrid].to_s == "true"
