@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.5.3'
+ruby '2.6.1'
 #gem 'rails', :git => 'git://github.com/rails/rails.git', :tag => 'v4.1.0.beta1'
 gem 'rails'
 gem 'puma'
@@ -98,7 +98,8 @@ end
 
 group :development, :test do
   gem 'rspec-rails'
-  gem 'factory_bot_rails'
+  # gem 'factory_bot_rails'
+  gem 'factory_bot'
   gem 'shoulda-matchers'
   # gem 'evergreen'           , :require => 'evergreen/rails' # Run Jasmine JavaScript unit tests, integrate them into Ruby applications.
   gem 'database_cleaner'

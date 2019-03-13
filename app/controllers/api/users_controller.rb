@@ -26,8 +26,10 @@ class Api::UsersController < ApplicationController
     params[:trip_id].present? ? trip_id= params[:trip_id].to_i : trip_id=0
     params[:get_all].present? ? get_all= params[:get_all].to_i : get_all = 0
 
-    if get_all == 1
+    if get_all == 1 && trip_id == 0
       trips = trips.order("id DESC")
+    elsif get_all == 1 && trip_id > 0
+      trips = trips.where("id > ?", trip_id).order("id DESC")
     else
       if num_trips == 0 && trip_id ==0
         trips =  trips.order("id DESC").limit(10)

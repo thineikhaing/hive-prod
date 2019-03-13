@@ -125,6 +125,8 @@ namespace :userdefaultsetup do
 
   end
 
+
+
   desc "Fetch bus stop data from data mall"
   task :fetch_busroute_data_from_data_mall  => :environment do
     ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_bus_routes
@@ -137,7 +139,6 @@ namespace :userdefaultsetup do
       uri = URI('http://datamall2.mytransport.sg/ltaodataservice/BusRoutes')
       params = { :$skip => i}
       uri.query = URI.encode_www_form(params)
-      p uri
       res = Net::HTTP::Get.new(uri,
                                initheader = {"accept" =>"application/json",
                                              "AccountKey"=>"4G40nh9gmUGe8L2GTNWbgg==",
@@ -240,13 +241,25 @@ namespace :userdefaultsetup do
                            place_id: 0)
          post.broadcast_hive
          post.broadcast_other_app(nil)
-
-         p post.content
-         p "+++"
        end
-    # j= scheduler.job(job)
-    # j.unschedule
   end
+
+  desc "fetch ygn bus stops"
+  task :fetch_ygn_bus_stops  => :environment do
+    uri = URI('http://ygnbus.herokuapp.com/api/bus/')
+    res = Net::HTTP::Get.new(uri, initheader = {"Authorization" =>"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoiMzc2ODcyOTMiLCJoYXNoIjp7Il9oYW5kbGUiOnt9fX0.Hl5u9m4n5npnLpRBehyFMrbghMlOYeMT1xUru3bIXVQ"})
+    con = Net::HTTP.new(uri.host, uri.port)
+    r = con.start {|http| http.request(res)}
+    results = JSON.parse(r.body)
+    results.map{|data|
+      p data["bus"]["busID"]
+      p data["bus"]["busName"]
+      p data["bus"]["busTypeID"]["busTypeName"]
+      p "++++++++++++++++"
+    }
+    end
+
+    
 
 
 
