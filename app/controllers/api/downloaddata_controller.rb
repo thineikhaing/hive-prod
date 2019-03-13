@@ -81,7 +81,7 @@ class Api::DownloaddataController < ApplicationController
       trip_detail =  []
       trips.each do |trip|
         detail = trip.data["route_detail"]
-        tt_detail = eval(detail)
+        tt_detail = eval(detail) unless detail.nil?
         trip_detail.push(tt_detail)
         trip_list.push(
           id: trip.id,
