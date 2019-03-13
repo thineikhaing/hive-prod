@@ -59,14 +59,19 @@ class Api::UsersController < ApplicationController
          puts "Rescued: JSON parsing"
       end
 
+      start_addr = trip.start_addr
+      start_addr = trip.depart.address if trip.start_addr.nil?
+
+      end_addr = trip.end_addr
+      end_addr = trip.arrive.address if trip.end_addr.nil?
 
       trip_list.push(
         id: trip.id,
         user_id: trip.user_id,
         depature_name: trip.depature_name,
         arrival_name: trip.arrival_name,
-        start_addr: trip.start_addr,
-        end_addr: trip.end_addr,
+        start_addr: start_addr,
+        end_addr: end_addr,
         transit_mode: trip.transit_mode,
         depature_time: trip.depature_time,
         arrival_time: trip.arrival_time,
