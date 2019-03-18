@@ -1109,39 +1109,44 @@ end
   def get_bus_directions
     service_no = params[:service_no]
     busRoutes = SgBusRoute.where(service_no: service_no)
-    first_direction = busRoutes.first.direction
-    last_direction = busRoutes.last.direction
-    towards = []
-    directions = []
-    if first_direction != last_direction
-      direction_one = busRoutes.where(direction: 1)
-      direction_two = busRoutes.where(direction: 2)
-      sequence1 = simplify_bus_sequence(direction_one)
-      sequence2 = simplify_bus_sequence(direction_two)
-      directions.push(sequence1, sequence2)
+    if busRoutes.present?
+      first_direction = busRoutes.first.direction
+      last_direction = busRoutes.last.direction
+      towards = []
+      directions = []
+      if first_direction != last_direction
+        direction_one = busRoutes.where(direction: 1)
+        direction_two = busRoutes.where(direction: 2)
+        sequence1 = simplify_bus_sequence(direction_one)
+        sequence2 = simplify_bus_sequence(direction_two)
+        directions.push(sequence1, sequence2)
 
-      d1startStop = SgBusStop.find_by_bus_id(direction_one.first.bus_stop_code)
-      d1endStop = SgBusStop.find_by_bus_id(direction_one.last.bus_stop_code)
+        d1startStop = SgBusStop.find_by_bus_id(direction_one.first.bus_stop_code)
+        d1endStop = SgBusStop.find_by_bus_id(direction_one.last.bus_stop_code)
 
-      d2startStop = SgBusStop.find_by_bus_id(direction_two.first.bus_stop_code)
-      d2endStop = SgBusStop.find_by_bus_id(direction_two.last.bus_stop_code)
+        d2startStop = SgBusStop.find_by_bus_id(direction_two.first.bus_stop_code)
+        d2endStop = SgBusStop.find_by_bus_id(direction_two.last.bus_stop_code)
 
-      towards.push({from:d1startStop.description , to:d1endStop.description})
-      towards.push({from: d2startStop.description, to:d2endStop.description})
+        towards.push({from:d1startStop.description , to:d1endStop.description})
+        towards.push({from: d2startStop.description, to:d2endStop.description})
 
-      render json: {status:200, towards:towards,directions:directions}
+        render json: {status:200, towards:towards,directions:directions}
+      else
+        sequence1 = simplify_bus_sequence(busRoutes)
+
+        startStop = SgBusStop.find_by_bus_id(busRoutes.first.bus_stop_code)
+        endStop = SgBusStop.find_by_bus_id(busRoutes.last.bus_stop_code)
+
+
+        towards.push({from:startStop.description, to:endStop.description})
+        directions.push(sequence1)
+
+        render json: {status:200, towards:towards, directions:directions}
+      end
     else
-      sequence1 = simplify_bus_sequence(busRoutes)
-
-      startStop = SgBusStop.find_by_bus_id(busRoutes.first.bus_stop_code)
-      endStop = SgBusStop.find_by_bus_id(busRoutes.last.bus_stop_code)
-
-
-      towards.push({from:startStop.description, to:endStop.description})
-      directions.push(sequence1)
-
-      render json: {status:200, towards:towards, directions:directions}
+        render json: {status:200, message: "Not Available"}
     end
+
 
   end
 
