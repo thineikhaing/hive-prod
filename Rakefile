@@ -3,4 +3,5 @@
 
 require File.expand_path('../config/application', __FILE__)
 
+ENV['NEW_RELIC_AGENT_ENABLED'] = 'false'
 Rails.application.load_tasks

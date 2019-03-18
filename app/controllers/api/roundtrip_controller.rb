@@ -285,13 +285,19 @@ class Api::RoundtripController < ApplicationController
     detail = trip.data["route_detail"]
     tt_detail = eval(detail) unless detail.nil?
 
+    start_addr = trip.start_addr
+    start_addr = trip.depart.address if trip.start_addr.nil?
+
+    end_addr = trip.end_addr
+    end_addr = trip.arrive.address if trip.end_addr.nil?
+
     user_trip = {
       id: trip.id,
       user_id: trip.user_id,
-      depature_name: trip.depature_name,
+      depature_name: start_addr,
       arrival_name: trip.arrival_name,
       start_addr: trip.start_addr,
-      end_addr: trip.end_addr,
+      end_addr: end_addr,
       transit_mode: trip.transit_mode,
       depature_time: trip.depature_time,
       arrival_time: trip.arrival_time,
@@ -327,6 +333,7 @@ class Api::RoundtripController < ApplicationController
           render json: {status:201, error_message: "Trip Record Not Found."}
         end
         if trip_to_delete.present?
+          trip_to_delete.delete_event_broadcast_hive
           trip_to_delete.destroy
           trips = Trip.where(user_id: params[:user_id])
           render json: {status:200, message: "Delete trip by id."}
