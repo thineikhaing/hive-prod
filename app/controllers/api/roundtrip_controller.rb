@@ -1097,19 +1097,71 @@ end
 
   end
 
+  def get_sg_services
+    bus_services = []
+    sgBusService =   SgBusService.select(:service_no,:operator).distinct.order(:service_no)
+    sgBusService.map{|data|
+      bus_services.push({service_no: data.service_no.upcase, operator: data.operator})
+    }
+    render json: {status:200,count:bus_services.count,buses: bus_services}
+  end
+
+  def get_bus_directions
+    service_no = params[:service_no]
+    busRoutes = SgBusRoute.where(service_no: service_no)
+    first_direction = busRoutes.first.direction
+    last_direction = busRoutes.last.direction
+    towards = []
+    directions = []
+    if first_direction != last_direction
+      direction_one = busRoutes.where(direction: 1)
+      direction_two = busRoutes.where(direction: 2)
+      sequence1 = simplify_bus_sequence(direction_one)
+      sequence2 = simplify_bus_sequence(direction_two)
+      directions.push(sequence1, sequence2)
+
+      d1startStop = SgBusStop.find_by_bus_id(direction_one.first.bus_stop_code)
+      d1endStop = SgBusStop.find_by_bus_id(direction_one.last.bus_stop_code)
+
+      d2startStop = SgBusStop.find_by_bus_id(direction_two.first.bus_stop_code)
+      d2endStop = SgBusStop.find_by_bus_id(direction_two.last.bus_stop_code)
+
+      towards.push({from:d1startStop.description , to:d1endStop.description})
+      towards.push({from: d2startStop.description, to:d2endStop.description})
+
+      render json: {status:200, towards:towards,directions:directions}
+    else
+      sequence1 = simplify_bus_sequence(busRoutes)
+
+      startStop = SgBusStop.find_by_bus_id(busRoutes.first.bus_stop_code)
+      endStop = SgBusStop.find_by_bus_id(busRoutes.last.bus_stop_code)
+
+
+      towards.push({from:startStop.description, to:endStop.description})
+      directions.push(sequence1)
+
+      render json: {status:200, towards:towards, directions:directions}
+    end
+
+  end
+
   def get_bus_sequence
     busRoute = SgBusRoute.find_by(service_no: params[:service_no],bus_stop_code: params[:bus_id])
-
     mainRoute = SgBusRoute.where(service_no: params[:service_no],direction: busRoute.direction)
+    seqHash = simplify_bus_sequence(mainRoute)
+    render json: {busSequence:seqHash, status: 200}
+
+  end
+
+  def simplify_bus_sequence(busRoute)
     seqHash = []
     busStops = []
     group_stops =  []
-    mainRoute.map{|rt| busStops.push(SgBusStop.find_by_bus_id(rt.bus_stop_code))}
+    busRoute.map{|rt| busStops.push(SgBusStop.find_by_bus_id(rt.bus_stop_code))}
     i =  0
     prev_roadname = ""
     prev_condition = 0
     while i <= busStops.length-1
-
       if busStops[i+1].present?
         if busStops[i].road_name == busStops[i+1].road_name
 
@@ -1147,20 +1199,17 @@ end
 
       i+=1
     end
-    p "group rest"
-    p group_stops
 
     if group_stops.length > 0
-      p group_roadname= group_stops.group_by(&:road_name)
+      group_roadname= group_stops.group_by(&:road_name)
       group_roadname.each do |key, value|
         seqHash.push({road_name: key,stops:value})
       end
     end
 
-    render json: {busSequence:seqHash, status: 200}
+    return seqHash
 
   end
-
 
   def get_user_fav_buses
     if current_user.present?
