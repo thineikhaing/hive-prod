@@ -420,7 +420,7 @@ class Api::RoundtripController < ApplicationController
             header = 'MRT (UPDATE)'
           elsif text.downcase.include?("cleared")
             mrt_status = 'cleared'
-            header = 'MRT (ClEARED)'
+            header = 'MRT (CLEARED)'
           elsif text.downcase.include?("alert")
             mrt_status = 'alert'
             header = 'MRT (ALERT)'
