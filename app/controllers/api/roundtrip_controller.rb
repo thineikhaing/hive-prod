@@ -1103,6 +1103,11 @@ end
     sgBusService.map{|data|
       bus_services.push({service_no: data.service_no.upcase, operator: data.operator})
     }
+
+    bus_services = bus_services.sort {|x,y|
+      y[:service_no].to_i <=>x[:service_no].to_i
+    }.reverse
+
     render json: {status:200,count:bus_services.count,buses: bus_services}
   end
 
