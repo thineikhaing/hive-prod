@@ -29,7 +29,7 @@ gem 'fog-aws'
 gem "koala"
 gem 'factual-api'
 gem 'obscenity'
-gem 'newrelic_rpm'
+gem 'newrelic_rpm', '~> 6.2', '>= 6.2.0.354'
 gem 'airbrake'
 gem "mini_magick"
 gem "encryptor"

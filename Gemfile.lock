@@ -348,7 +348,7 @@ GEM
     mustermann (1.0.3)
     naught (1.1.0)
     nenv (0.3.0)
-    newrelic_rpm (6.1.0.352)
+    newrelic_rpm (6.2.0.354)
     nio4r (2.3.1)
     nokogiri (1.10.1)
       mini_portile2 (~> 2.4.0)
@@ -589,7 +589,7 @@ DEPENDENCIES
   license_finder
   literate_randomizer
   mini_magick
-  newrelic_rpm
+  newrelic_rpm (~> 6.2, >= 6.2.0.354)
   oauth1
   obscenity
   pg
