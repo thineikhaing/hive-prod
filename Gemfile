@@ -82,6 +82,7 @@ end
 # gem 'faker', :git => 'https://github.com/stympy/faker.git', :branch => 'master'
 
 gem 'literate_randomizer'
+gem "insta_scrape", :git => "https://github.com/dannyvassallo/insta_scrape.git", :branch => "develop"
 
 group :assets do
   gem 'bourbon'
