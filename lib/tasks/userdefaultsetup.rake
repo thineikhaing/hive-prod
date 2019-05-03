@@ -77,7 +77,7 @@ namespace :userdefaultsetup do
 
   desc "Fetch bus stop data from data mall"
   task :fetch_busstop_data_from_data_mall  => :environment do
-    ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_bus_stops RESTART IDENTITY")
+
     result = []
     i = 0
     loop do
@@ -104,6 +104,9 @@ namespace :userdefaultsetup do
     end
 
     uniq_result = result.uniq{ |stop| [stop["BusStopCode"]]}
+
+    ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_bus_stops RESTART IDENTITY")
+
     uniq_result.each do |data|
       sg = SgBusStop.create(bus_id: data["BusStopCode"].to_s,road_name: data["RoadName"],
                             description: data["Description"],latitude: data["Latitude"],longitude: data["Longitude"])
@@ -114,7 +117,7 @@ namespace :userdefaultsetup do
 
   desc "Fetch bus stop data from data mall"
   task :fetch_busroute_data_from_data_mall  => :environment do
-    ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_bus_routes RESTART IDENTITY")
+
 
     result = []
     i = 0
@@ -141,8 +144,10 @@ namespace :userdefaultsetup do
     uniqresults = result.uniq do |hash|
       [hash["ServiceNo"],hash["BusStopCode"] ,hash["StopSequence"]]
     end
-    uniqresults.each do |data|
 
+    ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_bus_routes RESTART IDENTITY")
+
+    uniqresults.each do |data|
       rt = SgBusRoute.create(service_no: data["ServiceNo"],operator: data["Operator"],
                              direction: data["Direction"],stop_sequence: data["StopSequence"],
                              bus_stop_code: data["BusStopCode"],distance: data["Distance"],
@@ -157,7 +162,6 @@ namespace :userdefaultsetup do
 
   desc "Fetch bus service data from data mall"
   task :fetch_busservice_data_from_data_mall  => :environment do
-    ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_bus_services RESTART IDENTITY")
 
     result = []
     i = 0
@@ -186,6 +190,9 @@ namespace :userdefaultsetup do
     end
 
     uniqresults = result.uniq{ |service| [service["ServiceNo"], service["Direction"]]}
+
+    ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_bus_services RESTART IDENTITY")
+
     uniqresults.each do |data|
 
       scv = SgBusService.create(service_no: data["ServiceNo"],operator: data["Operator"],

@@ -267,16 +267,16 @@ class Api::RoundtripController < ApplicationController
 
 
 
-    if params[:hybrid].present?
-      if params[:hybrid].to_s == "true"
-        p "limit phonegap user's trip count to 10"
-        trips = Trip.where(user_id: user_id)
-        if trips.count > 11
-          ids = trips.limit(10).order('id DESC').pluck(:id)
-          trips.where('id NOT IN (?)', ids).destroy_all
-        end
-      end
-    end
+    # if params[:hybrid].present?
+    #   if params[:hybrid].to_s == "true"
+    #     p "limit phonegap user's trip count to 10"
+    #     trips = Trip.where(user_id: user_id)
+    #     if trips.count > 11
+    #       ids = trips.limit(10).order('id DESC').pluck(:id)
+    #       trips.where('id NOT IN (?)', ids).destroy_all
+    #     end
+    #   end
+    # end
 
     user_trips  = Trip.where(user_id: user_id).order("updated_at DESC")
 
