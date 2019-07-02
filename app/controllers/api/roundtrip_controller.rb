@@ -1135,7 +1135,7 @@ end
         towards.push({from:d1startStop.description , to:d1endStop.description})
         towards.push({from: d2startStop.description, to:d2endStop.description})
 
-        render json: {status:200, towards:towards,directions:directions}
+        render json: {status:200,service_no:service_no, towards:towards,directions:directions}
       else
         sequence1 = simplify_bus_sequence(busRoutes)
 
@@ -1146,10 +1146,10 @@ end
         towards.push({from:startStop.description, to:endStop.description})
         directions.push(sequence1)
 
-        render json: {status:200, towards:towards, directions:directions}
+        render json: {status:200, service_no:service_no,towards:towards, directions:directions}
       end
     else
-        render json: {status:200, message: "Not Available"}
+        render json: {status:400, message: "Not Available"}
     end
 
 
