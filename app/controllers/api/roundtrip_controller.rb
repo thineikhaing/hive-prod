@@ -1518,11 +1518,18 @@ end
             p stop.description
             chktoFlag = false if arr_distance == 0.0
           elsif arr_distance <= 0.24
+            p "closet destination"
             p arr_distance
-            p "closet_destination"
             p stop.id
-            closet_destination = stop.bus_id
+            p stop.bus_id
             p stop.description
+            closet_destination = stop.bus_id
+          # else
+          #   p "closetttt destination"
+          #   p arr_distance
+          #   p stop.id
+          #   p stop.bus_id
+          #   p stop.description
           end
         end
 
@@ -1531,39 +1538,60 @@ end
 
     tobusId = closet_destination if chktoFlag == true and !closet_destination.nil?
     frombusId = closet_origin if chkfromFlag == true and !closet_origin.nil?
-
     p "from and to bus"
-    p frombusId
-    p tobusId
+    bus_start = SgBusRoute.where(service_no: service_no, bus_stop_code: frombusId)
+    bus_end = SgBusRoute.where(service_no: service_no, bus_stop_code: tobusId)
 
-    p bus_start = SgBusRoute.where(service_no: service_no, bus_stop_code: frombusId)
-    p bus_end = SgBusRoute.where(service_no: service_no, bus_stop_code: tobusId)
+    dir1 = bus_start.take.direction
+    dir2 = bus_end.take.direction
 
     if bus_start.count > 1 and bus_end.count == 1
       bus_start = bus_start.where(direction: bus_end.take.direction).take
       bus_end = bus_end.take
     elsif bus_end.count > 1 and bus_start.count == 1
-      bus_end = bus_end.where(direction: bus_start.take.direction).take
+
+      if dir1 != dir2
+        bus_end = bus_end.where(direction: bus_start.take.direction).take
+      else
+        bus_end = bus_end.last
+      end
       bus_start = bus_start.take
     else
       bus_start = bus_start.take
       bus_end = bus_end.take
     end
+    p "bus start"
+    p bus_start
+    p "bus end"
+    p bus_end
 
-    busArray = []
+    bus_routes = SgBusRoute.where(service_no: service_no)
+    p "first and last directions"
+    p first_dir = bus_routes.first.direction
+    p last_dir = bus_routes.last.direction
+
+    busArray = route = []
     if !bus_start.nil? && !bus_end.nil?
       start_id = bus_start.id
       end_id = bus_end.id
 
+      if first_dir != last_dir
+      else
+      end
+
       if start_id > end_id
+        p "id desc"
         sg_bus_routes = SgBusRoute.where(id: end_id .. start_id).order("id desc")
       else
+        p "id asc"
         sg_bus_routes = SgBusRoute.where(id: start_id .. end_id)
       end
-      bus_route = sg_bus_routes.where(direction: bus_start.direction)
-      bus_route.each do |route|
+      route = sg_bus_routes.where(direction: bus_start.direction)
+
+      route.each do |route|
         sgstop = SgBusStop.find_by_bus_id(route.bus_stop_code)
         busArray.push({
+                id: route.id,
                 bus_stop_id: sgstop.bus_id,
                 bus_id: sgstop.bus_id,
                 road_name:sgstop.road_name,
