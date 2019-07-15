@@ -1524,19 +1524,24 @@ end
             p stop.bus_id
             p stop.description
             closet_destination = stop.bus_id
-          # else
-          #   p "closetttt destination"
-          #   p arr_distance
-          #   p stop.id
-          #   p stop.bus_id
-          #   p stop.description
+            # chktoFlag = false
           end
+        end
+
+        if arr_distance == 0.0
+          p "closet destination"
+          p arr_distance
+          p stop.id
+          p stop.bus_id
+          p stop.description
+          p tobusId = stop.bus_id
+          chktoFlag = false
         end
 
       end
     end
 
-    tobusId = closet_destination if chktoFlag == true and !closet_destination.nil?
+    p tobusId = closet_destination if chktoFlag == true and !closet_destination.nil?
     frombusId = closet_origin if chkfromFlag == true and !closet_origin.nil?
     p "from and to bus"
     bus_start = SgBusRoute.where(service_no: service_no, bus_stop_code: frombusId)
@@ -1549,7 +1554,6 @@ end
       bus_start = bus_start.where(direction: bus_end.take.direction).take
       bus_end = bus_end.take
     elsif bus_end.count > 1 and bus_start.count == 1
-
       if dir1 != dir2
         bus_end = bus_end.where(direction: bus_start.take.direction).take
       else
@@ -1575,15 +1579,9 @@ end
       start_id = bus_start.id
       end_id = bus_end.id
 
-      if first_dir != last_dir
-      else
-      end
-
       if start_id > end_id
-        p "id desc"
         sg_bus_routes = SgBusRoute.where(id: end_id .. start_id).order("id desc")
       else
-        p "id asc"
         sg_bus_routes = SgBusRoute.where(id: start_id .. end_id)
       end
       route = sg_bus_routes.where(direction: bus_start.direction)
