@@ -1498,7 +1498,7 @@ end
             p frombusId = stop.bus_id
             p stop.id
             chkfromFlag = false if dep_distance == 0.0
-          elsif dep_distance <= 0.2
+          elsif dep_distance <= 0.25
             p "closet_origin"
             p closet_origin = stop.bus_id
           end
