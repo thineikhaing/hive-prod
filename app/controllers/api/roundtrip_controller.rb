@@ -1517,7 +1517,7 @@ end
             p tobusId = stop.bus_id
             p stop.description
             chktoFlag = false if arr_distance == 0.0
-          elsif arr_distance <= 0.1
+          elsif arr_distance <= 0.24
             p arr_distance
             p "closet_destination"
             p stop.id
