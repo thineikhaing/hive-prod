@@ -1541,38 +1541,42 @@ end
       end
     end
 
-    p tobusId = closet_destination if chktoFlag == true and !closet_destination.nil?
+    tobusId = closet_destination if chktoFlag == true and !closet_destination.nil?
     frombusId = closet_origin if chkfromFlag == true and !closet_origin.nil?
     p "from and to bus"
-    bus_start = SgBusRoute.where(service_no: service_no, bus_stop_code: frombusId)
-    bus_end = SgBusRoute.where(service_no: service_no, bus_stop_code: tobusId)
+    p bus_starts = SgBusRoute.where(service_no: service_no, bus_stop_code: frombusId)
+    p bus_ends = SgBusRoute.where(service_no: service_no, bus_stop_code: tobusId)
+    p "directions"
+    p dir1 = bus_starts.take.direction
+    p dir2 = bus_ends.take.direction
 
-    dir1 = bus_start.take.direction
-    dir2 = bus_end.take.direction
 
-    if bus_start.count > 1 and bus_end.count == 1
-      bus_start = bus_start.where(direction: bus_end.take.direction).take
-      bus_end = bus_end.take
-    elsif bus_end.count > 1 and bus_start.count == 1
-      if dir1 != dir2
-        bus_end = bus_end.where(direction: bus_start.take.direction).take
+
+    if bus_starts.count > 1 and bus_ends.count == 1
+      bus_end = bus_ends.take
+      bus_start = bus_starts.where(direction: bus_end.direction).first
+
+    elsif bus_ends.count > 1 and bus_starts.count == 1
+      bus_start = bus_starts.take
+      if dir1.to_i != dir2.to_i
+        p "option 1"
+        bus_start.direction
+        bus_end = bus_ends.where(direction: bus_start.direction).first
       else
-        bus_end = bus_end.last
+        bus_end = bus_ends.last
       end
-      bus_start = bus_start.take
-    else
-      bus_start = bus_start.take
-      bus_end = bus_end.take
-    end
+
+    elsif bus_starts.count == 1 && bus_ends.count == 1
+        bus_start = bus_starts.take
+        bus_end = bus_ends.take
+      end
+
     p "bus start"
     p bus_start
     p "bus end"
     p bus_end
 
     bus_routes = SgBusRoute.where(service_no: service_no)
-    p "first and last directions"
-    p first_dir = bus_routes.first.direction
-    p last_dir = bus_routes.last.direction
 
     busArray = route = []
     if !bus_start.nil? && !bus_end.nil?
