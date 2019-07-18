@@ -1073,7 +1073,7 @@ end
       busRoute = SgBusRoute.where(bus_stop_code: stop.bus_id)
       busRoute = busRoute.uniq{ |r| [r["service_no"]]}
 
-      distance = calculate_distance([latitude.to_f,longitude.to_f],[stop.latitude,stop.longitude]).round(2)# Geocoder::Calculations.distance_between([latitude,longitude], [stop.latitude,stop.longitude], {units: :km}).round(1)
+      distance = calculate_distance([latitude.to_f,longitude.to_f],[stop.latitude,stop.longitude]).round(1)# Geocoder::Calculations.distance_between([latitude,longitude], [stop.latitude,stop.longitude], {units: :km}).round(1)
 
       stop= stop.as_json.merge!({distance: distance})
 
