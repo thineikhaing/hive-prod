@@ -390,6 +390,8 @@ class Api::RoundtripController < ApplicationController
 
     # Tweet.expiring_soon.where(creator: "SMRT_Singapore").order("created_at desc").collect do |tweet|
       text = tweet.text
+      text = CGI::unescapeHTML(text)
+
       if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides")|| text.downcase.include?("enjoy")|| text.downcase.include?("happy") || text.downcase.include?("shine")
         # p "found non alert"
       else
@@ -454,6 +456,8 @@ class Api::RoundtripController < ApplicationController
 
       tweet_counter = tweet_counter + 1
       text = tweet.text
+      text = CGI::unescapeHTML(text)
+
       topic_id = 0
       post_count = 0
       tweet_topic = Topic.find_by_title(text)
@@ -598,6 +602,8 @@ class Api::RoundtripController < ApplicationController
       else
         text = tweet.retweeted_status.text
       end
+
+      text = CGI::unescapeHTML(text)
 
       if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides") || text.downcase.include?("enjoy")
         # p "found non alert"
@@ -1032,6 +1038,22 @@ end
     render json: {services:services,buses: buses,route:route, status: 200}
   end
 
+  def calculate_distance(a, b)
+    rad_per_deg = Math::PI/180  # PI / 180
+    rkm = 6371                  # Earth radius in kilometers
+    rm = rkm * 1000             # Radius in meters
+
+    dlon_rad = (b[1]-a[1]) * rad_per_deg  # Delta, converted to rad
+    dlat_rad = (b[0]-a[0]) * rad_per_deg
+
+    lat1_rad, lon1_rad = a.map! {|i| i * rad_per_deg }
+    lat2_rad, lon2_rad = b.map! {|i| i * rad_per_deg }
+
+    a = Math.sin(dlat_rad/2)**2 + Math.cos(lat1_rad) * Math.cos(lat2_rad) * Math.sin(dlon_rad/2)**2
+    c = 2 * Math.asin(Math.sqrt(a))
+    rm * c / 1000
+  end
+
   def nearest_busstop_within
     nearby_buses = []
     nearby_buses2 = []
@@ -1051,7 +1073,8 @@ end
       busRoute = SgBusRoute.where(bus_stop_code: stop.bus_id)
       busRoute = busRoute.uniq{ |r| [r["service_no"]]}
 
-      distance = Geocoder::Calculations.distance_between([latitude,longitude], [stop.latitude,stop.longitude], {units: :km}).round(1)
+      distance = calculate_distance([latitude.to_f,longitude.to_f],[stop.latitude,stop.longitude]).round(2)# Geocoder::Calculations.distance_between([latitude,longitude], [stop.latitude,stop.longitude], {units: :km}).round(1)
+
       stop= stop.as_json.merge!({distance: distance})
 
       buses = []
