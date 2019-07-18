@@ -1051,7 +1051,7 @@ end
 
     a = Math.sin(dlat_rad/2)**2 + Math.cos(lat1_rad) * Math.cos(lat2_rad) * Math.sin(dlon_rad/2)**2
     c = 2 * Math.asin(Math.sqrt(a))
-    rm * c / 1000
+    rm * c
   end
 
   def nearest_busstop_within
@@ -1073,7 +1073,7 @@ end
       busRoute = SgBusRoute.where(bus_stop_code: stop.bus_id)
       busRoute = busRoute.uniq{ |r| [r["service_no"]]}
 
-      distance = calculate_distance([latitude.to_f,longitude.to_f],[stop.latitude,stop.longitude]).round(1)# Geocoder::Calculations.distance_between([latitude,longitude], [stop.latitude,stop.longitude], {units: :km}).round(1)
+      distance = calculate_distance([latitude.to_f,longitude.to_f],[stop.latitude,stop.longitude]).round(0)# Geocoder::Calculations.distance_between([latitude,longitude], [stop.latitude,stop.longitude], {units: :km}).round(1)
 
       stop= stop.as_json.merge!({distance: distance})
 
