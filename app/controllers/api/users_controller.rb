@@ -590,7 +590,11 @@ class Api::UsersController < ApplicationController
 
       if params[:app_key].present?
 
-        users = users.where("app_data ->'app_id#{hiveapp.id}' = '#{hiveapp.api_key}'")
+        app_data = Hash.new
+        app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
+        current_user.app_data = Hash.new if current_user.app_data.nil?
+        current_user.app_data = current_user.app_data.merge(app_data)
+        current_user.save!
 
         if Rails.env.development?
           carmmunicate_key = Carmmunicate_key::Development_Key
@@ -602,6 +606,7 @@ class Api::UsersController < ApplicationController
 
         if hiveapp.present?
           if hiveapp.api_key == carmmunicate_key
+            users = users.where("app_data ->'app_id#{hiveapp.id}' = '#{hiveapp.api_key}'")
             time_allowance = Time.now - 20.seconds.ago
             if params[:data].present?
               data = getHashValuefromString(params[:data])

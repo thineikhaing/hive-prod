@@ -1457,6 +1457,23 @@ class Topic < ActiveRecord::Base
         GCM: android_notification.to_json
     }.to_json
 
+    # sns = Aws::SNS::Client.new
+    # iphone_notification = {
+    #     aps: {
+    #         alert: "test",
+    #         sound: "default",
+    #         badge: 0,
+    #     }
+    # }
+    #
+    # sns_message = {
+    #     default:"test",
+    #     APNS_SANDBOX: iphone_notification.to_json,
+    #     APNS: iphone_notification.to_json,
+    # }.to_json
+    #
+    # sns.publish(target_arn: arn, message: sns_message, message_structure:"json")
+
     hiveapplication = HiveApplication.find(topic.hiveapplication_id)
 
     to_endpoint_arn = []
