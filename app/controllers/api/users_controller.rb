@@ -1067,7 +1067,7 @@ class Api::UsersController < ApplicationController
         update_place.place_type =  params[:place_type]
         update_place.save!
         fav_lists = UserFavLocation.where(user_id: current_user.id).order('id desc')
-        render json:{fav_place: UserFavLocation.find_by_place_id(place_id) , userfavlocation: fav_lists , status:200 , message: "Duplicate location" }
+        render json:{fav_place: update_place , userfavlocation: fav_lists , status:200 , message: "Duplicate location" }
       end
 
     else
