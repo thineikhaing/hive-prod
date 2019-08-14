@@ -592,8 +592,12 @@ class Api::UsersController < ApplicationController
 
         app_data = Hash.new
         app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
-        current_user.app_data = Hash.new if current_user.app_data.nil?
-        current_user.app_data = current_user.app_data.merge(app_data)
+
+        if current_user.app_data.present?
+          current_user.app_data = current_user.app_data.merge(app_data)
+        else
+          current_user.app_data = app_data
+        end
         current_user.save!
 
         if Rails.env.development?

@@ -265,23 +265,25 @@ class Api::RoundtripController < ApplicationController
       trip = trip.save!
     end
 
-
-
-    # if params[:hybrid].present?
-    #   if params[:hybrid].to_s == "true"
-    #     p "limit phonegap user's trip count to 10"
-    #     trips = Trip.where(user_id: user_id)
-    #     if trips.count > 11
-    #       ids = trips.limit(10).order('id DESC').pluck(:id)
-    #       trips.where('id NOT IN (?)', ids).destroy_all
-    #     end
-    #   end
-    # end
+    if params[:hybrid].present?
+      if params[:hybrid].to_s == "true"
+        p "limit phonegap user's trip count to 10"
+        trips = Trip.where(user_id: user_id)
+        if trips.count > 15
+          ids = trips.limit(14).order('id DESC').pluck(:id)
+          trips.where('id NOT IN (?)', ids).destroy_all
+        end
+      end
+    end
 
     user_trips  = Trip.where(user_id: user_id).order("updated_at DESC")
-
     trip =  Trip.where(user_id: user_id).last
-    native_data = JSON.parse(trip.native_legs["data"]) unless trip.native_legs.nil?
+    native_data = {}
+
+    if trip.native_legs.present?
+      native_data = JSON.parse(trip.native_legs["data"])
+    end
+
     detail = trip.data["route_detail"]
     tt_detail = eval(detail) unless detail.nil?
 
@@ -1745,8 +1747,13 @@ end
       substring = " MRT Station"
       from.slice! substring
       to.slice! substring
-      from = from.gsub(/\s+$/,'')
-      to = to.gsub(/\s+$/,'')
+
+      substring = " Stn"
+      from.slice! substring
+      to.slice! substring
+
+      p from = from.gsub(/\s+$/,'')
+      p to = to.gsub(/\s+$/,'')
     end
 
     if mrt_line_name == "North South Line"
@@ -1844,8 +1851,8 @@ end
       end
       sequence = sequence.where("latitude != 0")
     elsif mrt_line_name == "Sentosa Express"
-      start_dt = SE.where('lower(name) = ?', from.downcase).first
-      end_dt = SE.where('lower(name) = ?', to.downcase).first
+      p start_dt = SE.where('lower(name) = ?', from.downcase).first
+      p end_dt = SE.where('lower(name) = ?', to.downcase).first
 
       if start_dt.id > end_dt.id
         sequence = SE.where(id: end_dt.id .. start_dt.id).order(id: :desc)
