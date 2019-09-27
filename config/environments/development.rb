@@ -54,6 +54,7 @@ Hive::Application.configure do
   # Checks for improperly declared sprockets dependencies.
   # Raises helpful error messages.
   config.assets.raise_runtime_errors = true
+  config.telegram_updates_controller.session_store = :memory_store
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true

@@ -83,6 +83,9 @@ end
 
 gem 'literate_randomizer'
 
+gem 'telegram-bot'
+gem 'telegram-bot-types'
+
 group :assets do
   gem 'bourbon'
   gem 'uglifier', '~> 2.6.1'

@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  # get '*unmatched_route', to: 'application#raise_not_found'
+  telegram_webhook TelegramWebhooksController
 
   root to: 'hiveapplication#login_page'
   post "dev_sign_in"              =>  'home#dev_sign_in'        , via: [:get, :post]
@@ -64,6 +64,7 @@ Rails.application.routes.draw do
   match "carmic/camic_reset_pwd"  => "carmic#camic_reset_pwd"          , via: [:get,:post]
   match "carmic/create_post"      => 'carmic#create_post'              , via: [:get,:post]
   get "carmic/logout"             => 'carmic#logout'
+  # post "webhooks/telegram_roundtripsg" => "webhooks#callback"
 
 
   namespace :api do

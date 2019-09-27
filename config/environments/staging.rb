@@ -71,6 +71,13 @@ Hive::Application.configure do
   # the I18n.default_locale when a translation can not be found)
   config.i18n.fallbacks = true
 
+  # Set application domain, to be able to run `rake telegram:bot:set_webhook`
+  routes.default_url_options = {host: 'h1ve-production.herokuapp.com', protocol: 'https'}
+  
+  # Enable Bot's session unconditionally.
+  config.telegram_updates_controller.session_store = :file_store,
+    Rails.root.join('tmp', 'session_store')
+
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 

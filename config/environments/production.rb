@@ -93,6 +93,12 @@ Hive::Application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+  # Set application domain, to be able to run `rake telegram:bot:set_webhook`
+  routes.default_url_options = {host: 'h1ve-production.herokuapp.com', protocol: 'https'}
+
+  # Enable Bot's session unconditionally.
+  config.telegram_updates_controller.session_store = :file_store,
+    Rails.root.join('tmp', 'session_store')
 
   # SMTP
   config.action_mailer.delivery_method = :smtp
@@ -114,19 +120,3 @@ end
 
 # For factual
 require 'factual'
-
-# Pusher Development Credentials
-# Credentials are not required in Prod mode because Pusher account is linked directly with Heroku
-
-# require 'pusher'
-#Pusher.app_id = '65760'
-#Pusher.key    = '149e787d80733d128022'
-#Pusher.secret = '08febbd6c964685f36da'
-
-# Pusher.app_id = '76230'
-# Pusher.key    = '1ec4c02077ddc62c18e9'
-# Pusher.secret = 'b89f64a7d3ff1d5a2adc'
-# require 'pusher'
-# Pusher.app_id = "91034"
-# Pusher.key = "dcc808d176ab4ae8d02e"
-# Pusher.secret = "9cc9d2a3fdd24021a70a"

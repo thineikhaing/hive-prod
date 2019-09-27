@@ -148,7 +148,7 @@ namespace :userdefaultsetup do
     ActiveRecord::Base.connection.execute("TRUNCATE TABLE sg_bus_routes RESTART IDENTITY")
 
     uniqresults.each do |data|
-      rt = SgBusRoute.create(service_no: data["ServiceNo"],operator: data["Operator"],
+      rt = SgBusRoute.create(service_no: data["ServiceNo"].upcase,operator: data["Operator"],
                              direction: data["Direction"],stop_sequence: data["StopSequence"],
                              bus_stop_code: data["BusStopCode"],distance: data["Distance"],
                              wd_firstbus: data["WD_FirstBus"],wd_lastbus: data["WD_LastBus"],
@@ -195,13 +195,13 @@ namespace :userdefaultsetup do
 
     uniqresults.each do |data|
 
-      scv = SgBusService.create(service_no: data["ServiceNo"],operator: data["Operator"],
+      scv = SgBusService.create(service_no: data["ServiceNo"].upcase,operator: data["Operator"],
                           direction: data["Direction"],category: data["Category"],
                           origin_code: data["OriginCode"],destination_code: data["DestinationCode"],
                           am_peak_freq: data["AM_Peak_Freq"],am_offpeak_freq: data["AM_Offpeak_Freq"],
                           pm_peak_freq: data["PM_Peak_Freq"],pm_offpeak_freq: data["PM_Offpeak_Freq"])
       puts "#{scv.id}"
-      puts "#{scv.service_no}"
+      puts "#{scv.service_no.upcase}"
       puts "***"
     end
   end
