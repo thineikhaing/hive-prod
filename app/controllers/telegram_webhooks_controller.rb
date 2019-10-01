@@ -39,6 +39,23 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     end
   end
 
+
+    def direction!(*)
+
+      respond_with :message, text: t('.enter_destination'), reply_markup: {
+        keyboard: [[{
+            text: "My location",
+            request_location: true
+        }], ["Cancel"]],
+        resize_keyboard: true,
+        one_time_keyboard: true,
+
+      }
+
+
+
+    end
+
   def inline_keyboard!(*)
     respond_with :message, text: t('.prompt'), reply_markup: {
       inline_keyboard: [
@@ -60,8 +77,21 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   end
 
   def message(message)
-    respond_with :message, text: t('.content', text: message['text'])
+    if message['text'].present?
+      if message['text'].downcase == "direction"
+        respond_with :message, text: t('telegram_webhooks.direction.enter_destination')
+      end
+    elsif message['location'].present?
+      p "lat && lng"
+      p message['location']['latitude']
+      p message['location']['longitude']
+        respond_with :message, text: 'What is your destination?'
+    else
+      respond_with :message, text: t('.content', text: message['text'])
+    end
+
   end
+
 
   def inline_query(query, _offset)
     query = query.first(10) # it's just an example, don't use large queries.
