@@ -33,11 +33,11 @@ en:
     help:
       content: |
         Available cmds:
+        /start - start action
+        /direction - share location (keyboard)
         /get_help - request
         /keyboard - Simple keyboard.
         /inline_keyboard - Inline keyboard example.
-        /direction - Test share location
-
 
     inline_keyboard:
       alert: Answer with alert
@@ -76,4 +76,7 @@ en:
       nothing: Nothing to remind
 
     start:
-      content: Hi there!
+      content: Hi there! How will you be travelling today?
+      bus: Bus
+      train: Train
+      walk: Walk

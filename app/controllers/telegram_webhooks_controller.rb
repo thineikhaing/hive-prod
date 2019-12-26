@@ -2,7 +2,18 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   include Telegram::Bot::UpdatesController::MessageContext
 
   def start!(*)
-    respond_with :message, text: t('.content')
+    # respond_with :message, text: t('.content')
+    respond_with :message, text: t('.content'), reply_markup: {
+      inline_keyboard: [
+        [
+          {text: t('.bus'), callback_data: 'bus'},
+          {text: t('.train'), callback_data: 'train'},
+          {text: t('.walk'), callback_data: 'walk'},
+        ],
+
+      ],
+    }
+
   end
 
   def help!(*)
@@ -39,22 +50,33 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
     end
   end
 
-
-    def direction!(*)
-
-      respond_with :message, text: t('.enter_destination'), reply_markup: {
-        keyboard: [[{
-            text: "My location",
-            request_location: true
-        }], ["Cancel"]],
+  def keyboard1!(value =nil, *)
+    if value
+      respond_with :message, text: t('.selected', value: value)
+    else
+      save_context :keyboard1!
+      respond_with :message, text: t('prompt'), reply_markup: {
+        keyboard: [t('.buttons')],
         resize_keyboard: true,
         one_time_keyboard: true,
-
+        selective: true,
       }
-
-
-
     end
+  end
+
+  def direction!(*)
+
+    respond_with :message, text: t('.enter_destination'), reply_markup: {
+      keyboard: [[{
+          text: "My location",
+          request_location: true
+      }], ["Cancel"]],
+      resize_keyboard: true,
+      one_time_keyboard: true,
+
+    }
+
+  end
 
   def inline_keyboard!(*)
     respond_with :message, text: t('.prompt'), reply_markup: {
@@ -71,8 +93,10 @@ class TelegramWebhooksController < Telegram::Bot::UpdatesController
   def callback_query(data)
     if data == 'alert'
       answer_callback_query t('.alert'), show_alert: true
-    else
+    elsif data == 'no_alert'
       answer_callback_query t('.no_alert')
+
+
     end
   end
 

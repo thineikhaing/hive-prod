@@ -1,0 +1,2 @@
+class TE < SgMrtStation
+end
