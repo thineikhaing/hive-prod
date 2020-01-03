@@ -444,7 +444,7 @@ class Api::RoundtripController < ApplicationController
             lrt_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,name: "SMRT Transit",topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status})
           else
             line_color = "#5f57ba"
-            others_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,name: "SMRT Transit",topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status})
+            others_tweets.push({id: tweet_counter,header: "ANNOUNCEMENT",text: text, created_at: tweet.created_at,name: "LTA",topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status})
           end
 
           tweet_data = {id: tweet_counter,header: header,text: text, created_at: tweet.created_at,name: "SMRT Transit",topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status}
@@ -502,9 +502,9 @@ class Api::RoundtripController < ApplicationController
         elsif text.downcase.include?("nel")
           line_color = "purple"
           nel_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "Admin",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
-        else
-          line_color = "#5f57ba"
-          others_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,name: "Admin",topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status})
+        # else
+        #   line_color = "#5f57ba"
+        #   others_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,name: "Admin",topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status})
         end
 
       elsif text.downcase.include?("svcs") || text.downcase.include?("svc") || text.downcase.include?("services") || text.downcase.include?("service")
@@ -748,10 +748,10 @@ class Api::RoundtripController < ApplicationController
                 header = "ANNOUNCEMENT"
                 line_color = "#22b5d0"
                 bus_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
-              else
-                header = "ANNOUNCEMENT"
-                line_color = "#22b5d0"
-                bus_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
+              # else
+              #   header = "ANNOUNCEMENT"
+              #   line_color = "#22b5d0"
+              #   bus_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
             end
 
           end
@@ -767,7 +767,7 @@ class Api::RoundtripController < ApplicationController
 
     transit_annoucement = transit_annoucement.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
 
-    lta_status = SgAccidentHistory.last(3)
+    lta_status = SgAccidentHistory.last(10)
     line_color = "#5f57ba"
     lta_status.each do |data|
       tweet_counter = tweet_counter + 1
@@ -787,6 +787,8 @@ class Api::RoundtripController < ApplicationController
       transit_annoucement.push(lta_data)
       lta_tweets.push(lta_data)
     end
+
+    lta_tweets = lta_tweets + others_tweets
 
     lta_tweets = lta_tweets.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
     lrt_tweets = lrt_tweets.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
