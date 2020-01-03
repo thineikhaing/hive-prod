@@ -825,7 +825,7 @@ end
       sbs_mrt = params[:sbs_mrt].to_i
       smrt_bus = params[:smrt_bus].to_i
       sbs_bus = params[:sbs_bus].to_i
-      price_table = "db/mrt-lrt-fare.csv"
+      price_table = "db/mrt-lrt-fare-2020.csv"
 
       total_fare =0.0
       total_distance = (smrt_mrt + sbs_mrt + smrt_bus+sbs_bus) * 0.001
