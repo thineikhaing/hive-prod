@@ -1505,9 +1505,22 @@ end
     depart_name = params[:depart].strip
     arrive_name = params[:arrive].strip
 
-    substring = " Stn"
-    depart_name.slice! substring
-    arrive_name.slice! substring
+
+    p "station name"
+    p dchk_stn = depart_name.last(3)
+    p achk_stn = arrive_name.last(3)
+    if dchk_stn.downcase === "stn"
+      depart_name.delete_suffix! " Stn"
+      depart_name.delete_suffix! " stn"
+    end
+    if achk_stn.downcase === "stn"
+      arrive_name.delete_suffix! " Stn"
+      arrive_name.delete_suffix! " stn"
+    end
+
+
+    p depart_name
+    p arrive_name
 
     frombusId = nil
     tobusId = nil
