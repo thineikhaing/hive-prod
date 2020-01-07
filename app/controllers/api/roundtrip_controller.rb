@@ -1504,6 +1504,11 @@ end
     service_no = params[:service_no].strip
     depart_name = params[:depart].strip
     arrive_name = params[:arrive].strip
+
+    substring = " Stn"
+    depart_name.slice! substring
+    arrive_name.slice! substring
+
     frombusId = nil
     tobusId = nil
     closet_destination = closet_origin = nil
