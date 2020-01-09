@@ -639,6 +639,7 @@ class Api::RoundtripController < ApplicationController
           end
 
           header = "ANNOUNCEMENT"
+          line_color = "#22b5d0"
 
           if text.downcase.include?("svcs") || text.downcase.include?("svc") || text.downcase.include?("services") || text.downcase.include?("service")
             tweet_text = text.to_s
@@ -753,18 +754,8 @@ class Api::RoundtripController < ApplicationController
             nel_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
           end
 
-          if header === ""
-            if text.downcase.include?("bus")
-                header = "ANNOUNCEMENT"
-                line_color = "#22b5d0"
-                bus_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
-              # else
-              #   header = "ANNOUNCEMENT"
-              #   line_color = "#22b5d0"
-              #   bus_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
-            end
 
-          end
+          bus_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
 
           tweet_data = {id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status}
           transit_annoucement.push(tweet_data)
