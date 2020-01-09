@@ -384,6 +384,7 @@ class Api::RoundtripController < ApplicationController
     others_tweets = []
     mrt_status = ''
     tweet_counter = 0
+    line_color = '#5f57ba'
 
     smrt_client = $twitter_client.search("from:SMRT_Singapore", result_type: "recent")
     sbs_client = $twitter_client.search("from:SBSTransit_Ltd", result_type: "recent")
@@ -1477,6 +1478,7 @@ end
           arrivalTime = est_time.strftime("at %I:%M%p")
           wait_time = 0
           if Time.now < est_time
+
             wait_time = TimeDifference.between(Time.now,est_time).in_minutes
             wait_time = wait_time.round
           end
