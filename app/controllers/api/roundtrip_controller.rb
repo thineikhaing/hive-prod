@@ -638,7 +638,7 @@ class Api::RoundtripController < ApplicationController
             post_count = topic_posts.count
           end
 
-          header = ""
+          header = "ANNOUNCEMENT"
 
           if text.downcase.include?("svcs") || text.downcase.include?("svc") || text.downcase.include?("services") || text.downcase.include?("service")
             tweet_text = text.to_s
