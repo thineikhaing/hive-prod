@@ -369,8 +369,6 @@ class Place < ActiveRecord::Base
           else
 
             if place.blank?
-              latitude = 1.3180122375488281
-              longitude = 103.84351672688517
               geocoder = Geocoder.search("#{latitude},#{longitude}").first
               p "geocoder.address"
               p geocoder
