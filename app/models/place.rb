@@ -356,9 +356,7 @@ class Place < ActiveRecord::Base
         check_records.each do |cr|
           private_place = cr if cr.user_id == user_id and cr.source == 6
           if cr.name.present?
-
            place = cr if cr.address.downcase == address.downcase if address.present?
-
           end
         end
 
@@ -372,9 +370,12 @@ class Place < ActiveRecord::Base
 
             if place.blank?
               geocoder = Geocoder.search("#{latitude},#{longitude}").first
-              if geocoder.present? and geocoder.address.present?
-                !name.nil? ? name = name : name = geocoder.data["address"]["road"]
-                !address.nil? ? address = address : address = geocoder.address
+              p "geocoder.address"
+              p geocoder.display_name
+
+              if geocoder.present? and geocoder.display_name.present?
+                !name.blank? ? name = name : name = geocoder.data["address"]["road"]
+                !address.nil? ? address = address : address = geocoder.display_name
                 if address.present?
                   check = Place.find_by_address(address)
                 else
