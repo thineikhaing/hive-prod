@@ -369,6 +369,8 @@ class Place < ActiveRecord::Base
           else
 
             if place.blank?
+              latitude = 1.3180122375488281
+              longitude = 103.84351672688517
               geocoder = Geocoder.search("#{latitude},#{longitude}").first
               p "geocoder.address"
               p geocoder
@@ -384,7 +386,7 @@ class Place < ActiveRecord::Base
                   check = Place.find_by_address(geocoder.address)
                 end
 
-                check.present? ? place = check : place = Place.create1(name: name, latitude: latitude, longitude: longitude,
+                check.present? ? place = check : place = Place.create(name: name, latitude: latitude, longitude: longitude,
                     address: address, source: source, source_id: source_id, user_id: user_id,
                     img_url: img_url,category: category,country: geocoder.country,
                     postal_code: geocoder.postal_code,locality: locality) unless place.present?
