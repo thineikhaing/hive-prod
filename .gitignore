@@ -15,6 +15,5 @@
 .rvmrc
 .ruby-version
 .DS_STORE
-GemFile.lock
 /config/database.yml
                                                   F
