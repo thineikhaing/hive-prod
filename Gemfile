@@ -66,7 +66,7 @@ gem 'holidays'
 gem "puma_worker_killer"
 gem "font-awesome-rails"
 
-gem 'sinatra', github: 'sinatra'
+gem 'sinatra'
 
 gem 'rails_12factor', group: :production
 
