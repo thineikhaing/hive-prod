@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   has_many :topics
+  has_many :bookings
   has_many :checkinplaces
   has_many :posts
   has_many :user_push_tokens

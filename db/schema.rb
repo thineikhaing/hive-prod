@@ -10,31 +10,42 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_26_091512) do
+ActiveRecord::Schema.define(version: 2020_04_02_051906) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "hstore"
-  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
-  create_table "action_logs", id: :serial, force: :cascade do |t|
+  create_table "action_logs", force: :cascade do |t|
     t.string "action_type", null: false
     t.string "type_name", null: false
     t.integer "type_id", null: false
     t.integer "action_user_id", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "app_additional_fields", id: :serial, force: :cascade do |t|
+  create_table "app_additional_fields", force: :cascade do |t|
     t.integer "app_id"
     t.string "table_name"
     t.string "additional_column_name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "car_action_logs", id: :serial, force: :cascade do |t|
+  create_table "bookings", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "place_id"
+    t.datetime "booking_date"
+    t.time "checkin_time"
+    t.time "checkout_time"
+    t.integer "status", default: 0, null: false
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "car_action_logs", force: :cascade do |t|
     t.integer "user_id"
     t.integer "speed"
     t.integer "direction"
@@ -42,18 +53,18 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.float "longitude"
     t.string "activity"
     t.string "heartrate"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "checkinplaces", id: :serial, force: :cascade do |t|
+  create_table "checkinplaces", force: :cascade do |t|
     t.integer "place_id", default: 0
     t.integer "user_id", default: 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "countries", id: :serial, force: :cascade do |t|
+  create_table "countries", force: :cascade do |t|
     t.string "name"
     t.string "locale_name"
     t.string "cca2"
@@ -67,11 +78,11 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.float "relevance"
     t.string "region"
     t.string "subregion"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "delayed_jobs", id: :serial, force: :cascade do |t|
+  create_table "delayed_jobs", force: :cascade do |t|
     t.integer "priority", default: 0, null: false
     t.integer "attempts", default: 0, null: false
     t.text "handler", null: false
@@ -86,14 +97,15 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
-  create_table "devices", id: :serial, force: :cascade do |t|
+  create_table "devices", force: :cascade do |t|
     t.string "push_token"
-    t.integer "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_devices_on_user_id"
   end
 
-  create_table "devusers", id: :serial, force: :cascade do |t|
+  create_table "devusers", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -109,36 +121,39 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.string "default", default: "", null: false
     t.hstore "data"
     t.boolean "verified", default: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer "hiveapplication_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "hiveapplication_id"
     t.integer "role"
     t.index ["email"], name: "index_devusers_on_email", unique: true
+    t.index ["hiveapplication_id"], name: "index_devusers_on_hiveapplication_id"
     t.index ["reset_password_token"], name: "index_devusers_on_reset_password_token", unique: true
   end
 
-  create_table "favractions", id: :serial, force: :cascade do |t|
-    t.integer "topic_id"
+  create_table "favractions", force: :cascade do |t|
+    t.bigint "topic_id"
     t.integer "doer_user_id"
     t.integer "status", default: 0
-    t.integer "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "post_id"
     t.integer "honor_to_owner", default: 0
     t.integer "honor_to_doer", default: 0
+    t.index ["topic_id"], name: "index_favractions_on_topic_id"
+    t.index ["user_id"], name: "index_favractions_on_user_id"
   end
 
-  create_table "historychanges", id: :serial, force: :cascade do |t|
+  create_table "historychanges", force: :cascade do |t|
     t.string "type_action", default: ""
     t.string "type_name", default: ""
     t.integer "type_id", default: 0
     t.integer "parent_id", default: 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "hive_applications", id: :serial, force: :cascade do |t|
+  create_table "hive_applications", force: :cascade do |t|
     t.string "app_name"
     t.string "app_type", null: false
     t.string "api_key", null: false
@@ -146,28 +161,28 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.string "icon_url"
     t.string "theme_color", default: "#451734"
     t.integer "devuser_id", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "incident_histories", id: :serial, force: :cascade do |t|
+  create_table "incident_histories", force: :cascade do |t|
     t.integer "host_id"
     t.integer "peer_id"
     t.hstore "host_data"
     t.hstore "peer_data"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "invitees", id: :serial, force: :cascade do |t|
+  create_table "invitees", force: :cascade do |t|
     t.string "invitation_code"
     t.integer "topic_id"
     t.integer "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "lookups", id: :serial, force: :cascade do |t|
+  create_table "lookups", force: :cascade do |t|
     t.string "lookup_type"
     t.string "name"
     t.string "value"
@@ -175,7 +190,7 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "places", id: :serial, force: :cascade do |t|
+  create_table "places", force: :cascade do |t|
     t.string "name"
     t.string "category", default: ""
     t.string "address", default: "", null: false
@@ -194,32 +209,34 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.hstore "data"
     t.float "latitude", default: 0.0, null: false
     t.float "longitude", default: 0.0, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "short_name"
   end
 
-  create_table "posts", id: :serial, force: :cascade do |t|
+  create_table "posts", force: :cascade do |t|
     t.string "content", null: false
     t.string "img_url"
     t.integer "width", default: 0
     t.integer "height", default: 0
     t.integer "post_type", default: 0, null: false
     t.hstore "data"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "dislikes", default: 0
     t.integer "likes", default: 0
     t.integer "offensive", default: 0
     t.integer "place_id", default: 0
-    t.integer "user_id"
-    t.integer "topic_id"
+    t.bigint "user_id"
+    t.bigint "topic_id"
     t.float "latitude"
     t.float "longitude"
     t.integer "special_type", default: 0
+    t.index ["topic_id"], name: "index_posts_on_topic_id"
+    t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
-  create_table "privacy_policies", id: :serial, force: :cascade do |t|
+  create_table "privacy_policies", force: :cascade do |t|
     t.string "title"
     t.text "content"
     t.datetime "created_at", null: false
@@ -227,7 +244,7 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.integer "hiveapplication_id"
   end
 
-  create_table "route_logs", id: :serial, force: :cascade do |t|
+  create_table "route_logs", force: :cascade do |t|
     t.integer "user_id"
     t.string "start_address"
     t.string "end_address"
@@ -242,16 +259,16 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "sessions", id: :serial, force: :cascade do |t|
+  create_table "sessions", force: :cascade do |t|
     t.string "session_id", null: false
     t.text "data"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
-  create_table "sg_accident_histories", id: :serial, force: :cascade do |t|
+  create_table "sg_accident_histories", force: :cascade do |t|
     t.string "type"
     t.string "message"
     t.datetime "accident_datetime"
@@ -317,7 +334,7 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "suggesteddates", id: :serial, force: :cascade do |t|
+  create_table "suggesteddates", force: :cascade do |t|
     t.integer "topic_id"
     t.integer "user_id"
     t.string "invitation_code"
@@ -325,18 +342,18 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.time "suggesttime"
     t.integer "vote", default: 0
     t.boolean "admin_confirm", default: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "tags", id: :serial, force: :cascade do |t|
+  create_table "tags", force: :cascade do |t|
     t.integer "tag_type", null: false
     t.string "keyword", default: "", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "taxi_availabilities", id: :serial, force: :cascade do |t|
+  create_table "taxi_availabilities", force: :cascade do |t|
     t.float "latitude"
     t.float "longitude"
     t.datetime "date_time"
@@ -353,21 +370,21 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "topic_invitees", id: :serial, force: :cascade do |t|
+  create_table "topic_invitees", force: :cascade do |t|
     t.integer "topic_id"
     t.string "invitee_email"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "topic_with_tags", id: :serial, force: :cascade do |t|
+  create_table "topic_with_tags", force: :cascade do |t|
     t.integer "topic_id", null: false
     t.integer "tag_id", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "topics", id: :serial, force: :cascade do |t|
+  create_table "topics", force: :cascade do |t|
     t.string "title", null: false
     t.string "image_url"
     t.integer "width", default: 0
@@ -383,10 +400,10 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.integer "offensive", default: 0
     t.float "notification_range", default: 1.0
     t.hstore "data"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer "hiveapplication_id"
-    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "hiveapplication_id"
+    t.bigint "user_id"
     t.string "extra_info"
     t.datetime "valid_start_date"
     t.datetime "valid_end_date"
@@ -398,6 +415,8 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.integer "given_time"
     t.integer "start_place_id", default: 0
     t.integer "end_place_id", default: 0
+    t.index ["hiveapplication_id"], name: "index_topics_on_hiveapplication_id"
+    t.index ["user_id"], name: "index_topics_on_user_id"
   end
 
   create_table "trips", id: :serial, force: :cascade do |t|
@@ -433,13 +452,13 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.string "creator"
   end
 
-  create_table "user_accounts", id: :serial, force: :cascade do |t|
+  create_table "user_accounts", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "account_type", null: false
     t.string "linked_account_id", null: false
     t.integer "priority", default: 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "hiveapplication_id"
   end
 
@@ -451,7 +470,7 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "user_fav_locations", id: :serial, force: :cascade do |t|
+  create_table "user_fav_locations", force: :cascade do |t|
     t.integer "user_id"
     t.integer "place_id"
     t.string "place_type"
@@ -462,7 +481,7 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.string "address"
   end
 
-  create_table "user_friend_lists", id: :serial, force: :cascade do |t|
+  create_table "user_friend_lists", force: :cascade do |t|
     t.integer "user_id"
     t.integer "friend_id"
     t.datetime "created_at", null: false
@@ -476,25 +495,25 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "user_push_tokens", id: :serial, force: :cascade do |t|
+  create_table "user_push_tokens", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "push_token"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "endpoint_arn"
     t.boolean "notify", default: true
   end
 
-  create_table "userpreviouslocations", id: :serial, force: :cascade do |t|
+  create_table "userpreviouslocations", force: :cascade do |t|
     t.float "latitude", default: 0.0
     t.float "longitude", default: 0.0
     t.integer "user_id", default: 0
     t.integer "radius", default: 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "users", id: :serial, force: :cascade do |t|
+  create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -525,8 +544,8 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.integer "negative_honor", default: 0
     t.integer "honored_times", default: 0
     t.hstore "data"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "socal_id"
     t.integer "daily_points", default: 10
     t.hstore "app_data"
@@ -537,14 +556,14 @@ ActiveRecord::Schema.define(version: 2019_09_26_091512) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  create_table "votes", id: :serial, force: :cascade do |t|
+  create_table "votes", force: :cascade do |t|
     t.integer "vote"
     t.datetime "selected_datetime"
     t.integer "user_id"
     t.integer "topic_id"
     t.integer "suggesteddate_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end

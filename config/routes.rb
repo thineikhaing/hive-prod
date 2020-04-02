@@ -89,6 +89,9 @@ Rails.application.routes.draw do
     match "socal/signup"                            => "socal#signup"                     , via: [:get, :post]
     match "socal/signin"                            => "socal#signin"                     , via: [:get, :post]
     match "socal/get_events"                        => "socal#get_events"                     , via: [:get, :post]
+    match "socal/create_booking"                    => "socal#create_booking"                     , via: [:get, :post]
+    match "socal/get_bookings"                      => "socal#get_bookings"                     , via: [:get, :post]
+    
 
     match "hiveweb/get_all_topics_for_web"          => "hiveweb#get_all_topics_for_web"         , via: [:get, :post]
     match "hiveweb/get_all_posts_for_web"           => "hiveweb#get_all_posts_for_web"          , via: [:get, :post]

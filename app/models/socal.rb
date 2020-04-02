@@ -55,6 +55,8 @@ class Socal
 
     # [*('A'..'Z'),*('0'..'9')].shuffle[0,6].join
 
+    
+
   end
 
 

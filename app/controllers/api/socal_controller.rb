@@ -1,6 +1,59 @@
 class Api::SocalController < ApplicationController
   skip_before_action :verify_authenticity_token
 
+  def create_booking
+    hiveapp = HiveApplication.find_by_api_key(params[:app_key])
+    user = User.find(params[:user_id]) 
+    # booking_title = params[:title]
+    place_name = params[:place_name]
+    address = params[:address]
+    latitude = params[:latitude]
+    longitude = params[:longitude]
+    google_place_id = params[:google_place_id]
+    p "check in date and time"
+    p checkin_date = Date.parse(params[:checkin_date])
+    checkin_time = params[:checkin_time]
+    p checkin_time = checkin_time.to_time
+    checkout_time = checkin_time + 1.hour 
+
+    place = ''
+    check_records = Place.where(name:place_name,source:Place::GOOGLE)
+    check_records.each do |cr|
+      p "exisiting google record"
+      place = cr if cr.address.downcase == address.downcase if address.present?
+    end
+
+    if place == ""
+      place = Place.create(
+          name: place_name,
+          latitude:latitude,
+          longitude:longitude,
+          address: address,
+          source: Place::GOOGLE,
+          source_id: google_place_id,
+          user_id: user.id,
+          country: "Singapore")
+    end
+    place.save!
+    
+    p "google place"
+    p place
+
+    booking = Booking.create!(user_id: user.id,place_id: place.id,booking_date: checkin_date.to_time,checkin_time: checkin_time,checkout_time: checkout_time)
+
+    render json: {status: 200, bookings: user.bookings, user: user}
+
+  end
+
+  def get_bookings
+
+    # hiveapp = HiveApplication.find_by_api_key(params[:app_key])
+    user = User.find(params[:user_id]) 
+    bookings = Booking.where(user_id: user.id).order(:booking_date)
+    render json: {status: 200, bookings: bookings, user: user}
+
+  end
+
   def create_event
     app_data = Hash.new
     data = getHashValuefromString(params[:data]) if params[:data].present?
@@ -219,8 +272,15 @@ class Api::SocalController < ApplicationController
     if params[:email].present? and params[:password].present?
       user = User.find_by_email(params[:email])
       if user.present?
+        hiveapp = HiveApplication.find_by_api_key(params[:app_key])
+        app_data = Hash.new
+        app_data['app_id'+hiveapp.id.to_s] = hiveapp.api_key
 
         if user.valid_password?(params[:password])
+          user.app_data = Hash.new if user.app_data.nil?
+          user.app_data = user.app_data.merge(app_data)
+          user.socal_register = true
+          user.save!
           render json: { user: user, status: 200 }
 
         else
@@ -489,5 +549,18 @@ class Api::SocalController < ApplicationController
 
     render json: { status: true }
 
+  end
+end
+
+
+class DateTime
+  def self.combine(d, t)
+    # pass in a date and time or strings
+    d = Date.parse(d) if d.is_a? String 
+    t = Time.zone.parse(t) if t.is_a? String
+    # + 12 hours to make sure we are in the right zone
+    # (eg. PST and PDT switch at 2am)
+    zone = (Time.zone.parse(d.strftime("%Y-%m-%d")) + 12.hours ).zone
+    new(d.year, d.month, d.day, t.hour, t.min, t.sec, zone)
   end
 end
