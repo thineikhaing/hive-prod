@@ -3,9 +3,9 @@ class Booking < ApplicationRecord
 
     def as_json(options=nil)
         if options[:content].present?      #return topic json with content information
-            super(only: [:id, :user_id,:booking_date,:checkin_time,:checkout_time,:updated_at], methods: [:place_information])
+            super(only: [:id, :user_id,:booking_date,:booking_time,:checkin_time,:checkout_time,:updated_at], methods: [:place_information])
         else
-            super(only: [:id, :user_id,:booking_date,:checkin_time,:checkout_time,:updated_at], methods: [:place_information])
+            super(only: [:id, :user_id,:booking_date,:booking_time,:checkin_time,:checkout_time,:updated_at], methods: [:place_information])
         end
     end
     

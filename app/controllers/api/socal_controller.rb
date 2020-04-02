@@ -11,11 +11,9 @@ class Api::SocalController < ApplicationController
     longitude = params[:longitude]
     google_place_id = params[:google_place_id]
     p "check in date and time"
-    ENV['TZ'] = 'UTC'
-    p checkin_date = Date.parse(params[:checkin_date])
-    p checkin_time = Time.parse(params[:checkin_date])
-    checkout_time = checkin_time + 1.hour 
-
+    p booking_date = Date.parse(params[:checkin_date])
+    p booking_time = Time.parse(params[:checkin_date])
+  
     place = ''
     check_records = Place.where(name:place_name,source:Place::GOOGLE)
     check_records.each do |cr|
@@ -39,19 +37,23 @@ class Api::SocalController < ApplicationController
     p "google place"
     p place
 
-    booking = Booking.create!(user_id: user.id,place_id: place.id,booking_date: checkin_date.to_time,checkin_time: checkin_time,checkout_time: checkout_time)
+    booking = Booking.create!(user_id: user.id,place_id: place.id,booking_date: booking_date,booking_time: booking_time)
 
     render json: {status: 200, bookings: user.bookings, user: user}
 
   end
 
   def get_bookings
-
     # hiveapp = HiveApplication.find_by_api_key(params[:app_key])
     user = User.find(params[:user_id]) 
     bookings = Booking.where(user_id: user.id).order(:booking_date)
     render json: {status: 200, bookings: bookings, user: user}
+  end
 
+  def get_booking
+    user = User.find(params[:user_id]) 
+    booking = Booking.find(params[:id])
+    render json: {status: 200, booking: booking, user: user}
   end
 
   def create_event
