@@ -69,3 +69,8 @@ CSV.foreach("db/mrt_stations/sl.csv") do |row|
   SL.create(code: row[0],name: row[1], latitude: row[2], longitude: row[3])
   puts "Created: #{row}"
 end
+
+CSV.foreach("db/mrt_stations/te.csv") do |row|
+  TE.create(code: row[0],name: row[1], latitude: row[2], longitude: row[3])
+  puts "Created: #{row}"
+end

@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  telegram_webhook TelegramWebhooksController
+  # telegram_webhook TelegramWebhooksController
 
   root to: 'hiveapplication#login_page'
   post "dev_sign_in"              =>  'home#dev_sign_in'        , via: [:get, :post]

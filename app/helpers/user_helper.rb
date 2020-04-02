@@ -22,6 +22,4 @@ module UserHelper
   def current_rtuser
     Thread.current[:user] = user
   end
-
 end
-                                                                                                                                                     ``

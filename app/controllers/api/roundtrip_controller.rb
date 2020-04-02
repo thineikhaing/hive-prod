@@ -384,6 +384,7 @@ class Api::RoundtripController < ApplicationController
     others_tweets = []
     mrt_status = ''
     tweet_counter = 0
+    line_color = '#5f57ba'
 
     smrt_client = $twitter_client.search("from:SMRT_Singapore", result_type: "recent")
     sbs_client = $twitter_client.search("from:SBSTransit_Ltd", result_type: "recent")
@@ -394,8 +395,10 @@ class Api::RoundtripController < ApplicationController
       text = tweet.text
       text = CGI::unescapeHTML(text)
 
-      if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides")|| text.downcase.include?("enjoy")|| text.downcase.include?("happy") || text.downcase.include?("shine")
+      if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides")|| text.downcase.include?("enjoy")||
+        text.downcase.include?("happy") || text.downcase.include?("shine") || text.include?("https://t.co/bWcUJj6EGY")
         # p "found non alert"
+
       else
         tweet_counter = tweet_counter + 1
         smrt_tweets.push(tweet)
@@ -444,11 +447,18 @@ class Api::RoundtripController < ApplicationController
             lrt_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,name: "SMRT Transit",topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status})
           else
             line_color = "#5f57ba"
-            others_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,name: "SMRT Transit",topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status})
+            others_tweets.push({id: tweet_counter,header: "ANNOUNCEMENT",text: text, created_at: tweet.created_at,name: "LTA",topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status})
           end
 
-          tweet_data = {id: tweet_counter,header: header,text: text, created_at: tweet.created_at,name: "SMRT Transit",topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status}
+          if text.downcase.exclude?("spf advisory")
+            tweet_data = {id: tweet_counter,header: header,text: text, created_at: tweet.created_at,name: "SMRT Transit",topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status}
+          else
+            tweet_data = {id: tweet_counter,header: "ANNOUNCEMENT",text: text, created_at: tweet.created_at,name: "LTA",topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status}
+
+          end
+
           transit_annoucement.push(tweet_data)
+
         end
       end
 
@@ -502,9 +512,9 @@ class Api::RoundtripController < ApplicationController
         elsif text.downcase.include?("nel")
           line_color = "purple"
           nel_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "Admin",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
-        else
-          line_color = "#5f57ba"
-          others_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,name: "Admin",topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status})
+        # else
+        #   line_color = "#5f57ba"
+        #   others_tweets.push({id: tweet_counter,header: header,text: text, created_at: tweet.created_at,name: "Admin",topic_id: topic_id,post_count: post_count,line_color:line_color,mrt_status:mrt_status})
         end
 
       elsif text.downcase.include?("svcs") || text.downcase.include?("svc") || text.downcase.include?("services") || text.downcase.include?("service")
@@ -607,7 +617,7 @@ class Api::RoundtripController < ApplicationController
 
       text = CGI::unescapeHTML(text)
 
-      if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides") || text.downcase.include?("enjoy")
+      if text.downcase.include?("wishing") || text.downcase.include?("watch")|| text.downcase.include?("love")|| text.downcase.include?("join us") || text.downcase.include?("our bus guides") || text.downcase.include?("enjoy") || text.include?("https://t.co/bWcUJj6EGY") || text.downcase.include?("spf advisory")
         # p "found non alert"
       else
         tweet_counter = tweet_counter + 1
@@ -629,6 +639,7 @@ class Api::RoundtripController < ApplicationController
           end
 
           header = ""
+          line_color = "#22b5d0"
 
           if text.downcase.include?("svcs") || text.downcase.include?("svc") || text.downcase.include?("services") || text.downcase.include?("service")
             tweet_text = text.to_s
@@ -743,19 +754,19 @@ class Api::RoundtripController < ApplicationController
             nel_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
           end
 
+
+          # bus_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
           if header === ""
             if text.downcase.include?("bus")
                 header = "ANNOUNCEMENT"
                 line_color = "#22b5d0"
                 bus_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
-              else
+            else
                 header = "ANNOUNCEMENT"
                 line_color = "#22b5d0"
                 bus_tweets.push({id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status})
             end
-
           end
-
           tweet_data = {id: tweet_counter,header:header,text: text, created_at: tweet.created_at,name: "SBS Transit",topic_id: topic_id,post_count:post_count,line_color:line_color,mrt_status:mrt_status}
           transit_annoucement.push(tweet_data)
         end
@@ -788,6 +799,8 @@ class Api::RoundtripController < ApplicationController
       lta_tweets.push(lta_data)
     end
 
+    lta_tweets = lta_tweets + others_tweets
+
     lta_tweets = lta_tweets.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
     lrt_tweets = lrt_tweets.sort {|x,y| x[:created_at] <=> y[:created_at]}.reverse!
 
@@ -796,8 +809,8 @@ class Api::RoundtripController < ApplicationController
       status: 200,
       message: "Transit Tweet List",
       tweets:transit_annoucement,
-      smrt_recent_tweet:smrt_client,
-      sbs_recent_tweet:sbs_client,
+      # smrt_recent_tweet:smrt_client,
+      # sbs_recent_tweet:sbs_client,
       bus_tweets:bus_tweets,
       nsl_tweets:nsl_tweets,
       ewl_tweets:ewl_tweets,
@@ -825,7 +838,7 @@ end
       sbs_mrt = params[:sbs_mrt].to_i
       smrt_bus = params[:smrt_bus].to_i
       sbs_bus = params[:sbs_bus].to_i
-      price_table = "db/mrt-lrt-fare.csv"
+      price_table = "db/mrt-lrt-fare-2020.csv"
 
       total_fare =0.0
       total_distance = (smrt_mrt + sbs_mrt + smrt_bus+sbs_bus) * 0.001
@@ -1466,6 +1479,7 @@ end
           arrivalTime = est_time.strftime("at %I:%M%p")
           wait_time = 0
           if Time.now < est_time
+
             wait_time = TimeDifference.between(Time.now,est_time).in_minutes
             wait_time = wait_time.round
           end
@@ -1493,6 +1507,24 @@ end
     service_no = params[:service_no].strip
     depart_name = params[:depart].strip
     arrive_name = params[:arrive].strip
+
+
+    p "station name"
+    p dchk_stn = depart_name.last(3)
+    p achk_stn = arrive_name.last(3)
+    if dchk_stn.downcase === "stn"
+      depart_name.delete_suffix! " Stn"
+      depart_name.delete_suffix! " stn"
+    end
+    if achk_stn.downcase === "stn"
+      arrive_name.delete_suffix! " Stn"
+      arrive_name.delete_suffix! " stn"
+    end
+
+
+    p depart_name
+    p arrive_name
+
     frombusId = nil
     tobusId = nil
     closet_destination = closet_origin = nil
