@@ -12,8 +12,8 @@ class Api::SocalController < ApplicationController
     google_place_id = params[:google_place_id]
     p "check in date and time"
     p checkin_date = Date.parse(params[:checkin_date])
-    checkin_time = params[:checkin_time]
-    p checkin_time = checkin_time.to_time
+
+    p checkin_time = params[:checkin_date].to_time
     checkout_time = checkin_time + 1.hour 
 
     place = ''
