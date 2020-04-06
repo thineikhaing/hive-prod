@@ -11,6 +11,7 @@ class Api::SocalController < ApplicationController
     longitude = params[:longitude]
     google_place_id = params[:google_place_id]
     p "check in date and time"
+    ENV['TZ']= 'UTC' 
     p booking_date = Date.parse(params[:checkin_date])
     p booking_time = Time.parse(params[:checkin_date])
   
@@ -47,12 +48,23 @@ class Api::SocalController < ApplicationController
     # hiveapp = HiveApplication.find_by_api_key(params[:app_key])
     user = User.find(params[:user_id]) 
     bookings = Booking.where(user_id: user.id).order(:booking_date)
-    render json: {status: 200, bookings: bookings, user: user}
+
+    # Booking.where("Date(booking_date) = ?", Date.today)
+    active_bookings = bookings.where("booking_date > ?", Date.today)
+    past_bookings = bookings.where("booking_date < ?", Date.today)
+    render json: {status: 200,bookings:bookings, active_bookings: active_bookings, past_bookings:past_bookings, user: user}
   end
 
   def get_booking
     user = User.find(params[:user_id]) 
     booking = Booking.find(params[:id])
+    render json: {status: 200, booking: booking, user: user}
+  end
+
+  def delete_booking
+    user = User.find(params[:user_id]) 
+    Booking.delete(params[:id])
+    booking = Booking.where(user_id: user.id).order(:booking_date)
     render json: {status: 200, booking: booking, user: user}
   end
 
