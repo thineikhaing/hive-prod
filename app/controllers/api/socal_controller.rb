@@ -12,10 +12,14 @@ class Api::SocalController < ApplicationController
     google_place_id = params[:google_place_id]
     p "check in date and time"
     ENV['TZ']= 'UTC' 
-    p booking_date = Date.parse(params[:checkin_date])
+    # p booking_date = Date.parse(params[:checkin_date])
     p booking_time = Time.parse(params[:checkin_date])
-  
-    place = ''
+
+    p check_dup = Booking.where("DATE(booking_date) = ?", booking_time)
+    if check_dup.count > 0 
+      render json: {status: 201, bookings: user.bookings, user: user}
+    else
+      place = ''
     check_records = Place.where(name:place_name,source:Place::GOOGLE)
     check_records.each do |cr|
       p "exisiting google record"
@@ -38,10 +42,13 @@ class Api::SocalController < ApplicationController
     p "google place"
     p place
 
-    booking = Booking.create!(user_id: user.id,place_id: place.id,booking_date: booking_date,booking_time: booking_time)
-
+    booking = Booking.create!(user_id: user.id,place_id: place.id,booking_date: booking_time,booking_time: booking_time)
     render json: {status: 200, bookings: user.bookings, user: user}
+    end 
+  
+    
 
+    
   end
 
   def get_bookings
