@@ -5,8 +5,8 @@ class CreateFavractions < ActiveRecord::Migration[5.1]
       t.integer :doer_user_id
       t.integer :status,    :default => 0
 
-      t.references :topic
-      t.references :user
+      # t.references :topic
+      # t.references :user
       t.timestamps
     end
   end

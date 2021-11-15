@@ -40,7 +40,7 @@ require 'capistrano/bundler'
 require 'capistrano/rails'
 require 'capistrano/rbenv'
 set :rbenv_type, :user
-set :rbenv_ruby, '2.7.1'
+set :rbenv_ruby, '2.6.3'
 
 require 'capistrano/scm/git'
 install_plugin Capistrano::SCM::Git

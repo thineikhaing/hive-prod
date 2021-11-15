@@ -13,7 +13,7 @@
 #
 # Configure Using Gemfile
 # gem 'pg'
-#
+##  username: enterprise
 
 
 default: &default
@@ -21,16 +21,13 @@ default: &default
   encoding: unicode
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-
 development:
   <<: *default
   database: hive_development
   hostname: localhost
-#  username: enterprise
   username: thinei
   password:
-  pool: 5
-  timeout: 5000
+  
   # pg_restore --verbose --clean --no-acl --no-owner -h localhost -U thineikhaing -d hive_development latest.dump
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.
@@ -67,11 +64,9 @@ test:
   <<: *default
   database: hive_test
   hostname: localhost
-#  username: enterprise
   username: thinei
   password:
-  pool: 5
-  timeout: 5000
+  
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
 # ever seen by anyone, they now have access to your database.
