@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.6.3'
+ruby '2.7.1'
 #gem 'rails', :git => 'git://github.com/rails/rails.git', :tag => 'v4.1.0.beta1'
 gem 'rails'
 gem 'puma'
@@ -23,7 +23,7 @@ gem 'pusher'
 gem 'em-http-request'
 gem 'gon'
 gem "cloudfiles"
-gem 'carrierwave', '~> 1.0'
+gem 'carrierwave'
 gem 'carrierwave-base64'
 gem 'fog-aws'
 gem "koala"
