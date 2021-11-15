@@ -6,7 +6,7 @@ require 'capistrano-db-tasks'
 #FIXME add your app name here
 set :application, 'hive-prod'
 #FIXME replace 'git@github.com:YOUR-GIT-REPO-HERE' with your git clone url
-set :repo_url, 'https://github.com/rayser/bzz-web.git'
+set :repo_url, 'git@github.com:thineikhaing/hive-prod.git'
 #FIXME add location on the server here
 set :deploy_to, '/home/deploy/hive-prod'
 set :branch,'dev_aws'
