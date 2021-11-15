@@ -14,13 +14,14 @@
 # Configure Using Gemfile
 # gem 'pg'
 #
+
+
 default: &default
   adapter: postgresql
   encoding: unicode
-  # For details on connection pooling, see rails configuration guide
-  # http://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: <%= ENV["DB_POOL"] || ENV['MAX_THREADS'] || 5 %>
-#
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+
 development:
   <<: *default
   database: hive_development
@@ -90,20 +91,19 @@ test:
 #   production:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
+# production:
+#   <<: *default
+#   url:  <%= ENV["DATABASE_URL"] %>
+#   password: <%= ENV['HIVE_DATABASE_PASSWORD'] %>
+#   pool: 20
+
 production:
   <<: *default
-  url:  <%= ENV["DATABASE_URL"] %>
-  password: <%= ENV['HIVE_DATABASE_PASSWORD'] %>
-  pool: 20
-
+  database: hive-production
+  username: deploy
+  password: Rails.application.credentials.dig(:production, :db_password)
 
 staging:
   <<: *default
   url:  <%= ENV["DATABASE_URL"] %>
   password: <%= ENV['HIVE_DATABASE_PASSWORD'] %>
-#staging:
-#  <<: *default
-#  database: hive_production
-#  username: raydius
-#
-#  password: <%= ENV['HIVE_DATABASE_PASSWORD'] %>
