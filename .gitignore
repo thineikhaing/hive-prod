@@ -17,3 +17,5 @@
 .DS_STORE
 /config/database.yml
                                                   F
+
+/config/master.key
