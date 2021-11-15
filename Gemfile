@@ -122,3 +122,7 @@ group :test do
   # gem 'capybara', git: 'https://github.com/jnicklas/capybara', ref: '7fa75e55420e'
   gem 'guard-rspec'
 end
+
+gem 'net-ssh', '>= 6.0.2'
+gem 'ed25519', '>= 1.2', '< 2.0'
+gem 'bcrypt_pbkdf', '>= 1.0', '< 2.0'
